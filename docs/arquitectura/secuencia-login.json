@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Inicio de sesión con segundo factor",
+    "output": "secuencia-login.html",
+    "viewBox": [
+      1080,
+      570
+    ],
+    "column_fit": "spread",
+    "quality_profile": "showcase",
+    "animation": "trace",
+    "views": [
+      {
+        "id": "desafio",
+        "label": "1 · Login y desafío",
+        "focus": [
+          "usuario",
+          "spa",
+          "api",
+          "db",
+          "correo"
+        ],
+        "note": "La contraseña correcta no devuelve tokens: devuelve un desafío si la cuenta tiene MFA."
+      },
+      {
+        "id": "emision",
+        "label": "2 · Emisión de tokens",
+        "focus": [
+          "spa",
+          "api",
+          "jwt",
+          "db"
+        ],
+        "note": "El par de tokens solo se firma tras verificar el código de un solo uso."
+      }
+    ]
+  },
+  "participants": [
+    {
+      "id": "usuario",
+      "type": "external",
+      "label": "Usuario",
+      "sublabel": "cliente o vendedor"
+    },
+    {
+      "id": "spa",
+      "type": "frontend",
+      "label": "SPA",
+      "sublabel": "React 18"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "AUTH-SERVICE",
+      "sublabel": "/api/v1"
+    },
+    {
+      "id": "jwt",
+      "type": "security",
+      "label": "JwtTokenService",
+      "sublabel": "firma RS256"
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "usuarios y tokens"
+    },
+    {
+      "id": "correo",
+      "type": "external",
+      "label": "Correo / SMS",
+      "sublabel": "proveedor"
+    }
+  ],
+  "segments": [
+    {
+      "from": 180,
+      "to": 346,
+      "label": "1 · Credenciales y desafío de segundo factor"
+    },
+    {
+      "from": 354,
+      "to": 497,
+      "label": "2 · Verificación del código y emisión de tokens"
+    }
+  ],
+  "messages": [
+    {
+      "id": "credenciales",
+      "from": "usuario",
+      "to": "spa",
+      "y": 185,
+      "label": "correo y contraseña",
+      "variant": "default"
+    },
+    {
+      "id": "post-login",
+      "from": "spa",
+      "to": "api",
+      "y": 214,
+      "label": "POST /auth/login",
+      "variant": "emphasis"
+    },
+    {
+      "id": "verifica-bcrypt",
+      "from": "api",
+      "to": "db",
+      "y": 243,
+      "label": "verifica BCrypt y estado",
+      "variant": "default"
+    },
+    {
+      "id": "mfa-activo",
+      "from": "db",
+      "to": "api",
+      "y": 272,
+      "label": "válido · MFA activo",
+      "variant": "return"
+    },
+    {
+      "id": "envia-otp",
+      "from": "api",
+      "to": "correo",
+      "y": 301,
+      "label": "OTP de 6 dígitos · 5 min",
+      "variant": "dashed"
+    },
+    {
+      "id": "desafio",
+      "from": "api",
+      "to": "spa",
+      "y": 330,
+      "label": "202 mfa_requerido",
+      "variant": "return"
+    },
+    {
+      "id": "teclea-codigo",
+      "from": "usuario",
+      "to": "spa",
+      "y": 365,
+      "label": "introduce el código",
+      "variant": "default"
+    },
+    {
+      "id": "post-otp",
+      "from": "spa",
+      "to": "api",
+      "y": 394,
+      "label": "POST /auth/otp/verificar",
+      "variant": "emphasis"
+    },
+    {
+      "id": "firma",
+      "from": "api",
+      "to": "jwt",
+      "y": 423,
+      "label": "firma el par de tokens",
+      "variant": "security"
+    },
+    {
+      "id": "tokens",
+      "from": "jwt",
+      "to": "api",
+      "y": 452,
+      "label": "acceso 15 min · refresco 7 d hasheado",
+      "variant": "return"
+    },
+    {
+      "id": "respuesta-tokens",
+      "from": "api",
+      "to": "spa",
+      "y": 481,
+      "label": "200 con ambos tokens",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "spa",
+      "from": 209,
+      "to": 487,
+      "type": "frontend"
+    },
+    {
+      "participant": "api",
+      "from": 214,
+      "to": 481,
+      "type": "backend"
+    },
+    {
+      "participant": "db",
+      "from": 239,
+      "to": 278,
+      "type": "database"
+    },
+    {
+      "participant": "jwt",
+      "from": 419,
+      "to": 456,
+      "type": "security"
+    },
+    {
+      "participant": "correo",
+      "from": 297,
+      "to": 316,
+      "type": "external"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Lo que hay que contar el sábado",
+      "items": [
+        "La contraseña correcta no basta: si hay MFA, devuelve un desafío",
+        "El par de tokens solo se firma tras verificar el código",
+        "El acceso dura 15 minutos; el refresco, 7 días"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Decisiones de seguridad visibles",
+      "items": [
+        "La contraseña se compara con BCrypt de coste 12, nunca en claro",
+        "El OTP se guarda hasheado: 6 dígitos, 5 minutos, 3 intentos",
+        "El refresco se guarda hasheado y se rota en cada uso"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Qué ve el resto del marketplace",
+      "items": [
+        "Nada de este flujo: solo reciben el token de acceso ya firmado",
+        "Lo verifican con la clave pública del JWKS, sin llamarnos",
+        "La rotación del refresco está en secuencia-refresco.html"
+      ]
+    }
+  ]
+}

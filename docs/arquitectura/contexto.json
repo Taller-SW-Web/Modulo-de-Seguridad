@@ -1,0 +1,383 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Contexto — Módulo de Seguridad y Autenticación (G7)",
+    "output": "contexto.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1180,
+      520
+    ],
+    "views": [
+      {
+        "id": "alcance",
+        "label": "Nuestro alcance",
+        "focus": [
+          "usuarios",
+          "spa",
+          "auth"
+        ],
+        "note": "Lo que construye el G7: la SPA del módulo y el servicio de identidad."
+      },
+      {
+        "id": "via-local",
+        "label": "Vía 1 — validación local",
+        "focus": [
+          "auth",
+          "jwks",
+          "marketplace",
+          "chatbot",
+          "retail"
+        ],
+        "note": "El caso normal: cada módulo verifica la firma sin llamarnos."
+      },
+      {
+        "id": "via-sincrona",
+        "label": "Vía 2 — introspección",
+        "focus": [
+          "auth",
+          "introspeccion",
+          "ventas",
+          "productos"
+        ],
+        "note": "Solo antes de operaciones sensibles: anulaciones, reembolsos y cambios de precio."
+      },
+      {
+        "id": "via-asincrona",
+        "label": "Vía 3 — eventos",
+        "focus": [
+          "auth",
+          "eventos",
+          "despacho"
+        ],
+        "note": "Bajas, bloqueos y cambios de rol propagados sin preguntar."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "usuarios",
+      "type": "external",
+      "label": "Clientes, vendedores",
+      "sublabel": "y administradores",
+      "pos": [
+        40,
+        110
+      ],
+      "size": [
+        170,
+        56
+      ]
+    },
+    {
+      "id": "spa",
+      "type": "frontend",
+      "label": "SPA del módulo",
+      "sublabel": "React 18 · Vite",
+      "pos": [
+        40,
+        256
+      ],
+      "size": [
+        170,
+        56
+      ]
+    },
+    {
+      "id": "auth",
+      "type": "backend",
+      "label": "AUTH-SERVICE",
+      "sublabel": "Spring Boot 3 · /api/v1",
+      "pos": [
+        320,
+        248
+      ],
+      "size": [
+        190,
+        72
+      ],
+      "tag": "Dueño de la entidad usuario"
+    },
+    {
+      "id": "jwks",
+      "type": "security",
+      "label": "JWKS público",
+      "sublabel": "clave RS256",
+      "pos": [
+        620,
+        104
+      ],
+      "size": [
+        180,
+        58
+      ]
+    },
+    {
+      "id": "introspeccion",
+      "type": "security",
+      "label": "Introspección",
+      "sublabel": "POST /auth/introspeccion",
+      "pos": [
+        620,
+        250
+      ],
+      "size": [
+        180,
+        58
+      ]
+    },
+    {
+      "id": "eventos",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "eventos usuario.*",
+      "pos": [
+        620,
+        410
+      ],
+      "size": [
+        180,
+        58
+      ]
+    },
+    {
+      "id": "marketplace",
+      "type": "external",
+      "label": "Marketplace Cliente",
+      "pos": [
+        910,
+        42
+      ],
+      "size": [
+        200,
+        50
+      ]
+    },
+    {
+      "id": "chatbot",
+      "type": "external",
+      "label": "Chatbot Cliente",
+      "pos": [
+        910,
+        108
+      ],
+      "size": [
+        200,
+        50
+      ]
+    },
+    {
+      "id": "retail",
+      "type": "external",
+      "label": "Retail Vendedor",
+      "pos": [
+        910,
+        174
+      ],
+      "size": [
+        200,
+        50
+      ]
+    },
+    {
+      "id": "ventas",
+      "type": "external",
+      "label": "Ventas y Postventa",
+      "pos": [
+        910,
+        254
+      ],
+      "size": [
+        200,
+        50
+      ]
+    },
+    {
+      "id": "productos",
+      "type": "external",
+      "label": "Productos y Ofertas",
+      "pos": [
+        910,
+        320
+      ],
+      "size": [
+        200,
+        50
+      ]
+    },
+    {
+      "id": "despacho",
+      "type": "external",
+      "label": "Despacho y Entrega",
+      "pos": [
+        910,
+        414
+      ],
+      "size": [
+        200,
+        50
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "Módulo de Seguridad — alcance del G7",
+      "wraps": [
+        "spa",
+        "auth"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "Los otros seis módulos del marketplace",
+      "wraps": [
+        "marketplace",
+        "chatbot",
+        "retail",
+        "ventas",
+        "productos",
+        "despacho"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "login",
+      "from": "usuarios",
+      "to": "spa",
+      "label": "inicia sesión",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        125,
+        190
+      ]
+    },
+    {
+      "id": "spa-auth",
+      "from": "spa",
+      "to": "auth",
+      "label": "HTTPS + JSON",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -16
+    },
+    {
+      "id": "auth-jwks",
+      "from": "auth",
+      "to": "jwks",
+      "label": "publica clave",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "left",
+      "labelDy": -20
+    },
+    {
+      "id": "auth-introspeccion",
+      "from": "auth",
+      "to": "introspeccion",
+      "label": "estado actual",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -16,
+      "labelDx": 30
+    },
+    {
+      "id": "auth-eventos",
+      "from": "auth",
+      "to": "eventos",
+      "label": "publica",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "labelDy": 20
+    },
+    {
+      "id": "jwks-marketplace",
+      "from": "jwks",
+      "to": "marketplace",
+      "label": "verifica firma",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "jwks-chatbot",
+      "from": "jwks",
+      "to": "chatbot",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "jwks-retail",
+      "from": "jwks",
+      "to": "retail",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "introspeccion-ventas",
+      "from": "introspeccion",
+      "to": "ventas",
+      "label": "anulaciones",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -18
+    },
+    {
+      "id": "introspeccion-productos",
+      "from": "introspeccion",
+      "to": "productos",
+      "label": "cambios de precio",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": 18
+    },
+    {
+      "id": "eventos-despacho",
+      "from": "eventos",
+      "to": "despacho",
+      "label": "suscribe usuario.*",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": 22
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Qué construye el G7",
+      "items": [
+        "Un microservicio de identidad y su propia SPA en React",
+        "Es dueño de la entidad usuario: cliente, vendedor y administrador",
+        "Los seis módulos restantes dependen de él; él no depende de ninguno"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Tres vías de integración",
+      "items": [
+        "Validación local con JWKS: sin llamada de red, es el caso normal",
+        "Introspección síncrona: estado actual, al coste de una llamada",
+        "Eventos en RabbitMQ: bajas y bloqueos sin preguntar"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Reglas que no se negocian",
+      "items": [
+        "Ningún módulo accede a nuestra base de datos: todo pasa por API",
+        "RS256 y no HS256: los demás verifican sin poder firmar",
+        "Cada módulo se dibuja unido a su vía dominante, no a la única posible"
+      ]
+    }
+  ]
+}

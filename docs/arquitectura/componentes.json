@@ -1,0 +1,380 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Componentes internos del AUTH-SERVICE",
+    "output": "componentes.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1220,
+      570
+    ],
+    "views": [
+      {
+        "id": "peticion",
+        "label": "Camino de una petición",
+        "focus": [
+          "spa",
+          "api",
+          "autenticacion",
+          "jwt"
+        ],
+        "note": "De la pantalla al token firmado: el recorrido que se demuestra en el Hito 3."
+      },
+      {
+        "id": "dominio",
+        "label": "Capas de dominio",
+        "focus": [
+          "autenticacion",
+          "integracion",
+          "usuarios",
+          "credenciales"
+        ],
+        "note": "Cada capa agrupa las SPEC de un mismo responsable. Ver docs/responsabilidades.md."
+      },
+      {
+        "id": "datos",
+        "label": "Datos y migraciones",
+        "focus": [
+          "usuarios",
+          "persistencia",
+          "db"
+        ],
+        "note": "El esquema evoluciona solo por migraciones Flyway versionadas con el código."
+      },
+      {
+        "id": "salidas",
+        "label": "Salidas del servicio",
+        "focus": [
+          "integracion",
+          "rabbit",
+          "notificaciones",
+          "correo"
+        ],
+        "note": "Lo que el módulo emite hacia fuera: eventos, correos y códigos."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "spa",
+      "type": "frontend",
+      "label": "SPA del módulo",
+      "sublabel": "React 18 · Vite · React Router",
+      "pos": [
+        500,
+        26
+      ],
+      "size": [
+        240,
+        54
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Capa de API REST · /api/v1",
+      "sublabel": "Spring Boot 3 · Spring Security",
+      "pos": [
+        420,
+        112
+      ],
+      "size": [
+        400,
+        68
+      ],
+      "tag": "Filtro Bearer + errores RFC 7807"
+    },
+    {
+      "id": "autenticacion",
+      "type": "backend",
+      "label": "Autenticación y sesiones",
+      "sublabel": "SPEC-02 · SPEC-04",
+      "pos": [
+        40,
+        226
+      ],
+      "size": [
+        250,
+        78
+      ],
+      "tag": "Jose Luis · Luis David"
+    },
+    {
+      "id": "integracion",
+      "type": "backend",
+      "label": "API de identidad y auditoría",
+      "sublabel": "SPEC-09 · JWKS e introspección",
+      "pos": [
+        320,
+        226
+      ],
+      "size": [
+        250,
+        78
+      ],
+      "tag": "Sergio"
+    },
+    {
+      "id": "usuarios",
+      "type": "backend",
+      "label": "Usuarios, roles y permisos",
+      "sublabel": "SPEC-01 · SPEC-05 · SPEC-08",
+      "pos": [
+        600,
+        226
+      ],
+      "size": [
+        250,
+        78
+      ],
+      "tag": "Eva Lucía"
+    },
+    {
+      "id": "credenciales",
+      "type": "backend",
+      "label": "Credenciales y protección",
+      "sublabel": "SPEC-03 · SPEC-06 · SPEC-07",
+      "pos": [
+        880,
+        226
+      ],
+      "size": [
+        250,
+        78
+      ],
+      "tag": "Juan José · Luis David"
+    },
+    {
+      "id": "jwt",
+      "type": "security",
+      "label": "JwtTokenService",
+      "sublabel": "RS256 con Nimbus · jti y familia",
+      "pos": [
+        40,
+        352
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "rabbit",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "eventos usuario.*",
+      "pos": [
+        320,
+        352
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "persistencia",
+      "type": "backend",
+      "label": "Persistencia",
+      "sublabel": "Spring Data JPA · Flyway",
+      "pos": [
+        600,
+        352
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "notificaciones",
+      "type": "backend",
+      "label": "Notificaciones",
+      "sublabel": "envío asíncrono por outbox",
+      "pos": [
+        880,
+        352
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "PostgreSQL 16",
+      "sublabel": "15 tablas · base propia y aislada",
+      "pos": [
+        600,
+        462
+      ],
+      "size": [
+        250,
+        62
+      ]
+    },
+    {
+      "id": "correo",
+      "type": "external",
+      "label": "Proveedor de correo y SMS",
+      "sublabel": "SMTP real · SMS simulado",
+      "pos": [
+        880,
+        462
+      ],
+      "size": [
+        250,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Capa de dominio — cada bloque agrupa las SPEC de un responsable",
+      "wraps": [
+        "autenticacion",
+        "integracion",
+        "usuarios",
+        "credenciales"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "spa-api",
+      "from": "spa",
+      "to": "api",
+      "label": "HTTPS + JSON",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDx": 90,
+      "labelDy": 22
+    },
+    {
+      "id": "api-autenticacion",
+      "from": "api",
+      "to": "autenticacion",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-integracion",
+      "from": "api",
+      "to": "integracion",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-usuarios",
+      "from": "api",
+      "to": "usuarios",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-credenciales",
+      "from": "api",
+      "to": "credenciales",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "autenticacion-jwt",
+      "from": "autenticacion",
+      "to": "jwt",
+      "label": "emite y rota",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "integracion-jwt",
+      "from": "integracion",
+      "to": "jwt",
+      "label": "publica JWKS",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "right"
+    },
+    {
+      "id": "integracion-rabbit",
+      "from": "integracion",
+      "to": "rabbit",
+      "label": "publica eventos",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDx": 60,
+      "labelDy": 26
+    },
+    {
+      "id": "usuarios-persistencia",
+      "from": "usuarios",
+      "to": "persistencia",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "credenciales-notificaciones",
+      "from": "credenciales",
+      "to": "notificaciones",
+      "label": "OTP y avisos",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "persistencia-db",
+      "from": "persistencia",
+      "to": "db",
+      "label": "JPA · Flyway",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "notificaciones-correo",
+      "from": "notificaciones",
+      "to": "correo",
+      "label": "SMTP",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Cómo se lee",
+      "items": [
+        "De arriba abajo: pantalla, API, dominio, infraestructura",
+        "Cada bloque de dominio lleva las SPEC que agrupa; su responsable está en docs/responsabilidades.md",
+        "Las cuatro capas de dominio persisten por Spring Data JPA; el diagrama traza la ruta principal para no saturar el trazado"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Decisiones de la capa de API",
+      "items": [
+        "Un único backend de login: nadie más guarda contraseñas ni usuarios",
+        "Errores uniformes en application/problem+json (RFC 7807)",
+        "Todo cuelga de /api/v1: un cambio incompatible obliga a v2, no a modificar v1"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Decisiones de seguridad",
+      "items": [
+        "JWT firmado con RS256: los demás módulos verifican con la clave pública",
+        "Token de acceso de 15 minutos; refresco de 7 días, hasheado y rotado en cada uso",
+        "Reutilizar un refresco ya rotado revoca toda la familia de esa sesión"
+      ]
+    }
+  ]
+}
