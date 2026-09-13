@@ -115,7 +115,7 @@ operaciones en las que quince minutos de desfase son inaceptables.
 | RF-09.11 | Una petición sin token de servicio válido debe responder `401` con un cuerpo idéntico exista o no el usuario consultado, y esa decisión debe tomarse antes de comprobar la existencia. |
 | RF-09.12 | Una petición con token válido pero scope insuficiente debe responder `403` sin revelar qué scope habría hecho falta. |
 | RF-09.13 | El sistema debe exponer el catálogo de roles con sus permisos y el catálogo de permisos por módulo, para que ningún consumidor los codifique a mano. |
-| RF-09.14 | Cada acceso de un módulo consumidor debe registrarse en auditoría con el módulo solicitante, el endpoint, el identificador consultado, si el dato sensible se entregó en claro o enmascarado, y la fecha. |
+| RF-09.14 | Cada acceso de un módulo consumidor debe registrarse en auditoría con el módulo solicitante, el endpoint, el identificador consultado, si el dato sensible se entregó en claro o enmascarado, y la fecha. El formato y la tabla los define **SPEC-06**; aquí se fija qué hechos hay que registrar. |
 | RF-09.15 | Todos los errores de la API deben responder con `application/problem+json` (RFC 7807) y un `code` estable sobre el que los consumidores puedan ramificar. |
 | RF-09.16 | Debe existir un entorno simulado con datos y credenciales de prueba conocidas, disponible desde la semana 4, antes de que exista la implementación. |
 

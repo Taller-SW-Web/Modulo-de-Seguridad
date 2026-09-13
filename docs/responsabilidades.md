@@ -68,10 +68,10 @@ redacta, implementa y prueba su responsable.
 |---|---|---|---|---|
 | **SPEC-01** | Registro y gestión de usuarios | Eva Lucía | Valery | Hito 3 (Sem. 8) |
 | **SPEC-02** | Autenticación usuario/contraseña | Jose Luis | Valery | Hito 3 (Sem. 8) |
-| **SPEC-03** | Política de contraseñas | Juan José | Juan José | Hito 3 (Sem. 8) |
+| **SPEC-03** | Gestión de credenciales y contraseñas | Juan José | Juan José / Valery | Hito 3 (Sem. 8) |
 | **SPEC-04** | Autenticación por OTP y MFA | Luis David | Luis David | Hito 4 (Sem. 11) |
 | **SPEC-05** | Gestión de roles y permisos | Eva Lucía | Christian | Hito 4 (Sem. 11) |
-| **SPEC-06** | Recuperación y cambio de contraseña | Juan José | Juan José / Valery | Hito 4 (Sem. 11) |
+| **SPEC-06** | Auditoría y trazabilidad de eventos de seguridad | Christian | Christian | Hito 3 (registro) / Hito 5 (consulta) |
 | **SPEC-07** | Bloqueo y desbloqueo de cuentas | Luis David | Christian | Hito 5 (Sem. 14) |
 | **SPEC-08** | Gestión de atributos de usuarios | Eva Lucía | Christian | Hito 5 (Sem. 14) |
 | **SPEC-09** | API de identidad para los demás módulos | Sergio | — | Hito 1 (contrato) / Hito 4 (implementación) |
@@ -83,18 +83,41 @@ redacta, implementa y prueba su responsable.
 | Sergio | SPEC-09 | Arquitectura, OpenAPI, mock server, ADRs, coordinación intermódulos, aprobación de las 9 specs |
 | Jose Luis | SPEC-02 | Revisión de código de todos los PR, estructura del proyecto backend, pruebas del núcleo |
 | Eva Lucía | SPEC-01, 05, 08 | Modelo de datos de usuario/rol/permiso y sus migraciones Flyway |
-| Juan José | SPEC-03, 06 | Adaptador de correo (outbox) compartido con SPEC-01 y SPEC-04 |
-| Luis David | SPEC-04, 07 | Auditoría de seguridad e `intento_login`, compartidos con SPEC-02 |
-| Valery | Interfaz de SPEC-01, 02, 03, 06 | Sistema de diseño, paleta, wireframes, prototipos Figma, 3 propuestas de UX |
-| Christian | Interfaz de SPEC-05, 07, 08 | Docker, Docker Compose, GitHub Actions, despliegue en nube, JMeter, evidencias de prueba |
+| Juan José | SPEC-03 | Adaptador de correo (outbox) compartido con SPEC-01 y SPEC-04 |
+| Luis David | SPEC-04, 07 | Tabla `intento_login`, compartida con SPEC-02 |
+| Valery | Interfaz de SPEC-01, 02, 03 | Sistema de diseño, paleta, wireframes, prototipos Figma, 3 propuestas de UX |
+| Christian | SPEC-06 + interfaz de SPEC-05, 07, 08 | Docker, Docker Compose, GitHub Actions, despliegue en nube, JMeter, evidencias de prueba |
 
 **Por qué así.** Eva concentra las tres specs del dominio «usuario» porque
 comparten tablas (`usuario`, `rol`, `permiso`, `perfil_*`) y partirlas obligaría
-a coordinar migraciones entre dos personas. Juan José y Luis David reciben
-verticales completas — backend *más* su pantalla — para que cada uno pueda
-demostrar una funcionalidad de punta a punta en las revisiones semanales. Jose
-Luis lleva solo SPEC-02, pero es la spec más difícil del módulo y además revisa
-todo lo demás.
+a coordinar migraciones entre dos personas. Juan José lleva una sola spec, pero
+es la más grande del set —doce requisitos y quince escenarios, el ciclo de vida
+completo de una credencial— y además dos pantallas. Luis David recibe una
+vertical completa, backend *más* su pantalla, para poder demostrar una
+funcionalidad de punta a punta en las revisiones semanales. Jose Luis lleva solo
+SPEC-02, pero es la spec más difícil del módulo y además revisa todo lo demás.
+Christian pasa de llevar solo interfaz a ser dueño de SPEC-06, que es la spec
+que alimenta el panel de administración que ya tenía asignado.
+
+### Dos cambios sobre el reparto inicial (13 de septiembre)
+
+**La política de contraseñas dejó de ser una spec suelta.** El profesor indicó
+que no puede sostenerse por sí sola y debe ir dentro de otra. Se fusionó con la
+antigua SPEC-06 —recuperación y cambio— en la actual **SPEC-03, Gestión de
+credenciales y contraseñas**, que cubre el ciclo de vida completo: política de
+robustez, historial, caducidad, recuperación por correo y cambio autenticado.
+La fusión evita además que la regla de complejidad se duplicara en los tres
+flujos que la invocan (registro, cambio y restablecimiento).
+
+**La auditoría pasó a tener dueño.** Aparecía seis veces como frase suelta en
+los no funcionales de SPEC-01, SPEC-05, SPEC-07 y SPEC-08 —«queda registrada en
+`auditoria_seguridad`»— sin que ninguna spec dijera qué se registra, quién puede
+consultarlo ni cómo se exporta. Dos requisitos ya escritos dependían de esa
+tabla (RF-09.14 y RF-09.12) y la pantalla 8 de los wireframes la dibujaba sin
+respaldo. Ocupa el número **06**, que liberó la fusión anterior.
+
+El total sigue siendo nueve specs y SPEC-09 no se tocó: está publicada y los
+seis equipos consumidores programan contra ella.
 
 ---
 

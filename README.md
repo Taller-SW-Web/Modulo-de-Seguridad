@@ -61,9 +61,9 @@ producción: primero el contrato y las specs, después la implementación.
 |---|---|
 | Arquitectura preliminar | ✅ [`docs/arquitectura/`](docs/arquitectura/) — 4 diagramas y 4 ADR |
 | Funcionalidades distribuidas | ✅ [`docs/responsabilidades.md`](docs/responsabilidades.md) |
-| 9 especificaciones SDD | 🔶 1 de 9 — solo [`SPEC-09`](specs/SPEC-09-api-identidad.md), en borrador |
+| 9 especificaciones SDD | 🔶 2 de 9 — [`SPEC-06`](specs/SPEC-06-auditoria.md) y [`SPEC-09`](specs/SPEC-09-api-identidad.md), en borrador |
 | Wireframes | ⬜ sin empezar |
-| Contrato OpenAPI + mock | ✅ [`specs/openapi.yaml`](specs/openapi.yaml) — 16 endpoints, mock probado |
+| Contrato OpenAPI + mock | 🔶 [`specs/openapi.yaml`](specs/openapi.yaml) — 34 operaciones; congelamiento el jueves 17 |
 
 ---
 
@@ -74,7 +74,10 @@ producción: primero el contrato y las specs, después la implementación.
 | Integrante del G7 | [`docs/plan-hito-1.md`](docs/plan-hito-1.md) — tu tarea concreta de esta semana |
 | Integrante nuevo | [`docs/responsabilidades.md`](docs/responsabilidades.md) — quién hace qué y cómo trabajamos |
 | **De otro equipo del curso** | [`specs/openapi.yaml`](specs/openapi.yaml) — el contrato. No necesitas nada más para empezar a programar contra nosotros |
-| Vas a escribir una spec | [`specs/_PLANTILLA.md`](specs/_PLANTILLA.md) |
+| Vas a escribir una spec | [`specs/_PLANTILLA.md`](specs/_PLANTILLA.md), y después [`specs/trazabilidad.md`](specs/trazabilidad.md) para ver qué endpoints, eventos y pantallas te tocan |
+| Vas a devolver un error | [`specs/catalogo-errores.md`](specs/catalogo-errores.md) — los códigos tienen dueño único |
+| Vas a publicar un evento | [`specs/catalogo-eventos.md`](specs/catalogo-eventos.md) |
+| Vas a cambiar el estado de una cuenta | [`docs/arquitectura/estados-usuario.md`](docs/arquitectura/estados-usuario.md) |
 
 ---
 

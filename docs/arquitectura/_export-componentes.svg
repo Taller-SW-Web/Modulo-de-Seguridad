@@ -495,15 +495,15 @@ rect.c-bg-rect { fill: var(--bg); }
         <text x="165" y="296" class="t-backend" font-size="7" text-anchor="middle">Jose Luis · Luis David</text>
         </g>
 
-        <g id="node-integracion" data-node-id="integracion" data-node-label="API de identidad y auditoría" tabindex="0" role="button" aria-label="Focus API de identidad y auditoría, SPEC-09 · JWKS e introspección, Capa de dominio — cada bloque agrupa las SPEC de un responsable" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-09 · JWKS e introspección" data-node-tag="Sergio" data-node-context="Capa de dominio — cada bloque agrupa las SPEC de un responsable">
-          <title>API de identidad y auditoría · SPEC-09 · JWKS e introspección · Capa de dominio — cada bloque agrupa las SPEC de un responsable · Sergio</title>
+        <g id="node-integracion" data-node-id="integracion" data-node-label="API de identidad y auditoría" tabindex="0" role="button" aria-label="Focus API de identidad y auditoría, SPEC-06 · SPEC-09 · JWKS, Capa de dominio — cada bloque agrupa las SPEC de un responsable" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-06 · SPEC-09 · JWKS" data-node-tag="Sergio" data-node-context="Capa de dominio — cada bloque agrupa las SPEC de un responsable">
+          <title>API de identidad y auditoría · SPEC-06 · SPEC-09 · JWKS · Capa de dominio — cada bloque agrupa las SPEC de un responsable · Sergio</title>
           <rect x="320" y="226" width="250" height="78" rx="6" class="c-mask"/>
           <rect x="320" y="226" width="250" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(326 232) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" x="445" y="263" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">API de identidad y auditoría</text>
-        <text x="445" y="279" class="t-muted" font-size="9" text-anchor="middle">SPEC-09 · JWKS e introspección</text>
+        <text x="445" y="279" class="t-muted" font-size="9" text-anchor="middle">SPEC-06 · SPEC-09 · JWKS</text>
         <text x="445" y="296" class="t-backend" font-size="7" text-anchor="middle">Sergio</text>
         </g>
 
@@ -519,15 +519,15 @@ rect.c-bg-rect { fill: var(--bg); }
         <text x="725" y="296" class="t-backend" font-size="7" text-anchor="middle">Eva Lucía</text>
         </g>
 
-        <g id="node-credenciales" data-node-id="credenciales" data-node-label="Credenciales y protección" tabindex="0" role="button" aria-label="Focus Credenciales y protección, SPEC-03 · SPEC-06 · SPEC-07, Capa de dominio — cada bloque agrupa las SPEC de un responsable" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-03 · SPEC-06 · SPEC-07" data-node-tag="Juan José · Luis David" data-node-context="Capa de dominio — cada bloque agrupa las SPEC de un responsable">
-          <title>Credenciales y protección · SPEC-03 · SPEC-06 · SPEC-07 · Capa de dominio — cada bloque agrupa las SPEC de un responsable · Juan José · Luis David</title>
+        <g id="node-credenciales" data-node-id="credenciales" data-node-label="Credenciales y protección" tabindex="0" role="button" aria-label="Focus Credenciales y protección, SPEC-03 · SPEC-07, Capa de dominio — cada bloque agrupa las SPEC de un responsable" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-03 · SPEC-07" data-node-tag="Juan José · Luis David" data-node-context="Capa de dominio — cada bloque agrupa las SPEC de un responsable">
+          <title>Credenciales y protección · SPEC-03 · SPEC-07 · Capa de dominio — cada bloque agrupa las SPEC de un responsable · Juan José · Luis David</title>
           <rect x="880" y="226" width="250" height="78" rx="6" class="c-mask"/>
           <rect x="880" y="226" width="250" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(886 232) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" x="1005" y="263" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Credenciales y protección</text>
-        <text x="1005" y="279" class="t-muted" font-size="9" text-anchor="middle">SPEC-03 · SPEC-06 · SPEC-07</text>
+        <text x="1005" y="279" class="t-muted" font-size="9" text-anchor="middle">SPEC-03 · SPEC-07</text>
         <text x="1005" y="296" class="t-backend" font-size="7" text-anchor="middle">Juan José · Luis David</text>
         </g>
 
