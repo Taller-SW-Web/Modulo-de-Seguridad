@@ -93,6 +93,19 @@ tags:
   - name: Segundo factor
     description: Códigos de un solo uso para cuentas con MFA activo.
 
+  - name: Contraseñas
+    description: |
+      Ciclo de vida de una credencial: política de robustez, recuperación por
+      correo y cambio autenticado. Definido por SPEC-03.
+  - name: Administración
+    description: |
+      Alta y baja de usuarios, roles, bloqueos y atributos de perfil. Requiere
+      rol `ADMIN_SISTEMA`, salvo los atributos propios.
+  - name: Auditoría
+    description: |
+      Consulta y exportación del registro de eventos de seguridad. Definido por
+      SPEC-06. **No está disponible para los módulos consumidores.**
+
 security:
   - tokenUsuario: []
 
@@ -425,6 +438,26 @@ paths:
         '404':
           $ref: '#/components/responses/NoEncontrado'
 
+    delete:
+      tags: [Administración]
+      operationId: desactivarUsuario
+      summary: Baja lógica de un usuario
+      description: |
+        Definido por SPEC-01. **No borra nada**: la cuenta pasa a `INACTIVO`,
+        se revocan todos sus tokens de refresco y se publica
+        `usuario.desactivado`. Solo `ADMIN_SISTEMA`.
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      responses:
+        '204':
+          description: La cuenta quedó inactiva y sus sesiones revocadas
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+
   /usuarios/lote:
     post:
       tags: [Integración]
@@ -576,6 +609,39 @@ paths:
           $ref: '#/components/responses/ScopeInsuficiente'
         '404':
           $ref: '#/components/responses/NoEncontrado'
+
+    post:
+      tags: [Administración]
+      operationId: agregarDireccion
+      summary: Registra una dirección de entrega
+      description: |
+        Definido por SPEC-08. El usuario solo puede añadir direcciones a su
+        propia cuenta; `ADMIN_SISTEMA` puede hacerlo sobre cualquiera.
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Direccion'
+      responses:
+        '201':
+          description: Dirección registrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Direccion'
+        '400':
+          description: Cuerpo inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
 
   /roles:
     get:
@@ -1137,6 +1203,618 @@ paths:
                     code: CODIGO_INVALIDO
                     intentosRestantes: 2
 
+  # ---------------------------------------------------------------------------
+  # CONTRASENAS - SPEC-03
+  # ---------------------------------------------------------------------------
+
+  /password/politica:
+    get:
+      tags: [Contraseñas]
+      operationId: consultarPoliticaPassword
+      summary: Reglas vigentes de robustez de contraseña
+      description: |
+        Definido por SPEC-03. La SPA construye el medidor de fuerza con **estas**
+        reglas en vez de cablearlas en JavaScript. La lista de contraseñas
+        comunes se actualiza sin desplegar código, así que una copia cableada en
+        el frontend se desincroniza en silencio.
+
+        La validación real ocurre siempre en el backend: este endpoint sirve
+        para explicar y para dar retroalimentación, nunca para decidir.
+      security: []
+      responses:
+        '200':
+          description: Política vigente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoliticaPassword'
+
+  /password/recuperar:
+    post:
+      tags: [Contraseñas]
+      operationId: solicitarRecuperacion
+      summary: Solicita el enlace de recuperación
+      description: |
+        Definido por SPEC-03. **Responde `202` exista o no el correo, y con la
+        misma latencia.** Si existe, envía un enlace con un token de un solo uso
+        válido 30 minutos; si no existe, no envía nada. Una respuesta distinta
+        —o más rápida— permitiría averiguar qué correos están registrados.
+
+        Una solicitud nueva invalida el token de la anterior.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [correo]
+              properties:
+                correo:
+                  type: string
+                  format: email
+                  examples: ["maria@ejemplo.com"]
+      responses:
+        '202':
+          description: |
+            Solicitud aceptada. **No confirma ni niega que la cuenta exista.**
+        '429':
+          description: Demasiadas solicitudes de recuperación
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                demasiadas:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/demasiadas-solicitudes"
+                    title: Demasiadas solicitudes
+                    status: 429
+                    code: DEMASIADAS_SOLICITUDES
+
+  /password/restablecer:
+    post:
+      tags: [Contraseñas]
+      operationId: restablecerPassword
+      summary: Fija una contraseña nueva con el token del enlace
+      description: |
+        Definido por SPEC-03. Marca el token como usado, guarda la contraseña en
+        el historial y **revoca todas las sesiones previas del usuario**.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, nuevaContrasena]
+              properties:
+                token:
+                  type: string
+                  description: El token del enlace recibido por correo.
+                nuevaContrasena:
+                  type: string
+                  format: password
+      responses:
+        '204':
+          description: Contraseña actualizada y sesiones anteriores revocadas
+        '401':
+          description: El token no existe, ya se usó o fue reemplazado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                tokenInvalido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-recuperacion-invalido"
+                    title: Enlace de recuperación no válido
+                    status: 401
+                    code: TOKEN_RECUPERACION_INVALIDO
+        '410':
+          description: El token venció (más de 30 minutos)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                tokenExpirado:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-recuperacion-expirado"
+                    title: El enlace expiró
+                    status: 410
+                    code: TOKEN_RECUPERACION_EXPIRADO
+        '422':
+          $ref: '#/components/responses/PoliticaIncumplida'
+
+  /password/cambiar:
+    post:
+      tags: [Contraseñas]
+      operationId: cambiarPassword
+      summary: Cambia la contraseña conociendo la actual
+      description: |
+        Definido por SPEC-03. Exige la contraseña actual, la registra en el
+        historial y revoca las **demás** sesiones del usuario, conservando la
+        que hizo el cambio.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [contrasenaActual, nuevaContrasena]
+              properties:
+                contrasenaActual:
+                  type: string
+                  format: password
+                nuevaContrasena:
+                  type: string
+                  format: password
+      responses:
+        '204':
+          description: Contraseña actualizada
+        '401':
+          description: La contraseña actual no coincide
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                actualIncorrecta:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/credenciales-invalidas"
+                    title: Credenciales inválidas
+                    status: 401
+                    code: CREDENCIALES_INVALIDAS
+        '422':
+          $ref: '#/components/responses/PoliticaIncumplida'
+
+  # ---------------------------------------------------------------------------
+  # SEGUNDO FACTOR - SPEC-04 (activacion)
+  # ---------------------------------------------------------------------------
+
+  /auth/otp/habilitar:
+    post:
+      tags: [Segundo factor]
+      operationId: habilitarMfa
+      summary: Activa el segundo factor de la propia cuenta
+      description: |
+        Definido por SPEC-04. Envía un código de confirmación; el MFA queda
+        activo solo cuando ese código se verifica.
+      responses:
+        '202':
+          description: Código de confirmación enviado
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+
+  /auth/otp/deshabilitar:
+    post:
+      tags: [Segundo factor]
+      operationId: deshabilitarMfa
+      summary: Desactiva el segundo factor de la propia cuenta
+      description: |
+        Definido por SPEC-04. **Un `ADMIN_SISTEMA` no puede desactivarlo**: para
+        ese rol el segundo factor es obligatorio.
+      responses:
+        '204':
+          description: Segundo factor desactivado
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '422':
+          description: El rol exige segundo factor
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                obligatorio:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/mfa-obligatorio"
+                    title: El segundo factor es obligatorio para este rol
+                    status: 422
+                    code: MFA_OBLIGATORIO
+
+  # ---------------------------------------------------------------------------
+  # ADMINISTRACION DE USUARIOS - SPEC-01
+  # ---------------------------------------------------------------------------
+
+  /auth/verificar-correo:
+    post:
+      tags: [Autenticación]
+      operationId: verificarCorreo
+      summary: Confirma el correo con el token del enlace
+      description: |
+        Definido por SPEC-01. La cuenta pasa de `PENDIENTE_VERIFICACION` a
+        `ACTIVO` y se publica `usuario.creado`. El enlace vale 24 horas.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+      responses:
+        '204':
+          description: Correo verificado, la cuenta ya puede iniciar sesión
+        '410':
+          description: El enlace venció o ya se usó
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                expirado:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/enlace-expirado"
+                    title: El enlace de verificación expiró
+                    status: 410
+                    code: ENLACE_EXPIRADO
+
+  /usuarios:
+    post:
+      tags: [Administración]
+      operationId: crearUsuario
+      summary: Da de alta a un vendedor o a un administrador
+      description: |
+        Definido por SPEC-01. **Solo `ADMIN_SISTEMA`.** Los clientes no se crean
+        aquí: se registran ellos mismos en `/auth/registro`. La cuenta nace
+        `ACTIVO` y se publica `usuario.creado`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearUsuarioRequest'
+      responses:
+        '201':
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '409':
+          description: El correo ya está registrado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                correoNoDisponible:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/correo-no-disponible"
+                    title: No se pudo usar ese correo
+                    status: 409
+                    code: CORREO_NO_DISPONIBLE
+        '422':
+          $ref: '#/components/responses/PoliticaIncumplida'
+
+  # ---------------------------------------------------------------------------
+  # ROLES - SPEC-05
+  # ---------------------------------------------------------------------------
+
+  /usuarios/{id}/roles:
+    post:
+      tags: [Administración]
+      operationId: asignarRol
+      summary: Asigna un rol a un usuario
+      description: |
+        Definido por SPEC-05. **Solo `ADMIN_SISTEMA`.** Al cambiar los roles se
+        revocan las sesiones activas del usuario —debe volver a iniciar sesión
+        para que su token lleve los permisos nuevos— y se publica
+        `usuario.roles_cambiados`.
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rol]
+              properties:
+                rol:
+                  $ref: '#/components/schemas/CodigoRol'
+      responses:
+        '200':
+          description: Rol asignado, sesiones revocadas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+
+  /usuarios/{id}/roles/{rol}:
+    delete:
+      tags: [Administración]
+      operationId: revocarRol
+      summary: Revoca un rol de un usuario
+      description: |
+        Definido por SPEC-05. **Solo `ADMIN_SISTEMA`.** Mismo efecto sobre las
+        sesiones que la asignación. Un usuario sin ningún rol recibe `403` en
+        todo endpoint protegido: no tiene permisos efectivos.
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+        - name: rol
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/CodigoRol'
+      responses:
+        '204':
+          description: Rol revocado, sesiones revocadas
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+
+  # ---------------------------------------------------------------------------
+  # PROTECCION DE CUENTAS - SPEC-07
+  # ---------------------------------------------------------------------------
+
+  /usuarios/{id}/bloquear:
+    post:
+      tags: [Administración]
+      operationId: bloquearUsuario
+      summary: Bloquea manualmente una cuenta
+      description: |
+        Definido por SPEC-07. **Solo `ADMIN_SISTEMA`.** El bloqueo manual no
+        vence y **reemplaza** a un bloqueo automático en curso. Se notifica al
+        usuario por correo y se publica `usuario.bloqueado`.
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [motivo]
+              properties:
+                motivo:
+                  type: string
+                  maxLength: 500
+                  examples: ["Actividad sospechosa reportada por el canal retail"]
+      responses:
+        '204':
+          description: Cuenta bloqueada sin vencimiento
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+
+  /usuarios/{id}/desbloquear:
+    post:
+      tags: [Administración]
+      operationId: desbloquearUsuario
+      summary: Desbloquea una cuenta
+      description: |
+        Definido por SPEC-07. **Solo `ADMIN_SISTEMA`.** La cuenta vuelve a
+        `ACTIVO`, el contador de intentos fallidos se reinicia y se publica
+        `usuario.desbloqueado`.
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      responses:
+        '204':
+          description: Cuenta activa, contador reiniciado
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+
+  # ---------------------------------------------------------------------------
+  # ATRIBUTOS DE PERFIL - SPEC-08
+  # ---------------------------------------------------------------------------
+
+  /usuarios/{id}/atributos:
+    patch:
+      tags: [Administración]
+      operationId: actualizarAtributos
+      summary: Actualiza los atributos de perfil
+      description: |
+        Definido por SPEC-08. **Un usuario solo puede modificar los suyos**; un
+        `ADMIN_SISTEMA` puede modificar los de cualquiera. Los atributos de
+        vendedor no son aplicables a un cliente ni al revés.
+
+        Publica `usuario.atributos_actualizados` con la lista de campos que
+        cambiaron, nunca con sus valores.
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtributosUsuario'
+      responses:
+        '200':
+          description: Atributos actualizados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '422':
+          description: El atributo no aplica al rol del usuario
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                noAplicable:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/atributo-no-aplicable"
+                    title: Atributo no aplicable al rol
+                    status: 422
+                    code: ATRIBUTO_NO_APLICABLE
+                    detail: "codigoVendedor no aplica a una cuenta con rol CLIENTE."
+
+  # ---------------------------------------------------------------------------
+  # AUDITORIA - SPEC-06
+  # ---------------------------------------------------------------------------
+
+  /auditoria:
+    get:
+      tags: [Auditoría]
+      operationId: consultarAuditoria
+      summary: Consulta filtrada del registro de seguridad
+      description: |
+        Definido por SPEC-06. Exige el permiso `auditoria:leer`, que solo tiene
+        `ADMIN_SISTEMA`. **La propia consulta queda auditada**, y un intento sin
+        permiso también.
+
+        Los resultados llegan de más reciente a más antiguo.
+      parameters:
+        - name: objetivoUsuarioId
+          in: query
+          schema: { type: string, format: uuid }
+          description: La cuenta afectada por el evento.
+        - name: actorId
+          in: query
+          schema: { type: string }
+          description: Quien ejecutó la acción, usuario o `client_id` de un módulo.
+        - name: accion
+          in: query
+          schema: { type: string }
+          description: Código del catálogo de acciones, p. ej. `SESION_FALLIDA`.
+        - name: resultado
+          in: query
+          schema: { type: string, enum: [EXITO, FALLO] }
+        - name: ip
+          in: query
+          schema: { type: string }
+        - name: desde
+          in: query
+          schema: { type: string, format: date-time }
+        - name: hasta
+          in: query
+          schema: { type: string, format: date-time }
+        - name: pagina
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: tamano
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      responses:
+        '200':
+          description: Página de registros
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaAuditoria'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+
+  /auditoria/exportar:
+    get:
+      tags: [Auditoría]
+      operationId: exportarAuditoria
+      summary: Exporta el resultado de un filtro
+      description: |
+        Definido por SPEC-06. Acepta los mismos filtros que `GET /auditoria` y
+        devuelve **exactamente los mismos registros**, sin paginar. Un filtro que
+        abarque más de 100 000 registros se rechaza en vez de intentar
+        materializarlo.
+      parameters:
+        - name: formato
+          in: query
+          required: true
+          schema: { type: string, enum: [csv, json] }
+        - name: objetivoUsuarioId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: accion
+          in: query
+          schema: { type: string }
+        - name: desde
+          in: query
+          schema: { type: string, format: date-time }
+        - name: hasta
+          in: query
+          schema: { type: string, format: date-time }
+      responses:
+        '200':
+          description: Archivo con los eventos del filtro
+          content:
+            text/csv:
+              schema: { type: string }
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegistroAuditoria'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '413':
+          description: El filtro abarca demasiados registros
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                demasiadoGrande:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/exportacion-demasiado-grande"
+                    title: La exportación es demasiado grande
+                    status: 413
+                    code: EXPORTACION_DEMASIADO_GRANDE
+                    detail: "Acota el rango de fechas: el filtro alcanza 312480 registros."
+
+  /auth/me/actividad:
+    get:
+      tags: [Auditoría]
+      operationId: consultarActividadPropia
+      summary: Historial de seguridad de la propia cuenta
+      description: |
+        Definido por SPEC-06. Cualquier usuario autenticado, **sin permiso de
+        administración**, ve los eventos de su propia cuenta: inicios de sesión
+        con su IP y fecha, cambios de contraseña, bloqueos. Nunca los de otro.
+
+        Es la forma más barata de que alguien detecte un acceso que no reconoce.
+      parameters:
+        - name: pagina
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: tamano
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+      responses:
+        '200':
+          description: Página de eventos propios
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaAuditoria'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+
 components:
 
   securitySchemes:
@@ -1237,6 +1915,56 @@ components:
                 title: Usuario no encontrado
                 status: 404
                 code: NO_ENCONTRADO
+
+    PoliticaIncumplida:
+      description: |
+        La contraseña no cumple la política de SPEC-03. **Un solo `code` para
+        todas las reglas**: cuál falló va en `errores`. Así, añadir una regla
+        nueva no obliga a los consumidores a conocer un código más.
+      content:
+        application/problem+json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Problem'
+              - type: object
+                properties:
+                  errores:
+                    type: array
+                    items:
+                      type: object
+                      required: [regla]
+                      properties:
+                        regla:
+                          type: string
+                          enum:
+                            - LONGITUD_MINIMA
+                            - MAYUSCULA
+                            - MINUSCULA
+                            - DIGITO
+                            - CARACTER_ESPECIAL
+                            - CONTRASENA_COMUN
+                            - DATOS_PERSONALES
+                            - YA_UTILIZADA
+                        esperado: {}
+          examples:
+            cortaYSinSimbolo:
+              value:
+                type: "https://g7.unmsm.pe/errores/politica-incumplida"
+                title: La contraseña no cumple la política
+                status: 422
+                code: POLITICA_INCUMPLIDA
+                errores:
+                  - regla: LONGITUD_MINIMA
+                    esperado: 10
+                  - regla: CARACTER_ESPECIAL
+            yaUtilizada:
+              value:
+                type: "https://g7.unmsm.pe/errores/politica-incumplida"
+                title: La contraseña no cumple la política
+                status: 422
+                code: POLITICA_INCUMPLIDA
+                errores:
+                  - regla: YA_UTILIZADA
 
   schemas:
 
@@ -1479,3 +2207,122 @@ components:
           type: integer
           description: Segundos de validez del desafío.
           examples: [300]
+
+    PoliticaPassword:
+      type: object
+      description: |
+        Reglas vigentes de robustez. La SPA las descarga para construir el
+        medidor de fuerza; la validación real sigue siendo del backend.
+      required: [longitudMinima, requiereMayuscula, requiereMinuscula, requiereDigito, requiereCaracterEspecial, historial]
+      properties:
+        longitudMinima: { type: integer, examples: [10] }
+        requiereMayuscula: { type: boolean }
+        requiereMinuscula: { type: boolean }
+        requiereDigito: { type: boolean }
+        requiereCaracterEspecial: { type: boolean }
+        rechazaComunes:
+          type: boolean
+          description: Rechaza contraseñas de una lista negra actualizable sin desplegar.
+        rechazaDatosPersonales:
+          type: boolean
+          description: Rechaza si contiene nombre, apellido o correo del usuario.
+        historial:
+          type: integer
+          description: Cuántas contraseñas anteriores no se pueden reutilizar.
+          examples: [5]
+        caducidadDiasAdmin:
+          type: integer
+          nullable: true
+          description: Días tras los que caduca la contraseña de un administrador. `null` para el resto de roles.
+          examples: [90]
+
+    CrearUsuarioRequest:
+      type: object
+      description: Alta de un vendedor o administrador por `ADMIN_SISTEMA`.
+      required: [correo, contrasena, rol]
+      properties:
+        correo: { type: string, format: email }
+        contrasena:
+          type: string
+          format: password
+          description: Debe cumplir la política de SPEC-03.
+        rol: { $ref: '#/components/schemas/CodigoRol' }
+        nombres: { type: string }
+        apellidos: { type: string }
+
+    AtributosUsuario:
+      type: object
+      description: |
+        Atributos de perfil. **Los de cliente y los de vendedor son
+        excluyentes**: enviar `codigoVendedor` a una cuenta `CLIENTE` responde
+        `422 ATRIBUTO_NO_APLICABLE`. El número de documento se cifra con AES y
+        se devuelve enmascarado salvo con el scope `usuarios:leer:documento`.
+      properties:
+        nombres: { type: string }
+        apellidos: { type: string }
+        tipoDocumento: { type: string, enum: [DNI, CE, PASAPORTE] }
+        numeroDocumento:
+          type: string
+          description: Solo escritura. Nunca se devuelve en claro sin scope.
+          writeOnly: true
+        fechaNacimiento: { type: string, format: date }
+        telefono: { type: string, examples: ["+51 987 654 321"] }
+        codigoVendedor:
+          type: string
+          description: Solo para cuentas con rol `VENDEDOR`.
+        tienda:
+          type: string
+          description: Solo para cuentas con rol `VENDEDOR`.
+        fechaIngreso:
+          type: string
+          format: date
+          description: Solo para cuentas con rol `VENDEDOR`.
+
+    RegistroAuditoria:
+      type: object
+      description: |
+        Un hecho, no un dato. Nunca contiene contraseñas, códigos OTP, tokens
+        completos ni el número de documento en claro. Definido por SPEC-06.
+      required: [id, fecha, accion, resultado, actorTipo]
+      properties:
+        id: { type: string, format: uuid }
+        fecha:
+          type: string
+          format: date-time
+          description: Instante del evento, en UTC.
+        accion:
+          type: string
+          description: Código del catálogo cerrado de SPEC-06.
+          examples: ["SESION_FALLIDA"]
+        resultado: { type: string, enum: [EXITO, FALLO] }
+        actorTipo: { type: string, enum: [USUARIO, MODULO, SISTEMA] }
+        actorId:
+          type: string
+          nullable: true
+          description: Identificador del usuario, o `client_id` del módulo. Ausente si el actor no llegó a identificarse.
+        objetivoUsuarioId:
+          type: string
+          format: uuid
+          nullable: true
+          description: La cuenta afectada, si el evento recae sobre una.
+        ip: { type: string, nullable: true }
+        agente: { type: string, nullable: true, maxLength: 255 }
+        detalle:
+          type: object
+          nullable: true
+          description: Contexto específico de la acción.
+          additionalProperties: true
+
+    PaginaAuditoria:
+      type: object
+      required: [registros, pagina, tamano, total]
+      properties:
+        registros:
+          type: array
+          items: { $ref: '#/components/schemas/RegistroAuditoria' }
+        pagina: { type: integer, examples: [1] }
+        tamano: { type: integer, examples: [50] }
+        total:
+          type: integer
+          description: Coincidencias totales del filtro, para poder paginar.
+          examples: [237]

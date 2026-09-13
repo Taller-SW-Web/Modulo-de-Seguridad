@@ -164,8 +164,11 @@ Las demás tablas son de SPEC-01, SPEC-05 y SPEC-08. Estas dos son propias:
 | `cliente_servicio` | Los seis módulos consumidores | `id`, `client_id`, `secret_hash`, `nombre_modulo`, `activo`, `fecha_creacion` |
 | `cliente_servicio_scope` | Scopes concedidos a cada módulo | `cliente_servicio_id`, `scope` |
 
-La auditoría del acceso entre módulos reutiliza `auditoria_seguridad` de SPEC-01
-añadiendo el módulo solicitante en el campo `detalle`.
+La auditoría del acceso entre módulos reutiliza `auditoria_seguridad`, cuyo
+dueño es **SPEC-06**: escribimos con `actorTipo: "MODULO"` y el `client_id` del
+módulo solicitante en `actorId`, con las acciones `MODULO_CONSULTO_USUARIO` y
+`MODULO_OBTUVO_DOCUMENTO` del catálogo de esa spec. El formato del registro no
+se decide aquí.
 
 ### 4.2 Estructura del backend
 
