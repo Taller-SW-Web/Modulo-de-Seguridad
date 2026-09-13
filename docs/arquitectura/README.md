@@ -50,6 +50,7 @@ El botón **Present** entra en modo presentación a pantalla completa.
 | [ADR-001](adr/001-rs256-frente-a-hs256.md) | Firmar los tokens con RS256 y no con HS256 | Aceptada |
 | [ADR-002](adr/002-validacion-local-frente-a-introspeccion.md) | Ofrecer dos mecanismos de validación y dejar elegir al consumidor | Aceptada |
 | [ADR-003](adr/003-contrato-antes-que-codigo.md) | Publicar el contrato en la semana 4, antes de implementar | Aceptada |
+| [ADR-004](adr/004-idioma-del-contrato.md) | Rutas, roles y scopes del contrato en español | Aceptada |
 
 ---
 
