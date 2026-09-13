@@ -12,6 +12,46 @@ dependen de él para autenticar, validar tokens y consultar usuarios.
 
 ---
 
+## Cómo encaja en el marketplace
+
+Los diagramas se construyen solos al cargar la página y se quedan quietos para
+que puedas leerlos. Se adaptan al tema claro u oscuro de GitHub.
+
+![Diagrama de contexto: el módulo de seguridad y los seis módulos que lo consumen](docs/arquitectura/contexto.svg)
+
+Somos el proveedor de identidad. Los otros seis módulos se relacionan con
+nosotros por tres vías: **verificando el token en local** con la clave pública
+del JWKS —el caso normal, sin llamarnos—, **preguntando por introspección**
+antes de operaciones sensibles, y **suscribiéndose a eventos** para enterarse de
+bajas y bloqueos sin preguntar.
+
+### Qué hay dentro
+
+![Componentes internos del AUTH-SERVICE](docs/arquitectura/componentes.svg)
+
+### Cómo se inicia sesión
+
+Una contraseña correcta no basta si la cuenta tiene segundo factor: el servicio
+responde con un desafío, no con una sesión. El par de tokens se firma solo
+después de verificar el código.
+
+![Secuencia de inicio de sesión con segundo factor](docs/arquitectura/secuencia-login.svg)
+
+### Cómo se renueva la sesión, y qué pasa si roban un token
+
+El token de refresco se usa **una sola vez**. Si aparece uno ya rotado, o lo
+robaron o se duplicó la sesión: no hay forma de saber cuál es el legítimo, así
+que se revoca la familia entera.
+
+![Secuencia de rotación del token de refresco y detección de reúso](docs/arquitectura/secuencia-refresco.svg)
+
+> **¿Necesitas explorarlos?** Los mismos diagramas en versión interactiva —con
+> zoom, búsqueda, recorridos guiados y exportación— están en
+> [`docs/arquitectura/`](docs/arquitectura/). Descarga el `.html` y ábrelo: no
+> necesita servidor ni conexión.
+
+---
+
 ## Estado
 
 **Semana 4 — Hito 1.** Fase de especificación. Todavía no hay código de
@@ -19,11 +59,11 @@ producción: primero el contrato y las specs, después la implementación.
 
 | Entregable del Hito 1 | Estado |
 |---|---|
-| Arquitectura preliminar | En curso |
+| Arquitectura preliminar | ✅ [`docs/arquitectura/`](docs/arquitectura/) — 4 diagramas y 4 ADR |
 | Funcionalidades distribuidas | ✅ [`docs/responsabilidades.md`](docs/responsabilidades.md) |
-| 9 especificaciones SDD | En curso |
-| Wireframes | En curso |
-| Contrato OpenAPI + mock | En curso |
+| 9 especificaciones SDD | 🔶 1 de 9 — solo [`SPEC-09`](specs/SPEC-09-api-identidad.md), en borrador |
+| Wireframes | ⬜ sin empezar |
+| Contrato OpenAPI + mock | ✅ [`specs/openapi.yaml`](specs/openapi.yaml) — 16 endpoints, mock probado |
 
 ---
 
@@ -88,11 +128,17 @@ El contrato se congela antes que el código. Cuando esté publicado:
 
 ```bash
 npx @stoplight/prism-cli mock specs/openapi.yaml -p 4010
-curl http://localhost:4010/.well-known/jwks.json
+curl http://localhost:4010/auth/.well-known/jwks.json
 ```
 
-Responde con los ejemplos reales del contrato, incluidos los caminos de error.
-Cuando la implementación esté lista, solo cambiáis la URL base.
+Responde con los ejemplos reales del contrato, incluidos los caminos de error, y
+valida vuestras peticiones. Podéis forzar cualquier respuesta con la cabecera
+`Prefer` —`Prefer: code=401`— para probar vuestros caminos de fallo.
+
+> **Ojo con el prefijo.** Prism sirve las rutas sin `/api/v1`; el backend real
+> sí lo lleva. Parametrizad la URL base y no tocaréis código al cambiar.
+
+La guía completa está en [`specs/kit-integracion.md`](specs/kit-integracion.md).
 
 ---
 

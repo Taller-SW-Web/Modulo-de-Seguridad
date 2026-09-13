@@ -25,6 +25,25 @@ PNG, SVG y WebM para la PPT.
 Cada `.html` tiene su `.json` al lado: esa es la fuente. Para modificar un
 diagrama se edita el JSON y se vuelve a generar, nunca se toca el HTML.
 
+### Las versiones animadas del README
+
+Los cuatro `.svg` de esta carpeta son las versiones que se incrustan en el
+README. GitHub no renderiza HTML, pero **sí ejecuta animación CSS dentro de un
+SVG referenciado como imagen**, así que el diagrama se construye solo al cargar
+la página, sin subir nada a ningún servicio.
+
+Se generan con:
+
+```bash
+node docs/arquitectura/generar-svg-animado.mjs
+```
+
+El script parte de `_export-<nombre>.svg` —el export del visor, que ya es
+autocontenido y de doble tema— y le inyecta los keyframes; el **orden** de
+revelado sale del `.json`. Si cambias un diagrama: edita el JSON, regenera el
+HTML con archify, reexporta el SVG desde el visor (`Export → SVG`) y corre el
+script.
+
 ### Cómo usarlos en la presentación
 
 Cada diagrama trae **recorridos guiados** en la barra superior. En lugar de
