@@ -95,8 +95,12 @@ Ocho endpoints, en este orden, porque cada uno depende del anterior:
 ```bash
 npx @redocly/cli lint specs/openapi.yaml          # que valide antes de servirlo
 npx @stoplight/prism-cli mock specs/openapi.yaml -p 4010
-curl http://localhost:4010/api/v1/auth/.well-known/jwks.json
+curl http://localhost:4010/auth/.well-known/jwks.json
 ```
+
+**Prism sirve las rutas sin el prefijo `/api/v1`**, porque lo toma del
+documento tal cual y no del `server`. En el backend real sí lo lleva. Hay que
+decirlo en el kit o será la primera pregunta de los seis equipos.
 
 Prism valida también las **peticiones** contra el esquema, así que un equipo que
 envíe un cuerpo mal formado recibe un `400` real, no un éxito falso. Es la

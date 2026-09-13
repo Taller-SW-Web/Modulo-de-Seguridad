@@ -61,6 +61,7 @@ Todos los recursos cuelgan de `/api/v1`.
 
 | Método y ruta | Descripción | Acceso |
 |---|---|---|
+| `GET /auth/.well-known/openid-configuration` | Documento de descubrimiento del emisor | Público |
 | `GET /auth/.well-known/jwks.json` | Clave pública de verificación de firma | Público |
 | `POST /auth/token` | Emite el token de servicio de un módulo consumidor | `client_id` + `client_secret` |
 | `POST /auth/introspeccion` | Estado actual de un token de usuario | `tokens:introspeccion` |
@@ -101,6 +102,7 @@ operaciones en las que quince minutos de desfase son inaceptables.
 | Código | Requisito |
 |---|---|
 | RF-09.1 | El sistema debe publicar la clave pública de verificación en `GET /auth/.well-known/jwks.json`, sin autenticación, con un `kid` que identifique cada clave. |
+| RF-09.1b | El sistema debe publicar un documento de descubrimiento en `GET /auth/.well-known/openid-configuration` que declare el `issuer`, el `jwks_uri` y los scopes soportados, para que los consumidores se configuren con una sola URL en vez de cablear el JWKS a mano. |
 | RF-09.2 | Durante una rotación de clave el sistema debe publicar la clave nueva y la anterior simultáneamente, y mantener la anterior al menos 24 horas. |
 | RF-09.3 | El sistema debe emitir un token de servicio a un módulo consumidor que presente su `client_id` y `client_secret` mediante `grant_type=client_credentials`. |
 | RF-09.4 | El token de servicio debe llevar `tipo: "servicio"` y el `client_id` en `sub`, y debe conceder exactamente los scopes asignados a ese cliente, aunque haya solicitado más. |
@@ -309,12 +311,13 @@ que no admita ese periodo de convivencia obliga a `/api/v2`.
 
 ## Impacto en el contrato
 
-Esta spec **es** el contrato: define los ocho endpoints de la tabla de alcance,
+Esta spec **es** el contrato: define los nueve endpoints de la tabla de alcance,
 los códigos de rol, los scopes y el formato de error. Cualquier otra spec que
 quiera añadir, modificar o eliminar un endpoint pasa por el Product Owner.
 
 | Endpoint | Añade, modifica o elimina | Acordado |
 |---|---|---|
+| `GET /api/v1/auth/.well-known/openid-configuration` | Añade — **incorporado al escribir el contrato** | ⬜ |
 | `GET /api/v1/auth/.well-known/jwks.json` | Añade | ⬜ |
 | `POST /api/v1/auth/token` | Añade | ⬜ |
 | `POST /api/v1/auth/introspeccion` | Añade | ⬜ |
@@ -331,6 +334,6 @@ quiera añadir, modificar o eliminar un endpoint pasa por el Product Owner.
 - [ ] Los 16 requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los ocho endpoints figuran en `specs/openapi.yaml` publicado
+- [ ] Los nueve endpoints figuran en `specs/openapi.yaml` publicado
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube

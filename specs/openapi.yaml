@@ -1,0 +1,1481 @@
+openapi: 3.1.0
+
+info:
+  title: Módulo de Seguridad y Autenticación — API de identidad
+  version: 1.0.0
+  summary: Proveedor de identidad del Marketplace Multicanal de Productos Deportivos
+  description: |
+    Este módulo es el **proveedor de identidad** del marketplace. Es dueño de la
+    entidad usuario (cliente, vendedor, administrador) y los otros seis módulos
+    dependen de él para autenticar, validar tokens y consultar usuarios.
+
+    > **Regla de integración del curso:** ningún módulo accede a la base de datos
+    > de otro. Toda relación con este módulo pasa por esta API.
+
+    ## Cómo integrarse, en tres pasos
+
+    1. **Valida el token en local** con la clave pública de
+       `/auth/.well-known/jwks.json`. Es el caso normal y no requiere llamarnos.
+       Cachea el JWKS: descargarlo en cada validación anula la ventaja y nos
+       convierte en tu punto único de fallo.
+    2. **Pide tu token de servicio** en `/auth/token` con las credenciales de tu
+       módulo. Úsalo solo para lo que el token de usuario no lleva.
+    3. Un token de acceso vive **15 minutos** y sigue siendo válido aunque el
+       usuario haya sido desactivado en ese intervalo. Antes de una operación
+       sensible —anular, reembolsar, cambiar precios— usa
+       `/auth/introspeccion`.
+
+    La guía práctica con ejemplos ejecutables está en `specs/kit-integracion.md`.
+
+    ## Probar los caminos de error sin pedirnos nada
+
+    El entorno simulado obedece la cabecera `Prefer`, así que puedes forzar
+    cualquier respuesta del contrato, incluidos los errores:
+
+    ```
+    Prefer: code=401
+    Prefer: example=usuarioDesactivado
+    Prefer: code=400, example=loteDemasiadoGrande
+    ```
+
+    Los nombres de ejemplo están en cada endpoint de este documento.
+
+    ## Estado de este documento
+
+    Se escribe a mano mientras no exista la implementación, para no bloquear a
+    los seis equipos consumidores. Desde el Hito 4 se genera desde el código con
+    `springdoc-openapi`, para que no pueda desincronizarse.
+
+    Especificación de origen: `specs/SPEC-09-api-identidad.md`.
+    Decisión de idioma: `docs/arquitectura/adr/004-idioma-del-contrato.md`.
+
+    ## Convenciones
+
+    - Todos los errores responden `application/problem+json` (RFC 7807) con un
+      campo `code` estable sobre el que ramificar. **Ramifica por `code`, nunca
+      por el texto de `detail`.**
+    - Las claves JSON y los códigos son ASCII (`introspeccion`, `contrasena`);
+      el contenido lleva acentos con normalidad.
+    - Los claims estándar del token (`sub`, `email`, `iss`, `iat`, `exp`, `jti`)
+      conservan su nombre de OpenID Connect; los claims propios van en español
+      (`roles`, `permisos`, `tipo`).
+    - Un cambio incompatible obliga a `/api/v2`; nunca se modifica `v1`.
+
+  contact:
+    name: G7 — Módulo de Seguridad y Autenticación
+    url: https://github.com/Taller-SW-Web/Modulo-de-Seguridad
+  license:
+    name: Uso académico — Taller de Construcción de Software Web, UNMSM 2026-II
+
+servers:
+  - url: http://localhost:4010
+    description: |
+      Entorno simulado: `npx @stoplight/prism-cli mock specs/openapi.yaml -p 4010`.
+
+      **Ojo con el prefijo.** Prism sirve las rutas tal como están escritas en
+      este documento, sin `/api/v1`. En el mock el JWKS está en
+      `http://localhost:4010/auth/.well-known/jwks.json`; en el backend real
+      estará en `http://localhost:8080/api/v1/auth/.well-known/jwks.json`.
+      Parametriza la URL base y no tendrás que tocar nada al cambiar.
+  - url: http://localhost:8080/api/v1
+    description: Desarrollo local con el backend real. Aquí sí lleva `/api/v1`.
+
+tags:
+  - name: Integración
+    description: |
+      Lo que consumen los otros seis módulos del marketplace. Requiere token de
+      servicio, salvo el JWKS.
+  - name: Autenticación
+    description: |
+      Registro, inicio de sesión y sesiones. Lo consume nuestra SPA y también la
+      pantalla de login de cualquier otro módulo: **nadie más guarda contraseñas
+      ni usuarios.**
+  - name: Segundo factor
+    description: Códigos de un solo uso para cuentas con MFA activo.
+
+security:
+  - tokenUsuario: []
+
+paths:
+
+  # ---------------------------------------------------------------------------
+  # INTEGRACIÓN — SPEC-09
+  # ---------------------------------------------------------------------------
+
+  /auth/.well-known/jwks.json:
+    get:
+      tags: [Integración]
+      operationId: obtenerJwks
+      summary: Clave pública de verificación de firma
+      description: |
+        Escenario ESC-09.1 y ESC-09.2 de SPEC-09.
+
+        **Cachéalo.** Un consumidor que lo descargue en cada validación anula la
+        ventaja de validar en local. Si el JWKS no responde y tienes copia en
+        caché, sigue validando con ella; rechaza solo cuando llegue un `kid`
+        desconocido y el JWKS no responda.
+
+        Durante una rotación conviven dos claves y la anterior se mantiene
+        publicada al menos 24 horas. El `kid` de la cabecera del token dice cuál
+        usar.
+      security: []
+      responses:
+        '200':
+          description: Conjunto de claves públicas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jwks'
+              examples:
+                rotacion:
+                  summary: Durante una rotación conviven dos claves
+                  value:
+                    keys:
+                      - kty: RSA
+                        use: sig
+                        alg: RS256
+                        kid: "2026-10"
+                        n: "sXchDaQebHnPiGvyDOAT4saGEUetSyo9MKLOoWFsueri23bOdgWp4Dy1Wl"
+                        e: AQAB
+                      - kty: RSA
+                        use: sig
+                        alg: RS256
+                        kid: "2026-09"
+                        n: "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAA"
+                        e: AQAB
+        '503':
+          description: |
+            El servicio no puede publicar las claves en este momento.
+
+            **Si tienes el JWKS en caché, sigue validando con él.** Rechaza una
+            petición solo cuando llegue un token con un `kid` que no conozcas y
+            el JWKS no responda.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                noDisponible:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/no-disponible"
+                    title: Servicio no disponible
+                    status: 503
+                    code: NO_DISPONIBLE
+                    detail: Usa tu copia en caché del JWKS.
+
+  /auth/.well-known/openid-configuration:
+    get:
+      tags: [Integración]
+      operationId: obtenerConfiguracionOpenid
+      summary: Documento de descubrimiento
+      description: |
+        Requisito RF-09.1 de SPEC-09.
+
+        **Esto es lo que hace que la integración sea una línea de configuración
+        en vez de código.** Con esta URL, Spring Security resuelve solo dónde
+        está el JWKS, y lo mismo `JwtBearer` en .NET:
+
+        ```yaml
+        spring.security.oauth2.resourceserver.jwt.issuer-uri: http://localhost:8080/api/v1/auth
+        ```
+
+        Sin este documento habría que configurar el JWKS a mano en cada uno de
+        los seis módulos, y cada equipo se equivocaría a su manera.
+      security: []
+      responses:
+        '200':
+          description: Metadatos del emisor
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [issuer, jwks_uri]
+                properties:
+                  issuer: { type: string, format: uri }
+                  jwks_uri: { type: string, format: uri }
+                  token_endpoint: { type: string, format: uri }
+                  introspection_endpoint: { type: string, format: uri }
+                  id_token_signing_alg_values_supported:
+                    type: array
+                    items: { type: string }
+                  grant_types_supported:
+                    type: array
+                    items: { type: string }
+                  scopes_supported:
+                    type: array
+                    items: { type: string }
+              examples:
+                descubrimiento:
+                  value:
+                    issuer: "http://localhost:8080/api/v1/auth"
+                    jwks_uri: "http://localhost:8080/api/v1/auth/.well-known/jwks.json"
+                    token_endpoint: "http://localhost:8080/api/v1/auth/token"
+                    introspection_endpoint: "http://localhost:8080/api/v1/auth/introspeccion"
+                    id_token_signing_alg_values_supported: ["RS256"]
+                    grant_types_supported: ["client_credentials"]
+                    scopes_supported:
+                      - "tokens:introspeccion"
+                      - "usuarios:leer"
+                      - "usuarios:leer:documento"
+                      - "direcciones:leer"
+                      - "roles:leer"
+
+  /auth/token:
+    post:
+      tags: [Integración]
+      operationId: emitirTokenServicio
+      summary: Emite el token de servicio de un módulo consumidor
+      description: |
+        Escenarios ESC-09.3 y ESC-09.4 de SPEC-09.
+
+        Cada módulo tiene su propio `client_id` y `client_secret`, para que la
+        auditoría diga qué módulo consultó qué dato y para poder revocar uno sin
+        afectar a los otros cinco.
+
+        Los `scopes` devueltos son los **concedidos a ese cliente**, aunque haya
+        pedido más. Un token de servicio identifica a un módulo, no a una
+        persona: no sirve para invocar endpoints que actúan en nombre de un
+        usuario ni hereda los permisos del usuario que introspecciona.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [grant_type, client_id, client_secret]
+              properties:
+                grant_type:
+                  type: string
+                  enum: [client_credentials]
+                client_id:
+                  type: string
+                  examples: [modulo-despacho]
+                client_secret:
+                  type: string
+                  format: password
+                scope:
+                  type: string
+                  description: Scopes solicitados, separados por espacio. Se conceden solo los asignados al cliente.
+                  examples: ["usuarios:leer direcciones:leer"]
+      responses:
+        '200':
+          description: Token de servicio emitido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenServicio'
+              examples:
+                despacho:
+                  summary: El módulo de despacho obtiene su token
+                  value:
+                    accessToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjIwMjYtMTAifQ.eyJzdWIiOiJtb2R1bG8tZGVzcGFjaG8ifQ.firma"
+                    tokenType: Bearer
+                    expiresIn: 3600
+                    scopes: ["usuarios:leer", "direcciones:leer"]
+        '401':
+          description: Credenciales de cliente inválidas
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                credencialesInvalidas:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/cliente-invalido"
+                    title: Credenciales de cliente inválidas
+                    status: 401
+                    code: CLIENTE_INVALIDO
+                    detail: No se pudo emitir el token de servicio.
+
+  /auth/introspeccion:
+    post:
+      tags: [Integración]
+      operationId: introspeccionarToken
+      summary: Estado actual de un token de usuario
+      description: |
+        Escenarios ESC-09.5 y ESC-09.6 de SPEC-09.
+
+        Devuelve el estado del usuario **en este instante**, no el que llevaba el
+        token cuando se emitió. Úsalo solo antes de operaciones sensibles:
+        anulaciones, reembolsos, cambios de precio, cambios de rol.
+
+        Un token de un usuario desactivado responde `200` con `activo: false`.
+        La firma sigue siendo criptográficamente válida: lo que la respuesta
+        afirma es que **no es utilizable**, no que esté mal firmado.
+      security:
+        - tokenServicio: [tokens:introspeccion]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+                  description: El token de acceso del usuario final.
+      responses:
+        '200':
+          description: |
+            Resultado de la introspección. **Siempre `200`**, incluso cuando el
+            token no es utilizable: el resultado va en `activo`.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/IntrospeccionActiva'
+                  - $ref: '#/components/schemas/IntrospeccionInactiva'
+              examples:
+                activo:
+                  summary: Token vigente de un vendedor
+                  value:
+                    activo: true
+                    sub: "22222222-2222-2222-2222-222222222222"
+                    email: "carlos@ejemplo.com"
+                    roles: ["VENDEDOR"]
+                    permisos: []
+                    tipo: acceso
+                    exp: 1789276800
+                usuarioDesactivado:
+                  summary: ESC-09.6 — el usuario fue desactivado hace 3 minutos
+                  value:
+                    activo: false
+                    motivo: USUARIO_INACTIVO
+                tokenVencido:
+                  summary: El token superó su exp
+                  value:
+                    activo: false
+                    motivo: TOKEN_VENCIDO
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+
+  /usuarios/{id}:
+    get:
+      tags: [Integración]
+      operationId: obtenerUsuario
+      summary: Datos básicos de un usuario
+      description: |
+        Escenarios ESC-09.7, ESC-09.11 y ESC-09.12 de SPEC-09.
+
+        **Exposición selectiva por scope.** El número de documento llega en
+        claro solo si tu token de servicio tiene `usuarios:leer:documento`; en
+        caso contrario llega enmascarado con los últimos tres dígitos. No se
+        rechaza la petición: se responde con menos, no con un error.
+
+        Nunca se devuelve el hash de contraseña.
+      security:
+        - tokenServicio: [usuarios:leer]
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      responses:
+        '200':
+          description: Datos del usuario, según el scope del solicitante
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+              examples:
+                conScopeDocumento:
+                  summary: ESC-09.11 — con usuarios:leer:documento, el documento va en claro
+                  value:
+                    id: "11111111-1111-1111-1111-111111111111"
+                    nombres: "María"
+                    apellidos: "Quispe Rojas"
+                    nombreCompleto: "María Quispe Rojas"
+                    correo: "maria@ejemplo.com"
+                    celular: "+51987654321"
+                    estado: ACTIVO
+                    correoVerificado: true
+                    roles: ["CLIENTE"]
+                    tipoDocumento: DNI
+                    documento: "45781234"
+                sinScopeDocumento:
+                  summary: ESC-09.12 — sin el scope, el documento va enmascarado
+                  value:
+                    id: "11111111-1111-1111-1111-111111111111"
+                    nombres: "María"
+                    apellidos: "Quispe Rojas"
+                    nombreCompleto: "María Quispe Rojas"
+                    correo: "maria@ejemplo.com"
+                    celular: "+51987654321"
+                    estado: ACTIVO
+                    correoVerificado: true
+                    roles: ["CLIENTE"]
+                    tipoDocumento: DNI
+                    documentoEnmascarado: "*****234"
+                usuarioDesactivado:
+                  summary: Un usuario dado de baja sigue siendo consultable
+                  value:
+                    id: "33333333-3333-3333-3333-333333333333"
+                    nombres: "Pedro"
+                    apellidos: "Salas Vega"
+                    nombreCompleto: "Pedro Salas Vega"
+                    correo: "pedro@ejemplo.com"
+                    estado: INACTIVO
+                    correoVerificado: true
+                    roles: ["CLIENTE"]
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+
+  /usuarios/lote:
+    post:
+      tags: [Integración]
+      operationId: consultarUsuariosPorLote
+      summary: Consulta hasta 100 usuarios en una llamada
+      description: |
+        Escenarios ESC-09.8 y ESC-09.9 de SPEC-09.
+
+        **La petición no falla entera por los identificadores que no existan:**
+        los encontrados vuelven en `usuarios` y los demás en `noEncontrados`. Un
+        reporte de 50 clientes en el que uno se dio de baja sigue funcionando.
+
+        Los duplicados se colapsan a una sola aparición. Más de 100
+        identificadores es `400 LOTE_DEMASIADO_GRANDE`, nunca un truncado en
+        silencio. Un identificador malformado es `400 VALIDACION`, no un «no
+        encontrado».
+      security:
+        - tokenServicio: [usuarios:leer]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  minItems: 1
+                  maxItems: 100
+                  items:
+                    type: string
+                    format: uuid
+            examples:
+              mixto:
+                summary: Dos de los identificadores no existen
+                value:
+                  ids:
+                    - "11111111-1111-1111-1111-111111111111"
+                    - "22222222-2222-2222-2222-222222222222"
+                    - "99999999-9999-9999-9999-999999999999"
+      responses:
+        '200':
+          description: Resultado parcial. Nunca falla por los que faltan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoteUsuarios'
+              examples:
+                parcial:
+                  summary: ESC-09.8 — dos encontrados, uno no
+                  value:
+                    usuarios:
+                      - id: "11111111-1111-1111-1111-111111111111"
+                        nombreCompleto: "María Quispe Rojas"
+                        correo: "maria@ejemplo.com"
+                        estado: ACTIVO
+                        roles: ["CLIENTE"]
+                      - id: "22222222-2222-2222-2222-222222222222"
+                        nombreCompleto: "Carlos Mendoza Ruiz"
+                        correo: "carlos@ejemplo.com"
+                        estado: ACTIVO
+                        roles: ["VENDEDOR"]
+                    noEncontrados:
+                      - "99999999-9999-9999-9999-999999999999"
+        '400':
+          description: Lote inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                loteDemasiadoGrande:
+                  summary: ESC-09.9 — más de 100 identificadores
+                  value:
+                    type: "https://g7.unmsm.pe/errores/lote-demasiado-grande"
+                    title: El lote supera el máximo permitido
+                    status: 400
+                    code: LOTE_DEMASIADO_GRANDE
+                    detail: Se recibieron 140 identificadores; el máximo es 100.
+                identificadorMalformado:
+                  summary: Un identificador que no es UUID
+                  value:
+                    type: "https://g7.unmsm.pe/errores/validacion"
+                    title: Datos de entrada inválidos
+                    status: 400
+                    code: VALIDACION
+                    errores:
+                      - campo: "ids[2]"
+                        mensaje: No es un UUID válido.
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+
+  /usuarios/{id}/direcciones:
+    get:
+      tags: [Integración]
+      operationId: obtenerDireccionesUsuario
+      summary: Direcciones de entrega de un cliente
+      description: |
+        Escenario ESC-09.10 de SPEC-09.
+
+        **No incluye el número de documento ni la fecha de nacimiento:** no
+        hacen falta para entregar un paquete.
+      security:
+        - tokenServicio: [direcciones:leer]
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      responses:
+        '200':
+          description: Direcciones registradas del cliente
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [direcciones]
+                properties:
+                  direcciones:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Direccion'
+              examples:
+                dosDirecciones:
+                  value:
+                    direcciones:
+                      - id: "aaaaaaaa-0000-0000-0000-000000000001"
+                        etiqueta: Casa
+                        departamento: Lima
+                        provincia: Lima
+                        distrito: Miraflores
+                        direccion: "Av. Larco 1234, dpto. 502"
+                        referencia: "Frente al parque Kennedy"
+                        esPredeterminada: true
+                      - id: "aaaaaaaa-0000-0000-0000-000000000002"
+                        etiqueta: Trabajo
+                        departamento: Lima
+                        provincia: Lima
+                        distrito: San Isidro
+                        direccion: "Av. Javier Prado Este 560, piso 8"
+                        esPredeterminada: false
+                sinDirecciones:
+                  summary: Un cliente que aún no registró ninguna
+                  value:
+                    direcciones: []
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+
+  /roles:
+    get:
+      tags: [Integración]
+      operationId: listarRoles
+      summary: Catálogo de roles y sus permisos
+      description: |
+        Escenario ESC-09.15 de SPEC-09.
+
+        Consúltalo en vez de codificar los roles a mano: si mañana se añade un
+        permiso a `GESTOR_DESPACHO`, tu módulo se entera sin desplegar.
+
+        **Hoy `permisos` viaja vacío.** El catálogo de permisos lo define
+        SPEC-05, que todavía está en redacción; hasta entonces autoriza por
+        `roles`. Añadir contenido a una lista vacía es un cambio compatible.
+      security:
+        - tokenServicio: [roles:leer]
+      responses:
+        '200':
+          description: Los seis roles del marketplace
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [roles]
+                properties:
+                  roles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Rol'
+              examples:
+                catalogo:
+                  value:
+                    roles:
+                      - codigo: CLIENTE
+                        nombre: Cliente
+                        descripcion: Cliente que compra en cualquiera de los canales.
+                        permisos: []
+                      - codigo: VENDEDOR
+                        nombre: Vendedor
+                        descripcion: Vendedor que atiende en tienda.
+                        permisos: []
+                      - codigo: ADMIN_VENTAS
+                        nombre: Administrador de ventas
+                        descripcion: Administra pedidos, anulaciones y reembolsos.
+                        permisos: []
+                      - codigo: GESTOR_DESPACHO
+                        nombre: Gestor de despacho
+                        descripcion: Administra rutas, zonas y entregas.
+                        permisos: []
+                      - codigo: GESTOR_COMERCIAL
+                        nombre: Gestor comercial
+                        descripcion: Administra catálogo, precios y promociones.
+                        permisos: []
+                      - codigo: ADMIN_SISTEMA
+                        nombre: Administrador del sistema
+                        descripcion: Personal de la plataforma. Gestiona usuarios, roles y bloqueos.
+                        permisos: []
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+
+  /permisos:
+    get:
+      tags: [Integración]
+      operationId: listarPermisos
+      summary: Catálogo de permisos por módulo
+      description: |
+        Escenario ESC-09.15 de SPEC-09.
+
+        **Devuelve una lista vacía hasta que SPEC-05 defina el catálogo.** Se
+        publica ahora para que el endpoint exista en `v1` y añadirle contenido
+        no obligue a `v2`.
+      security:
+        - tokenServicio: [roles:leer]
+      parameters:
+        - name: modulo
+          in: query
+          required: false
+          description: Filtra los permisos de un módulo concreto.
+          schema:
+            type: string
+            examples: [ventas]
+      responses:
+        '200':
+          description: Catálogo de permisos
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [permisos]
+                properties:
+                  permisos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Permiso'
+              examples:
+                pendienteDeSpec05:
+                  summary: Estado actual — el catálogo lo define SPEC-05
+                  value:
+                    permisos: []
+                formatoPrevisto:
+                  summary: Forma que tendrá cuando SPEC-05 lo defina
+                  value:
+                    permisos:
+                      - codigo: "pedido:crear"
+                        modulo: ventas
+                        descripcion: Generar un pedido.
+                      - codigo: "pedido:anular"
+                        modulo: ventas
+                        descripcion: Anular un pedido según las reglas de negocio.
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+
+  # ---------------------------------------------------------------------------
+  # AUTENTICACIÓN — SPEC-01, SPEC-02, SPEC-03
+  # La pantalla de login de cualquier módulo llama aquí. Nadie más guarda
+  # contraseñas ni usuarios.
+  # ---------------------------------------------------------------------------
+
+  /auth/registro:
+    post:
+      tags: [Autenticación]
+      operationId: registrarCliente
+      summary: Autorregistro de un cliente
+      description: |
+        Definido por SPEC-01 y SPEC-03.
+
+        La cuenta se crea en estado `PENDIENTE_VERIFICACION` y se envía un correo
+        con un enlace de un solo uso válido **24 horas**. Se asigna el rol
+        `CLIENTE` por defecto.
+
+        **El mensaje de error no permite deducir si el correo ya existe.** Un
+        correo repetido responde `409` con un texto que no confirma ni niega la
+        existencia previa de la cuenta.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroRequest'
+            examples:
+              valido:
+                value:
+                  correo: "maria@ejemplo.com"
+                  contrasena: "Marketplace2026!"
+                  nombres: "María"
+                  apellidos: "Quispe Rojas"
+                  celular: "+51987654321"
+      responses:
+        '201':
+          description: Cuenta creada, pendiente de verificación de correo
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, estado]
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  estado:
+                    type: string
+                    enum: [PENDIENTE_VERIFICACION]
+              examples:
+                creada:
+                  value:
+                    id: "11111111-1111-1111-1111-111111111111"
+                    estado: PENDIENTE_VERIFICACION
+        '400':
+          description: La contraseña no cumple la política, o faltan datos
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                contrasenaDebil:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/validacion"
+                    title: Datos de entrada inválidos
+                    status: 400
+                    code: VALIDACION
+                    errores:
+                      - campo: contrasena
+                        mensaje: Debe tener al menos 10 caracteres.
+                      - campo: contrasena
+                        mensaje: Debe incluir un carácter especial.
+        '409':
+          description: Ya existe una cuenta con ese correo
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                correoNoDisponible:
+                  summary: El mensaje no confirma que la cuenta exista
+                  value:
+                    type: "https://g7.unmsm.pe/errores/correo-no-disponible"
+                    title: No se pudo completar el registro
+                    status: 409
+                    code: CORREO_NO_DISPONIBLE
+                    detail: Si el correo es válido, recibirás un mensaje con los pasos a seguir.
+
+  /auth/login:
+    post:
+      tags: [Autenticación]
+      operationId: iniciarSesion
+      summary: Inicio de sesión con correo y contraseña
+      description: |
+        Definido por SPEC-02.
+
+        **Éste es el endpoint al que llama la pantalla de login de cualquier
+        módulo.** Los demás equipos pueden tener su propio formulario en React,
+        pero el `POST` viene aquí.
+
+        Dos respuestas posibles con `200`:
+
+        - Sin MFA: el par de tokens y los datos básicos del usuario.
+        - Con MFA activo: `mfaRequerido: true` y un `challengeToken`. Entonces se
+          pide el código en `/auth/otp/solicitar` y se canjea en
+          `/auth/otp/verificar`.
+
+        **Credenciales inválidas y correo inexistente responden exactamente lo
+        mismo**, y en un tiempo comparable, para que no sea posible deducir si
+        una cuenta existe.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [correo, contrasena]
+              properties:
+                correo:
+                  type: string
+                  format: email
+                contrasena:
+                  type: string
+                  format: password
+            examples:
+              credenciales:
+                value:
+                  correo: "maria@ejemplo.com"
+                  contrasena: "Marketplace2026!"
+      responses:
+        '200':
+          description: Sesión iniciada, o desafío de segundo factor
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SesionIniciada'
+                  - $ref: '#/components/schemas/DesafioMfa'
+              examples:
+                sinMfa:
+                  summary: Cuenta sin segundo factor
+                  value:
+                    accessToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjIwMjYtMTAifQ.eyJzdWIiOiIxMTExMTExMSJ9.firma"
+                    refreshToken: "d0f3a1c8-7b2e-4a91-9c5d-8e6f0a1b2c3d"
+                    tokenType: Bearer
+                    expiresIn: 900
+                    usuario:
+                      id: "11111111-1111-1111-1111-111111111111"
+                      nombreCompleto: "María Quispe Rojas"
+                      correo: "maria@ejemplo.com"
+                      roles: ["CLIENTE"]
+                conMfa:
+                  summary: La cuenta tiene MFA activo — todavía no hay tokens
+                  value:
+                    mfaRequerido: true
+                    challengeToken: "chg_8f2a91c4b7e5"
+                    canal: EMAIL
+                    expiraEn: 300
+        '401':
+          description: |
+            Credenciales inválidas. **Idéntico si el correo no existe.**
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                credencialesInvalidas:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/credenciales-invalidas"
+                    title: Credenciales inválidas
+                    status: 401
+                    code: CREDENCIALES_INVALIDAS
+                    detail: El correo o la contraseña no son correctos.
+        '403':
+          description: |
+            La cuenta no está disponible: bloqueada, inactiva o pendiente de
+            verificación. **No se revela cuál de las tres.**
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                cuentaNoDisponible:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/cuenta-no-disponible"
+                    title: La cuenta no está disponible
+                    status: 403
+                    code: CUENTA_NO_DISPONIBLE
+                    detail: No es posible iniciar sesión con esta cuenta en este momento.
+
+  /auth/refresh:
+    post:
+      tags: [Autenticación]
+      operationId: renovarSesion
+      summary: Renueva la sesión rotando el token de refresco
+      description: |
+        Definido por SPEC-02.
+
+        **El refresco se usa una sola vez.** Cada renovación emite uno nuevo e
+        invalida el anterior. Si aparece un refresco ya rotado, se asume robo o
+        duplicación de sesión y se revoca **toda la familia**: el usuario queda
+        desconectado de todos sus dispositivos.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Nuevo par de tokens, de la misma familia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SesionIniciada'
+              examples:
+                renovada:
+                  value:
+                    accessToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjIwMjYtMTAifQ.nuevo.firma"
+                    refreshToken: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+                    tokenType: Bearer
+                    expiresIn: 900
+                    usuario:
+                      id: "11111111-1111-1111-1111-111111111111"
+                      nombreCompleto: "María Quispe Rojas"
+                      correo: "maria@ejemplo.com"
+                      roles: ["CLIENTE"]
+        '401':
+          description: Refresco inválido, vencido o ya rotado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                reusoDetectado:
+                  summary: Un refresco ya rotado — se revoca toda la familia
+                  value:
+                    type: "https://g7.unmsm.pe/errores/refresco-invalido"
+                    title: La sesión no es válida
+                    status: 401
+                    code: REFRESCO_INVALIDO
+                    detail: Vuelve a iniciar sesión.
+
+  /auth/logout:
+    post:
+      tags: [Autenticación]
+      operationId: cerrarSesion
+      summary: Cierra la sesión y revoca el token de refresco
+      description: Definido por SPEC-02. Revoca el refresco presentado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '204':
+          description: Sesión cerrada
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+
+  /auth/me:
+    get:
+      tags: [Autenticación]
+      operationId: obtenerPerfilPropio
+      summary: Datos del usuario del token actual
+      description: |
+        Definido por SPEC-02.
+
+        **Requiere un token de usuario.** Un token de servicio recibe `403`: un
+        módulo no puede actuar en nombre de una persona (ESC-09.4).
+      responses:
+        '200':
+          description: Perfil del titular del token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+              examples:
+                propio:
+                  value:
+                    id: "11111111-1111-1111-1111-111111111111"
+                    nombres: "María"
+                    apellidos: "Quispe Rojas"
+                    nombreCompleto: "María Quispe Rojas"
+                    correo: "maria@ejemplo.com"
+                    celular: "+51987654321"
+                    estado: ACTIVO
+                    correoVerificado: true
+                    roles: ["CLIENTE"]
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          description: Un token de servicio no puede invocar este endpoint
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                tokenDeServicio:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-no-aplicable"
+                    title: Este endpoint requiere un token de usuario
+                    status: 403
+                    code: TOKEN_NO_APLICABLE
+
+  # ---------------------------------------------------------------------------
+  # SEGUNDO FACTOR — SPEC-04
+  # ---------------------------------------------------------------------------
+
+  /auth/otp/solicitar:
+    post:
+      tags: [Segundo factor]
+      operationId: solicitarCodigoOtp
+      summary: Envía un código de un solo uso
+      description: |
+        Definido por SPEC-04.
+
+        Código de **6 dígitos**, válido **5 minutos**, con un máximo de **3
+        intentos** y **3 solicitudes cada 15 minutos**. Se envía por correo; el
+        canal SMS usa un adaptador simulado en desarrollo.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challengeToken]
+              properties:
+                challengeToken:
+                  type: string
+                  description: El devuelto por `/auth/login` cuando la cuenta tiene MFA.
+                canal:
+                  type: string
+                  enum: [EMAIL, SMS]
+                  default: EMAIL
+      responses:
+        '202':
+          description: Código enviado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  canal:
+                    type: string
+                    enum: [EMAIL, SMS]
+                  destinoEnmascarado:
+                    type: string
+                  expiraEn:
+                    type: integer
+                    description: Segundos de validez del código.
+              examples:
+                enviado:
+                  value:
+                    canal: EMAIL
+                    destinoEnmascarado: "m****a@ejemplo.com"
+                    expiraEn: 300
+        '429':
+          description: Se superó el límite de 3 solicitudes en 15 minutos
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                demasiadasSolicitudes:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/demasiadas-solicitudes"
+                    title: Demasiadas solicitudes de código
+                    status: 429
+                    code: DEMASIADAS_SOLICITUDES
+                    detail: Espera unos minutos antes de pedir otro código.
+
+  /auth/otp/verificar:
+    post:
+      tags: [Segundo factor]
+      operationId: verificarCodigoOtp
+      summary: Canjea el código por el par de tokens
+      description: |
+        Definido por SPEC-04. Verifica el código y, si es correcto, emite el par
+        de tokens definitivo. Al tercer intento fallido el desafío se invalida y
+        hay que volver a iniciar sesión.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challengeToken, codigo]
+              properties:
+                challengeToken:
+                  type: string
+                codigo:
+                  type: string
+                  pattern: '^[0-9]{6}$'
+                  examples: ["483920"]
+      responses:
+        '200':
+          description: Código correcto, sesión iniciada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SesionIniciada'
+              examples:
+                verificado:
+                  value:
+                    accessToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjIwMjYtMTAifQ.mfa.firma"
+                    refreshToken: "7c8d9e0f-1a2b-3c4d-5e6f-7a8b9c0d1e2f"
+                    tokenType: Bearer
+                    expiresIn: 900
+                    usuario:
+                      id: "22222222-2222-2222-2222-222222222222"
+                      nombreCompleto: "Carlos Mendoza Ruiz"
+                      correo: "carlos@ejemplo.com"
+                      roles: ["VENDEDOR"]
+        '401':
+          description: Código incorrecto, vencido o desafío agotado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                codigoIncorrecto:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/codigo-invalido"
+                    title: Código inválido
+                    status: 401
+                    code: CODIGO_INVALIDO
+                    intentosRestantes: 2
+
+components:
+
+  securitySchemes:
+    tokenUsuario:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        El token de acceso del usuario final, firmado con RS256.
+
+        **Verifícalo en local** con la clave pública del JWKS. Claims:
+
+        | Claim | Contenido |
+        |---|---|
+        | `sub` | Identificador del usuario |
+        | `email` | Correo electrónico |
+        | `roles` | Códigos de rol, p. ej. `["VENDEDOR"]` |
+        | `permisos` | Permisos efectivos, sin duplicados. **Vacío hasta SPEC-05** |
+        | `tipo` | `acceso`, `refresco` o `servicio` |
+        | `iss` | Emisor: el módulo de seguridad |
+        | `iat` / `exp` | Emisión y expiración. El acceso dura 15 minutos |
+        | `jti` | Identificador único del token, usado para revocar |
+
+    tokenServicio:
+      type: oauth2
+      description: |
+        El token propio de cada módulo consumidor. Identifica a un **módulo**, no
+        a una persona: lleva `tipo: "servicio"` y el `client_id` en `sub`.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes:
+            tokens:introspeccion: Introspección de tokens de usuario
+            usuarios:leer: Datos básicos de usuario, individuales y por lote
+            usuarios:leer:documento: El número de documento en claro en vez de enmascarado
+            direcciones:leer: Direcciones de entrega del cliente
+            roles:leer: Catálogo de roles y de permisos
+
+  parameters:
+    UsuarioId:
+      name: id
+      in: path
+      required: true
+      description: Identificador del usuario.
+      schema:
+        type: string
+        format: uuid
+      examples:
+        cliente:
+          value: "11111111-1111-1111-1111-111111111111"
+
+  responses:
+    NoAutenticado:
+      description: |
+        Falta el token o no es válido. **El cuerpo es idéntico exista o no el
+        usuario consultado**: la decisión se toma antes de comprobar la
+        existencia, para que un `401` no sirva para enumerar cuentas.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            tokenInvalido:
+              value:
+                type: "https://g7.unmsm.pe/errores/token-invalido"
+                title: Token ausente o inválido
+                status: 401
+                code: TOKEN_INVALIDO
+
+    ScopeInsuficiente:
+      description: |
+        El token es válido pero no tiene el scope necesario. **No se revela qué
+        scope habría hecho falta**, y el intento queda registrado en auditoría.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            scopeInsuficiente:
+              value:
+                type: "https://g7.unmsm.pe/errores/scope-insuficiente"
+                title: Permisos insuficientes
+                status: 403
+                code: SCOPE_INSUFICIENTE
+
+    NoEncontrado:
+      description: |
+        No existe un usuario con ese identificador. Solo se llega aquí con un
+        token de servicio válido y el scope correcto.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            noEncontrado:
+              value:
+                type: "https://g7.unmsm.pe/errores/no-encontrado"
+                title: Usuario no encontrado
+                status: 404
+                code: NO_ENCONTRADO
+
+  schemas:
+
+    Problem:
+      type: object
+      description: Error uniforme según RFC 7807. Ramifica por `code`, no por `detail`.
+      required: [type, title, status, code]
+      properties:
+        type:
+          type: string
+          format: uri
+          description: Identificador del tipo de problema.
+        title:
+          type: string
+          description: Resumen legible, estable para un mismo `code`.
+        status:
+          type: integer
+          description: Código HTTP, repetido para comodidad del cliente.
+        code:
+          type: string
+          description: Código estable de la aplicación. **Esto es lo que debes leer.**
+        detail:
+          type: string
+          description: Explicación de esta ocurrencia concreta.
+        instance:
+          type: string
+          description: Referencia de la petición, útil para soporte.
+        errores:
+          type: array
+          description: Presente solo en `VALIDACION`.
+          items:
+            type: object
+            properties:
+              campo: { type: string }
+              mensaje: { type: string }
+        intentosRestantes:
+          type: integer
+          description: |
+            Presente solo en `CODIGO_INVALIDO` y en los errores de credenciales.
+            Cuántos intentos quedan antes de invalidar el desafío o bloquear la
+            cuenta. RFC 7807 admite extensiones como ésta.
+
+    Jwks:
+      type: object
+      required: [keys]
+      properties:
+        keys:
+          type: array
+          items:
+            type: object
+            required: [kty, use, alg, kid, n, e]
+            properties:
+              kty: { type: string, examples: [RSA] }
+              use: { type: string, examples: [sig] }
+              alg: { type: string, examples: [RS256] }
+              kid:
+                type: string
+                description: Identifica la clave. Coincide con el `kid` de la cabecera del token.
+              n: { type: string }
+              e: { type: string, examples: [AQAB] }
+
+    TokenServicio:
+      type: object
+      required: [accessToken, tokenType, expiresIn, scopes]
+      properties:
+        accessToken: { type: string }
+        tokenType: { type: string, enum: [Bearer] }
+        expiresIn:
+          type: integer
+          description: Segundos de validez.
+        scopes:
+          type: array
+          description: Los concedidos a este cliente, que pueden ser menos de los pedidos.
+          items: { type: string }
+
+    IntrospeccionActiva:
+      type: object
+      required: [activo, sub, roles, permisos, tipo]
+      properties:
+        activo: { type: boolean, enum: [true] }
+        sub: { type: string, format: uuid }
+        email: { type: string, format: email }
+        roles:
+          type: array
+          items: { $ref: '#/components/schemas/CodigoRol' }
+        permisos:
+          type: array
+          description: Vacío hasta que SPEC-05 defina el catálogo.
+          items: { type: string }
+        tipo: { type: string, enum: [acceso, refresco, servicio] }
+        exp: { type: integer }
+
+    IntrospeccionInactiva:
+      type: object
+      required: [activo, motivo]
+      properties:
+        activo: { type: boolean, enum: [false] }
+        motivo:
+          type: string
+          enum: [TOKEN_VENCIDO, TOKEN_REVOCADO, FIRMA_INVALIDA, USUARIO_INACTIVO, USUARIO_BLOQUEADO]
+          description: |
+            `USUARIO_INACTIVO` y `USUARIO_BLOQUEADO` significan que la firma es
+            correcta pero el token no es utilizable.
+
+    CodigoRol:
+      type: string
+      description: Código de rol. Viaja dentro del claim `roles` del token.
+      enum: [CLIENTE, VENDEDOR, ADMIN_VENTAS, GESTOR_DESPACHO, GESTOR_COMERCIAL, ADMIN_SISTEMA]
+
+    EstadoCuenta:
+      type: string
+      enum: [ACTIVO, INACTIVO, BLOQUEADO, PENDIENTE_VERIFICACION]
+
+    Usuario:
+      type: object
+      description: |
+        Datos de identidad. Los campos presentes dependen del scope del
+        solicitante: `documento` solo con `usuarios:leer:documento`, y
+        `documentoEnmascarado` en caso contrario. **Nunca incluye el hash de
+        contraseña.**
+      required: [id, nombreCompleto, correo, estado, roles]
+      properties:
+        id: { type: string, format: uuid }
+        nombres: { type: string }
+        apellidos: { type: string }
+        nombreCompleto: { type: string }
+        correo: { type: string, format: email }
+        celular: { type: string }
+        estado: { $ref: '#/components/schemas/EstadoCuenta' }
+        correoVerificado: { type: boolean }
+        roles:
+          type: array
+          items: { $ref: '#/components/schemas/CodigoRol' }
+        tipoDocumento:
+          type: string
+          enum: [DNI, CE, PASAPORTE]
+        documento:
+          type: string
+          description: En claro. Solo con el scope `usuarios:leer:documento`.
+        documentoEnmascarado:
+          type: string
+          description: Últimos tres dígitos. Sin el scope anterior.
+          examples: ["*****234"]
+
+    LoteUsuarios:
+      type: object
+      required: [usuarios, noEncontrados]
+      properties:
+        usuarios:
+          type: array
+          items: { $ref: '#/components/schemas/Usuario' }
+        noEncontrados:
+          type: array
+          description: Identificadores bien formados que no corresponden a ninguna cuenta.
+          items: { type: string, format: uuid }
+
+    Direccion:
+      type: object
+      description: Dirección de entrega. No incluye documento ni fecha de nacimiento.
+      required: [id, departamento, provincia, distrito, direccion]
+      properties:
+        id: { type: string, format: uuid }
+        etiqueta: { type: string, examples: [Casa] }
+        departamento: { type: string }
+        provincia: { type: string }
+        distrito: { type: string }
+        direccion: { type: string }
+        referencia: { type: string }
+        esPredeterminada: { type: boolean }
+
+    Rol:
+      type: object
+      required: [codigo, nombre, permisos]
+      properties:
+        codigo: { $ref: '#/components/schemas/CodigoRol' }
+        nombre: { type: string }
+        descripcion: { type: string }
+        permisos:
+          type: array
+          description: Vacío hasta que SPEC-05 defina el catálogo.
+          items: { type: string }
+
+    Permiso:
+      type: object
+      required: [codigo, modulo]
+      properties:
+        codigo: { type: string, examples: ["pedido:crear"] }
+        modulo: { type: string, examples: [ventas] }
+        descripcion: { type: string }
+
+    RegistroRequest:
+      type: object
+      required: [correo, contrasena, nombres, apellidos, celular]
+      properties:
+        correo: { type: string, format: email }
+        contrasena:
+          type: string
+          format: password
+          minLength: 10
+          description: |
+            Mínimo 10 caracteres, con mayúscula, minúscula, dígito y carácter
+            especial. No puede ser una contraseña común ni contener el nombre o
+            el correo del usuario. La política la define SPEC-03.
+        nombres: { type: string }
+        apellidos: { type: string }
+        celular: { type: string, examples: ["+51987654321"] }
+
+    SesionIniciada:
+      type: object
+      required: [accessToken, refreshToken, tokenType, expiresIn, usuario]
+      properties:
+        accessToken:
+          type: string
+          description: JWT firmado con RS256. Dura 15 minutos.
+        refreshToken:
+          type: string
+          description: Se rota en cada uso. Dura 7 días.
+        tokenType: { type: string, enum: [Bearer] }
+        expiresIn: { type: integer, examples: [900] }
+        usuario:
+          type: object
+          required: [id, nombreCompleto, correo, roles]
+          properties:
+            id: { type: string, format: uuid }
+            nombreCompleto: { type: string }
+            correo: { type: string, format: email }
+            roles:
+              type: array
+              items: { $ref: '#/components/schemas/CodigoRol' }
+
+    DesafioMfa:
+      type: object
+      description: La cuenta tiene segundo factor activo. Todavía no hay tokens.
+      required: [mfaRequerido, challengeToken, expiraEn]
+      properties:
+        mfaRequerido: { type: boolean, enum: [true] }
+        challengeToken: { type: string }
+        canal: { type: string, enum: [EMAIL, SMS] }
+        expiraEn:
+          type: integer
+          description: Segundos de validez del desafío.
+          examples: [300]
