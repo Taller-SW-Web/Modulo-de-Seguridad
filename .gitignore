@@ -1,0 +1,20 @@
+# Evidencia local de la generación de diagramas (se regenera con archify)
+docs/arquitectura/*.visual-check.*
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Dependencias y compilados
+node_modules/
+target/
+dist/
+build/
+
+# Entorno
+.env
+.env.local
+*.pem
+*.key
