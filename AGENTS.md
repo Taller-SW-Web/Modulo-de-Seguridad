@@ -27,6 +27,7 @@ módulos del curso. Fase de especificación — todavía no hay código de produ
 
 | Si vas a… | Lee |
 |---|---|
+| Nombrar cualquier cosa del dominio | [`CONTEXT.md`](CONTEXT.md) — el glosario: términos canónicos y los que hay que evitar |
 | Escribir o revisar una spec | [`specs/_PLANTILLA.md`](specs/_PLANTILLA.md) y [`specs/trazabilidad.md`](specs/trazabilidad.md) |
 | Devolver un error | [`specs/catalogo-errores.md`](specs/catalogo-errores.md) |
 | Publicar un evento | [`specs/catalogo-eventos.md`](specs/catalogo-eventos.md) |

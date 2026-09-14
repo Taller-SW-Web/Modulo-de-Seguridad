@@ -5,7 +5,8 @@ repositorio al explorar el código.
 
 ## Antes de explorar, lee esto
 
-- **`CONTEXT.md`** en la raíz del repositorio, si existe.
+- **[`CONTEXT.md`](../../CONTEXT.md)** en la raíz del repositorio: el glosario
+  del dominio, con los términos canónicos y los que hay que evitar.
 - **`docs/arquitectura/adr/`**: lee los ADR que toquen el área en la que vas a
   trabajar. Hoy hay cuatro:
 
@@ -34,7 +35,7 @@ Este repositorio es de **contexto único**: no es un monorepo y no hay
 ```
 /
 ├── AGENTS.md
-├── CONTEXT.md                      ← todavía no existe; se crea cuando haga falta
+├── CONTEXT.md                      ← el glosario del dominio
 ├── README.md
 ├── docs/
 │   ├── agents/                     ← esta configuración
@@ -62,12 +63,13 @@ Si el concepto que necesitas todavía no está en el glosario, eso es una señal
 estás inventando lenguaje que el proyecto no usa (reconsidéralo), o hay un hueco
 real (anótalo para `/domain-modeling`).
 
-Mientras no exista `CONTEXT.md`, el vocabulario de referencia de este módulo son
-los códigos ya publicados en el contrato: los seis roles (`CLIENTE`, `VENDEDOR`,
-`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA`), los
-cuatro estados de cuenta y los códigos de error de
-[`specs/catalogo-errores.md`](../../specs/catalogo-errores.md). **Son parte del
-contrato: no se renombran unilateralmente.**
+Cuidado con una clase de término en particular: los que además están publicados
+en el contrato —los seis códigos de rol, los cuatro estados de cuenta, los
+scopes y los códigos de error de
+[`specs/catalogo-errores.md`](../../specs/catalogo-errores.md)—. Ahí el glosario
+no es una preferencia de estilo: **son parte del contrato y no se renombran
+unilateralmente**, porque seis equipos ajenos programan contra ellos. Si crees
+que uno está mal elegido, dilo en vez de cambiarlo.
 
 ## Señala los conflictos con un ADR
 

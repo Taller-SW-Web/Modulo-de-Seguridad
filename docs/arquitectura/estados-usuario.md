@@ -65,7 +65,7 @@ stateDiagram-v2
 | `PENDIENTE_VERIFICACION` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | Publica `usuario.desactivado` |
 | `ACTIVO` | `BLOQUEADO` | El sistema, tras 5 fallos en 15 min | 07 | `bloqueado_hasta` = ahora + 30 min · correo al usuario · `usuario.bloqueado` |
 | `ACTIVO` | `BLOQUEADO` | `ADMIN_SISTEMA`, con motivo | 07 | `bloqueado_hasta` = `null` · correo · `usuario.bloqueado` |
-| `ACTIVO` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | **Revoca todos sus refresh tokens** · `usuario.desactivado` |
+| `ACTIVO` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | **Revoca todos sus tokens de refresco** · `usuario.desactivado` |
 | `BLOQUEADO` | `ACTIVO` | El sistema, al vencer `bloqueado_hasta` | 07 | Reinicia el contador de fallos · `usuario.desbloqueado` |
 | `BLOQUEADO` | `ACTIVO` | `ADMIN_SISTEMA` | 07 | Reinicia el contador · `usuario.desbloqueado` |
 | `BLOQUEADO` | `BLOQUEADO` | `ADMIN_SISTEMA` sobre un bloqueo automático | 07 | El manual reemplaza al automático: `bloqueado_hasta` pasa a `null` |
