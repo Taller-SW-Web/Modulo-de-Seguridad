@@ -35,6 +35,12 @@ donde el hueco se hiciera visible. Esta es esa tabla.
 
 ---
 
+Las historias de usuario de cada spec, con los RF y escenarios que cubren, están
+en [`historias-usuario.md`](historias-usuario.md). Todo RF y todo escenario
+pertenece al menos a una historia.
+
+---
+
 ## 2. Specs ↔ endpoints del contrato
 
 ✅ publicado en `openapi.yaml`

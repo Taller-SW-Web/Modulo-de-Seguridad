@@ -91,6 +91,7 @@ producción: primero el contrato y las specs, después la implementación.
 | Integrante del G7 | [`docs/plan-hito-1.md`](docs/plan-hito-1.md) — tu tarea concreta de esta semana |
 | Integrante nuevo | [`docs/responsabilidades.md`](docs/responsabilidades.md) — quién hace qué y cómo trabajamos |
 | **De otro equipo del curso** | [`specs/openapi.yaml`](specs/openapi.yaml) — el contrato. No necesitas nada más para empezar a programar contra nosotros |
+| Quieres la vista del usuario | [`specs/historias-usuario.md`](specs/historias-usuario.md) — 39 historias, cada una enlazada a sus RF y escenarios |
 | Vas a escribir una spec | [`specs/_PLANTILLA.md`](specs/_PLANTILLA.md), y después [`specs/trazabilidad.md`](specs/trazabilidad.md) para ver qué endpoints, eventos y pantallas te tocan |
 | Vas a devolver un error | [`specs/catalogo-errores.md`](specs/catalogo-errores.md) — los códigos tienen dueño único |
 | Vas a publicar un evento | [`specs/catalogo-eventos.md`](specs/catalogo-eventos.md) |
