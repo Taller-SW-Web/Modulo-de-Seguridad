@@ -66,7 +66,7 @@ del correo o restableciendo la contraseña, o lo levante un administrador.
 | RF-07.5 | El contador de intentos fallidos debe volver a cero con un login correcto, con cualquier desbloqueo, al restablecer la contraseña y al vencer un bloqueo. |
 | RF-07.6 | Mientras una cuenta esté bloqueada, el login no debe emitir tokens y debe responder `401 CREDENCIALES_INVALIDAS`, exactamente igual que ante una contraseña incorrecta, aunque la contraseña presentada sea correcta. |
 | RF-07.7 | Un bloqueo automático con vencimiento debe terminar solo al pasar `bloqueado_hasta`, sin ningún proceso ni intervención: desde ese instante la cuenta se considera `ACTIVO` en toda la API. El vencimiento no publica ningún evento, porque los módulos consumidores ya conocen `hasta` por `usuario.bloqueado`. |
-| RF-07.8 | Un `ADMIN_SISTEMA` debe poder bloquear manualmente una cuenta activa indicando obligatoriamente un motivo. Nadie puede bloquearse a sí mismo, y no se puede bloquear al último `ADMIN_SISTEMA` activo (`422 BLOQUEO_NO_PERMITIDO`). |
+| RF-07.8 | Un `ADMIN_SISTEMA` debe poder bloquear manualmente una cuenta activa indicando obligatoriamente un motivo. Nadie puede bloquearse a sí mismo, y no se puede bloquear al último `ADMIN_SISTEMA` activo (`422 ADMINISTRADOR_PROTEGIDO`, la misma regla que aplican SPEC-01 a la baja y SPEC-05 al revocar el rol). |
 | RF-07.9 | El bloqueo manual no debe tener vencimiento automático y debe reemplazar cualquier bloqueo automático vigente. |
 | RF-07.10 | Un `ADMIN_SISTEMA` debe poder desbloquear manualmente una cuenta bloqueada, reiniciando el contador de fallos. |
 | RF-07.11 | Solo el bloqueo manual debe cerrar las sesiones abiertas de la cuenta, revocando sus tokens de refresco. El bloqueo automático no las cierra: las sesiones abiertas antes del bloqueo pueden seguir renovándose, y solo se impide iniciar sesiones nuevas. |
@@ -120,7 +120,7 @@ del correo o restableciendo la contraseña, o lo levante un administrador.
 
 - **Dado** un `ADMIN_SISTEMA` autenticado y una cuenta `ACTIVO`,
 - **Cuando** hace `POST /api/v1/usuarios/{id}/bloquear` con un motivo válido,
-- **Entonces** la cuenta pasa a `BLOQUEADO`, `bloqueado_hasta` queda en `null`, se revocan los refresh tokens, se registra la acción, se notifica al usuario sin enlace de desbloqueo y se publica `usuario.bloqueado` con `hasta: null`.
+- **Entonces** la cuenta pasa a `BLOQUEADO`, `bloqueado_hasta` queda en `null`, se revocan los tokens de refresco, se registra la acción, se notifica al usuario sin enlace de desbloqueo y se publica `usuario.bloqueado` con `hasta: null`.
 ### ESC-07.9 Bloqueo manual sin motivo *(caso borde)*
 
 - **Dado** un `ADMIN_SISTEMA` autenticado,
@@ -213,7 +213,7 @@ del correo o restableciendo la contraseña, o lo levante un administrador.
 
 - **Dado** un `ADMIN_SISTEMA` autenticado,
 - **Cuando** intenta bloquearse a sí mismo, o bloquear al último `ADMIN_SISTEMA` activo,
-- **Entonces** el sistema responde `422 BLOQUEO_NO_PERMITIDO` y no cambia nada.
+- **Entonces** el sistema responde `422 ADMINISTRADOR_PROTEGIDO` y no cambia nada.
 
 ---
 
@@ -260,7 +260,7 @@ y eventos. Cualquier cambio de contrato lo aplica Sergio como Product Owner.
 | `usuario.bloqueado` | Publica según catálogo de eventos | ⬜ |
 | `usuario.desbloqueado` | Publica según catálogo de eventos | ⬜ |
 | `CUENTA_NO_DISPONIBLE` | Solo al intentar bloquear una cuenta no operativa; el login ya no lo devuelve | ⬜ |
-| `TOKEN_DESBLOQUEO_INVALIDO` · `TOKEN_DESBLOQUEO_EXPIRADO` · `BLOQUEO_NO_PERMITIDO` | Añade | ⬜ |
+| `TOKEN_DESBLOQUEO_INVALIDO` · `TOKEN_DESBLOQUEO_EXPIRADO` · `ADMINISTRADOR_PROTEGIDO` | Añade | ⬜ |
 | `CUENTA_BLOQUEADA` / `CUENTA_DESBLOQUEADA` | Acciones del catálogo de auditoría de SPEC-06 | ⬜ |
 
 Los módulos consumidores no modifican estados de cuenta. Solo reciben los eventos

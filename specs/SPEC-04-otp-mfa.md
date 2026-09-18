@@ -65,11 +65,12 @@ verifica dentro de los límites establecidos.
 | RF-04.8 | Si un usuario con MFA habilitado inicia sesión correctamente con su contraseña, el sistema debe devolver un `challengeToken` en lugar de tokens de acceso. |
 | RF-04.9 | El `challengeToken` debe tener corta duración, estar vinculado al usuario y no poder utilizarse para otra cuenta o desafío. |
 | RF-04.10 | La verificación correcta del desafío debe emitir el token de acceso de 15 minutos y el token de refresco de 7 días definidos por SPEC-02. |
-| RF-04.11 | El MFA debe ser obligatorio para `ADMIN_SISTEMA` y opcional para `CLIENTE`, `VENDEDOR`, `ADMIN_VENTAS`, `GESTOR_DESPACHO` y `GESTOR_COMERCIAL`, según la política aprobada por el equipo. |
+| RF-04.11 | El segundo factor debe ser obligatorio para quien tenga algún rol de gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA`) y opcional para `CLIENTE` y `VENDEDOR`. Basta **un** rol de gestión para que sea obligatorio. |
 | RF-04.12 | Un usuario autenticado debe poder solicitar la habilitación de MFA y confirmar su activación mediante un código de prueba. |
-| RF-04.13 | Un usuario permitido debe poder deshabilitar MFA después de autenticarse y verificar un código de confirmación. `ADMIN_SISTEMA` no puede deshabilitar el segundo factor obligatorio. |
+| RF-04.13 | Un usuario permitido debe poder deshabilitar MFA después de autenticarse y verificar un código de confirmación. Quien tenga algún rol de gestión no puede deshabilitarlo (`422 MFA_OBLIGATORIO`). |
 | RF-04.14 | El sistema debe permitir validar un correo o celular mediante este mecanismo cuando exista una solicitud autorizada del canal consumidor. |
 | RF-04.15 | El sistema debe registrar mediante SPEC-06 las solicitudes, verificaciones exitosas, verificaciones fallidas, activaciones y desactivaciones de MFA, sin registrar el código. |
+| RF-04.16 | Al verificar el desafío (`POST /api/v1/auth/otp/verificar`) y antes de emitir tokens, el sistema debe aplicar la comprobación de caducidad de contraseña de SPEC-03: si caducó, responde `403 PASSWORD_CADUCADA` y no emite tokens. SPEC-04 invoca la regla; no la reimplementa. |
 
 ---
 
@@ -91,7 +92,7 @@ verifica dentro de los límites establecidos.
 
 - **Dado** un `challengeToken` válido y un código vigente cuyo hash coincide,
 - **Cuando** el usuario envía `POST /api/v1/auth/otp/verificar`,
-- **Entonces** el sistema marca el código como usado, registra `OTP_VERIFICADO`, emite el access token y el refresh token, y responde `200`.
+- **Entonces** el sistema marca el código como usado, registra `OTP_VERIFICADO`, emite el token de acceso y el token de refresco, y responde `200`.
 
 ### ESC-04.4 Código incorrecto dentro del límite
 
@@ -121,7 +122,7 @@ verifica dentro de los límites establecidos.
 
 - **Dado** un usuario activo con MFA habilitado y contraseña correcta,
 - **Cuando** completa `POST /api/v1/auth/login`,
-- **Entonces** el sistema responde `200` con `mfaRequerido: true` y un `challengeToken`, pero no entrega access token ni refresh token.
+- **Entonces** el sistema responde `200` con `mfaRequerido: true` y un `challengeToken`, pero no entrega token de acceso ni token de refresco.
 
 ### ESC-04.9 Código de otro desafío *(caso borde de seguridad)*
 
@@ -147,9 +148,9 @@ verifica dentro de los límites establecidos.
 - **Cuando** solicita `POST /api/v1/auth/otp/deshabilitar` y verifica correctamente el código de confirmación,
 - **Entonces** el sistema deshabilita MFA, registra `MFA_DESACTIVADO` y exige contraseña solamente en el siguiente inicio de sesión.
 
-### ESC-04.13 Deshabilitación de MFA administrativo *(caso borde)*
+### ESC-04.13 Deshabilitación del segundo factor con un rol de gestión *(caso borde)*
 
-- **Dado** un usuario con rol `ADMIN_SISTEMA` y MFA habilitado,
+- **Dado** un usuario con un rol de gestión —por ejemplo `ADMIN_VENTAS`— y MFA habilitado,
 - **Cuando** intenta deshabilitar MFA,
 - **Entonces** el sistema responde `422 MFA_OBLIGATORIO`, mantiene MFA activo y registra el intento rechazado.
 
@@ -164,6 +165,12 @@ verifica dentro de los límites establecidos.
 - **Dado** una solicitud autorizada para verificar el correo o celular de un cliente,
 - **Cuando** el usuario recibe y verifica correctamente el código,
 - **Entonces** el sistema marca el canal correspondiente como verificado, registra `OTP_VERIFICADO` y devuelve el resultado al consumidor autorizado.
+
+### ESC-04.16 Basta un rol de gestión *(caso borde)*
+
+- **Dado** un usuario con los roles `VENDEDOR` y `GESTOR_COMERCIAL`,
+- **Cuando** intenta deshabilitar su segundo factor,
+- **Entonces** el sistema responde `422 MFA_OBLIGATORIO`: aunque `VENDEDOR` lo permitiría, `GESTOR_COMERCIAL` lo exige, y manda el más estricto.
 
 ---
 
@@ -188,7 +195,7 @@ verifica dentro de los límites establecidos.
 - Notificaciones push.
 - Códigos de respaldo para recuperar MFA.
 - Integración con un proveedor SMS real durante esta etapa.
-- La emisión o rotación de access/refresh tokens, que pertenece a SPEC-02.
+- La emisión o rotación de los tokens de acceso y de refresco, que pertenece a SPEC-02.
 - El bloqueo de cuentas por intentos fallidos, que pertenece a SPEC-07.
 - La consulta y exportación de auditoría, que pertenece a SPEC-06.
 
@@ -202,7 +209,7 @@ de contrato lo aplica Sergio como Product Owner.
 | Endpoint / evento | Añade, modifica o elimina | Acordado con el PO |
 |---|---|---|
 | `POST /api/v1/auth/otp/solicitar` | Utiliza contrato existente | ⬜ |
-| `POST /api/v1/auth/otp/verificar` | Utiliza contrato existente | ⬜ |
+| `POST /api/v1/auth/otp/verificar` | Utiliza contrato existente; puede responder `403 PASSWORD_CADUCADA` (SPEC-03) | ⬜ |
 | `POST /api/v1/auth/otp/habilitar` | Utiliza contrato existente | ⬜ |
 | `POST /api/v1/auth/otp/deshabilitar` | Utiliza contrato existente | ⬜ |
 | `OTP_SOLICITADO`, `OTP_VERIFICADO`, `OTP_FALLIDO` | Catálogo de auditoría de SPEC-06 | ⬜ |
