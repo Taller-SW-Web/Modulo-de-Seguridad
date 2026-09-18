@@ -854,6 +854,7 @@ paths:
                   nombres: "María"
                   apellidos: "Quispe Rojas"
                   celular: "+51987654321"
+                  aceptaTerminos: true
       responses:
         '201':
           description: Cuenta creada, pendiente de verificación de correo
@@ -2505,6 +2506,9 @@ components:
         celular: { type: string }
         estado: { $ref: '#/components/schemas/EstadoCuenta' }
         correoVerificado: { type: boolean }
+        celularVerificado:
+          type: boolean
+          description: '`false` tras cambiar el celular, hasta verificarlo por SMS (SPEC-08 RF-08.7).'
         roles:
           type: array
           items: { $ref: '#/components/schemas/CodigoRol' }
@@ -2518,6 +2522,29 @@ components:
           type: string
           description: Últimos tres dígitos. Sin el scope anterior.
           examples: ["*****234"]
+        bloqueo:
+          type: [object, "null"]
+          description: |
+            Presente solo si `estado` es `BLOQUEADO` (SPEC-07, RF-07.18).
+            `motivo` solo llega a un token de usuario con el permiso
+            `usuario.ver`; un token de servicio nunca lo recibe.
+          required: [tipo, hasta]
+          properties:
+            tipo:
+              type: string
+              enum: [AUTOMATICO, MANUAL]
+            hasta:
+              type: [string, "null"]
+              format: date-time
+              description: Vencimiento del bloqueo. `null` si no vence (manual, o automático desde el cuarto seguido).
+            motivo:
+              type: string
+              maxLength: 500
+              description: Solo en bloqueos manuales y solo para administradores.
+          examples:
+            - tipo: MANUAL
+              hasta: null
+              motivo: "Actividad sospechosa reportada por el canal retail"
 
     LoteUsuarios:
       type: object
@@ -2567,7 +2594,7 @@ components:
 
     RegistroRequest:
       type: object
-      required: [correo, contrasena, nombres, apellidos, celular]
+      required: [correo, contrasena, nombres, apellidos, celular, aceptaTerminos]
       properties:
         correo: { type: string, format: email }
         contrasena:
@@ -2580,7 +2607,19 @@ components:
             el correo del usuario. La política la define SPEC-03.
         nombres: { type: string }
         apellidos: { type: string }
-        celular: { type: string, examples: ["+51987654321"] }
+        celular:
+          type: string
+          pattern: '^\+51[0-9]{9}$'
+          description: '`+51` seguido de 9 dígitos (SPEC-01, RF-01.17).'
+          examples: ["+51987654321"]
+        aceptaTerminos:
+          type: boolean
+          const: true
+          description: |
+            Aceptación expresa de los términos y del tratamiento de datos
+            personales (Ley N.º 29733, SPEC-01 RF-01.16). Si falta o es `false`
+            responde `400 VALIDACION`. El servidor guarda la fecha y la versión
+            de los términos aceptados.
 
     SesionIniciada:
       type: object
@@ -2612,10 +2651,15 @@ components:
       properties:
         mfaRequerido: { type: boolean, enum: [true] }
         challengeToken: { type: string }
-        canal: { type: string, enum: [EMAIL, SMS] }
+        canal:
+          type: string
+          enum: [EMAIL, SMS]
+          description: |
+            Canal preferido de la cuenta. Todavía no se ha enviado ningún
+            código: se pide con `/auth/otp/solicitar`.
         expiraEn:
           type: integer
-          description: Segundos de validez del desafío.
+          description: Segundos de validez del desafío (no del código).
           examples: [300]
 
     PoliticaPassword:
@@ -2675,7 +2719,14 @@ components:
           description: Solo escritura. Nunca se devuelve en claro sin scope.
           writeOnly: true
         fechaNacimiento: { type: string, format: date }
-        telefono: { type: string, examples: ["+51 987 654 321"] }
+        celular:
+          type: string
+          pattern: '^\+51[0-9]{9}$'
+          description: |
+            `+51` seguido de 9 dígitos. Cambiarlo deja `celularVerificado` en
+            `false` hasta completar un código por SMS con `/auth/otp/solicitar`
+            y `/auth/otp/verificar` (SPEC-08 RF-08.7).
+          examples: ["+51987654321"]
         codigoVendedor:
           type: string
           description: Solo para cuentas con rol `VENDEDOR`.

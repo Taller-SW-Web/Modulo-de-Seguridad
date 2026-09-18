@@ -169,7 +169,7 @@ en procesar el evento.
 Publica **SPEC-08**, al cambiar datos de perfil.
 
 ```json
-"datos": { "campos": ["telefono", "direcciones"] }
+"datos": { "campos": ["celular", "direcciones"] }
 ```
 
 Un cambio de correo confirmado también lo publica, con `"campos": ["correo"]`.

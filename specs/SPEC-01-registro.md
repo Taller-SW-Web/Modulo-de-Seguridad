@@ -63,6 +63,8 @@ Esta especificación comprende:
 | RF-01.13 | Nadie puede darse de baja a sí mismo por esta vía, ni dar de baja al último `ADMIN_SISTEMA` activo: responde `422 ADMINISTRADOR_PROTEGIDO`, la misma regla que aplican SPEC-05 al revocar el rol y SPEC-07 al bloquear. |
 | RF-01.14 | Un `ADMIN_SISTEMA` debe poder reactivar una cuenta `INACTIVO` (`POST /api/v1/usuarios/{id}/reactivar`): vuelve a `ACTIVO` con la misma identidad, el mismo correo y los mismos roles, sin repetir la verificación y sin sesiones abiertas, y se publica `usuario.reactivado`. |
 | RF-01.15 | El token de verificación de correo es el **único** mecanismo de confirmación de correo del módulo. SPEC-08 lo reutiliza para confirmar un cambio de correo, con otro propósito, a través del mismo `POST /api/v1/auth/verificar-correo`. |
+| RF-01.16 | El registro debe exigir la aceptación expresa de los términos y del tratamiento de datos personales (`aceptaTerminos: true`), conforme a la Ley N.º 29733. Sin ella responde `400 VALIDACION` y no crea la cuenta. El sistema guarda la fecha de aceptación y la versión del texto aceptado, para poder demostrar el consentimiento. |
+| RF-01.17 | El celular debe registrarse en formato internacional peruano: `+51` seguido de 9 dígitos. Otro formato responde `400 VALIDACION`. |
 
 ---
 
@@ -190,6 +192,14 @@ Esta especificación comprende:
 
 **Entonces** la cuenta vuelve a `ACTIVO` con el mismo identificador, correo y roles, sin repetir la verificación y sin ninguna sesión abierta; se registra `USUARIO_REACTIVADO` y se publica `usuario.reactivado`, **no** `usuario.creado`.
 
+### ESC-01.13 Registro sin aceptar los términos *(caso borde legal)*
+
+**Dado** un visitante que completa el formulario de registro correctamente.
+
+**Cuando** envía `POST /api/v1/auth/registro` con `aceptaTerminos: false` o sin ese campo.
+
+**Entonces** el sistema responde `400 VALIDACION` con el error en el campo `aceptaTerminos`, no crea la cuenta y no envía ningún correo. Con `aceptaTerminos: true`, la cuenta guarda la fecha de aceptación y la versión de los términos vigente.
+
 ---
 
 ## Requisitos no funcionales — ¿con qué condiciones?
@@ -217,7 +227,7 @@ Esta especificación comprende:
 
 | Endpoint / evento | Añade, modifica o elimina | Acordado con el PO |
 |---|---|---|
-| `POST /api/v1/auth/registro` | Utiliza contrato existente | ⬜ |
+| `POST /api/v1/auth/registro` | Modifica: añade `aceptaTerminos` obligatorio y el formato del celular (RF-01.16, RF-01.17) | ⬜ |
 | `POST /api/v1/auth/verificar-correo` | Utiliza contrato existente; lo reutiliza SPEC-08 | ⬜ |
 | `POST /api/v1/auth/verificar-correo/reenviar` | Añade | ⬜ |
 | `GET /api/v1/usuarios` | Añade | ⬜ |
