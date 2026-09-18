@@ -8,7 +8,7 @@
 | **Estado** | Borrador — pendiente de acuerdo con los seis equipos |
 
 `SPEC-09` declara los eventos fuera de su alcance y dice que «se especifican por
-separado». Este documento es ese aparte. Hasta que existiera, seis eventos
+separado». Este documento es ese aparte. Hasta que existiera, los eventos
 viajaban nombrados en cuatro specs distintas sin que nadie hubiera definido su
 carga útil ni sus garantías.
 
@@ -70,7 +70,7 @@ Todos los eventos comparten sobre. Lo que cambia es `datos`.
 | `tipo` | El nombre del evento, igual que la routing key |
 | `version` | Versión del esquema de `datos`. Empieza en 1 |
 | `fecha` | Instante del hecho, UTC con milisegundos |
-| `usuarioId` | La cuenta afectada. Presente en los seis eventos |
+| `usuarioId` | La cuenta afectada. Presente en todos los eventos |
 | `datos` | Carga específica del evento. Puede estar vacía |
 
 **El evento notifica un hecho, no transporta el estado completo.** Quien
@@ -80,7 +80,7 @@ al consumidor con datos viejos creyendo que son nuevos.
 
 ---
 
-## Los seis eventos
+## Los siete eventos
 
 ### `usuario.creado`
 
@@ -104,6 +104,19 @@ Publica **SPEC-01**, tras una baja lógica.
 
 Quien reciba esto debe dejar de aceptar el token de ese usuario aunque no haya
 vencido.
+
+### `usuario.reactivado`
+
+Publica **SPEC-01**, cuando un administrador reactiva una cuenta dada de baja.
+
+```json
+"datos": { "roles": ["CLIENTE"] }
+```
+
+**No es `usuario.creado`**, aunque lo parezca: la cuenta ya existía, con el
+mismo identificador. Un consumidor que al recibir `usuario.creado` cree un
+registro local lo duplicaría. Quien haya marcado la cuenta como inactiva al
+recibir `usuario.desactivado` la vuelve a marcar como activa.
 
 ### `usuario.bloqueado`
 
@@ -159,6 +172,8 @@ Publica **SPEC-08**, al cambiar datos de perfil.
 "datos": { "campos": ["telefono", "direcciones"] }
 ```
 
+Un cambio de correo confirmado también lo publica, con `"campos": ["correo"]`.
+
 Lleva **qué campos cambiaron, nunca sus valores**. Un evento con el número de
 documento dentro acabaría replicando datos personales en seis bases de datos
 ajenas, y la Ley N.º 29733 nos hace responsables de esa copia.
@@ -199,7 +214,7 @@ Mismas reglas que el contrato REST:
 |---|---|
 | Este catálogo acordado con los seis equipos | Antes del viernes 18 |
 | Topología en `docker-compose.yml` | Hito 2 |
-| Publicación real de los seis eventos | Hito 4 (Sem. 11), junto con la implementación de SPEC-09 |
+| Publicación real de los siete eventos | Hito 4 (Sem. 11), junto con la implementación de SPEC-09 |
 
 Hasta el Hito 4 no se publica nada. Los consumidores que necesiten enterarse de
 un cambio antes de esa fecha usan la introspección, y la ventana de incoherencia

@@ -185,11 +185,13 @@ Los seis códigos de rol del marketplace:
 | `GESTOR_COMERCIAL` | Administra catálogo, precios y promociones |
 | `ADMIN_SISTEMA` | Personal de la plataforma |
 
-> **`permisos` viaja vacío por ahora.** El catálogo de permisos granulares
-> (`pedido:crear`, `producto:editar`…) lo define nuestra SPEC-05, todavía en
-> redacción. **Autorizad por `roles` mientras tanto.** Cuando el catálogo
-> exista, la lista se llenará sin que cambie nada del contrato: añadir
-> contenido a una lista vacía es compatible.
+> **`permisos` todavía no lleva los vuestros.** Hoy solo contiene los de
+> nuestro módulo (`usuario.ver`, `auditoria.ver`…), definidos en SPEC-05. Los
+> de cada módulo (`pedido.crear`, `producto.editar`…) se acuerdan con cada
+> equipo. **Autorizad por `roles` mientras tanto.** Cuando se acuerden, la
+> lista crecerá sin que cambie nada del contrato: añadir permisos es
+> compatible. Fijaos en el punto: los permisos se escriben `recurso.accion`;
+> los dos puntos son de los scopes.
 
 ---
 

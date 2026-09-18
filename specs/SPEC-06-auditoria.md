@@ -121,7 +121,7 @@ documento se registra que se entregó en claro y a qué módulo, no el número.
 | RF-06.6 | El fallo al escribir un registro de auditoría no debe impedir que la operación auditada se complete, salvo en las acciones marcadas como **críticas** en el catálogo, donde la operación debe revertirse si no se pudo auditar. |
 | RF-06.7 | Un administrador debe poder consultar la auditoría filtrando por usuario afectado, actor, acción, resultado, rango de fechas y dirección IP, con resultados paginados y ordenados de más reciente a más antiguo. |
 | RF-06.8 | Un administrador debe poder exportar el resultado de un filtro en formato CSV o JSON, con el mismo criterio de filtrado que la consulta. |
-| RF-06.9 | El acceso a la consulta y a la exportación de la auditoría debe exigir el permiso `auditoria:leer`, que solo posee el rol `ADMIN_SISTEMA`. Cualquier otro rol recibe `403`. |
+| RF-06.9 | El acceso a la consulta y a la exportación de la auditoría debe exigir el permiso `auditoria.ver`, que solo posee el rol `ADMIN_SISTEMA`. Cualquier otro rol recibe `403`. |
 | RF-06.10 | La consulta y la exportación de la auditoría deben, a su vez, quedar registradas en la auditoría: quién consultó los registros de quién también es un hecho auditable. |
 | RF-06.11 | El sistema debe conservar los registros al menos **90 días** y eliminar automáticamente los anteriores mediante una tarea programada, dejando constancia de la purga como un registro más. |
 | RF-06.12 | Un usuario debe poder consultar los eventos de **su propia** cuenta —inicios de sesión, cambios de contraseña, bloqueos— sin permiso de administrador y sin ver los de nadie más. |
@@ -144,12 +144,14 @@ operación si no se pudieron auditar (RF-06.6).
 | `USUARIO_CREADO` | SPEC-01 | Sí |
 | `USUARIO_VERIFICADO` | SPEC-01 | No |
 | `USUARIO_DESACTIVADO` | SPEC-01 | Sí |
+| `USUARIO_REACTIVADO` | SPEC-01 | Sí |
 | `CONTRASENA_CAMBIADA` | SPEC-03 | Sí |
 | `CONTRASENA_RESTABLECIDA` | SPEC-03 | Sí |
 | `RECUPERACION_SOLICITADA` | SPEC-03 | No |
 | `ROL_ASIGNADO` / `ROL_REVOCADO` | SPEC-05 | Sí |
 | `CUENTA_BLOQUEADA` / `CUENTA_DESBLOQUEADA` | SPEC-07 | Sí |
 | `ATRIBUTOS_ACTUALIZADOS` | SPEC-08 | No |
+| `CORREO_CAMBIADO` | SPEC-08 | Sí |
 | `MODULO_CONSULTO_USUARIO` | SPEC-09 | No |
 | `MODULO_OBTUVO_DOCUMENTO` | SPEC-09 | Sí |
 | `ACCESO_DENEGADO` | SPEC-09, SPEC-06 | No |
@@ -194,7 +196,7 @@ condiciones límite, de error o de seguridad.
 - **Entonces** el sistema responde `403` con `code: SCOPE_INSUFICIENTE`, no devuelve ningún registro, y **deja un registro `ACCESO_DENEGADO`**: el intento de leer la auditoría sin permiso es, él mismo, un evento de seguridad.
 
 ### ESC-06.7 Consultar la auditoría es auditable
-- **Dado** un `ADMIN_SISTEMA` con permiso `auditoria:leer`,
+- **Dado** un `ADMIN_SISTEMA` con permiso `auditoria.ver`,
 - **Cuando** consulta los registros de una cuenta ajena,
 - **Entonces** además de recibir los resultados se escribe un registro `AUDITORIA_CONSULTADA` con el filtro aplicado en `detalle`, de modo que el uso del privilegio de auditoría queda sujeto a la propia auditoría.
 
@@ -257,9 +259,9 @@ condiciones límite, de error o de seguridad.
 
 | Dependencia | Estado | Cómo se resuelve mientras tanto |
 |---|---|---|
-| El permiso `auditoria:leer` debe existir en el catálogo de permisos de **SPEC-05** | Sin especificar | Hasta que SPEC-05 publique el catálogo, la autorización se resuelve por rol: solo `ADMIN_SISTEMA`. El permiso se añade cuando el catálogo exista |
+| El permiso `auditoria.ver` en el catálogo de permisos de **SPEC-05** | Definido | Solo lo tiene `ADMIN_SISTEMA` |
 | Las acciones del catálogo las producen **todas** las demás specs | En redacción | Cada responsable añade la llamada de auditoría al implementar su spec; el catálogo de acciones se congela antes del Hito 3 para que nadie invente códigos |
-| El scope `auditoria:leer` para módulos consumidores | No previsto | **Ningún módulo consumidor accede a la auditoría.** Si alguno lo pide, se evalúa como cambio de contrato |
+| Un scope de auditoría para módulos consumidores | No previsto | **Ningún módulo consumidor accede a la auditoría.** Si alguno lo pide, se evalúa como cambio de contrato |
 
 ---
 
@@ -309,7 +311,7 @@ final.
 | `GET /api/v1/auditoria` | Añade | ⬜ |
 | `GET /api/v1/auditoria/exportar` | Añade | ⬜ |
 | `GET /api/v1/auth/me/actividad` | Añade | ⬜ |
-| Permiso `auditoria:leer` en el catálogo de SPEC-05 | Añade | ⬜ |
+| Permiso `auditoria.ver` en el catálogo de SPEC-05 | Añade | ⬜ |
 | Código de error `EXPORTACION_DEMASIADO_GRANDE` | Añade | ⬜ |
 
 No publica ningún evento nuevo en RabbitMQ: la auditoría es consumidora de lo
@@ -322,7 +324,7 @@ que ocurre, no productora.
 La spec se cierra cuando:
 
 - [ ] Los 12 requisitos están implementados
-- [ ] Las 22 acciones del catálogo escriben su registro desde la spec que las origina
+- [ ] Las 28 acciones del catálogo escriben su registro desde la spec que las origina
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Se ha verificado con una prueba de carga que el inicio de sesión sigue bajo 800 ms con la auditoría activa
 - [ ] La consulta filtrada responde bajo 300 ms sobre un millón de registros sembrados

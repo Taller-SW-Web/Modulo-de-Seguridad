@@ -67,13 +67,13 @@ stateDiagram-v2
 | `PENDIENTE_VERIFICACION` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | Publica `usuario.desactivado` |
 | `ACTIVO` | `BLOQUEADO` | El sistema, tras 5 intentos fallidos consecutivos | 07 | `bloqueado_hasta` = ahora + 1, 2 o 4 min según sea el 1.º, 2.º o 3.º bloqueo seguido; **desde el 4.º, `null`** · **no** cierra sesiones · correo con enlace de desbloqueo · `usuario.bloqueado` |
 | `ACTIVO` | `BLOQUEADO` | `ADMIN_SISTEMA`, con motivo; nunca sobre sí mismo ni sobre el último `ADMIN_SISTEMA` activo | 07 | `bloqueado_hasta` = `null` · **cierra todas sus sesiones** · correo sin enlace · `usuario.bloqueado` |
-| `ACTIVO` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | **Revoca todos sus tokens de refresco** · `usuario.desactivado` |
+| `ACTIVO` | `INACTIVO` | `ADMIN_SISTEMA`; nunca sobre sí mismo ni sobre el último `ADMIN_SISTEMA` activo | 01 | **Revoca todos sus tokens de refresco** · `usuario.desactivado` |
 | `BLOQUEADO` | `ACTIVO` | Nadie: vence `bloqueado_hasta` | 07 | El estado se **calcula**, no lo cambia ningún proceso · contador a cero · **sin evento**: los módulos ya conocen `hasta` |
 | `BLOQUEADO` | `ACTIVO` | El titular, con el enlace de desbloqueo o restableciendo la contraseña. Solo si el bloqueo es automático | 07, 03 | Contador a cero · `usuario.desbloqueado` |
 | `BLOQUEADO` | `ACTIVO` | `ADMIN_SISTEMA` | 07 | Contador a cero · `usuario.desbloqueado` |
 | `BLOQUEADO` | `BLOQUEADO` | `ADMIN_SISTEMA` sobre un bloqueo automático | 07 | El manual reemplaza al automático: `bloqueado_hasta` pasa a `null` |
 | `BLOQUEADO` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | Revoca sus tokens · `usuario.desactivado` |
-| `INACTIVO` | `ACTIVO` | `ADMIN_SISTEMA` | 01 | Publica `usuario.creado` con `reactivado: true` |
+| `INACTIVO` | `ACTIVO` | `ADMIN_SISTEMA`, con `POST /usuarios/{id}/reactivar` | 01 | Conserva identidad, correo y roles · sin sesiones · sin repetir la verificación · `usuario.reactivado` |
 
 ---
 
@@ -102,9 +102,10 @@ cuentan los **bloqueos seguidos**, que solo vuelven a cero con un login
 correcto. Todo esto es de SPEC-07; aquí se anota porque explica por qué
 `ACTIVO` no se subdivide.
 
-**La caducidad de contraseña no es un estado.** Un `ADMIN_SISTEMA` con la
-contraseña vencida sigue `ACTIVO`; lo que ocurre es que el inicio de sesión
-responde `403 PASSWORD_CADUCADA` y le exige cambiarla. Es de SPEC-03. Si fuese
+**La caducidad de contraseña no es un estado.** Quien tiene un rol de gestión y
+la contraseña vencida sigue `ACTIVO`; lo que ocurre es que, al completar la
+autenticación, recibe `403 PASSWORD_CADUCADA` en vez de tokens, y la restablece
+con el flujo de recuperación. Es de SPEC-03. Si fuese
 un estado, habría que decidir qué pasa si además se bloquea, y no hace falta.
 
 **El segundo factor tampoco es un estado.** `mfa_habilitado` es una bandera

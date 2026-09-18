@@ -212,7 +212,7 @@ concurrentes, medido con JMeter en el Hito 5.
 |---|---|---|
 | El contrato se escribe sin implementación detrás y algo resulta inviable en la semana 11 | El coste de bloquear seis equipos siete semanas es mayor. Los cambios se absorben añadiendo campos, no renombrando | Un endpoint que exige una consulta que el modelo de datos no permite |
 | Los seis equipos no levantan el mock y esperan a la implementación real | No podemos obligarlos. El kit reduce la fricción a un comando | Nadie pregunta nada en el canal de integración durante dos semanas: no lo están usando |
-| `permisos` viaja vacío hasta que exista SPEC-05 | Los consumidores autorizan por `roles` mientras tanto, y añadir contenido a una lista vacía es compatible | Un equipo codifica permisos a mano en su módulo |
+| `permisos` solo lleva los de este módulo hasta que se acuerden los de cada consumidor | Los consumidores autorizan por `roles` mientras tanto, y añadir permisos es compatible | Un equipo codifica permisos a mano en su módulo |
 | Prism no cubre lógica, solo ejemplos | Un mock que ejecutara reglas sería una segunda implementación que mantener | Un equipo asume que el mock valida credenciales de verdad |
 | Aprobar ocho specs se come el tiempo de escribir el contrato | Es real y es el riesgo principal de la semana | Llegar al jueves con el YAML a medias |
 

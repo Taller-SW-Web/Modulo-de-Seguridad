@@ -54,7 +54,7 @@ Esta especificación cubre:
 | **RF-03.4**  | El sistema debe impedir la reutilización de cualquiera de las **últimas cinco contraseñas** utilizadas.                                                 |
 | **RF-03.5**  | Las reglas de validación deben aplicarse obligatoriamente en el **backend**, independientemente del cliente.                                            |
 | **RF-03.6**  | Las contraseñas deben almacenarse mediante un mecanismo de **hash seguro** y nunca en texto claro.                                                      |
-| **RF-03.7**  | Las contraseñas de las cuentas administrativas deben expirar cada **90 días**.                                                                          |
+| **RF-03.7**  | Las contraseñas de las cuentas con algún rol de gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA`) deben expirar cada **90 días**. Al completar la autenticación con una contraseña caducada no se emiten tokens: se responde `403 PASSWORD_CADUCADA` y el titular la restablece con el flujo de recuperación (RF-03.8 a RF-03.12). |
 | **RF-03.8**  | El sistema debe permitir solicitar la recuperación mediante el correo asociado a la cuenta sin revelar si dicho correo está registrado.                 |
 | **RF-03.9**  | El sistema debe generar un **token de recuperación de un solo uso** con una vigencia máxima de **30 minutos**.                                          |
 | **RF-03.10** | Una nueva solicitud de recuperación debe invalidar los tokens anteriores asociados a la cuenta.                                                         |
@@ -106,9 +106,9 @@ Esta especificación cubre:
 
 ### ESC-03.7 — Contraseña administrativa expirada
 
-**Dado** que una cuenta administrativa tiene una contraseña con 90 días o más de antigüedad,
-**Cuando** el usuario intenta autenticarse,
-**Entonces** el sistema solicita actualizar la contraseña.
+**Dado** que una cuenta con un rol de gestión tiene una contraseña con 90 días o más de antigüedad,
+**Cuando** el usuario completa la autenticación —con el segundo factor, que para ese rol es obligatorio—,
+**Entonces** el sistema responde `403 PASSWORD_CADUCADA`, no emite tokens, y el usuario debe restablecer la contraseña mediante `/password/recuperar`.
 
 ### ESC-03.8 — Recuperación con correo registrado
 

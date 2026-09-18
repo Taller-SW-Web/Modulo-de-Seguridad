@@ -57,13 +57,15 @@ Por eso:
 | Cuenta bloqueada, **con cualquier contraseña** | `401 CREDENCIALES_INVALIDAS` — idéntico |
 | Cuenta inactiva, con cualquier contraseña | `401 CREDENCIALES_INVALIDAS` — idéntico |
 | Cuenta sin verificar, con cualquier contraseña | `401 CREDENCIALES_INVALIDAS` — idéntico |
-
-El login solo distingue dos resultados: **entras**, o **`401`**. Si una cuenta
-bloqueada respondiera distinto con la contraseña correcta, el bloqueo no
-frenaría un ataque de fuerza bruta, solo le cambiaría el mensaje de éxito. Quien
-queda bloqueado se entera por el correo de aviso que exige SPEC-07.
 | Recuperación con correo existente | `202` sin cuerpo |
 | Recuperación con correo inexistente | `202` sin cuerpo — idéntico, y con la misma latencia |
+
+**Sin la contraseña correcta de una cuenta `ACTIVO`, el login responde siempre
+el mismo `401`.** Si una cuenta bloqueada respondiera distinto con la contraseña
+correcta, el bloqueo no frenaría un ataque de fuerza bruta, solo le cambiaría el
+mensaje de éxito. Quien queda bloqueado se entera por el correo de aviso que
+exige SPEC-07. Solo quien completa la autenticación de una cuenta `ACTIVO` puede
+recibir otra cosa: tokens, un desafío, o `403 PASSWORD_CADUCADA`.
 
 ---
 
@@ -108,7 +110,7 @@ congelamiento del jueves.
 |---|---|---|
 | `POLITICA_INCUMPLIDA` | 422 | La contraseña no cumple la política. **Un solo código para las cinco reglas**; cuál falló va en el array `errores` |
 | `PASSWORD_YA_UTILIZADA` | 422 | Está entre las últimas 5 del historial |
-| `PASSWORD_CADUCADA` | 403 | Un administrador con contraseña de más de 90 días inicia sesión: debe cambiarla antes de continuar |
+| `PASSWORD_CADUCADA` | 403 | Quien tiene un rol de gestión completa la autenticación con una contraseña de más de 90 días. No recibe tokens: la restablece con el flujo de recuperación. Lo devuelven `/auth/login` y `/auth/otp/verificar` |
 | `TOKEN_RECUPERACION_INVALIDO` | 401 | El token de recuperación no existe, ya se usó, o fue reemplazado por una solicitud posterior |
 | `TOKEN_RECUPERACION_EXPIRADO` | 410 | El token de recuperación tiene más de 30 minutos |
 
@@ -150,7 +152,7 @@ congelamiento del jueves.
 |---|---|---|
 | `TOKEN_DESBLOQUEO_INVALIDO` | 401 | El enlace de desbloqueo no existe, ya se usó o fue reemplazado por un bloqueo posterior |
 | `TOKEN_DESBLOQUEO_EXPIRADO` | 410 | El enlace de desbloqueo tiene más de 30 minutos |
-| `BLOQUEO_NO_PERMITIDO` | 422 | Un administrador intenta bloquearse a sí mismo, o bloquear al último `ADMIN_SISTEMA` activo |
+| `ADMINISTRADOR_PROTEGIDO` | 422 | Un administrador intenta bloquearse, darse de baja o quitarse el rol `ADMIN_SISTEMA` a sí mismo, o hacerlo con el último `ADMIN_SISTEMA` activo. **Un solo código para SPEC-01, SPEC-05 y SPEC-07**, porque es una sola regla |
 
 ### SPEC-08 — Atributos
 
@@ -170,6 +172,10 @@ información o duplica algo que ya existe.
 | `423 Locked` con el motivo del bloqueo | `401 CREDENCIALES_INVALIDAS` | Un `423` confirma que la cuenta existe **y** que está bloqueada. Con eso se enumera y además se sabe a quién se ha conseguido bloquear |
 | `403 CUENTA_NO_DISPONIBLE` en el login | `401 CREDENCIALES_INVALIDAS` | Con la contraseña correcta, un `403` le avisa al atacante de que acertó, aunque la cuenta esté bloqueada |
 | `AUTH_EMAIL_YA_REGISTRADO` | `CORREO_NO_DISPONIBLE` | Mismo significado, nombre que afirma de más |
+| `TOKEN_EXPIRED` / `TOKEN_INVALID` (verificación de correo) | `ENLACE_EXPIRADO` / `ENLACE_YA_USADO` | Los códigos van en español (ADR-004) y ya existen |
+| `BAD_REQUEST`, `FORBIDDEN`, `UNPROCESSABLE_ENTITY` | `VALIDACION`, `SCOPE_INSUFICIENTE`, el código concreto del caso | Son nombres de estado HTTP, no códigos: no dicen nada que el `status` no diga ya |
+| `SCOPE_INSUFFICIENT` | `SCOPE_INSUFICIENTE` | Errata en inglés de un código publicado |
+| `BLOQUEO_NO_PERMITIDO` | `ADMINISTRADOR_PROTEGIDO` | Retirado el mismo día en que se creó: la misma protección cubre también la baja y la revocación del rol |
 | `PASSWORD_DEMASIADO_CORTA` y las cuatro hermanas | `POLITICA_INCUMPLIDA` + `errores[]` | Ver el recuadro de SPEC-03 |
 | `TOKEN_RECUPERACION_USADO` | `TOKEN_RECUPERACION_INVALIDO` | Distinguir «usado» de «inexistente» dice si alguien pidió recuperación para ese correo |
 | Cualquier código que empiece por `AUTH_` | El equivalente de este catálogo | El prefijo no aporta: toda la API es de autenticación |

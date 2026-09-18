@@ -281,7 +281,7 @@ especifica aparte.
 
 | Dependencia | Estado | Cómo se resuelve mientras tanto |
 |---|---|---|
-| El claim `permisos` presupone un catálogo de permisos por módulo (`pedido:crear`, `producto:editar`…) que define **SPEC-05** | Sin especificar | Esta spec fija el **formato** —lista de códigos, sin duplicados, unión de los roles del usuario—. Hasta que SPEC-05 exista, `permisos` viaja como lista vacía y los consumidores autorizan por `roles` |
+| El claim `permisos` presupone un catálogo de permisos por módulo (`pedido.crear`, `producto.editar`…) que define **SPEC-05** | Definido para este módulo; pendiente para los consumidores | Esta spec fija el **formato** —lista de códigos con punto, sin duplicados, unión de los roles del usuario—. Hoy `permisos` lleva los de este módulo; los de cada consumidor se añaden cuando se acuerden, y mientras tanto autorizan por `roles` |
 | La forma de los datos de usuario expuestos depende de **SPEC-01** y **SPEC-08** | En redacción | El contrato fija los campos mínimos; añadir campos es compatible, renombrarlos no |
 | Los `client_id` y `client_secret` de los seis módulos | Sin crear | El entorno simulado usa credenciales de prueba conocidas y publicadas |
 

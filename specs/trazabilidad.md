@@ -57,9 +57,12 @@ donde el hueco se hiciera visible. Esta es esa tabla.
 | `GET /auth/me` | 01 | ✅ |
 | `POST /auth/otp/solicitar` | 04 | ✅ |
 | `POST /auth/otp/verificar` | 04 | ✅ |
-| `POST /auth/verificar-correo` | 01 | ✅ |
+| `POST /auth/verificar-correo` | 01, 08 | ✅ |
+| `POST /auth/verificar-correo/reenviar` | 01 | ✅ |
+| `GET /usuarios` | 01 | ✅ |
 | `POST /usuarios` | 01 | ✅ |
 | `DELETE /usuarios/{id}` | 01 | ✅ |
+| `POST /usuarios/{id}/reactivar` | 01 | ✅ |
 | `GET /password/politica` | 03 | ✅ |
 | `POST /password/recuperar` | 03 | ✅ |
 | `POST /password/restablecer` | 03 | ✅ |
@@ -75,6 +78,7 @@ donde el hueco se hiciera visible. Esta es esa tabla.
 | `POST /usuarios/{id}/desbloquear` | 07 | ✅ |
 | `POST /auth/desbloquear` | 07 | ✅ |
 | `PATCH /usuarios/{id}/atributos` | 08 | ✅ |
+| `POST /usuarios/{id}/correo` | 08 | ✅ |
 | `POST /usuarios/{id}/direcciones` | 08 | ✅ |
 
 **Ninguna spec puede quedarse sin endpoint.** Si al redactar la tuya no
@@ -111,6 +115,7 @@ Detalle en [`catalogo-eventos.md`](catalogo-eventos.md).
 |---|---|---|
 | `usuario.creado` | 01 | Los seis módulos |
 | `usuario.desactivado` | 01 | Los seis módulos |
+| `usuario.reactivado` | 01 | Los seis módulos |
 | `usuario.bloqueado` | 07 | Los seis módulos |
 | `usuario.desbloqueado` | 07 | Los seis módulos |
 | `usuario.roles_cambiados` | 05 | Los seis módulos |
@@ -161,7 +166,6 @@ Lo que hoy sabemos que falta. Se cierra o se convierte en decisión escrita.
 
 | Hueco | Quién | Para cuándo |
 |---|---|---|
-| `permisos` viaja vacío hasta que SPEC-05 defina el catálogo | Eva Lucía | Hito 4 |
-| El permiso `auditoria:leer` no existe aún en el catálogo de SPEC-05 | Eva Lucía / Christian | Hito 3 |
+| Los permisos de los módulos consumidores (`pedido.crear`…) no están acordados; hoy `permisos` solo lleva los de este módulo | Eva Lucía | Hito 4 |
 | Los `client_id` y `client_secret` de los seis módulos no están creados | Christian | Hito 4 |
 | El catálogo de eventos no está acordado con los seis equipos | Sergio | Vie 18 |
