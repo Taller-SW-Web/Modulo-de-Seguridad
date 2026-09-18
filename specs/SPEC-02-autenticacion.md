@@ -60,6 +60,7 @@ Esta especificación comprende:
 | RF-02.5 | Si el sistema detecta que un refreshToken previamente utilizado vuelve a ser presentado, debe revocar todos los refreshToken pertenecientes a la familia de esa sesión y rechazar la solicitud. |
 | RF-02.6 | Cuando se produzca un intento de inicio de sesión con credenciales incorrectas, el sistema debe registrarlo como intento fallido según SPEC-07, que es la dueña del contador y del bloqueo. |
 | RF-02.7 | El sistema debe rechazar el inicio de sesión cuando la cuenta se encuentre bloqueada, inactiva o pendiente de verificación, no debe emitir tokens y debe responder `401 CREDENCIALES_INVALIDAS`, igual que ante una contraseña incorrecta. |
+| RF-02.8 | Al completar la autenticación, el sistema debe aplicar la comprobación de caducidad de contraseña de SPEC-03: si caducó, responde `403 PASSWORD_CADUCADA` en vez de emitir tokens. SPEC-02 no reimplementa la regla: la invoca. |
 
 ---
 
@@ -79,7 +80,7 @@ Esta especificación comprende:
 
 ---
 
-### ESC02.2 Contraseña incorrecta
+### ESC-02.2 Contraseña incorrecta
 
 **Dado** un usuario activo registrado en el sistema.
 
@@ -95,7 +96,7 @@ Además:
 
 ---
 
-### ESC02.3 Correo electrónico inexistente
+### ESC-02.3 Correo electrónico inexistente
 
 **Dado** que el correo electrónico proporcionado no pertenece a ningún usuario registrado.
 
@@ -107,7 +108,7 @@ El mensaje debe ser equivalente al utilizado para una contraseña incorrecta y n
 
 ---
 
-### ESC02.4 Cuenta bloqueada
+### ESC-02.4 Cuenta bloqueada
 
 **Dado** un usuario cuya cuenta tiene estado `BLOQUEADO`.
 
@@ -121,7 +122,7 @@ No se debe revelar que la cuenta está bloqueada ni el motivo: el titular se ent
 
 ---
 
-### ESC02.5 Usuario con MFA habilitado
+### ESC-02.5 Usuario con MFA habilitado
 
 **Dado** un usuario activo con `mfa_habilitado = true`.
 
@@ -136,7 +137,7 @@ No se debe revelar que la cuenta está bloqueada ni el motivo: el titular se ent
 
 ---
 
-### ESC02.6 Rotación del refresh token
+### ESC-02.6 Rotación del token de refresco
 
 Dado un refreshToken válido y vigente.
 
@@ -152,7 +153,7 @@ El token anterior no debe poder utilizarse nuevamente.
 
 ---
 
-### ESC02.7 Reutilización de un refresh token
+### ESC-02.7 Reutilización de un token de refresco
 
 Dado un refreshToken que ya fue utilizado y posteriormente revocado.
 
@@ -166,7 +167,7 @@ Responder con código HTTP 401.
 
 ---
 
-### ESC02.8 Cierre de sesión
+### ESC-02.8 Cierre de sesión
 
 Dado un usuario con una sesión activa.
 
@@ -178,7 +179,7 @@ La operación debe finalizar con código HTTP 204.
 
 ---
 
-### ESC02.9 Refresh token expirado
+### ESC-02.9 Token de refresco expirado
 
 Dado un refreshToken cuya fecha de expiración ya fue superada.
 
