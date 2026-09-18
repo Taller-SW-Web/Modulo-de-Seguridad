@@ -158,12 +158,12 @@ uno de ellos caso borde.
 |---|---|---|---|
 | 06 | 14 | 13 | 🔶 Por revisar |
 | 09 | 16 | 16 | ✅ |
-| 01 | 15 | 12 | 🔶 Por revisar |
+| 01 | 17 | 13 | 🔶 Por revisar |
 | 02 | 8 | 9 | 🔶 Por revisar |
 | 03 | 15 | 15 | 🔶 Por revisar |
 | 04 | 16 | 16 | 🔶 Por revisar |
 | 05 | 10 | 7 | 🔶 Por revisar |
-| 07 | 17 | 24 | 🔶 Por revisar |
+| 07 | 18 | 25 | 🔶 Por revisar |
 | 08 | 10 | 10 | 🔶 Por revisar |
 
 ---

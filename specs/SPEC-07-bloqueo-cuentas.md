@@ -76,6 +76,7 @@ del correo o restableciendo la contraseña, o lo levante un administrador.
 | RF-07.15 | Una cuenta `INACTIVO` o `PENDIENTE_VERIFICACION` no debe entrar en estado `BLOQUEADO`; los módulos consumidores solo pueden leer el estado y no modificarlo. |
 | RF-07.16 | El enlace de desbloqueo debe ser de un solo uso, expirar a los 30 minutos y quedar invalidado por cualquier bloqueo posterior. Consumirlo con `POST /api/v1/auth/desbloquear` levanta un bloqueo automático, tenga o no vencimiento. |
 | RF-07.17 | Restablecer la contraseña (SPEC-03) debe levantar un bloqueo automático, tenga o no vencimiento. Ni el enlace ni el restablecimiento levantan un bloqueo manual. |
+| RF-07.18 | Mientras la cuenta está `BLOQUEADO`, `GET /api/v1/usuarios/{id}` debe incluir el objeto `bloqueo` con `tipo` (`AUTOMATICO` o `MANUAL`) y `hasta` (`null` si no vence). El `motivo` del bloqueo manual solo se incluye para un token de usuario con el permiso `usuario.ver`; un token de servicio nunca lo recibe. |
 
 ---
 
@@ -215,6 +216,12 @@ del correo o restableciendo la contraseña, o lo levante un administrador.
 - **Cuando** intenta bloquearse a sí mismo, o bloquear al último `ADMIN_SISTEMA` activo,
 - **Entonces** el sistema responde `422 ADMINISTRADOR_PROTEGIDO` y no cambia nada.
 
+### ESC-07.25 El detalle de una cuenta bloqueada muestra el bloqueo *(caso borde de privacidad)*
+
+- **Dado** una cuenta con bloqueo manual y motivo «Actividad sospechosa»,
+- **Cuando** un `ADMIN_SISTEMA` consulta `GET /api/v1/usuarios/{id}` y, por separado, un módulo lo consulta con un token de servicio,
+- **Entonces** el administrador recibe `bloqueo: { tipo: MANUAL, hasta: null, motivo: "Actividad sospechosa" }` y el módulo recibe `bloqueo: { tipo: MANUAL, hasta: null }`, sin el motivo.
+
 ---
 
 ## Requisitos no funcionales — ¿con qué condiciones?
@@ -254,6 +261,7 @@ y eventos. Cualquier cambio de contrato lo aplica Sergio como Product Owner.
 | Endpoint / evento | Añade, modifica o elimina | Acordado con el PO |
 |---|---|---|
 | `POST /api/v1/auth/login` | Responde `401 CREDENCIALES_INVALIDAS` también con la cuenta bloqueada | ⬜ |
+| `GET /api/v1/usuarios/{id}` | Amplía: objeto `bloqueo` con `tipo`, `hasta` y, solo para administradores, `motivo` (RF-07.18) | ⬜ |
 | `POST /api/v1/usuarios/{id}/bloquear` | Utiliza contrato existente | ⬜ |
 | `POST /api/v1/usuarios/{id}/desbloquear` | Utiliza contrato existente | ⬜ |
 | `POST /api/v1/auth/desbloquear` | Añade — desbloqueo por el titular con el enlace del correo | ⬜ |
