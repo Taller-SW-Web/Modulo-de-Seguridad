@@ -25,9 +25,10 @@ Este documento las fija.
 | `BLOQUEADO` | Suspendido por fallos repetidos o por decisión de un administrador | **No** |
 | `INACTIVO` | Dado de baja lógicamente. No se borra de la base de datos | **No** |
 
-Los tres estados que impiden iniciar sesión responden **el mismo error**:
-`403 CUENTA_NO_DISPONIBLE`, sin decir cuál de los tres es. Ver
-`specs/catalogo-errores.md`.
+En los tres estados que impiden iniciar sesión, el login responde **exactamente
+lo mismo que ante una contraseña incorrecta**: `401 CREDENCIALES_INVALIDAS`. Si
+respondiera algo distinto, serviría para averiguar si la contraseña es correcta
+o si la cuenta existe. Ver `specs/catalogo-errores.md`.
 
 ---
 
@@ -41,11 +42,12 @@ stateDiagram-v2
     PENDIENTE_VERIFICACION --> ACTIVO: verifica su correo (SPEC-01)
     PENDIENTE_VERIFICACION --> INACTIVO: baja lógica (SPEC-01)
 
-    ACTIVO --> BLOQUEADO: 5 fallos en 15 min (SPEC-07)
+    ACTIVO --> BLOQUEADO: 5 intentos fallidos consecutivos (SPEC-07)
     ACTIVO --> BLOQUEADO: bloqueo manual del admin (SPEC-07)
     ACTIVO --> INACTIVO: baja lógica (SPEC-01)
 
     BLOQUEADO --> ACTIVO: vence el bloqueo automático (SPEC-07)
+    BLOQUEADO --> ACTIVO: el titular usa el enlace o restablece la contraseña (SPEC-07)
     BLOQUEADO --> ACTIVO: desbloqueo manual del admin (SPEC-07)
     BLOQUEADO --> BLOQUEADO: el bloqueo manual reemplaza al automático (SPEC-07)
     BLOQUEADO --> INACTIVO: baja lógica (SPEC-01)
@@ -63,11 +65,12 @@ stateDiagram-v2
 | — | `ACTIVO` | `ADMIN_SISTEMA` al dar de alta a un vendedor o admin | 01 | Publica `usuario.creado` |
 | `PENDIENTE_VERIFICACION` | `ACTIVO` | El usuario, al consumir el enlace | 01 | Publica `usuario.creado` |
 | `PENDIENTE_VERIFICACION` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | Publica `usuario.desactivado` |
-| `ACTIVO` | `BLOQUEADO` | El sistema, tras 5 fallos en 15 min | 07 | `bloqueado_hasta` = ahora + 30 min · correo al usuario · `usuario.bloqueado` |
-| `ACTIVO` | `BLOQUEADO` | `ADMIN_SISTEMA`, con motivo | 07 | `bloqueado_hasta` = `null` · correo · `usuario.bloqueado` |
+| `ACTIVO` | `BLOQUEADO` | El sistema, tras 5 intentos fallidos consecutivos | 07 | `bloqueado_hasta` = ahora + 1, 2 o 4 min según sea el 1.º, 2.º o 3.º bloqueo seguido; **desde el 4.º, `null`** · **no** cierra sesiones · correo con enlace de desbloqueo · `usuario.bloqueado` |
+| `ACTIVO` | `BLOQUEADO` | `ADMIN_SISTEMA`, con motivo; nunca sobre sí mismo ni sobre el último `ADMIN_SISTEMA` activo | 07 | `bloqueado_hasta` = `null` · **cierra todas sus sesiones** · correo sin enlace · `usuario.bloqueado` |
 | `ACTIVO` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | **Revoca todos sus tokens de refresco** · `usuario.desactivado` |
-| `BLOQUEADO` | `ACTIVO` | El sistema, al vencer `bloqueado_hasta` | 07 | Reinicia el contador de fallos · `usuario.desbloqueado` |
-| `BLOQUEADO` | `ACTIVO` | `ADMIN_SISTEMA` | 07 | Reinicia el contador · `usuario.desbloqueado` |
+| `BLOQUEADO` | `ACTIVO` | Nadie: vence `bloqueado_hasta` | 07 | El estado se **calcula**, no lo cambia ningún proceso · contador a cero · **sin evento**: los módulos ya conocen `hasta` |
+| `BLOQUEADO` | `ACTIVO` | El titular, con el enlace de desbloqueo o restableciendo la contraseña. Solo si el bloqueo es automático | 07, 03 | Contador a cero · `usuario.desbloqueado` |
+| `BLOQUEADO` | `ACTIVO` | `ADMIN_SISTEMA` | 07 | Contador a cero · `usuario.desbloqueado` |
 | `BLOQUEADO` | `BLOQUEADO` | `ADMIN_SISTEMA` sobre un bloqueo automático | 07 | El manual reemplaza al automático: `bloqueado_hasta` pasa a `null` |
 | `BLOQUEADO` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | Revoca sus tokens · `usuario.desactivado` |
 | `INACTIVO` | `ACTIVO` | `ADMIN_SISTEMA` | 01 | Publica `usuario.creado` con `reactivado: true` |
@@ -83,7 +86,7 @@ interpretación si no están prohibidas aquí.
 |---|---|
 | `INACTIVO` → `BLOQUEADO` | Bloquear a quien ya no puede entrar no aporta nada. El admin que quiera «reforzar» una baja no tiene nada que reforzar |
 | `INACTIVO` → `PENDIENTE_VERIFICACION` | Una reactivación no vuelve a pedir verificación: el correo ya se verificó una vez |
-| `PENDIENTE_VERIFICACION` → `BLOQUEADO` | Los fallos de contraseña no se cuentan en una cuenta que aún no puede iniciar sesión. Si se contaran, cualquiera podría bloquear una cuenta ajena recién registrada |
+| `PENDIENTE_VERIFICACION` → `BLOQUEADO` | Solo cuentan los intentos fallidos sobre cuentas `ACTIVO`: una cuenta que todavía no puede iniciar sesión no tiene nada que proteger |
 | `BLOQUEADO` → `PENDIENTE_VERIFICACION` | El bloqueo no revierte la verificación |
 | Cualquier transición disparada por un módulo consumidor | Los seis módulos **leen** estado, nunca lo cambian. No existe endpoint que se lo permita |
 
@@ -92,10 +95,12 @@ interpretación si no están prohibidas aquí.
 ## Reglas que cruzan estados
 
 **El contador de intentos fallidos vive fuera del estado.** Un usuario `ACTIVO`
-puede tener 4 fallos acumulados y seguir `ACTIVO`. El contador se reinicia al
-iniciar sesión correctamente, al desbloquear, y al vencer la ventana de 15
-minutos. Esto es de SPEC-07; aquí se anota porque explica por qué `ACTIVO` no se
-subdivide.
+puede tener 4 fallos acumulados y seguir `ACTIVO`. Cuenta fallos consecutivos,
+sin ventana de tiempo, y vuelve a cero con un login correcto, con cualquier
+desbloqueo, al restablecer la contraseña y al vencer un bloqueo. Aparte se
+cuentan los **bloqueos seguidos**, que solo vuelven a cero con un login
+correcto. Todo esto es de SPEC-07; aquí se anota porque explica por qué
+`ACTIVO` no se subdivide.
 
 **La caducidad de contraseña no es un estado.** Un `ADMIN_SISTEMA` con la
 contraseña vencida sigue `ACTIVO`; lo que ocurre es que el inicio de sesión

@@ -46,11 +46,18 @@ La credencial de vida larga que sirve para obtener un token de acceso nuevo sin
 volver a introducir la contraseña. Viaja como `refreshToken` en el contrato.
 _Avoid_: refresh token, `refresh_token`, «el refresco» a secas
 
+**Sesión**:
+Un acceso abierto de un usuario desde un dispositivo, desde que inicia sesión
+hasta que la cierra o se revoca. Es la unidad que un usuario reconoce y la que
+se revoca («cerrar sesión en los demás dispositivos»); cada sesión tiene
+exactamente una familia.
+_Avoid_: login, conexión, dispositivo
+
 **Familia**:
-El conjunto de tokens de refresco encadenados que nacen de un mismo inicio de
-sesión, cada uno rotado a partir del anterior. Presentar uno ya rotado revoca la
-familia entera.
-_Avoid_: cadena, linaje, sesión, árbol de tokens
+Los tokens de refresco de una sesión, encadenados porque cada uno se rota a
+partir del anterior. Presentar uno ya rotado revoca la familia entera y, con
+ella, su sesión.
+_Avoid_: cadena, linaje, árbol de tokens, y usarlo como sinónimo de sesión
 
 **Token de servicio**:
 La credencial propia de un módulo consumidor, que lo identifica a **él** y no a
@@ -67,22 +74,35 @@ _Avoid_: challenge, reto, token MFA, token temporal
 
 **Estado de cuenta**:
 La situación de una cuenta frente al acceso, y una de exactamente cuatro:
-`PENDIENTE_VERIFICACION`, `ACTIVO`, `BLOQUEADO`, `INACTIVO`. Las tres últimas que
-no son `ACTIVO` impiden iniciar sesión y responden el mismo error.
+`PENDIENTE_VERIFICACION`, `ACTIVO`, `BLOQUEADO`, `INACTIVO`. Solo `ACTIVO`
+permite iniciar sesión.
 _Avoid_: situación, estatus, flag de activo
 
+**Intento fallido**:
+Una contraseña incorrecta presentada para una cuenta `ACTIVO`. Repetir la misma
+contraseña equivocada no cuenta como un intento nuevo, y los intentos contra una
+cuenta ya bloqueada tampoco cuentan.
+_Avoid_: fallo de login, error de autenticación, intento inválido
+
 **Bloqueo**:
-La suspensión temporal o indefinida del acceso a una cuenta. Es **automático**
-cuando lo dispara una racha de intentos fallidos y **manual** cuando lo decide un
-administrador; en ambos casos la cuenta queda en el mismo estado y solo cambia
-si el bloqueo vence.
+La suspensión del acceso a una cuenta. Es **automático** cuando lo dispara una
+racha de intentos fallidos consecutivos —vence solo, salvo cuando se repite
+demasiadas veces seguidas, y su titular siempre puede levantarlo— y **manual**
+cuando lo decide un administrador —no vence, y solo un administrador lo
+levanta—. En ambos casos la cuenta queda en el mismo estado.
 _Avoid_: suspensión, baneo, cuenta cerrada, dos términos distintos para el
 automático y el manual
 
 **Baja lógica**:
 La desactivación de una cuenta que la deja inutilizable sin borrarla de la base
-de datos. Ninguna cuenta se elimina físicamente.
+de datos. Ninguna cuenta se elimina físicamente, y por eso una baja puede
+deshacerse.
 _Avoid_: eliminar, borrar, dar de baja, soft delete
+
+**Reactivación**:
+La vuelta de una cuenta dada de baja al estado `ACTIVO`, conservando su
+identidad y su correo. Es lo opuesto de la baja lógica, no un alta nueva.
+_Avoid_: rehabilitación, restauración, volver a crear, alta
 
 **Verificación de correo**:
 La confirmación, mediante un enlace de un solo uso, de que quien se registró
@@ -91,8 +111,8 @@ _Avoid_: activación, confirmación de cuenta, validación de correo
 
 **Segundo factor**:
 La comprobación adicional al inicio de sesión mediante un código de un solo uso,
-de modo que conocer la contraseña no baste. Obligatorio para administradores,
-opcional para el resto.
+de modo que conocer la contraseña no baste. Obligatorio para quien tenga algún
+rol de gestión, opcional para el resto.
 _Avoid_: MFA a secas, 2FA, doble autenticación, autenticación en dos pasos
 
 ### Roles y permisos
@@ -105,10 +125,18 @@ _Avoid_: perfil, tipo de usuario, grupo, y los códigos en inglés (`BUYER`,
 `SELLER`, `SYSTEM_ADMIN`), descartados en
 [ADR-004](docs/arquitectura/adr/004-idioma-del-contrato.md)
 
+**Rol de gestión**:
+Cualquiera de los cuatro roles asignados a personal de la plataforma y no a
+clientes ni a vendedores de tienda: `ADMIN_VENTAS`, `GESTOR_DESPACHO`,
+`GESTOR_COMERCIAL`, `ADMIN_SISTEMA`. Basta tener uno para que el segundo factor
+sea obligatorio.
+_Avoid_: administrador a secas, rol admin, rol privilegiado, staff
+
 **Permiso**:
-Una capacidad concreta que un rol concede a una **persona**, nombrada por módulo
-y acción (`pedido:crear`, `producto:editar`).
-_Avoid_: privilegio, autorización, capacidad, y usar «permiso» para un scope
+Una capacidad concreta que un rol concede a una **persona**, nombrada por
+recurso y acción separados por un punto (`pedido.crear`, `producto.editar`).
+_Avoid_: privilegio, autorización, capacidad, usar «permiso» para un scope, y
+escribirlo con dos puntos
 
 **Permisos efectivos**:
 La unión sin duplicados de los permisos de todos los roles de un usuario, que es
@@ -117,8 +145,8 @@ _Avoid_: permisos del usuario, permisos totales, permisos resueltos
 
 **Scope**:
 Lo que un **módulo consumidor** puede leer de esta API, concedido a su token de
-servicio (`usuarios:leer`, `tokens:introspeccion`). Un scope habla de módulos y
-de lectura; un permiso habla de personas y de acciones.
+servicio y escrito con dos puntos (`usuarios:leer`, `tokens:introspeccion`). Un
+scope habla de módulos y de lectura; un permiso habla de personas y de acciones.
 _Avoid_: permiso del módulo, alcance, autorización de servicio
 
 ### Integración entre módulos

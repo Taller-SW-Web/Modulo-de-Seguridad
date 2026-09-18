@@ -54,9 +54,14 @@ Por eso:
 |---|---|
 | Contraseña incorrecta | `401 CREDENCIALES_INVALIDAS` |
 | El correo no está registrado | `401 CREDENCIALES_INVALIDAS` — idéntico |
-| Cuenta bloqueada | `403 CUENTA_NO_DISPONIBLE` |
-| Cuenta inactiva | `403 CUENTA_NO_DISPONIBLE` — idéntico |
-| Cuenta sin verificar | `403 CUENTA_NO_DISPONIBLE` — idéntico |
+| Cuenta bloqueada, **con cualquier contraseña** | `401 CREDENCIALES_INVALIDAS` — idéntico |
+| Cuenta inactiva, con cualquier contraseña | `401 CREDENCIALES_INVALIDAS` — idéntico |
+| Cuenta sin verificar, con cualquier contraseña | `401 CREDENCIALES_INVALIDAS` — idéntico |
+
+El login solo distingue dos resultados: **entras**, o **`401`**. Si una cuenta
+bloqueada respondiera distinto con la contraseña correcta, el bloqueo no
+frenaría un ataque de fuerza bruta, solo le cambiaría el mensaje de éxito. Quien
+queda bloqueado se entera por el correo de aviso que exige SPEC-07.
 | Recuperación con correo existente | `202` sin cuerpo |
 | Recuperación con correo inexistente | `202` sin cuerpo — idéntico, y con la misma latencia |
 
@@ -71,11 +76,11 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 | `VALIDACION` ✅ | 400 | Todas | El cuerpo de la petición no cumple el esquema: falta un campo, el tipo no corresponde, el formato del correo es inválido |
 | `LOTE_DEMASIADO_GRANDE` ✅ | 400 | 09 | La consulta por lote trae más de 100 identificadores |
 | `TOKEN_INVALIDO` ✅ | 401 | Todas | Falta el token, la firma no valida o ya venció |
-| `CREDENCIALES_INVALIDAS` ✅ | 401 | 02 | Correo o contraseña incorrectos, **o el correo no existe** |
+| `CREDENCIALES_INVALIDAS` ✅ | 401 | 02 | Correo o contraseña incorrectos, **o el correo no existe, o la cuenta no está `ACTIVO`** |
 | `REFRESCO_INVALIDO` ✅ | 401 | 02 | El token de refresco no existe, ya se usó o fue revocado |
 | `CODIGO_INVALIDO` ✅ | 401 | 04 | El código OTP no coincide con el desafío |
 | `CLIENTE_INVALIDO` ✅ | 401 | 09 | El `client_id` o el `client_secret` del módulo consumidor no son válidos |
-| `CUENTA_NO_DISPONIBLE` ✅ | 403 | 02, 07 | La cuenta está bloqueada, inactiva o pendiente de verificación. **No se revela cuál** |
+| `CUENTA_NO_DISPONIBLE` ✅ | 403 | 07 | Un administrador intenta bloquear una cuenta `INACTIVO` o `PENDIENTE_VERIFICACION`. **Ya no lo devuelve el login**, que responde `401` |
 | `TOKEN_NO_APLICABLE` ✅ | 403 | 09 | Un token de servicio intenta una operación que actúa en nombre de una persona |
 | `SCOPE_INSUFICIENTE` ✅ | 403 | 05, 06, 09 | El token es válido pero no tiene el permiso necesario. **No se revela cuál haría falta** |
 | `NO_ENCONTRADO` ✅ | 404 | 01, 08, 09 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
@@ -139,6 +144,14 @@ congelamiento del jueves.
 |---|---|---|
 | `EXPORTACION_DEMASIADO_GRANDE` | 413 | El filtro abarca más de 100 000 registros |
 
+### SPEC-07 — Bloqueo
+
+| Código | HTTP | Cuándo |
+|---|---|---|
+| `TOKEN_DESBLOQUEO_INVALIDO` | 401 | El enlace de desbloqueo no existe, ya se usó o fue reemplazado por un bloqueo posterior |
+| `TOKEN_DESBLOQUEO_EXPIRADO` | 410 | El enlace de desbloqueo tiene más de 30 minutos |
+| `BLOQUEO_NO_PERMITIDO` | 422 | Un administrador intenta bloquearse a sí mismo, o bloquear al último `ADMIN_SISTEMA` activo |
+
 ### SPEC-08 — Atributos
 
 | Código | HTTP | Cuándo |
@@ -154,18 +167,17 @@ información o duplica algo que ya existe.
 
 | No usar | Usar en su lugar | Por qué |
 |---|---|---|
-| `423 Locked` con el motivo del bloqueo | `403 CUENTA_NO_DISPONIBLE` | Un `423` confirma que la cuenta existe **y** que está bloqueada. Con eso se enumera y además se sabe a quién se ha conseguido bloquear |
+| `423 Locked` con el motivo del bloqueo | `401 CREDENCIALES_INVALIDAS` | Un `423` confirma que la cuenta existe **y** que está bloqueada. Con eso se enumera y además se sabe a quién se ha conseguido bloquear |
+| `403 CUENTA_NO_DISPONIBLE` en el login | `401 CREDENCIALES_INVALIDAS` | Con la contraseña correcta, un `403` le avisa al atacante de que acertó, aunque la cuenta esté bloqueada |
 | `AUTH_EMAIL_YA_REGISTRADO` | `CORREO_NO_DISPONIBLE` | Mismo significado, nombre que afirma de más |
 | `PASSWORD_DEMASIADO_CORTA` y las cuatro hermanas | `POLITICA_INCUMPLIDA` + `errores[]` | Ver el recuadro de SPEC-03 |
 | `TOKEN_RECUPERACION_USADO` | `TOKEN_RECUPERACION_INVALIDO` | Distinguir «usado» de «inexistente» dice si alguien pidió recuperación para ese correo |
 | Cualquier código que empiece por `AUTH_` | El equivalente de este catálogo | El prefijo no aporta: toda la API es de autenticación |
 
-> **Nota para SPEC-02 y SPEC-07.** Los dos borradores en PDF especifican
-> `423 Locked` en sus escenarios de cuenta bloqueada. Al redactarlas hay que
-> cambiarlo por `403 CUENTA_NO_DISPONIBLE`, que es lo que ya responde el
-> contrato publicado. Si alguien cree que el `423` es preferible, es una
-> discusión legítima, pero hay que tenerla **antes** del jueves y cambiar el
-> contrato, no después y cambiar el código.
+> **Decisión del 17 de septiembre.** El login con una cuenta bloqueada, inactiva
+> o sin verificar responde `401 CREDENCIALES_INVALIDAS`, igual que una
+> contraseña incorrecta. Sustituye tanto al `423 Locked` de los borradores en PDF
+> como al `403 CUENTA_NO_DISPONIBLE` que respondía el contrato hasta esa fecha.
 
 ---
 

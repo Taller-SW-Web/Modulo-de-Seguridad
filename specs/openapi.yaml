@@ -922,7 +922,12 @@ paths:
                     expiraEn: 300
         '401':
           description: |
-            Credenciales inválidas. **Idéntico si el correo no existe.**
+            Credenciales inválidas. **Idéntico si el correo no existe, y también
+            si la cuenta está bloqueada, inactiva o sin verificar, aunque la
+            contraseña sea correcta.** El login solo distingue «entras» de `401`:
+            cualquier otra respuesta serviría para saber si se acertó la
+            contraseña de una cuenta bloqueada. Quien queda bloqueado se entera
+            por correo (SPEC-07).
           content:
             application/problem+json:
               schema:
@@ -935,22 +940,6 @@ paths:
                     status: 401
                     code: CREDENCIALES_INVALIDAS
                     detail: El correo o la contraseña no son correctos.
-        '403':
-          description: |
-            La cuenta no está disponible: bloqueada, inactiva o pendiente de
-            verificación. **No se revela cuál de las tres.**
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Problem'
-              examples:
-                cuentaNoDisponible:
-                  value:
-                    type: "https://g7.unmsm.pe/errores/cuenta-no-disponible"
-                    title: La cuenta no está disponible
-                    status: 403
-                    code: CUENTA_NO_DISPONIBLE
-                    detail: No es posible iniciar sesión con esta cuenta en este momento.
 
   /auth/refresh:
     post:
@@ -1573,8 +1562,14 @@ paths:
       summary: Bloquea manualmente una cuenta
       description: |
         Definido por SPEC-07. **Solo `ADMIN_SISTEMA`.** El bloqueo manual no
-        vence y **reemplaza** a un bloqueo automático en curso. Se notifica al
-        usuario por correo y se publica `usuario.bloqueado`.
+        vence, **reemplaza** a un bloqueo automático en curso y **cierra todas
+        las sesiones** de la cuenta. Se notifica al usuario por correo, sin
+        enlace de desbloqueo, y se publica `usuario.bloqueado`.
+
+        Nadie puede bloquearse a sí mismo, y no se puede bloquear al último
+        `ADMIN_SISTEMA` activo. Una cuenta `INACTIVO` o
+        `PENDIENTE_VERIFICACION` no se puede bloquear: responde
+        `403 CUENTA_NO_DISPONIBLE`.
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       requestBody:
@@ -1591,13 +1586,27 @@ paths:
                   examples: ["Actividad sospechosa reportada por el canal retail"]
       responses:
         '204':
-          description: Cuenta bloqueada sin vencimiento
+          description: Cuenta bloqueada sin vencimiento y sesiones cerradas
         '401':
           $ref: '#/components/responses/NoAutenticado'
         '403':
           $ref: '#/components/responses/ScopeInsuficiente'
         '404':
           $ref: '#/components/responses/NoEncontrado'
+        '422':
+          description: Autobloqueo, o bloqueo del último `ADMIN_SISTEMA` activo
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                noPermitido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/bloqueo-no-permitido"
+                    title: Bloqueo no permitido
+                    status: 422
+                    code: BLOQUEO_NO_PERMITIDO
+                    detail: No se puede bloquear al último ADMIN_SISTEMA activo.
 
   /usuarios/{id}/desbloquear:
     post:
@@ -1605,9 +1614,9 @@ paths:
       operationId: desbloquearUsuario
       summary: Desbloquea una cuenta
       description: |
-        Definido por SPEC-07. **Solo `ADMIN_SISTEMA`.** La cuenta vuelve a
-        `ACTIVO`, el contador de intentos fallidos se reinicia y se publica
-        `usuario.desbloqueado`.
+        Definido por SPEC-07. **Solo `ADMIN_SISTEMA`.** Levanta cualquier
+        bloqueo, automático o manual. La cuenta vuelve a `ACTIVO`, el contador
+        de intentos fallidos se reinicia y se publica `usuario.desbloqueado`.
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       responses:
@@ -1619,6 +1628,63 @@ paths:
           $ref: '#/components/responses/ScopeInsuficiente'
         '404':
           $ref: '#/components/responses/NoEncontrado'
+
+  /auth/desbloquear:
+    post:
+      tags: [Autenticación]
+      operationId: desbloquearConEnlace
+      summary: El titular levanta un bloqueo automático con el enlace del correo
+      description: |
+        Definido por SPEC-07. El correo de aviso de un **bloqueo automático**
+        trae un enlace de un solo uso, válido 30 minutos. Consumirlo devuelve la
+        cuenta a `ACTIVO`, reinicia el contador de intentos fallidos y publica
+        `usuario.desbloqueado`.
+
+        Así, quien conozca el correo de alguien puede provocarle un bloqueo,
+        pero solo el dueño de ese correo puede levantarlo sin esperar a un
+        administrador. **Un bloqueo manual no genera enlace.** Cada bloqueo
+        nuevo invalida el enlace anterior.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+                  description: El token del enlace recibido por correo.
+      responses:
+        '204':
+          description: Cuenta desbloqueada
+        '401':
+          description: El token no existe, ya se usó o fue reemplazado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                tokenInvalido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-desbloqueo-invalido"
+                    title: Enlace de desbloqueo no válido
+                    status: 401
+                    code: TOKEN_DESBLOQUEO_INVALIDO
+        '410':
+          description: El token venció (más de 30 minutos)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                tokenExpirado:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-desbloqueo-expirado"
+                    title: El enlace de desbloqueo expiró
+                    status: 410
+                    code: TOKEN_DESBLOQUEO_EXPIRADO
 
   # ---------------------------------------------------------------------------
   # ATRIBUTOS DE PERFIL - SPEC-08

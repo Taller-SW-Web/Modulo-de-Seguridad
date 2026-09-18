@@ -37,7 +37,7 @@ donde el hueco se hiciera visible. Esta es esa tabla.
 
 ## 2. Specs ↔ endpoints del contrato
 
-✅ publicado en `openapi.yaml` · ⬜ falta añadirlo antes del jueves 17
+✅ publicado en `openapi.yaml`
 
 | Endpoint | SPEC | Estado |
 |---|---|---|
@@ -57,24 +57,25 @@ donde el hueco se hiciera visible. Esta es esa tabla.
 | `GET /auth/me` | 01 | ✅ |
 | `POST /auth/otp/solicitar` | 04 | ✅ |
 | `POST /auth/otp/verificar` | 04 | ✅ |
-| `POST /auth/verificar-correo` | 01 | ⬜ |
-| `POST /usuarios` | 01 | ⬜ |
-| `DELETE /usuarios/{id}` | 01 | ⬜ |
-| `GET /password/politica` | 03 | ⬜ |
-| `POST /password/recuperar` | 03 | ⬜ |
-| `POST /password/restablecer` | 03 | ⬜ |
-| `POST /password/cambiar` | 03 | ⬜ |
-| `POST /auth/otp/habilitar` | 04 | ⬜ |
-| `POST /auth/otp/deshabilitar` | 04 | ⬜ |
-| `POST /usuarios/{id}/roles` | 05 | ⬜ |
-| `DELETE /usuarios/{id}/roles/{rol}` | 05 | ⬜ |
-| `GET /auditoria` | 06 | ⬜ |
-| `GET /auditoria/exportar` | 06 | ⬜ |
-| `GET /auth/me/actividad` | 06 | ⬜ |
-| `POST /usuarios/{id}/bloquear` | 07 | ⬜ |
-| `POST /usuarios/{id}/desbloquear` | 07 | ⬜ |
-| `PATCH /usuarios/{id}/atributos` | 08 | ⬜ |
-| `POST /usuarios/{id}/direcciones` | 08 | ⬜ |
+| `POST /auth/verificar-correo` | 01 | ✅ |
+| `POST /usuarios` | 01 | ✅ |
+| `DELETE /usuarios/{id}` | 01 | ✅ |
+| `GET /password/politica` | 03 | ✅ |
+| `POST /password/recuperar` | 03 | ✅ |
+| `POST /password/restablecer` | 03 | ✅ |
+| `POST /password/cambiar` | 03 | ✅ |
+| `POST /auth/otp/habilitar` | 04 | ✅ |
+| `POST /auth/otp/deshabilitar` | 04 | ✅ |
+| `POST /usuarios/{id}/roles` | 05 | ✅ |
+| `DELETE /usuarios/{id}/roles/{rol}` | 05 | ✅ |
+| `GET /auditoria` | 06 | ✅ |
+| `GET /auditoria/exportar` | 06 | ✅ |
+| `GET /auth/me/actividad` | 06 | ✅ |
+| `POST /usuarios/{id}/bloquear` | 07 | ✅ |
+| `POST /usuarios/{id}/desbloquear` | 07 | ✅ |
+| `POST /auth/desbloquear` | 07 | ✅ |
+| `PATCH /usuarios/{id}/atributos` | 08 | ✅ |
+| `POST /usuarios/{id}/direcciones` | 08 | ✅ |
 
 **Ninguna spec puede quedarse sin endpoint.** Si al redactar la tuya no
 encuentras aquí ninguno que la haga observable desde fuera, díselo al PO: o
@@ -160,9 +161,7 @@ Lo que hoy sabemos que falta. Se cierra o se convierte en decisión escrita.
 
 | Hueco | Quién | Para cuándo |
 |---|---|---|
-| 18 endpoints sin publicar en `openapi.yaml` | Sergio | Jue 17 — congelamiento |
 | `permisos` viaja vacío hasta que SPEC-05 defina el catálogo | Eva Lucía | Hito 4 |
 | El permiso `auditoria:leer` no existe aún en el catálogo de SPEC-05 | Eva Lucía / Christian | Hito 3 |
-| SPEC-02 y SPEC-07 en PDF dicen `423 Locked`; el contrato dice `403 CUENTA_NO_DISPONIBLE` | Jose Luis / Luis David | Al redactar — ver [`catalogo-errores.md`](catalogo-errores.md) |
 | Los `client_id` y `client_secret` de los seis módulos no están creados | Christian | Hito 4 |
 | El catálogo de eventos no está acordado con los seis equipos | Sergio | Vie 18 |

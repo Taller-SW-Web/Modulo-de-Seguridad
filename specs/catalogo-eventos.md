@@ -113,15 +113,27 @@ Publica **SPEC-07**, tanto en el bloqueo automático como en el manual.
 "datos": { "automatico": true, "hasta": "2026-09-13T15:02:07.482Z" }
 ```
 
-`hasta` es `null` en el bloqueo manual, que no vence.
+`hasta` es `null` cuando el bloqueo no vence: el manual, y el automático a partir
+del cuarto seguido.
+
+**Si `hasta` tiene fecha, a partir de ese instante la cuenta ya no está
+bloqueada, y no llegará ningún `usuario.desbloqueado` que lo avise.** El
+vencimiento no es un suceso: el estado se calcula comparando la hora. El
+consumidor que cachee el estado debe guardar `hasta` y dejar de considerar
+bloqueada la cuenta cuando pase.
 
 ### `usuario.desbloqueado`
 
-Publica **SPEC-07**, en el desbloqueo manual y en el vencimiento automático.
+Publica **SPEC-07**, solo cuando alguien levanta el bloqueo de forma explícita:
+un administrador, o el titular con el enlace de desbloqueo o restableciendo su
+contraseña. **El vencimiento de un bloqueo no lo publica** (ver
+`usuario.bloqueado`).
 
 ```json
-"datos": { "automatico": false }
+"datos": { "via": "ADMINISTRADOR" }
 ```
+
+`via` es `ADMINISTRADOR`, `ENLACE` o `RESTABLECIMIENTO`.
 
 ### `usuario.roles_cambiados`
 

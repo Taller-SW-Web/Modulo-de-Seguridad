@@ -59,7 +59,7 @@ Esta especificación cubre:
 | **RF-03.9**  | El sistema debe generar un **token de recuperación de un solo uso** con una vigencia máxima de **30 minutos**.                                          |
 | **RF-03.10** | Una nueva solicitud de recuperación debe invalidar los tokens anteriores asociados a la cuenta.                                                         |
 | **RF-03.11** | El sistema debe rechazar tokens de recuperación expirados o ya utilizados.                                                                              |
-| **RF-03.12** | Después de un restablecimiento exitoso, el sistema debe validar la nueva contraseña e invalidar los tokens o sesiones anteriores asociados a la cuenta. |
+| **RF-03.12** | Después de un restablecimiento exitoso, el sistema debe validar la nueva contraseña e invalidar los tokens o sesiones anteriores asociados a la cuenta. Si la cuenta tiene un bloqueo automático, el restablecimiento lo levanta (ver SPEC-07). La recuperación funciona aunque la cuenta esté bloqueada. |
 | **RF-03.13** | El cambio de contraseña de un usuario autenticado debe requerir la verificación de su contraseña actual y validar la nueva contraseña.                  |
 | **RF-03.14** | El sistema debe notificar al usuario mediante correo después de un cambio o restablecimiento exitoso.                                                   |
 | **RF-03.15** | El sistema debe generar los eventos de auditoría `RECUPERACION_SOLICITADA`, `CONTRASENA_RESTABLECIDA` y `CONTRASENA_CAMBIADA`.                          |
