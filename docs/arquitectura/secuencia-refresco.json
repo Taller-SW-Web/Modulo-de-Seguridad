@@ -135,7 +135,7 @@
       "from": "api",
       "to": "auditoria",
       "y": 387,
-      "label": "posible robo de token",
+      "label": "REFRESCO_REUTILIZADO",
       "variant": "dashed"
     },
     {
@@ -143,7 +143,7 @@
       "from": "api",
       "to": "spa",
       "y": 416,
-      "label": "401 · todas las sesiones cerradas",
+      "label": "401 REFRESCO_INVALIDO · sesión revocada",
       "variant": "return"
     }
   ],
@@ -188,8 +188,8 @@
       "title": "El caso borde que importa",
       "items": [
         "Si aparece un refresco ya rotado, o lo robaron o se duplicó la sesión",
-        "El servicio no puede saber cuál es el legítimo: revoca la familia entera",
-        "Responde 401 y deja el evento en la bitácora de auditoría"
+        "El servicio no puede saber cuál es el legítimo: revoca la familia entera de esa sesión",
+        "Responde 401 REFRESCO_INVALIDO y registra REFRESCO_REUTILIZADO en auditoría"
       ]
     },
     {

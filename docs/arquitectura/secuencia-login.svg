@@ -443,9 +443,9 @@ rect.c-bg-rect { fill: var(--bg); }
         <rect width="100%" height="100%" fill="url(#grid)"/>
 
         <!-- Time Segments -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="0" x="48" y="180" width="984" height="166" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="0" x="48" y="177" width="984" height="185" rx="10" class="c-lane" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="1" x="48" y="354" width="984" height="143" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="1" x="48" y="382" width="984" height="108" rx="10" class="c-lane" stroke-width="1"/>
 
         <!-- Lifelines -->
         <path d="M 129.5 142 L 129.5 505" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
@@ -456,119 +456,119 @@ rect.c-bg-rect { fill: var(--bg); }
         <path d="M 972.5 142 L 972.5 505" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
 
         <!-- Activations -->
-        <rect x="293.1" y="209" width="10" height="278" rx="3" class="c-mask"/>
-        <rect x="293.1" y="209" width="10" height="278" rx="3" class="c-frontend" stroke-width="1"/>
-        <rect x="461.7" y="214" width="10" height="267" rx="3" class="c-mask"/>
-        <rect x="461.7" y="214" width="10" height="267" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="798.9" y="239" width="10" height="39" rx="3" class="c-mask"/>
-        <rect x="798.9" y="239" width="10" height="39" rx="3" class="c-database" stroke-width="1"/>
-        <rect x="630.3" y="419" width="10" height="37" rx="3" class="c-mask"/>
-        <rect x="630.3" y="419" width="10" height="37" rx="3" class="c-security" stroke-width="1"/>
-        <rect x="967.5" y="297" width="10" height="19" rx="3" class="c-mask"/>
-        <rect x="967.5" y="297" width="10" height="19" rx="3" class="c-external" stroke-width="1"/>
+        <rect x="293.1" y="205" width="10" height="277" rx="3" class="c-mask"/>
+        <rect x="293.1" y="205" width="10" height="277" rx="3" class="c-frontend" stroke-width="1"/>
+        <rect x="461.7" y="210" width="10" height="266" rx="3" class="c-mask"/>
+        <rect x="461.7" y="210" width="10" height="266" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="798.9" y="234" width="10" height="38" rx="3" class="c-mask"/>
+        <rect x="798.9" y="234" width="10" height="38" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="630.3" y="444" width="10" height="22" rx="3" class="c-mask"/>
+        <rect x="630.3" y="444" width="10" height="22" rx="3" class="c-security" stroke-width="1"/>
+        <rect x="967.5" y="346" width="10" height="19" rx="3" class="c-mask"/>
+        <rect x="967.5" y="346" width="10" height="19" rx="3" class="c-external" stroke-width="1"/>
 
         <!-- Messages -->
         <g data-edge-from="usuario" data-edge-to="spa" data-edge-label="correo y contraseña" data-edge-key="0" data-edge-id="credenciales">
-          <path data-composition-edge-from="usuario" data-composition-edge-to="spa" data-composition-edge-id="credenciales" data-composition-points="136.5,185;291.1,185" d="M 136.5 185 L 291.1 185" class="a-default" data-animate="edge" style="--step:0" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="usuario" data-composition-edge-to="spa" data-composition-edge-id="credenciales" data-composition-points="136.5,182;291.1,182" d="M 136.5 182 L 291.1 182" class="a-default" data-animate="edge" style="--step:0" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <rect x="158.4" y="165" width="110.8" height="16" rx="3" class="c-mask"/>
-          <text x="213.8" y="175" class="t-backend" font-size="9" text-anchor="middle">correo y contraseña</text>
+          <rect x="158.4" y="162" width="110.8" height="16" rx="3" class="c-mask"/>
+          <text x="213.8" y="172" class="t-backend" font-size="9" text-anchor="middle">correo y contraseña</text>
         </g>
         </g>
 
         <g data-edge-from="spa" data-edge-to="api" data-edge-label="POST /auth/login" data-edge-key="1" data-edge-id="post-login">
-          <path data-composition-edge-from="spa" data-composition-edge-to="api" data-composition-edge-id="post-login" data-composition-points="305.1,214;459.7,214" d="M 305.1 214 L 459.7 214" class="a-emphasis" data-animate="edge" style="--step:1" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+          <path data-composition-edge-from="spa" data-composition-edge-to="api" data-composition-edge-id="post-login" data-composition-points="305.1,210;459.7,210" d="M 305.1 210 L 459.7 210" class="a-emphasis" data-animate="edge" style="--step:1" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g>
-          <rect x="334.79999999999995" y="194" width="95.2" height="16" rx="3" class="c-mask"/>
-          <text x="382.4" y="204" class="t-backend" font-size="9" text-anchor="middle">POST /auth/login</text>
+          <rect x="334.79999999999995" y="190" width="95.2" height="16" rx="3" class="c-mask"/>
+          <text x="382.4" y="200" class="t-backend" font-size="9" text-anchor="middle">POST /auth/login</text>
         </g>
         </g>
 
         <g data-edge-from="api" data-edge-to="db" data-edge-label="verifica BCrypt y estado" data-edge-key="2" data-edge-id="verifica-bcrypt">
-          <path data-composition-edge-from="api" data-composition-edge-to="db" data-composition-edge-id="verifica-bcrypt" data-composition-points="473.7,243;796.9,243" d="M 473.7 243 L 796.9 243" class="a-default" data-animate="edge" style="--step:2" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="api" data-composition-edge-to="db" data-composition-edge-id="verifica-bcrypt" data-composition-points="473.7,238;796.9,238" d="M 473.7 238 L 796.9 238" class="a-default" data-animate="edge" style="--step:2" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <rect x="566.9" y="223" width="136.8" height="16" rx="3" class="c-mask"/>
-          <text x="635.3" y="233" class="t-backend" font-size="9" text-anchor="middle">verifica BCrypt y estado</text>
+          <rect x="566.9" y="218" width="136.8" height="16" rx="3" class="c-mask"/>
+          <text x="635.3" y="228" class="t-backend" font-size="9" text-anchor="middle">verifica BCrypt y estado</text>
         </g>
         </g>
 
         <g data-edge-from="db" data-edge-to="api" data-edge-label="válido · MFA activo" data-edge-key="3" data-edge-id="mfa-activo">
-          <path data-composition-edge-from="db" data-composition-edge-to="api" data-composition-edge-id="mfa-activo" data-composition-points="796.9,272;473.7,272" d="M 796.9 272 L 473.7 272" class="a-default" data-animate="edge" style="--step:3" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="db" data-composition-edge-to="api" data-composition-edge-id="mfa-activo" data-composition-points="796.9,266;473.7,266" d="M 796.9 266 L 473.7 266" class="a-default" data-animate="edge" style="--step:3" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <rect x="579.9" y="252" width="110.8" height="16" rx="3" class="c-mask"/>
-          <text x="635.3" y="262" class="t-muted" font-size="9" text-anchor="middle">válido · MFA activo</text>
+          <rect x="579.9" y="246" width="110.8" height="16" rx="3" class="c-mask"/>
+          <text x="635.3" y="256" class="t-muted" font-size="9" text-anchor="middle">válido · MFA activo</text>
         </g>
         </g>
 
-        <g data-edge-from="api" data-edge-to="correo" data-edge-label="OTP de 6 dígitos · 5 min" data-edge-key="4" data-edge-id="envia-otp">
-          <path data-composition-edge-from="api" data-composition-edge-to="correo" data-composition-edge-id="envia-otp" data-composition-points="473.7,301;965.5,301" d="M 473.7 301 L 965.5 301" class="a-dashed" data-animate="edge" style="--step:4" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+        <g data-edge-from="api" data-edge-to="spa" data-edge-label="200 · mfaRequerido + challengeToken" data-edge-key="4" data-edge-id="desafio">
+          <path data-composition-edge-from="api" data-composition-edge-to="spa" data-composition-edge-id="desafio" data-composition-points="459.7,294;305.1,294" d="M 459.7 294 L 305.1 294" class="a-default" data-animate="edge" style="--step:4" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <rect x="651.2" y="281" width="136.8" height="16" rx="3" class="c-mask"/>
-          <text x="719.6" y="291" class="t-messagebus" font-size="9" text-anchor="middle">OTP de 6 dígitos · 5 min</text>
+          <rect x="285.4" y="274" width="194" height="16" rx="3" class="c-mask"/>
+          <text x="382.4" y="284" class="t-muted" font-size="9" text-anchor="middle">200 · mfaRequerido + challengeToken</text>
         </g>
         </g>
 
-        <g data-edge-from="api" data-edge-to="spa" data-edge-label="202 mfa_requerido" data-edge-key="5" data-edge-id="desafio">
-          <path data-composition-edge-from="api" data-composition-edge-to="spa" data-composition-edge-id="desafio" data-composition-points="459.7,330;305.1,330" d="M 459.7 330 L 305.1 330" class="a-default" data-animate="edge" style="--step:5" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-edge-from="spa" data-edge-to="api" data-edge-label="POST /auth/otp/solicitar" data-edge-key="5" data-edge-id="solicita-otp">
+          <path data-composition-edge-from="spa" data-composition-edge-to="api" data-composition-edge-id="solicita-otp" data-composition-points="305.1,322;459.7,322" d="M 305.1 322 L 459.7 322" class="a-default" data-animate="edge" style="--step:5" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <rect x="332.2" y="310" width="100.4" height="16" rx="3" class="c-mask"/>
-          <text x="382.4" y="320" class="t-muted" font-size="9" text-anchor="middle">202 mfa_requerido</text>
+          <rect x="314" y="302" width="136.8" height="16" rx="3" class="c-mask"/>
+          <text x="382.4" y="312" class="t-backend" font-size="9" text-anchor="middle">POST /auth/otp/solicitar</text>
         </g>
         </g>
 
-        <g data-edge-from="usuario" data-edge-to="spa" data-edge-label="introduce el código" data-edge-key="6" data-edge-id="teclea-codigo">
-          <path data-composition-edge-from="usuario" data-composition-edge-to="spa" data-composition-edge-id="teclea-codigo" data-composition-points="136.5,365;291.1,365" d="M 136.5 365 L 291.1 365" class="a-default" data-animate="edge" style="--step:6" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-edge-from="api" data-edge-to="correo" data-edge-label="OTP de 6 dígitos · 5 min" data-edge-key="6" data-edge-id="envia-otp">
+          <path data-composition-edge-from="api" data-composition-edge-to="correo" data-composition-edge-id="envia-otp" data-composition-points="473.7,350;965.5,350" d="M 473.7 350 L 965.5 350" class="a-dashed" data-animate="edge" style="--step:6" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <g>
-          <rect x="158.4" y="345" width="110.8" height="16" rx="3" class="c-mask"/>
-          <text x="213.8" y="355" class="t-backend" font-size="9" text-anchor="middle">introduce el código</text>
+          <rect x="651.2" y="330" width="136.8" height="16" rx="3" class="c-mask"/>
+          <text x="719.6" y="340" class="t-messagebus" font-size="9" text-anchor="middle">OTP de 6 dígitos · 5 min</text>
         </g>
         </g>
 
-        <g data-edge-from="spa" data-edge-to="api" data-edge-label="POST /auth/otp/verificar" data-edge-key="7" data-edge-id="post-otp">
-          <path data-composition-edge-from="spa" data-composition-edge-to="api" data-composition-edge-id="post-otp" data-composition-points="305.1,394;459.7,394" d="M 305.1 394 L 459.7 394" class="a-emphasis" data-animate="edge" style="--step:7" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-edge-from="usuario" data-edge-to="spa" data-edge-label="introduce el código" data-edge-key="7" data-edge-id="teclea-codigo">
+          <path data-composition-edge-from="usuario" data-composition-edge-to="spa" data-composition-edge-id="teclea-codigo" data-composition-points="136.5,392;291.1,392" d="M 136.5 392 L 291.1 392" class="a-default" data-animate="edge" style="--step:7" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <rect x="314" y="374" width="136.8" height="16" rx="3" class="c-mask"/>
-          <text x="382.4" y="384" class="t-backend" font-size="9" text-anchor="middle">POST /auth/otp/verificar</text>
+          <rect x="158.4" y="372" width="110.8" height="16" rx="3" class="c-mask"/>
+          <text x="213.8" y="382" class="t-backend" font-size="9" text-anchor="middle">introduce el código</text>
         </g>
         </g>
 
-        <g data-edge-from="api" data-edge-to="jwt" data-edge-label="firma el par de tokens" data-edge-key="8" data-edge-id="firma">
-          <path data-composition-edge-from="api" data-composition-edge-to="jwt" data-composition-edge-id="firma" data-composition-points="473.7,423;628.3,423" d="M 473.7 423 L 628.3 423" class="a-security" data-animate="edge" style="--step:8" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+        <g data-edge-from="spa" data-edge-to="api" data-edge-label="POST /auth/otp/verificar" data-edge-key="8" data-edge-id="post-otp">
+          <path data-composition-edge-from="spa" data-composition-edge-to="api" data-composition-edge-id="post-otp" data-composition-points="305.1,420;459.7,420" d="M 305.1 420 L 459.7 420" class="a-emphasis" data-animate="edge" style="--step:8" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g>
-          <rect x="487.8" y="403" width="126.4" height="16" rx="3" class="c-mask"/>
-          <text x="551" y="413" class="t-security" font-size="9" text-anchor="middle">firma el par de tokens</text>
+          <rect x="314" y="400" width="136.8" height="16" rx="3" class="c-mask"/>
+          <text x="382.4" y="410" class="t-backend" font-size="9" text-anchor="middle">POST /auth/otp/verificar</text>
         </g>
         </g>
 
-        <g data-edge-from="jwt" data-edge-to="api" data-edge-label="acceso 15 min · refresco 7 d hasheado" data-edge-key="9" data-edge-id="tokens">
-          <path data-composition-edge-from="jwt" data-composition-edge-to="api" data-composition-edge-id="tokens" data-composition-points="628.3,452;473.7,452" d="M 628.3 452 L 473.7 452" class="a-default" data-animate="edge" style="--step:9" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-edge-from="api" data-edge-to="jwt" data-edge-label="firma el par de tokens (RS256)" data-edge-key="9" data-edge-id="firma">
+          <path data-composition-edge-from="api" data-composition-edge-to="jwt" data-composition-edge-id="firma" data-composition-points="473.7,448;628.3,448" d="M 473.7 448 L 628.3 448" class="a-security" data-animate="edge" style="--step:9" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
         <g>
-          <rect x="448.8" y="432" width="204.4" height="16" rx="3" class="c-mask"/>
-          <text x="551" y="442" class="t-muted" font-size="9" text-anchor="middle">acceso 15 min · refresco 7 d hasheado</text>
+          <rect x="467" y="428" width="168" height="16" rx="3" class="c-mask"/>
+          <text x="551" y="438" class="t-security" font-size="9" text-anchor="middle">firma el par de tokens (RS256)</text>
         </g>
         </g>
 
-        <g data-edge-from="api" data-edge-to="spa" data-edge-label="200 con ambos tokens" data-edge-key="10" data-edge-id="respuesta-tokens">
-          <path data-composition-edge-from="api" data-composition-edge-to="spa" data-composition-edge-id="respuesta-tokens" data-composition-points="459.7,481;305.1,481" d="M 459.7 481 L 305.1 481" class="a-default" data-animate="edge" style="--step:10" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-edge-from="api" data-edge-to="spa" data-edge-label="200 · acceso 15 min · refresco 7 d" data-edge-key="10" data-edge-id="respuesta-tokens">
+          <path data-composition-edge-from="api" data-composition-edge-to="spa" data-composition-edge-id="respuesta-tokens" data-composition-points="459.7,476;305.1,476" d="M 459.7 476 L 305.1 476" class="a-default" data-animate="edge" style="--step:10" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <rect x="324.4" y="461" width="116" height="16" rx="3" class="c-mask"/>
-          <text x="382.4" y="471" class="t-muted" font-size="9" text-anchor="middle">200 con ambos tokens</text>
+          <rect x="288" y="456" width="188.8" height="16" rx="3" class="c-mask"/>
+          <text x="382.4" y="466" class="t-muted" font-size="9" text-anchor="middle">200 · acceso 15 min · refresco 7 d</text>
         </g>
         </g>
 
         <!-- Segment Labels -->
         <g data-graph-role="segment-label" data-segment-id="0">
-          <rect x="56" y="136" width="242.8" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="149" class="t-dim" font-size="9" font-weight="600">1 · Credenciales y desafío de segundo factor</text>
+          <rect x="56" y="133" width="242.8" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="146" class="t-dim" font-size="9" font-weight="600">1 · Credenciales y desafío de segundo factor</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="1">
-          <rect x="56" y="288" width="258.4" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="301" class="t-dim" font-size="9" font-weight="600">2 · Verificación del código y emisión de tokens</text>
+          <rect x="56" y="338" width="258.4" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="351" class="t-dim" font-size="9" font-weight="600">2 · Verificación del código y emisión de tokens</text>
         </g>
 
         <!-- Participants -->
-        <g id="node-usuario" data-node-id="usuario" data-node-label="Usuario" tabindex="0" role="button" aria-label="Focus Usuario, cliente o vendedor, Sequence participant" aria-pressed="false" data-node-kind="external" data-node-sublabel="cliente o vendedor" data-node-context="Sequence participant">
-          <title>Usuario · cliente o vendedor · Sequence participant</title>
+        <g id="node-usuario" data-node-id="usuario" data-node-label="Usuario" tabindex="0" role="button" aria-label="Focus Usuario, cuenta con MFA, Sequence participant" aria-pressed="false" data-node-kind="external" data-node-sublabel="cuenta con MFA" data-node-context="Sequence participant">
+          <title>Usuario · cuenta con MFA · Sequence participant</title>
           <rect x="62" y="72" width="135" height="54" rx="6" class="c-mask"/>
           <rect x="62" y="72" width="135" height="54" rx="6" class="c-external" data-animate="node" style="--step:0" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(68 78) scale(0.6875)">
@@ -576,7 +576,7 @@ rect.c-bg-rect { fill: var(--bg); }
             <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
           </g>
           <text data-node-label="" x="129.5" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Usuario</text>
-          <text x="129.5" y="111" class="t-muted" font-size="7" text-anchor="middle">cliente o vendedor</text>
+          <text x="129.5" y="111" class="t-muted" font-size="7" text-anchor="middle">cuenta con MFA</text>
         </g>
 
         <g id="node-spa" data-node-id="spa" data-node-label="SPA" tabindex="0" role="button" aria-label="Focus SPA, React 18, Sequence participant" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="React 18" data-node-context="Sequence participant">
@@ -680,12 +680,12 @@ g[data-edge-id="credenciales"]{animation:l_xcredenciales var(--ciclo) linear inf
 g[data-edge-id="post-login"]{animation:l_xpost_login var(--ciclo) linear infinite both}
 g[data-edge-id="verifica-bcrypt"]{animation:l_xverifica_bcrypt var(--ciclo) linear infinite both}
 g[data-edge-id="mfa-activo"]{animation:l_xmfa_activo var(--ciclo) linear infinite both}
-g[data-edge-id="envia-otp"]{animation:l_xenvia_otp var(--ciclo) linear infinite both}
 g[data-edge-id="desafio"]{animation:l_xdesafio var(--ciclo) linear infinite both}
+g[data-edge-id="solicita-otp"]{animation:l_xsolicita_otp var(--ciclo) linear infinite both}
+g[data-edge-id="envia-otp"]{animation:l_xenvia_otp var(--ciclo) linear infinite both}
 g[data-edge-id="teclea-codigo"]{animation:l_xteclea_codigo var(--ciclo) linear infinite both}
 g[data-edge-id="post-otp"]{animation:l_xpost_otp var(--ciclo) linear infinite both}
 g[data-edge-id="firma"]{animation:l_xfirma var(--ciclo) linear infinite both}
-g[data-edge-id="tokens"]{animation:l_xtokens var(--ciclo) linear infinite both}
 g[data-edge-id="respuesta-tokens"]{animation:l_xrespuesta_tokens var(--ciclo) linear infinite both}
 @keyframes m_x0{0%,2.719%{opacity:0}5.438%,95.106%{opacity:1}100%{opacity:0}}
 @keyframes m_x1{0%,3.915%{opacity:0}6.634%,95.106%{opacity:1}100%{opacity:0}}
@@ -699,12 +699,12 @@ g[data-edge-id="respuesta-tokens"]{animation:l_xrespuesta_tokens var(--ciclo) li
 @keyframes l_xpost_login{0%,18.488%{opacity:0}20.772%,95.106%{opacity:1}100%{opacity:0}}
 @keyframes l_xverifica_bcrypt{0%,20.772%{opacity:0}23.056%,95.106%{opacity:1}100%{opacity:0}}
 @keyframes l_xmfa_activo{0%,23.056%{opacity:0}25.34%,95.106%{opacity:1}100%{opacity:0}}
-@keyframes l_xenvia_otp{0%,25.34%{opacity:0}27.624%,95.106%{opacity:1}100%{opacity:0}}
-@keyframes l_xdesafio{0%,27.624%{opacity:0}29.908%,95.106%{opacity:1}100%{opacity:0}}
-@keyframes l_xteclea_codigo{0%,29.908%{opacity:0}32.191%,95.106%{opacity:1}100%{opacity:0}}
-@keyframes l_xpost_otp{0%,32.191%{opacity:0}34.475%,95.106%{opacity:1}100%{opacity:0}}
-@keyframes l_xfirma{0%,34.475%{opacity:0}36.759%,95.106%{opacity:1}100%{opacity:0}}
-@keyframes l_xtokens{0%,36.759%{opacity:0}39.043%,95.106%{opacity:1}100%{opacity:0}}
+@keyframes l_xdesafio{0%,25.34%{opacity:0}27.624%,95.106%{opacity:1}100%{opacity:0}}
+@keyframes l_xsolicita_otp{0%,27.624%{opacity:0}29.908%,95.106%{opacity:1}100%{opacity:0}}
+@keyframes l_xenvia_otp{0%,29.908%{opacity:0}32.191%,95.106%{opacity:1}100%{opacity:0}}
+@keyframes l_xteclea_codigo{0%,32.191%{opacity:0}34.475%,95.106%{opacity:1}100%{opacity:0}}
+@keyframes l_xpost_otp{0%,34.475%{opacity:0}36.759%,95.106%{opacity:1}100%{opacity:0}}
+@keyframes l_xfirma{0%,36.759%{opacity:0}39.043%,95.106%{opacity:1}100%{opacity:0}}
 @keyframes l_xrespuesta_tokens{0%,39.043%{opacity:0}41.327%,95.106%{opacity:1}100%{opacity:0}}
 </style>
 </svg>

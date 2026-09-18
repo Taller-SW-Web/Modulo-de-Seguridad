@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Integración con Seguridad",
+    "output": "comunicacion-modulos.html",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "viewBox": [
+      1080,
+      591
+    ],
+    "views": [
+      {
+        "id": "arranque",
+        "label": "Arranque del módulo",
+        "focus": [
+          "consumidor",
+          "auth"
+        ],
+        "note": "Una vez al arrancar: token de servicio con client_credentials y clave pública del JWKS en caché."
+      },
+      {
+        "id": "via1",
+        "label": "Vía 1 · validación local",
+        "focus": [
+          "canal",
+          "auth",
+          "consumidor"
+        ],
+        "note": "El caso normal: el consumidor verifica la firma RS256 sin llamarnos."
+      },
+      {
+        "id": "datos",
+        "label": "Pedir datos del usuario",
+        "focus": [
+          "consumidor",
+          "identidad"
+        ],
+        "note": "Con token de servicio y el scope justo; el documento llega enmascarado sin usuarios:leer:documento."
+      },
+      {
+        "id": "via2",
+        "label": "Vía 2 · introspección",
+        "focus": [
+          "consumidor",
+          "auth"
+        ],
+        "note": "Solo antes de una operación sensible: confirma que la sesión sigue viva."
+      },
+      {
+        "id": "via3",
+        "label": "Vía 3 · eventos",
+        "focus": [
+          "identidad",
+          "rabbit",
+          "consumidor"
+        ],
+        "note": "Bajas, bloqueos y cambios de rol llegan sin preguntar, con consistencia eventual."
+      }
+    ]
+  },
+  "participants": [
+    {
+      "id": "canal",
+      "type": "frontend",
+      "label": "Frontend del canal",
+      "sublabel": "p. ej. Marketplace"
+    },
+    {
+      "id": "consumidor",
+      "type": "backend",
+      "label": "Backend consumidor",
+      "sublabel": "p. ej. Despacho"
+    },
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "Seguridad /auth",
+      "sublabel": "login · token · JWKS"
+    },
+    {
+      "id": "identidad",
+      "type": "backend",
+      "label": "Seguridad /usuarios",
+      "sublabel": "API de identidad"
+    },
+    {
+      "id": "rabbit",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "seguridad.usuarios"
+    }
+  ],
+  "segments": [
+    {
+      "from": 161,
+      "to": 213,
+      "label": "Arranque"
+    },
+    {
+      "from": 235,
+      "to": 315,
+      "label": "Vía 1 · validación local"
+    },
+    {
+      "from": 337,
+      "to": 445,
+      "label": "Consultas síncronas: datos y vía 2"
+    },
+    {
+      "from": 467,
+      "to": 519,
+      "label": "Vía 3 · eventos"
+    }
+  ],
+  "messages": [
+    {
+      "id": "pedir-token-servicio",
+      "from": "consumidor",
+      "to": "auth",
+      "y": 172,
+      "label": "POST /auth/token · GET jwks.json",
+      "variant": "security"
+    },
+    {
+      "id": "token-servicio",
+      "from": "auth",
+      "to": "consumidor",
+      "y": 200,
+      "label": "token de servicio + clave pública",
+      "variant": "return"
+    },
+    {
+      "id": "login",
+      "from": "canal",
+      "to": "auth",
+      "y": 246,
+      "label": "POST /auth/login",
+      "variant": "emphasis",
+      "note": "La persona inicia sesión en el canal"
+    },
+    {
+      "id": "access-token",
+      "from": "auth",
+      "to": "canal",
+      "y": 274,
+      "label": "JWT RS256 · 15 min · roles",
+      "variant": "return"
+    },
+    {
+      "id": "peticion-bearer",
+      "from": "canal",
+      "to": "consumidor",
+      "y": 302,
+      "label": "petición + Authorization: Bearer",
+      "variant": "emphasis",
+      "note": "El consumidor valida la firma con la clave en caché: ninguna llamada a Seguridad"
+    },
+    {
+      "id": "pedir-direcciones",
+      "from": "consumidor",
+      "to": "identidad",
+      "y": 348,
+      "label": "GET /usuarios/{id}/direcciones",
+      "variant": "default"
+    },
+    {
+      "id": "direcciones",
+      "from": "identidad",
+      "to": "consumidor",
+      "y": 376,
+      "label": "datos según el scope",
+      "variant": "return"
+    },
+    {
+      "id": "introspeccion",
+      "from": "consumidor",
+      "to": "auth",
+      "y": 404,
+      "label": "POST /auth/introspeccion",
+      "variant": "security"
+    },
+    {
+      "id": "sesion-viva",
+      "from": "auth",
+      "to": "consumidor",
+      "y": 432,
+      "label": "active: true · roles actuales",
+      "variant": "return"
+    },
+    {
+      "id": "publicar-evento",
+      "from": "identidad",
+      "to": "rabbit",
+      "y": 478,
+      "label": "usuario.bloqueado",
+      "variant": "dashed"
+    },
+    {
+      "id": "entregar-evento",
+      "from": "rabbit",
+      "to": "consumidor",
+      "y": 506,
+      "label": "a la cola del módulo (AMQP)",
+      "variant": "dashed",
+      "note": "Deduplica por eventoId e invalida su caché"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "consumidor",
+      "from": 167,
+      "to": 206,
+      "type": "backend"
+    },
+    {
+      "participant": "auth",
+      "from": 167,
+      "to": 206,
+      "type": "security"
+    },
+    {
+      "participant": "canal",
+      "from": 241,
+      "to": 308,
+      "type": "frontend"
+    },
+    {
+      "participant": "auth",
+      "from": 241,
+      "to": 280,
+      "type": "security"
+    },
+    {
+      "participant": "consumidor",
+      "from": 297,
+      "to": 438,
+      "type": "backend"
+    },
+    {
+      "participant": "identidad",
+      "from": 343,
+      "to": 382,
+      "type": "backend"
+    },
+    {
+      "participant": "auth",
+      "from": 399,
+      "to": 438,
+      "type": "security"
+    },
+    {
+      "participant": "rabbit",
+      "from": 473,
+      "to": 512,
+      "type": "messagebus"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Qué vía usar",
+      "items": [
+        "Vía 1 en cada petición: cero llamadas",
+        "Vía 2 antes de algo sensible",
+        "Vía 3 para bajas, bloqueos y roles"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Scopes por módulo",
+      "items": [
+        "Despacho: usuarios:leer · direcciones:leer",
+        "Productos: tokens:introspeccion · roles:leer",
+        "Ventas: + usuarios:leer:documento"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Piden sus repos y aún no cubrimos",
+      "items": [
+        "Despacho: roles REPARTIDOR y GESTOR_FLOTA",
+        "Despacho: claim idRepartidor",
+        "Chatbot: buscar cliente por correo"
+      ]
+    }
+  ]
+}
