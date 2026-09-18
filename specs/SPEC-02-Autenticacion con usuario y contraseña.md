@@ -45,7 +45,7 @@ Esta especificación comprende:
 - Detección del reutilizamiento de un `refreshToken`.
 - Revocación de la familia completa de tokens cuando se detecte reutilización.
 - Validación del estado de la cuenta antes de emitir tokens.
-- Manejo del contador de intentos fallidos de autenticación.
+- Aviso de cada intento fallido a SPEC-07, que lleva el contador y decide el bloqueo.
 - Integración con MFA cuando la cuenta tenga MFA habilitado.
 
 ---
@@ -58,8 +58,8 @@ Esta especificación comprende:
 | RF-02.3 | El sistema debe rotar el refreshToken en cada uso válido, entregando un nuevo par de tokens e invalidando el refreshToken utilizado. |
 | RF-02.4 | El sistema debe revocar el refreshToken correspondiente a la sesión cuando el usuario realiza logout. |
 | RF-02.5 | Si el sistema detecta que un refreshToken previamente utilizado vuelve a ser presentado, debe revocar todos los refreshToken pertenecientes a la familia de esa sesión y rechazar la solicitud. |
-| RF-02.6 | Cuando se produzca un intento de inicio de sesión con credenciales incorrectas, el sistema debe incrementar en uno el contador de intentos fallidos del usuario. |
-| RF-02.7 | El sistema debe rechazar el inicio de sesión cuando la cuenta se encuentre bloqueada o inactiva y no debe emitir tokens. |
+| RF-02.6 | Cuando se produzca un intento de inicio de sesión con credenciales incorrectas, el sistema debe registrarlo como intento fallido según SPEC-07, que es la dueña del contador y del bloqueo. |
+| RF-02.7 | El sistema debe rechazar el inicio de sesión cuando la cuenta se encuentre bloqueada, inactiva o pendiente de verificación, no debe emitir tokens y debe responder `401 CREDENCIALES_INVALIDAS`, igual que ante una contraseña incorrecta. |
 
 ---
 
@@ -90,7 +90,7 @@ Esta especificación comprende:
 Además:
 
 - Debe mostrar un mensaje genérico.
-- Debe incrementar `intentos_fallidos` en uno.
+- Debe registrar el intento fallido, que SPEC-07 cuenta según sus reglas.
 - No debe entregar tokens.
 
 ---
@@ -113,11 +113,11 @@ El mensaje debe ser equivalente al utilizado para una contraseña incorrecta y n
 
 **Cuando** proporciona credenciales correctas.
 
-**Entonces** el sistema debe responder con código HTTP `423 Locked`.
+**Entonces** el sistema debe responder `401 CREDENCIALES_INVALIDAS`, exactamente igual que ante una contraseña incorrecta.
 
 No se deben generar ni entregar `accessToken` ni `refreshToken`.
 
-Cuando corresponda, se debe proporcionar el motivo del bloqueo.
+No se debe revelar que la cuenta está bloqueada ni el motivo: el titular se entera por el correo de aviso (SPEC-07).
 
 ---
 
