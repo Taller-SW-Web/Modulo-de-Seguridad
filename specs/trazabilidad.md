@@ -17,14 +17,14 @@ donde el hueco se hiciera visible. Esta es esa tabla.
 
 | SPEC | Funcionalidad | Responsable | Archivo | Estado |
 |---|---|---|---|---|
-| 01 | Registro y gestión de usuarios | Eva Lucía | `SPEC-01-registro.md` | ⬜ Por redactar |
-| 02 | Autenticación usuario/contraseña | Jose Luis | `SPEC-02-autenticacion.md` | ⬜ Por redactar |
-| 03 | Gestión de credenciales y contraseñas | Juan José | `SPEC-03-credenciales.md` | ⬜ Por redactar |
-| 04 | Autenticación por OTP y MFA | Luis David | `SPEC-04-otp-mfa.md` | ⬜ Por redactar |
-| 05 | Gestión de roles y permisos | Eva Lucía | `SPEC-05-roles-permisos.md` | ⬜ Por redactar |
+| 01 | Registro y gestión de usuarios | Eva Lucía | [`SPEC-01-registro.md`](SPEC-01-registro.md) | 🔶 Borrador |
+| 02 | Autenticación usuario/contraseña | Jose Luis | [`SPEC-02-autenticacion.md`](SPEC-02-autenticacion.md) | 🔶 Borrador |
+| 03 | Gestión de credenciales y contraseñas | Juan José | [`SPEC-03-gestion-credenciales.md`](SPEC-03-gestion-credenciales.md) | 🔶 Borrador |
+| 04 | Autenticación por OTP y MFA | Luis David | [`SPEC-04-otp-mfa.md`](SPEC-04-otp-mfa.md) | 🔶 Borrador |
+| 05 | Gestión de roles y permisos | Eva Lucía | [`SPEC-05-roles-permisos.md`](SPEC-05-roles-permisos.md) | 🔶 Borrador |
 | 06 | Auditoría y trazabilidad | Christian | [`SPEC-06-auditoria.md`](SPEC-06-auditoria.md) | 🔶 Borrador |
-| 07 | Bloqueo y desbloqueo de cuentas | Luis David | `SPEC-07-bloqueo-cuentas.md` | ⬜ Por redactar |
-| 08 | Gestión de atributos de usuarios | Eva Lucía | `SPEC-08-atributos.md` | ⬜ Por redactar |
+| 07 | Bloqueo y desbloqueo de cuentas | Luis David | [`SPEC-07-bloqueo-cuentas.md`](SPEC-07-bloqueo-cuentas.md) | 🔶 Borrador |
+| 08 | Gestión de atributos de usuarios | Eva Lucía | [`SPEC-08-atributos.md`](SPEC-08-atributos.md) | 🔶 Borrador |
 | 09 | API de identidad para los demás módulos | Sergio | [`SPEC-09-api-identidad.md`](SPEC-09-api-identidad.md) | 🔶 Borrador · contrato publicado |
 
 > **Cambio de numeración del 13 de septiembre.** La política de contraseñas dejó
@@ -156,7 +156,13 @@ uno de ellos caso borde.
 |---|---|---|---|
 | 06 | 12 | 13 | ✅ |
 | 09 | 16 | 16 | ✅ |
-| 01 a 05, 07, 08 | — | — | ⬜ Al redactarlas |
+| 01 | 15 | 12 | 🔶 Por revisar |
+| 02 | 8 | 9 | 🔶 Por revisar |
+| 03 | 15 | 15 | 🔶 Por revisar |
+| 04 | 16 | 16 | 🔶 Por revisar |
+| 05 | 10 | 7 | 🔶 Por revisar |
+| 07 | 17 | 24 | 🔶 Por revisar |
+| 08 | 10 | 10 | 🔶 Por revisar |
 
 ---
 

@@ -61,7 +61,7 @@ producción: primero el contrato y las specs, después la implementación.
 |---|---|
 | Arquitectura preliminar | ✅ [`docs/arquitectura/`](docs/arquitectura/) — 4 diagramas y 4 ADR |
 | Funcionalidades distribuidas | ✅ [`docs/responsabilidades.md`](docs/responsabilidades.md) |
-| 9 especificaciones SDD | 🔶 2 de 9 — [`SPEC-06`](specs/SPEC-06-auditoria.md) y [`SPEC-09`](specs/SPEC-09-api-identidad.md), en borrador |
+| 9 especificaciones SDD | 🔶 9 de 9 en `main`, en borrador y pendientes de aprobación — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md) |
 | Wireframes | ⬜ sin empezar |
 | Contrato OpenAPI + mock | 🔶 [`specs/openapi.yaml`](specs/openapi.yaml) — 34 operaciones; congelamiento el jueves 17 |
 

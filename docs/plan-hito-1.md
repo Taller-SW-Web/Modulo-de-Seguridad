@@ -87,7 +87,7 @@ equipos el viernes 18 y no el mismo día de la presentación.
 
 ### Juan José — Full Stack
 
-- [ ] `specs/SPEC-03-credenciales.md` — la spec más grande del set: política de robustez, historial, caducidad, recuperación y cambio
+- [ ] `specs/SPEC-03-gestion-credenciales.md` — la spec más grande del set: política de robustez, historial, caducidad, recuperación y cambio
 - [ ] Revisar los wireframes de sus dos pantallas (2 y 5) con Valery
 
 ### Luis David — Full Stack
