@@ -1,0 +1,389 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Estructura del Módulo de Seguridad G7",
+    "output": "estructura-modulo.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1320,
+      600
+    ],
+    "views": [
+      {
+        "id": "entradas",
+        "label": "Quién entra",
+        "focus": [
+          "spa",
+          "consumidores",
+          "api"
+        ],
+        "note": "Personas por la SPA con token de usuario; módulos con token de servicio. Todo pasa por /api/v1."
+      },
+      {
+        "id": "sesion",
+        "label": "Iniciar sesión",
+        "focus": [
+          "api",
+          "autenticacion",
+          "credenciales",
+          "correo"
+        ],
+        "note": "SPEC-02 valida la contraseña, SPEC-04 pide el segundo factor y SPEC-07 cuenta los fallos."
+      },
+      {
+        "id": "eventos",
+        "label": "Lo que se anuncia",
+        "focus": [
+          "usuarios",
+          "roles",
+          "rabbit"
+        ],
+        "note": "Los siete eventos usuario.* salen de SPEC-01, 05, 07 y 08, siempre tras confirmar la transacción."
+      },
+      {
+        "id": "rastro",
+        "label": "Rastro de auditoría",
+        "focus": [
+          "auditoria",
+          "db"
+        ],
+        "note": "Las nueve specs registran en auditoria_seguridad; nadie puede modificar ni borrar un registro."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "spa",
+      "type": "frontend",
+      "label": "SPA del módulo",
+      "sublabel": "login · Mi cuenta · panel admin",
+      "pos": [
+        330,
+        26
+      ],
+      "size": [
+        260,
+        56
+      ]
+    },
+    {
+      "id": "consumidores",
+      "type": "external",
+      "label": "Los otros seis módulos",
+      "sublabel": "Despacho · Productos · Chatbot…",
+      "pos": [
+        730,
+        26
+      ],
+      "size": [
+        260,
+        56
+      ]
+    },
+    {
+      "id": "api",
+      "type": "security",
+      "label": "Capa de API REST · /api/v1",
+      "sublabel": "filtro Bearer · permisos y scopes · RFC 7807",
+      "pos": [
+        410,
+        132
+      ],
+      "size": [
+        500,
+        66
+      ]
+    },
+    {
+      "id": "autenticacion",
+      "type": "backend",
+      "label": "Autenticación",
+      "sublabel": "SPEC-02 · SPEC-04",
+      "tag": "token_refresco · otp",
+      "pos": [
+        60,
+        262
+      ],
+      "size": [
+        185,
+        78
+      ]
+    },
+    {
+      "id": "credenciales",
+      "type": "backend",
+      "label": "Credenciales y bloqueo",
+      "sublabel": "SPEC-03 · SPEC-07",
+      "tag": "credencial · bloqueo",
+      "pos": [
+        265,
+        262
+      ],
+      "size": [
+        185,
+        78
+      ]
+    },
+    {
+      "id": "usuarios",
+      "type": "backend",
+      "label": "Usuarios y atributos",
+      "sublabel": "SPEC-01 · SPEC-08",
+      "tag": "usuario · direccion",
+      "pos": [
+        470,
+        262
+      ],
+      "size": [
+        185,
+        78
+      ]
+    },
+    {
+      "id": "roles",
+      "type": "backend",
+      "label": "Roles y permisos",
+      "sublabel": "SPEC-05",
+      "tag": "rol · permiso",
+      "pos": [
+        675,
+        262
+      ],
+      "size": [
+        185,
+        78
+      ]
+    },
+    {
+      "id": "auditoria",
+      "type": "backend",
+      "label": "Auditoría",
+      "sublabel": "SPEC-06",
+      "tag": "auditoria_seguridad",
+      "pos": [
+        880,
+        262
+      ],
+      "size": [
+        185,
+        78
+      ]
+    },
+    {
+      "id": "identidad",
+      "type": "backend",
+      "label": "API de identidad",
+      "sublabel": "SPEC-09 · JWKS",
+      "tag": "cliente_servicio",
+      "pos": [
+        1085,
+        262
+      ],
+      "size": [
+        185,
+        78
+      ]
+    },
+    {
+      "id": "correo",
+      "type": "external",
+      "label": "Correo y SMS",
+      "sublabel": "SMTP · SMS simulado",
+      "pos": [
+        150,
+        470
+      ],
+      "size": [
+        210,
+        62
+      ]
+    },
+    {
+      "id": "rabbit",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "exchange seguridad.usuarios",
+      "pos": [
+        550,
+        470
+      ],
+      "size": [
+        230,
+        62
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "base propia · Flyway",
+      "pos": [
+        960,
+        470
+      ],
+      "size": [
+        230,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Dominio — cada bloque es dueño de sus tablas; los demás lo invocan",
+      "wraps": [
+        "autenticacion",
+        "credenciales",
+        "usuarios",
+        "roles",
+        "auditoria",
+        "identidad"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "spa-api",
+      "from": "spa",
+      "to": "api",
+      "label": "token de usuario",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "consumidores-api",
+      "from": "consumidores",
+      "to": "api",
+      "label": "token de servicio",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-autenticacion",
+      "from": "api",
+      "to": "autenticacion",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-credenciales",
+      "from": "api",
+      "to": "credenciales",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-usuarios",
+      "from": "api",
+      "to": "usuarios",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-roles",
+      "from": "api",
+      "to": "roles",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-auditoria",
+      "from": "api",
+      "to": "auditoria",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "api-identidad",
+      "from": "api",
+      "to": "identidad",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "autenticacion-correo",
+      "from": "autenticacion",
+      "to": "correo",
+      "label": "código OTP",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "credenciales-correo",
+      "from": "credenciales",
+      "to": "correo",
+      "label": "enlaces y avisos",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "usuarios-rabbit",
+      "from": "usuarios",
+      "to": "rabbit",
+      "label": "usuario.*",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "roles-rabbit",
+      "from": "roles",
+      "to": "rabbit",
+      "label": "roles_cambiados",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "auditoria-db",
+      "from": "auditoria",
+      "to": "db",
+      "label": "solo INSERT",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "identidad-db",
+      "from": "identidad",
+      "to": "db",
+      "label": "lecturas",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Cómo se lee",
+      "items": [
+        "De arriba abajo: quién llama, la capa de API, los seis bloques de dominio y la infraestructura",
+        "Cada bloque lleva sus SPEC; al acercar el zoom muestra las tablas de las que es dueño",
+        "Los seis bloques persisten en PostgreSQL; el diagrama traza solo las rutas que explican algo"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Una capacidad, una spec dueña",
+      "items": [
+        "El bloqueo lo decide SPEC-07 aunque el login esté en SPEC-02",
+        "La política de contraseñas vive en SPEC-03; registro y alta la invocan",
+        "SPEC-05 es la única que concede permisos; el resto solo los exige"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Hacia fuera",
+      "items": [
+        "SPEC-01, 05, 07 y 08 publican los siete eventos usuario.* (también bloqueado y desbloqueado)",
+        "SPEC-03, 04 y 07 envían correos: enlaces, códigos y avisos",
+        "SPEC-09 no tiene pantallas: la consumen máquinas"
+      ]
+    }
+  ]
+}

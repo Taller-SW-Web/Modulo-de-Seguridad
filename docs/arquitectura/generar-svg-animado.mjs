@@ -37,7 +37,10 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const DIR = dirname(fileURLToPath(import.meta.url));
-const DIAGRAMAS = ["contexto", "componentes", "secuencia-login", "secuencia-refresco"];
+const DIAGRAMAS = [
+  "contexto", "componentes", "secuencia-login", "secuencia-refresco",
+  "estructura-modulo", "comunicacion-modulos",
+];
 
 /* ---------------------------------------------------------------- ritmo --
    Un README no es una presentacion: la mayor parte del tiempo el lector

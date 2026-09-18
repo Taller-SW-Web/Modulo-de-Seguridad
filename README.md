@@ -4,7 +4,8 @@
 Grupo 7 — Taller de Construcción de Software Web — UNMSM — Ciclo 2026-II
 
 Este módulo es el **proveedor de identidad** del marketplace. Es dueño de la
-entidad usuario (cliente, vendedor, administrador) y los otros seis módulos
+entidad usuario —y de sus seis roles: cliente, vendedor y cuatro de gestión— y
+los otros seis módulos
 dependen de él para autenticar, validar tokens y consultar usuarios.
 
 > **Regla de integración del curso:** ningún módulo accede a la base de datos de
@@ -25,15 +26,30 @@ del JWKS —el caso normal, sin llamarnos—, **preguntando por introspección**
 antes de operaciones sensibles, y **suscribiéndose a eventos** para enterarse de
 bajas y bloqueos sin preguntar.
 
+### Cómo nos llaman los demás módulos
+
+El recorrido completo de las tres vías, con los endpoints reales del contrato:
+token de servicio y JWKS al arrancar, validación local en cada petición,
+consultas e introspección cuando hacen falta, y eventos por RabbitMQ.
+
+![Secuencia de integración de los demás módulos con Seguridad](docs/arquitectura/comunicacion-modulos.svg)
+
 ### Qué hay dentro
+
+Seis bloques de dominio, uno por grupo de specs, cada uno dueño de sus tablas.
+
+![Estructura del módulo: API, seis bloques de dominio e infraestructura](docs/arquitectura/estructura-modulo.svg)
+
+La vista por tecnologías y capas técnicas (Spring, JPA, outbox):
 
 ![Componentes internos del AUTH-SERVICE](docs/arquitectura/componentes.svg)
 
 ### Cómo se inicia sesión
 
-Una contraseña correcta no basta si la cuenta tiene segundo factor: el servicio
-responde con un desafío, no con una sesión. El par de tokens se firma solo
-después de verificar el código.
+Una contraseña correcta no basta si la cuenta tiene segundo factor —obligatorio
+para los cuatro roles de gestión—: el servicio responde con un `challengeToken`,
+no con una sesión. La SPA pide el código con `/auth/otp/solicitar` y el par de
+tokens se firma solo después de verificarlo.
 
 ![Secuencia de inicio de sesión con segundo factor](docs/arquitectura/secuencia-login.svg)
 
@@ -41,7 +57,8 @@ después de verificar el código.
 
 El token de refresco se usa **una sola vez**. Si aparece uno ya rotado, o lo
 robaron o se duplicó la sesión: no hay forma de saber cuál es el legítimo, así
-que se revoca la familia entera.
+que se revoca la familia entera de esa sesión. Las demás sesiones del usuario
+siguen vivas.
 
 ![Secuencia de rotación del token de refresco y detección de reúso](docs/arquitectura/secuencia-refresco.svg)
 
@@ -59,7 +76,7 @@ producción: primero el contrato y las specs, después la implementación.
 
 | Entregable del Hito 1 | Estado |
 |---|---|
-| Arquitectura preliminar | ✅ [`docs/arquitectura/`](docs/arquitectura/) — 4 diagramas y 4 ADR |
+| Arquitectura preliminar | ✅ [`docs/arquitectura/`](docs/arquitectura/) — 6 diagramas y 4 ADR |
 | Funcionalidades distribuidas | ✅ [`docs/responsabilidades.md`](docs/responsabilidades.md) |
 | 9 especificaciones SDD | 🔶 9 de 9 en `main`, en borrador y pendientes de aprobación — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md) |
 | Wireframes | 🔶 primera versión en Stitch (47 pantallas, SPEC-01 a SPEC-08); falta exportarla a `docs/wireframes/` y pasarla a Figma |
@@ -116,7 +133,7 @@ base de datos.
 
 | Vía | Cuándo usarla | Coste |
 |---|---|---|
-| **Validación local del token** con la clave pública de `/.well-known/jwks.json` | En cada petición ordinaria. Es el caso normal | Ninguna llamada de red. No detecta cambios de estado hasta que el token vence (15 min) |
+| **Validación local del token** con la clave pública de `/api/v1/auth/.well-known/jwks.json` | En cada petición ordinaria. Es el caso normal | Ninguna llamada de red. No detecta cambios de estado hasta que el token vence (15 min) |
 | **Introspección remota** `POST /api/v1/auth/introspeccion` | Antes de operaciones sensibles: anulaciones, reembolsos, cambios de precio | Una llamada de red y dependencia de nuestra disponibilidad |
 | **Eventos asíncronos** en RabbitMQ | Para enteraros de bajas, bloqueos y cambios de rol sin preguntar | Ninguna, pero es eventualmente consistente |
 
@@ -127,7 +144,7 @@ emitir un token de administrador.
 
 ### Programad contra nosotros antes de que existamos
 
-El contrato se congela antes que el código. Cuando esté publicado:
+El contrato está publicado antes que el código. Levantad el mock:
 
 ```bash
 npx @stoplight/prism-cli mock specs/openapi.yaml -p 4010

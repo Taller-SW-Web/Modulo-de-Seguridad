@@ -205,7 +205,7 @@
       "id": "db",
       "type": "database",
       "label": "PostgreSQL 16",
-      "sublabel": "15 tablas · base propia y aislada",
+      "sublabel": "17 tablas · base propia y aislada",
       "pos": [
         600,
         462

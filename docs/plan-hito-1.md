@@ -83,7 +83,7 @@ equipos el viernes 18 y no el mismo día de la presentación.
 - [ ] `specs/SPEC-01-registro.md`
 - [ ] `specs/SPEC-05-roles-permisos.md`
 - [ ] `specs/SPEC-08-atributos.md`
-- [ ] `docs/arquitectura/modelo-datos.md` — las 15 tablas con sus relaciones (diagrama entidad-relación)
+- [ ] `docs/arquitectura/modelo-datos.md` — las 17 tablas con sus relaciones (diagrama entidad-relación)
 
 ### Juan José — Full Stack
 
