@@ -2,6 +2,11 @@
 
 **Para:** Valery (Frontend y Diseño) · **Apoyo en panel admin:** Christian
 
+> **Actualizado el 18 de septiembre.** Ya hay una primera versión completa en
+> Stitch (proyecto `889177073946089595`, 47 pantallas, todas las specs salvo
+> SPEC-09). Este prompt se corrigió para que coincida con las specs actuales; si
+> lo reutilizas, las specs mandan sobre él.
+
 ## Antes de pegarlo: dos cosas
 
 1. **Esto son wireframes, no mockups.** El Hito 1 pide estructura: qué hay en
@@ -38,24 +43,28 @@ entregable de esta semana son wireframes de baja fidelidad, no mockups.
 
 **Contexto del producto:**
 
-Es el proveedor de identidad de todo el marketplace. Hay tres tipos de usuario:
-cliente, vendedor y administrador. El cliente se registra solo; al vendedor y al
-administrador los da de alta un administrador. La autenticación es con correo y
-contraseña, con un segundo factor por código de 6 dígitos que es obligatorio
-para administradores y opcional para el resto.
+Es el proveedor de identidad de todo el marketplace. Hay seis roles: cliente,
+vendedor y cuatro roles de gestión (ADMIN_VENTAS, GESTOR_DESPACHO,
+GESTOR_COMERCIAL y ADMIN_SISTEMA). El cliente se registra solo; al resto los da
+de alta un ADMIN_SISTEMA. La autenticación es con correo y contraseña, con un
+segundo factor por código de 6 dígitos que es obligatorio para los cuatro roles
+de gestión y opcional para el resto.
 
 **Las ocho pantallas:**
 
 1. **Inicio de sesión.** Campos de correo y contraseña, botón de entrar, enlace
    de «olvidé mi contraseña» y enlace de registro. Tres artboards de estado:
    (a) normal, (b) credenciales inválidas — el mensaje debe ser genérico y no
-   revelar si el correo existe, (c) cuenta bloqueada temporalmente — mensaje
-   genérico que no explique el motivo exacto.
+   revelar si el correo existe, (c) contraseña caducada — solo para roles de
+   gestión, con salida al flujo de recuperación. **No hay artboard de «cuenta
+   bloqueada»**: una cuenta bloqueada, inactiva o sin verificar ve exactamente
+   el mismo mensaje que (b); el titular se entera del bloqueo por correo.
 
 2. **Registro de cliente.** Nombres, apellidos, correo, celular, contraseña y
    confirmación. Bajo el campo de contraseña, un medidor de fuerza con la lista
    de reglas que se van marcando: mínimo 10 caracteres, mayúscula, minúscula,
-   dígito y carácter especial. Dos artboards: (a) formulario vacío, (b)
+   dígito, carácter especial, que no sea común y que no contenga el nombre ni
+   el correo. Dos artboards: (a) formulario vacío, (b)
    formulario con errores de validación por campo.
 
 3. **Verificación de correo.** Tres artboards: (a) «revisa tu correo», con el
@@ -73,14 +82,15 @@ para administradores y opcional para el resto.
    nueva, con el mismo medidor de fuerza de la pantalla 2.
 
 6. **Mi cuenta.** Datos personales editables, número de documento mostrado
-   enmascarado como `*****1234` y no editable, teléfono verificado o sin
+   enmascarado como `*****234` y no editable, teléfono verificado o sin
    verificar, un interruptor para activar el segundo factor, y una sección de
    direcciones con listado, dirección predeterminada y botón de añadir.
 
 7. **Panel de administración — listado de usuarios.** Tabla con correo, nombre,
-   rol, estado y último acceso. Filtros por rol y por estado, buscador y
-   paginación. Acciones por fila: ver, bloquear, desbloquear y desactivar. Botón
-   destacado de crear vendedor o administrador. Los cuatro estados posibles de
+   rol y estado (sin «último acceso»: la API no lo devuelve). Filtros por rol y
+   por estado, buscador y paginación. Acciones por fila: ver, bloquear,
+   desbloquear, dar de baja y reactivar. Botón destacado de crear vendedor o
+   personal de gestión. Los cuatro estados posibles de
    una cuenta deben distinguirse sin depender del color, porque estos wireframes
    son en gris: usa etiquetas de texto. Los estados son: activo, pendiente de
    verificación, bloqueado e inactivo.
@@ -104,7 +114,7 @@ Empieza por las pantallas 1, 2 y 4, que son las que enseñamos primero.
 
 ## Después de generarlo
 
-- [ ] Revisar con Juan José las pantallas 2 y 5 (son sus SPEC-03 y SPEC-06)
+- [ ] Revisar con Juan José las pantallas 2 y 5 (su SPEC-03)
 - [ ] Revisar con Luis David la pantalla 4 (su SPEC-04)
 - [ ] Revisar con Christian las pantallas 7 y 8 (él las implementa)
 - [ ] Exportar a PDF en esta carpeta, con el nombre `wireframes-hito-1.pdf`

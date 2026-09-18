@@ -196,7 +196,7 @@
       "dot": "amber",
       "title": "Cómo lo probamos",
       "items": [
-        "Es el escenario ESC-02.5 de SPEC-02, marcado como caso borde",
+        "Es el escenario ESC-02.7 de SPEC-02, marcado como caso borde",
         "Se traduce a una prueba de integración con Testcontainers",
         "Sin esa prueba, la SPEC-02 no se cierra"
       ]

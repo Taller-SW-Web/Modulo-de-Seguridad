@@ -443,7 +443,7 @@ rect.c-bg-rect { fill: var(--bg); }
         <rect width="100%" height="100%" fill="url(#grid)"/>
 
         <!-- Boundaries (behind everything) -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" data-composition-frame-label="Capa de dominio — cada bloque agrupa las SPEC de un responsable" x="10" y="196" width="1150" height="128" rx="12" class="c-region" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" data-composition-frame-label="Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva" x="10" y="196" width="1150" height="128" rx="12" class="c-region" stroke-width="1"/>
 
         <!-- Connection paths (before components for correct z-order) -->
         <path data-edge-from="spa" data-edge-to="api" data-edge-label="HTTPS + JSON" data-edge-key="0" data-edge-id="spa-api" data-composition-points="620,80;620,112" d="M 620 80 L 620 112" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
@@ -486,8 +486,8 @@ rect.c-bg-rect { fill: var(--bg); }
         <text x="620" y="172" class="t-backend" font-size="7" text-anchor="middle">Filtro Bearer + errores RFC 7807</text>
         </g>
 
-        <g id="node-autenticacion" data-node-id="autenticacion" data-node-label="Autenticación y sesiones" tabindex="0" role="button" aria-label="Focus Autenticación y sesiones, SPEC-02 · SPEC-04, Capa de dominio — cada bloque agrupa las SPEC de un responsable" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-02 · SPEC-04" data-node-tag="Jose Luis · Luis David" data-node-context="Capa de dominio — cada bloque agrupa las SPEC de un responsable">
-          <title>Autenticación y sesiones · SPEC-02 · SPEC-04 · Capa de dominio — cada bloque agrupa las SPEC de un responsable · Jose Luis · Luis David</title>
+        <g id="node-autenticacion" data-node-id="autenticacion" data-node-label="Autenticación y sesiones" tabindex="0" role="button" aria-label="Focus Autenticación y sesiones, SPEC-02 · SPEC-04, Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-02 · SPEC-04" data-node-tag="Jose Luis · Luis David" data-node-context="Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva">
+          <title>Autenticación y sesiones · SPEC-02 · SPEC-04 · Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva · Jose Luis · Luis David</title>
           <rect x="40" y="226" width="250" height="78" rx="6" class="c-mask"/>
           <rect x="40" y="226" width="250" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(46 232) scale(0.6875)">
@@ -498,8 +498,8 @@ rect.c-bg-rect { fill: var(--bg); }
         <text x="165" y="296" class="t-backend" font-size="7" text-anchor="middle">Jose Luis · Luis David</text>
         </g>
 
-        <g id="node-integracion" data-node-id="integracion" data-node-label="API de identidad y auditoría" tabindex="0" role="button" aria-label="Focus API de identidad y auditoría, SPEC-06 · SPEC-09 · JWKS, Capa de dominio — cada bloque agrupa las SPEC de un responsable" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-06 · SPEC-09 · JWKS" data-node-tag="Sergio" data-node-context="Capa de dominio — cada bloque agrupa las SPEC de un responsable">
-          <title>API de identidad y auditoría · SPEC-06 · SPEC-09 · JWKS · Capa de dominio — cada bloque agrupa las SPEC de un responsable · Sergio</title>
+        <g id="node-integracion" data-node-id="integracion" data-node-label="API de identidad y auditoría" tabindex="0" role="button" aria-label="Focus API de identidad y auditoría, SPEC-06 · SPEC-09 · JWKS, Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-06 · SPEC-09 · JWKS" data-node-tag="Sergio · Christian" data-node-context="Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva">
+          <title>API de identidad y auditoría · SPEC-06 · SPEC-09 · JWKS · Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva · Sergio · Christian</title>
           <rect x="320" y="226" width="250" height="78" rx="6" class="c-mask"/>
           <rect x="320" y="226" width="250" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(326 232) scale(0.6875)">
@@ -507,11 +507,11 @@ rect.c-bg-rect { fill: var(--bg); }
           </g>
           <text data-node-label="" x="445" y="263" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">API de identidad y auditoría</text>
         <text x="445" y="279" class="t-muted" font-size="9" text-anchor="middle">SPEC-06 · SPEC-09 · JWKS</text>
-        <text x="445" y="296" class="t-backend" font-size="7" text-anchor="middle">Sergio</text>
+        <text x="445" y="296" class="t-backend" font-size="7" text-anchor="middle">Sergio · Christian</text>
         </g>
 
-        <g id="node-usuarios" data-node-id="usuarios" data-node-label="Usuarios, roles y permisos" tabindex="0" role="button" aria-label="Focus Usuarios, roles y permisos, SPEC-01 · SPEC-05 · SPEC-08, Capa de dominio — cada bloque agrupa las SPEC de un responsable" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-01 · SPEC-05 · SPEC-08" data-node-tag="Eva Lucía" data-node-context="Capa de dominio — cada bloque agrupa las SPEC de un responsable">
-          <title>Usuarios, roles y permisos · SPEC-01 · SPEC-05 · SPEC-08 · Capa de dominio — cada bloque agrupa las SPEC de un responsable · Eva Lucía</title>
+        <g id="node-usuarios" data-node-id="usuarios" data-node-label="Usuarios, roles y permisos" tabindex="0" role="button" aria-label="Focus Usuarios, roles y permisos, SPEC-01 · SPEC-05 · SPEC-08, Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-01 · SPEC-05 · SPEC-08" data-node-tag="Eva Lucía" data-node-context="Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva">
+          <title>Usuarios, roles y permisos · SPEC-01 · SPEC-05 · SPEC-08 · Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva · Eva Lucía</title>
           <rect x="600" y="226" width="250" height="78" rx="6" class="c-mask"/>
           <rect x="600" y="226" width="250" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(606 232) scale(0.6875)">
@@ -522,8 +522,8 @@ rect.c-bg-rect { fill: var(--bg); }
         <text x="725" y="296" class="t-backend" font-size="7" text-anchor="middle">Eva Lucía</text>
         </g>
 
-        <g id="node-credenciales" data-node-id="credenciales" data-node-label="Credenciales y protección" tabindex="0" role="button" aria-label="Focus Credenciales y protección, SPEC-03 · SPEC-07, Capa de dominio — cada bloque agrupa las SPEC de un responsable" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-03 · SPEC-07" data-node-tag="Juan José · Luis David" data-node-context="Capa de dominio — cada bloque agrupa las SPEC de un responsable">
-          <title>Credenciales y protección · SPEC-03 · SPEC-07 · Capa de dominio — cada bloque agrupa las SPEC de un responsable · Juan José · Luis David</title>
+        <g id="node-credenciales" data-node-id="credenciales" data-node-label="Credenciales y protección" tabindex="0" role="button" aria-label="Focus Credenciales y protección, SPEC-03 · SPEC-07, Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-03 · SPEC-07" data-node-tag="Juan José · Luis David" data-node-context="Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva">
+          <title>Credenciales y protección · SPEC-03 · SPEC-07 · Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva · Juan José · Luis David</title>
           <rect x="880" y="226" width="250" height="78" rx="6" class="c-mask"/>
           <rect x="880" y="226" width="250" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(886 232) scale(0.6875)">
@@ -642,9 +642,9 @@ rect.c-bg-rect { fill: var(--bg); }
         </g>
 
         <!-- Boundary labels (foreground masks keep routes out of titles) -->
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="0" data-composition-frame-kind="region" data-composition-frame-label="Capa de dominio — cada bloque agrupa las SPEC de un responsable">
+        <g data-graph-role="structural-frame-label" data-composition-frame-id="0" data-composition-frame-kind="region" data-composition-frame-label="Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva">
           <rect data-graph-role="structural-frame-label-mask" x="14" y="206" width="350.2" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="18" y="219" class="t-cloud" font-size="9" font-weight="600">Capa de dominio — cada bloque agrupa las SPEC de un responsable</text>
+          <text data-boundary-label="" x="18" y="219" class="t-cloud" font-size="9" font-weight="600">Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva</text>
         </g>
 
         <!-- Legend -->

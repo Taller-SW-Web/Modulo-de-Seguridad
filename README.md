@@ -62,8 +62,8 @@ producción: primero el contrato y las specs, después la implementación.
 | Arquitectura preliminar | ✅ [`docs/arquitectura/`](docs/arquitectura/) — 4 diagramas y 4 ADR |
 | Funcionalidades distribuidas | ✅ [`docs/responsabilidades.md`](docs/responsabilidades.md) |
 | 9 especificaciones SDD | 🔶 9 de 9 en `main`, en borrador y pendientes de aprobación — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md) |
-| Wireframes | ⬜ sin empezar |
-| Contrato OpenAPI + mock | 🔶 [`specs/openapi.yaml`](specs/openapi.yaml) — 34 operaciones; congelamiento el jueves 17 |
+| Wireframes | 🔶 primera versión en Stitch (47 pantallas, SPEC-01 a SPEC-08); falta exportarla a `docs/wireframes/` y pasarla a Figma |
+| Contrato OpenAPI + mock | 🔶 [`specs/openapi.yaml`](specs/openapi.yaml) — 39 operaciones, valida sin errores y el mock de Prism responde |
 
 ---
 

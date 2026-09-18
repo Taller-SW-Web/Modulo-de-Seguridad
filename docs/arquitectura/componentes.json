@@ -30,7 +30,7 @@
           "usuarios",
           "credenciales"
         ],
-        "note": "Cada capa agrupa las SPEC de un mismo responsable. Ver docs/responsabilidades.md."
+        "note": "Cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva. Ver docs/responsabilidades.md."
       },
       {
         "id": "datos",
@@ -104,7 +104,7 @@
       "id": "integracion",
       "type": "backend",
       "label": "API de identidad y auditoría",
-      "sublabel": "SPEC-09 · JWKS e introspección",
+      "sublabel": "SPEC-06 · SPEC-09 · JWKS",
       "pos": [
         320,
         226
@@ -113,7 +113,7 @@
         250,
         78
       ],
-      "tag": "Sergio"
+      "tag": "Sergio · Christian"
     },
     {
       "id": "usuarios",
@@ -134,7 +134,7 @@
       "id": "credenciales",
       "type": "backend",
       "label": "Credenciales y protección",
-      "sublabel": "SPEC-03 · SPEC-06 · SPEC-07",
+      "sublabel": "SPEC-03 · SPEC-07",
       "pos": [
         880,
         226
@@ -233,7 +233,7 @@
   "boundaries": [
     {
       "kind": "region",
-      "label": "Capa de dominio — cada bloque agrupa las SPEC de un responsable",
+      "label": "Capa de dominio — cada bloque agrupa SPEC afines; la etiqueta dice quién las lleva",
       "wraps": [
         "autenticacion",
         "integracion",
@@ -354,7 +354,7 @@
       "title": "Cómo se lee",
       "items": [
         "De arriba abajo: pantalla, API, dominio, infraestructura",
-        "Cada bloque de dominio lleva las SPEC que agrupa; su responsable está en docs/responsabilidades.md",
+        "Cada bloque de dominio lleva las SPEC que agrupa y, en la etiqueta, quién las lleva (docs/responsabilidades.md)",
         "Las cuatro capas de dominio persisten por Spring Data JPA; el diagrama traza la ruta principal para no saturar el trazado"
       ]
     },

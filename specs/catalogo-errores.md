@@ -84,18 +84,18 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 | `CLIENTE_INVALIDO` ✅ | 401 | 09 | El `client_id` o el `client_secret` del módulo consumidor no son válidos |
 | `CUENTA_NO_DISPONIBLE` ✅ | 403 | 07 | Un administrador intenta bloquear una cuenta `INACTIVO` o `PENDIENTE_VERIFICACION`. **Ya no lo devuelve el login**, que responde `401` |
 | `TOKEN_NO_APLICABLE` ✅ | 403 | 09 | Un token de servicio intenta una operación que actúa en nombre de una persona |
-| `SCOPE_INSUFICIENTE` ✅ | 403 | 05, 06, 09 | El token es válido pero no tiene el permiso necesario. **No se revela cuál haría falta** |
-| `NO_ENCONTRADO` ✅ | 404 | 01, 08, 09 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
+| `SCOPE_INSUFICIENTE` ✅ | 403 | 01, 05, 06, 07, 08, 09 | El token es válido pero no tiene el permiso necesario. **No se revela cuál haría falta** |
+| `NO_ENCONTRADO` ✅ | 404 | 01, 05, 07, 08, 09 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
 | `CORREO_NO_DISPONIBLE` ✅ | 409 | 01 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
-| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 03, 04 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, o recuperaciones repetidas |
+| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 01, 03, 04 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, o recuperaciones repetidas |
 | `NO_DISPONIBLE` ✅ | 503 | Todas | Dependencia caída: base de datos, cola de correo o auditoría crítica |
 
 ---
 
-## Códigos que faltan y hay que añadir al contrato
+## Códigos propios de cada spec
 
-Los piden las specs pero todavía no están en `openapi.yaml`. Se añaden antes del
-congelamiento del jueves.
+Nacieron al redactar las specs y **ya están todos publicados en `openapi.yaml`**.
+Si una spec necesita uno nuevo, se añade aquí y al contrato en el mismo cambio.
 
 ### SPEC-01 — Registro
 
@@ -108,8 +108,7 @@ congelamiento del jueves.
 
 | Código | HTTP | Cuándo |
 |---|---|---|
-| `POLITICA_INCUMPLIDA` | 422 | La contraseña no cumple la política. **Un solo código para las cinco reglas**; cuál falló va en el array `errores` |
-| `PASSWORD_YA_UTILIZADA` | 422 | Está entre las últimas 5 del historial |
+| `POLITICA_INCUMPLIDA` | 422 | La contraseña no cumple la política. **Un solo código para todas las reglas**, historial incluido; cuál falló va en el array `errores` (`LONGITUD_MINIMA`, `MAYUSCULA`, `MINUSCULA`, `DIGITO`, `CARACTER_ESPECIAL`, `CONTRASENA_COMUN`, `DATOS_PERSONALES`, `YA_UTILIZADA`) |
 | `PASSWORD_CADUCADA` | 403 | Quien tiene un rol de gestión completa la autenticación con una contraseña de más de 90 días. No recibe tokens: la restablece con el flujo de recuperación. Lo devuelven `/auth/login` y `/auth/otp/verificar` |
 | `TOKEN_RECUPERACION_INVALIDO` | 401 | El token de recuperación no existe, ya se usó, o fue reemplazado por una solicitud posterior |
 | `TOKEN_RECUPERACION_EXPIRADO` | 410 | El token de recuperación tiene más de 30 minutos |
@@ -138,7 +137,7 @@ congelamiento del jueves.
 |---|---|---|
 | `OTP_EXPIRADO` | 410 | El código tiene más de 5 minutos |
 | `OTP_INTENTOS_AGOTADOS` | 401 | Se agotaron los 3 intentos; el OTP queda invalidado |
-| `MFA_OBLIGATORIO` | 422 | Un `ADMIN_SISTEMA` intenta desactivar su segundo factor |
+| `MFA_OBLIGATORIO` | 422 | Una cuenta con algún rol de gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA`) intenta desactivar su segundo factor. Si tiene varios roles, manda el más estricto |
 
 ### SPEC-06 — Auditoría
 
@@ -177,6 +176,7 @@ información o duplica algo que ya existe.
 | `SCOPE_INSUFFICIENT` | `SCOPE_INSUFICIENTE` | Errata en inglés de un código publicado |
 | `BLOQUEO_NO_PERMITIDO` | `ADMINISTRADOR_PROTEGIDO` | Retirado el mismo día en que se creó: la misma protección cubre también la baja y la revocación del rol |
 | `PASSWORD_DEMASIADO_CORTA` y las cuatro hermanas | `POLITICA_INCUMPLIDA` + `errores[]` | Ver el recuadro de SPEC-03 |
+| `PASSWORD_YA_UTILIZADA` | `POLITICA_INCUMPLIDA` con la regla `YA_UTILIZADA` | El historial es una regla más de la política: un código aparte obligaba al cliente a tratar dos errores para lo mismo |
 | `TOKEN_RECUPERACION_USADO` | `TOKEN_RECUPERACION_INVALIDO` | Distinguir «usado» de «inexistente» dice si alguien pidió recuperación para ese correo |
 | Cualquier código que empiece por `AUTH_` | El equivalente de este catálogo | El prefijo no aporta: toda la API es de autenticación |
 
