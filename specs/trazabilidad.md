@@ -89,11 +89,13 @@ falta un endpoint, o la spec no es una funcionalidad.
 
 ## 3. Specs ↔ pantallas
 
-Las ocho del Hito 1, según `docs/plan-hito-1.md` §5.
+Las ocho del Hito 1, según `docs/plan-hito-1.md` §5. La primera versión en
+Stitch las desglosa en 47 artboards, uno por estado, cada uno rotulado con su
+spec (`SPEC-0X · Pantalla · (letra) estado`).
 
 | # | Pantalla | SPEC | Interfaz |
 |---|---|---|---|
-| 1 | Inicio de sesión | 02, 07 | Valery |
+| 1 | Inicio de sesión — sin estado propio de «cuenta bloqueada» | 02, 03, 07 | Valery |
 | 2 | Registro de cliente, con medidor de fuerza | 01, 03 | Valery |
 | 3 | Verificación de correo | 01 | Valery |
 | 4 | Desafío de código OTP | 04 | Luis David |
@@ -154,7 +156,7 @@ uno de ellos caso borde.
 
 | SPEC | Requisitos | Escenarios | Cumple la regla |
 |---|---|---|---|
-| 06 | 12 | 13 | ✅ |
+| 06 | 14 | 13 | 🔶 Por revisar |
 | 09 | 16 | 16 | ✅ |
 | 01 | 15 | 12 | 🔶 Por revisar |
 | 02 | 8 | 9 | 🔶 Por revisar |

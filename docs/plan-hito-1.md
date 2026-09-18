@@ -119,7 +119,7 @@ equipos el viernes 18 y no el mismo día de la presentación.
 
 | #   | Pantalla                                                                | SPEC que la origina       |
 | --- | ----------------------------------------------------------------------- | ------------------------- |
-| 1   | Inicio de sesión (con estado de error genérico y de cuenta bloqueada)   | SPEC-02, SPEC-07          |
+| 1   | Inicio de sesión (error genérico, idéntico con la cuenta bloqueada; contraseña caducada) | SPEC-02, SPEC-03, SPEC-07 |
 | 2   | Registro de cliente (con medidor de fuerza de contraseña)               | SPEC-01, SPEC-03          |
 | 3   | Verificación de correo (esperando / éxito / enlace vencido)             | SPEC-01                   |
 | 4   | Desafío de código OTP (6 dígitos, reenvío, intentos restantes)          | SPEC-04                   |

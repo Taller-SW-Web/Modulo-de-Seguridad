@@ -23,7 +23,7 @@ consecuencias sobre el reparto:
    Product Owner y todos los demás programan contra él.
 2. **Nadie es dueño exclusivo de una capa.** El curso evalúa el desarrollo
    *individual* en cada revisión semanal. Ningún integrante ocupa un rol que sea
-   solo de gestión, y todos tienen commits propios en `main`.
+   solo de gestión, y todos deben tener commits propios en `main`.
 
 ---
 

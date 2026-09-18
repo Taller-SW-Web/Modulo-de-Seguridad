@@ -875,23 +875,25 @@ paths:
                     id: "11111111-1111-1111-1111-111111111111"
                     estado: PENDIENTE_VERIFICACION
         '400':
-          description: La contraseña no cumple la política, o faltan datos
+          description: Faltan datos o no tienen el formato esperado
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
-                contrasenaDebil:
+                faltanDatos:
                   value:
                     type: "https://g7.unmsm.pe/errores/validacion"
                     title: Datos de entrada inválidos
                     status: 400
                     code: VALIDACION
                     errores:
-                      - campo: contrasena
-                        mensaje: Debe tener al menos 10 caracteres.
-                      - campo: contrasena
-                        mensaje: Debe incluir un carácter especial.
+                      - campo: correo
+                        mensaje: No es un correo válido.
+                      - campo: nombres
+                        mensaje: Es obligatorio.
+        '422':
+          $ref: '#/components/responses/PoliticaIncumplida'
         '409':
           description: Ya existe una cuenta con ese correo
           content:
@@ -1210,6 +1212,21 @@ paths:
                     status: 429
                     code: DEMASIADAS_SOLICITUDES
                     detail: Espera unos minutos antes de pedir otro código.
+        '401':
+          description: |
+            El `challengeToken` no existe o venció (SPEC-04). No se revela si la
+            cuenta existe ni se envía ningún mensaje.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                desafioInvalido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-invalido"
+                    title: Token inválido
+                    status: 401
+                    code: TOKEN_INVALIDO
 
   /auth/otp/verificar:
     post:
@@ -1218,8 +1235,9 @@ paths:
       summary: Canjea el código por el par de tokens
       description: |
         Definido por SPEC-04. Verifica el código y, si es correcto, emite el par
-        de tokens definitivo. Al tercer intento fallido el desafío se invalida y
-        hay que volver a iniciar sesión.
+        de tokens definitivo. Al tercer intento fallido el código se invalida
+        (`OTP_INTENTOS_AGOTADOS`) y hay que pedir uno nuevo con
+        `/auth/otp/solicitar`.
       security: []
       requestBody:
         required: true
@@ -1255,7 +1273,7 @@ paths:
                       correo: "carlos@ejemplo.com"
                       roles: ["VENDEDOR"]
         '401':
-          description: Código incorrecto, vencido o desafío agotado
+          description: Código incorrecto, o se agotaron los 3 intentos del código
           content:
             application/problem+json:
               schema:
@@ -1268,6 +1286,27 @@ paths:
                     status: 401
                     code: CODIGO_INVALIDO
                     intentosRestantes: 2
+                intentosAgotados:
+                  summary: ESC-04 — tercer fallo; el código queda invalidado
+                  value:
+                    type: "https://g7.unmsm.pe/errores/otp-intentos-agotados"
+                    title: Se agotaron los intentos
+                    status: 401
+                    code: OTP_INTENTOS_AGOTADOS
+                    detail: Pide un código nuevo.
+        '410':
+          description: El código tiene más de 5 minutos. No cambia el contador de la cuenta
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                codigoVencido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/otp-expirado"
+                    title: El código venció
+                    status: 410
+                    code: OTP_EXPIRADO
         '403':
           description: |
             La contraseña caducó (SPEC-03). Solo llega aquí quien completó la
@@ -1542,6 +1581,12 @@ paths:
                     title: El enlace de verificación expiró
                     status: 410
                     code: ENLACE_EXPIRADO
+                yaUsado:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/enlace-ya-usado"
+                    title: El enlace de verificación ya se usó
+                    status: 410
+                    code: ENLACE_YA_USADO
 
   /auth/verificar-correo/reenviar:
     post:
@@ -1694,6 +1739,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Usuario'
+        '400':
+          $ref: '#/components/responses/Validacion'
         '401':
           $ref: '#/components/responses/NoAutenticado'
         '403':
@@ -1779,10 +1826,31 @@ paths:
       responses:
         '204':
           description: Cuenta bloqueada sin vencimiento y sesiones cerradas
+        '400':
+          $ref: '#/components/responses/Validacion'
         '401':
           $ref: '#/components/responses/NoAutenticado'
         '403':
-          $ref: '#/components/responses/ScopeInsuficiente'
+          description: |
+            Sin el permiso `cuenta.bloquear` (`SCOPE_INSUFICIENTE`), o la cuenta
+            está `INACTIVO` o `PENDIENTE_VERIFICACION` (`CUENTA_NO_DISPONIBLE`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                scopeInsuficiente:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/scope-insuficiente"
+                    title: Permisos insuficientes
+                    status: 403
+                    code: SCOPE_INSUFICIENTE
+                cuentaNoDisponible:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/cuenta-no-disponible"
+                    title: La cuenta no se puede bloquear en su estado actual
+                    status: 403
+                    code: CUENTA_NO_DISPONIBLE
         '404':
           $ref: '#/components/responses/NoEncontrado'
         '422':
@@ -2200,6 +2268,25 @@ components:
                 status: 401
                 code: TOKEN_INVALIDO
 
+    Validacion:
+      description: |
+        El cuerpo no cumple el esquema: falta un campo obligatorio, el tipo no
+        corresponde o el valor no pertenece a un catálogo cerrado.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            validacion:
+              value:
+                type: "https://g7.unmsm.pe/errores/validacion"
+                title: Datos de entrada inválidos
+                status: 400
+                code: VALIDACION
+                errores:
+                  - campo: motivo
+                    mensaje: Es obligatorio.
+
     ScopeInsuficiente:
       description: |
         El token es válido pero no tiene el scope necesario. **No se revela qué
@@ -2261,7 +2348,8 @@ components:
                             - CONTRASENA_COMUN
                             - DATOS_PERSONALES
                             - YA_UTILIZADA
-                        esperado: {}
+                        esperado:
+                          description: Valor que exige la regla, por ejemplo la longitud mínima.
           examples:
             cortaYSinSimbolo:
               value:
@@ -2310,18 +2398,24 @@ components:
           description: Referencia de la petición, útil para soporte.
         errores:
           type: array
-          description: Presente solo en `VALIDACION`.
+          description: |
+            Presente solo en `VALIDACION` (con `campo` y `mensaje`) y en
+            `POLITICA_INCUMPLIDA` (con `regla` y, si aplica, `esperado`).
           items:
             type: object
             properties:
               campo: { type: string }
               mensaje: { type: string }
+              regla: { type: string }
+              esperado:
+                description: Valor que exige la regla, por ejemplo la longitud mínima.
         intentosRestantes:
           type: integer
           description: |
-            Presente solo en `CODIGO_INVALIDO` y en los errores de credenciales.
-            Cuántos intentos quedan antes de invalidar el desafío o bloquear la
-            cuenta. RFC 7807 admite extensiones como ésta.
+            Presente solo en `CODIGO_INVALIDO`: cuántos intentos quedan antes de
+            invalidar el código OTP. RFC 7807 admite extensiones como ésta.
+            **Nunca acompaña a `CREDENCIALES_INVALIDAS`**: un correo inexistente
+            no tiene contador, así que el campo delataría qué cuentas existen.
 
     Jwks:
       type: object
@@ -2547,8 +2641,7 @@ components:
           description: Cuántas contraseñas anteriores no se pueden reutilizar.
           examples: [5]
         caducidadDiasAdmin:
-          type: integer
-          nullable: true
+          type: [integer, "null"]
           description: Días tras los que caduca la contraseña de un administrador. `null` para el resto de roles.
           examples: [90]
 
@@ -2613,19 +2706,16 @@ components:
         resultado: { type: string, enum: [EXITO, FALLO] }
         actorTipo: { type: string, enum: [USUARIO, MODULO, SISTEMA] }
         actorId:
-          type: string
-          nullable: true
+          type: [string, "null"]
           description: Identificador del usuario, o `client_id` del módulo. Ausente si el actor no llegó a identificarse.
         objetivoUsuarioId:
-          type: string
+          type: [string, "null"]
           format: uuid
-          nullable: true
           description: La cuenta afectada, si el evento recae sobre una.
-        ip: { type: string, nullable: true }
-        agente: { type: string, nullable: true, maxLength: 255 }
+        ip: { type: [string, "null"] }
+        agente: { type: [string, "null"], maxLength: 255 }
         detalle:
-          type: object
-          nullable: true
+          type: [object, "null"]
           description: Contexto específico de la acción.
           additionalProperties: true
 
