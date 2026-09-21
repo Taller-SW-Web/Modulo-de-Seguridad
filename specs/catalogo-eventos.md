@@ -7,7 +7,7 @@
 | **Consumen** | Los seis módulos del marketplace |
 | **Estado** | Borrador — pendiente de acuerdo con los seis equipos |
 
-`SPEC-09` declara los eventos fuera de su alcance y dice que «se especifican por
+`SPEC-17` y `SPEC-18` declaran los eventos fuera de su alcance y dice que «se especifican por
 separado». Este documento es ese aparte. Hasta que existiera, los eventos
 viajaban nombrados en cuatro specs distintas sin que nadie hubiera definido su
 carga útil ni sus garantías.
@@ -17,7 +17,7 @@ carga útil ni sus garantías.
 ## Para qué sirven
 
 Es la **vía 3** de integración, la que existe para que un módulo no tenga que
-preguntarnos. Las otras dos están en SPEC-09:
+preguntarnos. Las otras dos están en SPEC-17:
 
 | Vía | Cuándo | Coste |
 |---|---|---|
@@ -84,7 +84,7 @@ al consumidor con datos viejos creyendo que son nuevos.
 
 ### `usuario.creado`
 
-Publica **SPEC-01**, al crearse una cuenta con el correo ya verificado.
+Publica **SPEC-02** al verificarse el correo de un cliente, y **SPEC-03** al dar de alta un administrador una cuenta, que nace ya verificada.
 
 ```json
 "datos": { "roles": ["CLIENTE"] }
@@ -96,7 +96,7 @@ consumidores a crear registros que quizá nunca se usen.
 
 ### `usuario.desactivado`
 
-Publica **SPEC-01**, tras una baja lógica.
+Publica **SPEC-04**, tras una baja lógica.
 
 ```json
 "datos": { "motivo": "BAJA_ADMINISTRATIVA" }
@@ -107,7 +107,7 @@ vencido.
 
 ### `usuario.reactivado`
 
-Publica **SPEC-01**, cuando un administrador reactiva una cuenta dada de baja.
+Publica **SPEC-04**, cuando un administrador reactiva una cuenta dada de baja.
 
 ```json
 "datos": { "roles": ["CLIENTE"] }
@@ -120,7 +120,7 @@ recibir `usuario.desactivado` la vuelve a marcar como activa.
 
 ### `usuario.bloqueado`
 
-Publica **SPEC-07**, tanto en el bloqueo automático como en el manual.
+Publica **SPEC-14** en el bloqueo automático y **SPEC-15** en el manual.
 
 ```json
 "datos": { "automatico": true, "hasta": "2026-09-13T15:02:07.482Z" }
@@ -137,7 +137,7 @@ bloqueada la cuenta cuando pase.
 
 ### `usuario.desbloqueado`
 
-Publica **SPEC-07**, solo cuando alguien levanta el bloqueo de forma explícita:
+Publican **SPEC-14** y **SPEC-15**, solo cuando alguien levanta el bloqueo de forma explícita:
 un administrador, o el titular con el enlace de desbloqueo o restableciendo su
 contraseña. **El vencimiento de un bloqueo no lo publica** (ver
 `usuario.bloqueado`).
@@ -150,7 +150,7 @@ contraseña. **El vencimiento de un bloqueo no lo publica** (ver
 
 ### `usuario.roles_cambiados`
 
-Publica **SPEC-05**, tras asignar o revocar un rol.
+Publica **SPEC-11**, tras asignar o revocar un rol.
 
 ```json
 "datos": { "roles": ["VENDEDOR", "GESTOR_COMERCIAL"] }
@@ -166,7 +166,7 @@ en procesar el evento.
 
 ### `usuario.atributos_actualizados`
 
-Publica **SPEC-08**, al cambiar datos de perfil.
+Publica **SPEC-16**, al cambiar datos de perfil.
 
 ```json
 "datos": { "campos": ["celular", "direcciones"] }
@@ -214,7 +214,7 @@ Mismas reglas que el contrato REST:
 |---|---|
 | Este catálogo acordado con los seis equipos | Antes del viernes 18 |
 | Topología en `docker-compose.yml` | Hito 2 |
-| Publicación real de los siete eventos | Hito 4 (Sem. 11), junto con la implementación de SPEC-09 |
+| Publicación real de los siete eventos | Hito 4 (Sem. 11), junto con la implementación de SPEC-17 y SPEC-18 |
 
 Hasta el Hito 4 no se publica nada. Los consumidores que necesiten enterarse de
 un cambio antes de esa fecha usan la introspección, y la ventana de incoherencia
@@ -224,7 +224,7 @@ es de 15 minutos.
 
 ## Relación con la auditoría
 
-No confundir. **SPEC-06 registra hacia dentro; estos eventos anuncian hacia
+No confundir. **SPEC-12 registra hacia dentro; estos eventos anuncian hacia
 fuera.** Un bloqueo produce las dos cosas: un registro en `auditoria_seguridad`
 que nadie fuera del módulo ve, y un `usuario.bloqueado` que los seis módulos
 consumen. Ni el registro viaja por RabbitMQ ni el evento se guarda como

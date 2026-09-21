@@ -500,75 +500,75 @@ rect.c-bg-rect { fill: var(--bg); }
         <text x="660" y="179" class="t-muted" font-size="9" text-anchor="middle">filtro Bearer · permisos y scopes · RFC 7807</text>
         </g>
 
-        <g id="node-autenticacion" data-node-id="autenticacion" data-node-label="Autenticación" tabindex="0" role="button" aria-label="Focus Autenticación, SPEC-02 · SPEC-04, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-02 · SPEC-04" data-node-tag="token_refresco · otp" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
-          <title>Autenticación · SPEC-02 · SPEC-04 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · token_refresco · otp</title>
+        <g id="node-autenticacion" data-node-id="autenticacion" data-node-label="Autenticación" tabindex="0" role="button" aria-label="Focus Autenticación, SPEC-05 · 06 · 09 · 10, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-05 · 06 · 09 · 10" data-node-tag="token_refresco · otp" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
+          <title>Autenticación · SPEC-05 · 06 · 09 · 10 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · token_refresco · otp</title>
           <rect x="60" y="262" width="185" height="78" rx="6" class="c-mask"/>
           <rect x="60" y="262" width="185" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(66 268) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" x="152.5" y="299" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Autenticación</text>
-        <text x="152.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-02 · SPEC-04</text>
+        <text x="152.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-05 · 06 · 09 · 10</text>
         <text x="152.5" y="332" class="t-backend" font-size="7" text-anchor="middle">token_refresco · otp</text>
         </g>
 
-        <g id="node-credenciales" data-node-id="credenciales" data-node-label="Credenciales y bloqueo" tabindex="0" role="button" aria-label="Focus Credenciales y bloqueo, SPEC-03 · SPEC-07, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-03 · SPEC-07" data-node-tag="credencial · bloqueo" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
-          <title>Credenciales y bloqueo · SPEC-03 · SPEC-07 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · credencial · bloqueo</title>
+        <g id="node-credenciales" data-node-id="credenciales" data-node-label="Credenciales y bloqueo" tabindex="0" role="button" aria-label="Focus Credenciales y bloqueo, SPEC-07 · 08 · 14 · 15, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-07 · 08 · 14 · 15" data-node-tag="credencial · bloqueo" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
+          <title>Credenciales y bloqueo · SPEC-07 · 08 · 14 · 15 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · credencial · bloqueo</title>
           <rect x="265" y="262" width="185" height="78" rx="6" class="c-mask"/>
           <rect x="265" y="262" width="185" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(271 268) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" x="357.5" y="299" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Credenciales y bloqueo</text>
-        <text x="357.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-03 · SPEC-07</text>
+        <text x="357.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-07 · 08 · 14 · 15</text>
         <text x="357.5" y="332" class="t-backend" font-size="7" text-anchor="middle">credencial · bloqueo</text>
         </g>
 
-        <g id="node-usuarios" data-node-id="usuarios" data-node-label="Usuarios y atributos" tabindex="0" role="button" aria-label="Focus Usuarios y atributos, SPEC-01 · SPEC-08, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-01 · SPEC-08" data-node-tag="usuario · direccion" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
-          <title>Usuarios y atributos · SPEC-01 · SPEC-08 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · usuario · direccion</title>
+        <g id="node-usuarios" data-node-id="usuarios" data-node-label="Usuarios y atributos" tabindex="0" role="button" aria-label="Focus Usuarios y atributos, SPEC-01 a 04 · 16, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-01 a 04 · 16" data-node-tag="usuario · direccion" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
+          <title>Usuarios y atributos · SPEC-01 a 04 · 16 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · usuario · direccion</title>
           <rect x="470" y="262" width="185" height="78" rx="6" class="c-mask"/>
           <rect x="470" y="262" width="185" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(476 268) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" x="562.5" y="299" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Usuarios y atributos</text>
-        <text x="562.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-01 · SPEC-08</text>
+        <text x="562.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-01 a 04 · 16</text>
         <text x="562.5" y="332" class="t-backend" font-size="7" text-anchor="middle">usuario · direccion</text>
         </g>
 
-        <g id="node-roles" data-node-id="roles" data-node-label="Roles y permisos" tabindex="0" role="button" aria-label="Focus Roles y permisos, SPEC-05, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-05" data-node-tag="rol · permiso" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
-          <title>Roles y permisos · SPEC-05 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · rol · permiso</title>
+        <g id="node-roles" data-node-id="roles" data-node-label="Roles y permisos" tabindex="0" role="button" aria-label="Focus Roles y permisos, SPEC-11, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-11" data-node-tag="rol · permiso" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
+          <title>Roles y permisos · SPEC-11 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · rol · permiso</title>
           <rect x="675" y="262" width="185" height="78" rx="6" class="c-mask"/>
           <rect x="675" y="262" width="185" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(681 268) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" x="767.5" y="299" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Roles y permisos</text>
-        <text x="767.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-05</text>
+        <text x="767.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-11</text>
         <text x="767.5" y="332" class="t-backend" font-size="7" text-anchor="middle">rol · permiso</text>
         </g>
 
-        <g id="node-auditoria" data-node-id="auditoria" data-node-label="Auditoría" tabindex="0" role="button" aria-label="Focus Auditoría, SPEC-06, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-06" data-node-tag="auditoria_seguridad" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
-          <title>Auditoría · SPEC-06 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · auditoria_seguridad</title>
+        <g id="node-auditoria" data-node-id="auditoria" data-node-label="Auditoría" tabindex="0" role="button" aria-label="Focus Auditoría, SPEC-12 · 13, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-12 · 13" data-node-tag="auditoria_seguridad" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
+          <title>Auditoría · SPEC-12 · 13 · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · auditoria_seguridad</title>
           <rect x="880" y="262" width="185" height="78" rx="6" class="c-mask"/>
           <rect x="880" y="262" width="185" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(886 268) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" x="972.5" y="299" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Auditoría</text>
-        <text x="972.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-06</text>
+        <text x="972.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-12 · 13</text>
         <text x="972.5" y="332" class="t-backend" font-size="7" text-anchor="middle">auditoria_seguridad</text>
         </g>
 
-        <g id="node-identidad" data-node-id="identidad" data-node-label="API de identidad" tabindex="0" role="button" aria-label="Focus API de identidad, SPEC-09 · JWKS, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-09 · JWKS" data-node-tag="cliente_servicio" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
-          <title>API de identidad · SPEC-09 · JWKS · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · cliente_servicio</title>
+        <g id="node-identidad" data-node-id="identidad" data-node-label="API de identidad" tabindex="0" role="button" aria-label="Focus API de identidad, SPEC-17 · 18 · JWKS, Dominio — cada bloque es dueño de sus tablas; los demás lo invocan" aria-pressed="false" data-node-kind="backend" data-node-sublabel="SPEC-17 · 18 · JWKS" data-node-tag="cliente_servicio" data-node-context="Dominio — cada bloque es dueño de sus tablas; los demás lo invocan">
+          <title>API de identidad · SPEC-17 · 18 · JWKS · Dominio — cada bloque es dueño de sus tablas; los demás lo invocan · cliente_servicio</title>
           <rect x="1085" y="262" width="185" height="78" rx="6" class="c-mask"/>
           <rect x="1085" y="262" width="185" height="78" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1091 268) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" x="1177.5" y="299" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">API de identidad</text>
-        <text x="1177.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-09 · JWKS</text>
+        <text x="1177.5" y="315" class="t-muted" font-size="9" text-anchor="middle">SPEC-17 · 18 · JWKS</text>
         <text x="1177.5" y="332" class="t-backend" font-size="7" text-anchor="middle">cliente_servicio</text>
         </g>
 

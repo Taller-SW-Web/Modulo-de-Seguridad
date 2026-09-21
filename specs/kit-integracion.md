@@ -186,7 +186,7 @@ Los seis códigos de rol del marketplace:
 | `ADMIN_SISTEMA` | Personal de la plataforma |
 
 > **`permisos` todavía no lleva los vuestros.** Hoy solo contiene los de
-> nuestro módulo (`usuario.ver`, `auditoria.ver`…), definidos en SPEC-05. Los
+> nuestro módulo (`usuario.ver`, `auditoria.ver`…), definidos en SPEC-11. Los
 > de cada módulo (`pedido.crear`, `producto.editar`…) se acuerdan con cada
 > equipo. **Autorizad por `roles` mientras tanto.** Cuando se acuerden, la
 > lista crecerá sin que cambie nada del contrato: añadir permisos es

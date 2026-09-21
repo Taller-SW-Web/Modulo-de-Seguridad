@@ -29,10 +29,11 @@ módulos del curso. Fase de especificación — todavía no hay código de produ
 |---|---|
 | Nombrar cualquier cosa del dominio | [`CONTEXT.md`](CONTEXT.md) — el glosario: términos canónicos y los que hay que evitar |
 | Escribir o revisar una spec | [`specs/_PLANTILLA.md`](specs/_PLANTILLA.md) y [`specs/trazabilidad.md`](specs/trazabilidad.md) |
+| Escribir la spec de una pantalla | [`specs/front/`](specs/front/) — specs de interfaz, aparte de las de backend |
 | Devolver un error | [`specs/catalogo-errores.md`](specs/catalogo-errores.md) |
 | Publicar un evento | [`specs/catalogo-eventos.md`](specs/catalogo-eventos.md) |
 | Cambiar el estado de una cuenta | [`docs/arquitectura/estados-usuario.md`](docs/arquitectura/estados-usuario.md) |
-| Entender la integración con los otros módulos | [`specs/SPEC-09-api-identidad.md`](specs/SPEC-09-api-identidad.md) |
+| Entender la integración con los otros módulos | [`specs/SPEC-17-tokens-servicio.md`](specs/SPEC-17-tokens-servicio.md) y [`specs/SPEC-18-consulta-identidad.md`](specs/SPEC-18-consulta-identidad.md) |
 
 ## Agent skills
 
