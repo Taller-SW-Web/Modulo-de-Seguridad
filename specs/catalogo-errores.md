@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **Dueño** | Product Owner — igual que el contrato |
-| **Aplica a** | Las nueve specs y `specs/openapi.yaml` |
+| **Aplica a** | Las 18 specs y `specs/openapi.yaml` |
 | **Estado** | Borrador — los códigos marcados ✅ ya están publicados y no se tocan |
 
 Este documento existe porque los códigos de error estaban dispersos: cada spec
@@ -64,7 +64,7 @@ Por eso:
 el mismo `401`.** Si una cuenta bloqueada respondiera distinto con la contraseña
 correcta, el bloqueo no frenaría un ataque de fuerza bruta, solo le cambiaría el
 mensaje de éxito. Quien queda bloqueado se entera por el correo de aviso que
-exige SPEC-07. Solo quien completa la autenticación de una cuenta `ACTIVO` puede
+exigen SPEC-14 y SPEC-15. Solo quien completa la autenticación de una cuenta `ACTIVO` puede
 recibir otra cosa: tokens, un desafío, o `403 PASSWORD_CADUCADA`.
 
 ---
@@ -97,21 +97,19 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 Nacieron al redactar las specs y **ya están todos publicados en `openapi.yaml`**.
 Si una spec necesita uno nuevo, se añade aquí y al contrato en el mismo cambio.
 
-### SPEC-01 — Registro
+### SPEC-02 — Verificación de correo
 
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `ENLACE_EXPIRADO` | 410 | El enlace de verificación de correo tiene más de 24 h |
 | `ENLACE_YA_USADO` | 410 | El enlace de verificación ya se consumió |
 
-### SPEC-03 — Credenciales y contraseñas
+### SPEC-07 — Política y cambio de contraseña
 
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `POLITICA_INCUMPLIDA` | 422 | La contraseña no cumple la política. **Un solo código para todas las reglas**, historial incluido; cuál falló va en el array `errores` (`LONGITUD_MINIMA`, `MAYUSCULA`, `MINUSCULA`, `DIGITO`, `CARACTER_ESPECIAL`, `CONTRASENA_COMUN`, `DATOS_PERSONALES`, `YA_UTILIZADA`) |
 | `PASSWORD_CADUCADA` | 403 | Quien tiene un rol de gestión completa la autenticación con una contraseña de más de 90 días. No recibe tokens: la restablece con el flujo de recuperación. Lo devuelven `/auth/login` y `/auth/otp/verificar` |
-| `TOKEN_RECUPERACION_INVALIDO` | 401 | El token de recuperación no existe, ya se usó, o fue reemplazado por una solicitud posterior |
-| `TOKEN_RECUPERACION_EXPIRADO` | 410 | El token de recuperación tiene más de 30 minutos |
 
 > **Por qué un solo `POLITICA_INCUMPLIDA` y no cinco códigos.** Las specs en PDF
 > proponían `PASSWORD_DEMASIADO_CORTA`, `PASSWORD_SIN_CARACTER_ESPECIAL`,
@@ -131,29 +129,46 @@ Si una spec necesita uno nuevo, se añade aquí y al contrato en el mismo cambio
 > }
 > ```
 
-### SPEC-04 — OTP y MFA
+### SPEC-08 — Recuperación de contraseña
+
+| Código | HTTP | Cuándo |
+|---|---|---|
+| `TOKEN_RECUPERACION_INVALIDO` | 401 | El token de recuperación no existe, ya se usó, o fue reemplazado por una solicitud posterior |
+| `TOKEN_RECUPERACION_EXPIRADO` | 410 | El token de recuperación tiene más de 30 minutos |
+
+### SPEC-09 — Segundo factor en el inicio de sesión
 
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `OTP_EXPIRADO` | 410 | El código tiene más de 5 minutos |
 | `OTP_INTENTOS_AGOTADOS` | 401 | Se agotaron los 3 intentos; el OTP queda invalidado |
+
+### SPEC-10 — Activación del segundo factor
+
+| Código | HTTP | Cuándo |
+|---|---|---|
 | `MFA_OBLIGATORIO` | 422 | Una cuenta con algún rol de gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA`) intenta desactivar su segundo factor. Si tiene varios roles, manda el más estricto |
 
-### SPEC-06 — Auditoría
+### SPEC-13 — Consulta y exportación de la auditoría
 
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `EXPORTACION_DEMASIADO_GRANDE` | 413 | El filtro abarca más de 100 000 registros |
 
-### SPEC-07 — Bloqueo
+### SPEC-14 — Bloqueo automático
 
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `TOKEN_DESBLOQUEO_INVALIDO` | 401 | El enlace de desbloqueo no existe, ya se usó o fue reemplazado por un bloqueo posterior |
 | `TOKEN_DESBLOQUEO_EXPIRADO` | 410 | El enlace de desbloqueo tiene más de 30 minutos |
-| `ADMINISTRADOR_PROTEGIDO` | 422 | Un administrador intenta bloquearse, darse de baja o quitarse el rol `ADMIN_SISTEMA` a sí mismo, o hacerlo con el último `ADMIN_SISTEMA` activo. **Un solo código para SPEC-01, SPEC-05 y SPEC-07**, porque es una sola regla |
 
-### SPEC-08 — Atributos
+### SPEC-15 — Bloqueo manual
+
+| Código | HTTP | Cuándo |
+|---|---|---|
+| `ADMINISTRADOR_PROTEGIDO` | 422 | Un administrador intenta bloquearse, darse de baja o quitarse el rol `ADMIN_SISTEMA` a sí mismo, o hacerlo con el último `ADMIN_SISTEMA` activo. **Un solo código para SPEC-04, SPEC-11 y SPEC-15**, porque es una sola regla |
+
+### SPEC-16 — Atributos
 
 | Código | HTTP | Cuándo |
 |---|---|---|
@@ -175,7 +190,7 @@ información o duplica algo que ya existe.
 | `BAD_REQUEST`, `FORBIDDEN`, `UNPROCESSABLE_ENTITY` | `VALIDACION`, `SCOPE_INSUFICIENTE`, el código concreto del caso | Son nombres de estado HTTP, no códigos: no dicen nada que el `status` no diga ya |
 | `SCOPE_INSUFFICIENT` | `SCOPE_INSUFICIENTE` | Errata en inglés de un código publicado |
 | `BLOQUEO_NO_PERMITIDO` | `ADMINISTRADOR_PROTEGIDO` | Retirado el mismo día en que se creó: la misma protección cubre también la baja y la revocación del rol |
-| `PASSWORD_DEMASIADO_CORTA` y las cuatro hermanas | `POLITICA_INCUMPLIDA` + `errores[]` | Ver el recuadro de SPEC-03 |
+| `PASSWORD_DEMASIADO_CORTA` y las cuatro hermanas | `POLITICA_INCUMPLIDA` + `errores[]` | Ver el recuadro de SPEC-07 |
 | `PASSWORD_YA_UTILIZADA` | `POLITICA_INCUMPLIDA` con la regla `YA_UTILIZADA` | El historial es una regla más de la política: un código aparte obligaba al cliente a tratar dos errores para lo mismo |
 | `TOKEN_RECUPERACION_USADO` | `TOKEN_RECUPERACION_INVALIDO` | Distinguir «usado» de «inexistente» dice si alguien pidió recuperación para ese correo |
 | Cualquier código que empiece por `AUTH_` | El equivalente de este catálogo | El prefijo no aporta: toda la API es de autenticación |

@@ -3,12 +3,13 @@
 | Campo | Valor |
 |---|---|
 | **Dueño** | Product Owner, con Jose Luis (arquitectura de implementación) |
-| **Afecta a** | SPEC-01, SPEC-02, SPEC-03, SPEC-06, SPEC-07 |
+| **Afecta a** | SPEC-01 a SPEC-05, SPEC-07, SPEC-08, SPEC-12, SPEC-14, SPEC-15 |
 | **Refleja** | El enum `EstadoCuenta` de `specs/openapi.yaml` |
 
-Los cuatro estados de una cuenta estaban repartidos entre tres specs: SPEC-01
-creaba `PENDIENTE_VERIFICACION`, SPEC-07 ponía `BLOQUEADO` y SPEC-01 ponía
-`INACTIVO`, pero ninguna decía qué transiciones son legales. Preguntas como
+Los cuatro estados de una cuenta están repartidos entre varias specs: SPEC-01
+crea `PENDIENTE_VERIFICACION`, SPEC-02 la pasa a `ACTIVO`, SPEC-14 y SPEC-15
+ponen `BLOQUEADO` y SPEC-04 pone `INACTIVO`, pero ninguna dice qué transiciones
+son legales. Preguntas como
 «¿se puede bloquear una cuenta ya desactivada?» no tenían respuesta escrita, y
 tres personas distintas iban a implementarlas.
 
@@ -37,22 +38,22 @@ o si la cuenta existe. Ver `specs/catalogo-errores.md`.
 ```mermaid
 stateDiagram-v2
     [*] --> PENDIENTE_VERIFICACION: registro de cliente (SPEC-01)
-    [*] --> ACTIVO: alta por ADMIN_SISTEMA (SPEC-01)
+    [*] --> ACTIVO: alta por ADMIN_SISTEMA (SPEC-03)
 
-    PENDIENTE_VERIFICACION --> ACTIVO: verifica su correo (SPEC-01)
-    PENDIENTE_VERIFICACION --> INACTIVO: baja lógica (SPEC-01)
+    PENDIENTE_VERIFICACION --> ACTIVO: verifica su correo (SPEC-02)
+    PENDIENTE_VERIFICACION --> INACTIVO: baja lógica (SPEC-04)
 
-    ACTIVO --> BLOQUEADO: 5 intentos fallidos consecutivos (SPEC-07)
-    ACTIVO --> BLOQUEADO: bloqueo manual del admin (SPEC-07)
-    ACTIVO --> INACTIVO: baja lógica (SPEC-01)
+    ACTIVO --> BLOQUEADO: 5 intentos fallidos consecutivos (SPEC-14)
+    ACTIVO --> BLOQUEADO: bloqueo manual del admin (SPEC-15)
+    ACTIVO --> INACTIVO: baja lógica (SPEC-04)
 
-    BLOQUEADO --> ACTIVO: vence el bloqueo automático (SPEC-07)
-    BLOQUEADO --> ACTIVO: el titular usa el enlace o restablece la contraseña (SPEC-07)
-    BLOQUEADO --> ACTIVO: desbloqueo manual del admin (SPEC-07)
-    BLOQUEADO --> BLOQUEADO: el bloqueo manual reemplaza al automático (SPEC-07)
-    BLOQUEADO --> INACTIVO: baja lógica (SPEC-01)
+    BLOQUEADO --> ACTIVO: vence el bloqueo automático (SPEC-14)
+    BLOQUEADO --> ACTIVO: el titular usa el enlace o restablece la contraseña (SPEC-14)
+    BLOQUEADO --> ACTIVO: desbloqueo manual del admin (SPEC-15)
+    BLOQUEADO --> BLOQUEADO: el bloqueo manual reemplaza al automático (SPEC-15)
+    BLOQUEADO --> INACTIVO: baja lógica (SPEC-04)
 
-    INACTIVO --> ACTIVO: reactivación por ADMIN_SISTEMA (SPEC-01)
+    INACTIVO --> ACTIVO: reactivación por ADMIN_SISTEMA (SPEC-04)
 ```
 
 ---
@@ -99,21 +100,21 @@ puede tener 4 fallos acumulados y seguir `ACTIVO`. Cuenta fallos consecutivos,
 sin ventana de tiempo, y vuelve a cero con un login correcto, con cualquier
 desbloqueo, al restablecer la contraseña y al vencer un bloqueo. Aparte se
 cuentan los **bloqueos seguidos**, que solo vuelven a cero con un login
-correcto. Todo esto es de SPEC-07; aquí se anota porque explica por qué
+correcto. Todo esto es de SPEC-14; aquí se anota porque explica por qué
 `ACTIVO` no se subdivide.
 
 **La caducidad de contraseña no es un estado.** Quien tiene un rol de gestión y
 la contraseña vencida sigue `ACTIVO`; lo que ocurre es que, al completar la
 autenticación, recibe `403 PASSWORD_CADUCADA` en vez de tokens, y la restablece
-con el flujo de recuperación. Es de SPEC-03. Si fuese
+con el flujo de recuperación (SPEC-08). La regla es de SPEC-07. Si fuese
 un estado, habría que decidir qué pasa si además se bloquea, y no hace falta.
 
 **El segundo factor tampoco es un estado.** `mfa_habilitado` es una bandera
 independiente. Una cuenta con MFA activo sigue `ACTIVO`; lo que cambia es que el
-inicio de sesión devuelve un desafío en vez de tokens. Es de SPEC-04.
+inicio de sesión devuelve un desafío en vez de tokens. Es de SPEC-09.
 
 **Toda transición se audita.** Las seis acciones correspondientes están en el
-catálogo de `SPEC-06`, y las marcadas como críticas revierten la transición si
+catálogo de `SPEC-12`, y las marcadas como críticas revierten la transición si
 no se pudo auditar.
 
 ---

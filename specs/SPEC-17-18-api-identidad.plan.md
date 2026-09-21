@@ -1,8 +1,9 @@
-# Plan de implementación — SPEC-09 · API de identidad
+# Plan de implementación — SPEC-17 y SPEC-18 · API de identidad
 
 | Campo | Valor |
 |---|---|
-| **Spec** | [`SPEC-09-api-identidad.md`](SPEC-09-api-identidad.md) |
+| **Specs** | [`SPEC-17-tokens-servicio.md`](SPEC-17-tokens-servicio.md) y [`SPEC-18-consulta-identidad.md`](SPEC-18-consulta-identidad.md) |
+| **Nota** | Se escribió para la antigua SPEC-09, que el 20 de septiembre se dividió en SPEC-17 y SPEC-18. Las referencias están renumeradas; el plan no cambió |
 | **Responsable** | Sergio Osorio (Product Owner) |
 | **Este plan cubre** | Semana 4 (contrato) y Semana 11 (implementación) |
 
@@ -15,14 +16,14 @@
 
 ## 1. Qué se construye esta semana y qué no
 
-SPEC-09 tiene dos entregas separadas por siete semanas, y confundirlas es el
+SPEC-17 y SPEC-18 tienen dos entregas separadas por siete semanas, y confundirlas es el
 riesgo principal de esta funcionalidad.
 
 | | Semana 4 — **esta** | Semana 11 — Hito 4 |
 |---|---|---|
 | **Se entrega** | El contrato y un entorno simulado | La implementación real |
-| **Artefactos** | `SPEC-09.md`, `openapi.yaml`, `kit-integracion.md` | Controladores, servicios, filtros de scope, auditoría |
-| **Prueba de que está hecho** | Un equipo ajeno programa contra el mock y obtiene respuestas | Los escenarios ESC-09.1 a ESC-09.16 pasan como pruebas automatizadas |
+| **Artefactos** | `SPEC-17.md`, `SPEC-18.md`, `openapi.yaml`, `kit-integracion.md` | Controladores, servicios, filtros de scope, auditoría |
+| **Prueba de que está hecho** | Un equipo ajeno programa contra el mock y obtiene respuestas | Los escenarios ESC-17.1 a ESC-17.9 y ESC-18.1 a ESC-18.7 pasan como pruebas automatizadas |
 | **No se toca** | Ninguna línea de código de producción | — |
 
 **El rubro del Hito 1 no pide código.** Escribir el backend ahora tendría un
@@ -51,11 +52,11 @@ Las cinco tareas de la tarjeta, en el único orden en que tienen sentido.
 
 ### Paso 1 — Aprobar la spec *(bloquea todo lo demás)*
 
-`SPEC-09-api-identidad.md` está en borrador. Antes de escribir el YAML hay que
+`SPEC-17-tokens-servicio.md` y `SPEC-18-consulta-identidad.md` están en borrador. Antes de escribir el YAML hay que
 cerrar tres cosas con el equipo:
 
-- [ ] **Jose Luis** revisa que `tipo: "servicio"` y el manejo de scopes encajen con cómo va a montar Spring Security en SPEC-02
-- [ ] **Eva Lucía** confirma que los campos de `GET /usuarios/{id}` existen en su modelo de datos de SPEC-01 y SPEC-08
+- [ ] **Jose Luis** revisa que `tipo: "servicio"` y el manejo de scopes encajen con cómo va a montar Spring Security en SPEC-05
+- [ ] **Eva Lucía** confirma que los campos de `GET /usuarios/{id}` existen en su modelo de datos de SPEC-01 y SPEC-16
 - [ ] **Christian** confirma que puede aprovisionar seis pares `client_id` / `client_secret`
 
 Sin esos tres visto bueno, el contrato se publica con supuestos y se rompe en la
@@ -86,7 +87,7 @@ Ocho endpoints, en este orden, porque cada uno depende del anterior:
    probar el camino feliz descubrirá sus errores en producción.
 3. **Claves y códigos en ASCII** (`introspeccion`, `contrasena`), contenido con
    acentos. Ver [ADR-004](../docs/arquitectura/adr/004-idioma-del-contrato.md).
-4. **Cada `operationId` cita su escenario** en la descripción (`ESC-09.5`), para
+4. **Cada `operationId` cita su escenario** en la descripción (`ESC-17.5`), para
    que en la semana 11 la prueba de integración y el endpoint se encuentren
    solos.
 
@@ -114,8 +115,8 @@ Credenciales y datos de prueba publicados en el contrato, iguales para todos:
 | `client_secret` de prueba | `secreto-de-prueba` (el mismo para los seis; los reales los aprovisiona Christian) |
 | Usuario cliente | `11111111-1111-1111-1111-111111111111` · rol `CLIENTE` |
 | Usuario vendedor | `22222222-2222-2222-2222-222222222222` · rol `VENDEDOR` |
-| Usuario desactivado | `33333333-3333-3333-3333-333333333333` · para probar ESC-09.6 |
-| Identificador inexistente | `99999999-9999-9999-9999-999999999999` · para probar ESC-09.8 |
+| Usuario desactivado | `33333333-3333-3333-3333-333333333333` · para probar ESC-17.6 |
+| Identificador inexistente | `99999999-9999-9999-9999-999999999999` · para probar ESC-18.2 |
 
 Que el usuario desactivado y el identificador inexistente estén **publicados** es
 lo que permite a un equipo consumidor probar sus caminos de error sin pedirnos
@@ -140,7 +141,7 @@ profesor. Criterio de aprobación, el mismo para las ocho:
 
 - [ ] Las siete secciones están completas
 - [ ] Cada requisito clave tiene dos escenarios y uno es caso borde
-- [ ] No contradice el contrato de SPEC-09
+- [ ] No contradice el contrato de SPEC-17 y SPEC-18
 - [ ] Lo que declara fuera de alcance no se lo asigna en silencio a otra spec
 
 ### Paso 6 — Comunicar el contrato a los seis equipos
@@ -157,7 +158,7 @@ No se toca ahora; queda registrado para que la semana 11 no empiece de cero.
 
 ### 4.1 Tablas que esta spec necesita y que ninguna otra spec cubre
 
-Las demás tablas son de SPEC-01, SPEC-05 y SPEC-08. Estas dos son propias:
+Las demás tablas son de SPEC-01, SPEC-11 y SPEC-16. Estas dos son propias:
 
 | Tabla | Propósito | Campos relevantes |
 |---|---|---|
@@ -165,7 +166,7 @@ Las demás tablas son de SPEC-01, SPEC-05 y SPEC-08. Estas dos son propias:
 | `cliente_servicio_scope` | Scopes concedidos a cada módulo | `cliente_servicio_id`, `scope` |
 
 La auditoría del acceso entre módulos reutiliza `auditoria_seguridad`, cuyo
-dueño es **SPEC-06**: escribimos con `actorTipo: "MODULO"` y el `client_id` del
+dueño es **SPEC-12**: escribimos con `actorTipo: "MODULO"` y el `client_id` del
 módulo solicitante en `actorId`, con las acciones `MODULO_CONSULTO_USUARIO` y
 `MODULO_OBTUVO_DOCUMENTO` del catálogo de esa spec. El formato del registro no
 se decide aquí.
@@ -192,14 +193,14 @@ redactarlo aparte.
 
 | Escenarios | Tipo de prueba | Herramienta |
 |---|---|---|
-| ESC-09.1, ESC-09.2 | Unitaria — verificación de firma y selección por `kid` | JUnit 5 |
-| ESC-09.3, ESC-09.4 | Integración — emisión de token de servicio y sus límites | Spring Boot Test |
-| ESC-09.5, ESC-09.6 | Integración contra base real — estado actual frente a estado del token | Testcontainers |
-| ESC-09.7, ESC-09.10, ESC-09.15 | Integración — forma de la respuesta y campos ausentes | Spring Boot Test |
-| ESC-09.8, ESC-09.9 | Integración — lote parcial, límite de 100, duplicados, malformados | Spring Boot Test |
-| ESC-09.11, ESC-09.12 | Integración + auditoría — enmascarado según scope | Testcontainers |
-| ESC-09.13, ESC-09.14 | Seguridad — anti-enumeración y scope insuficiente | Pruebas dedicadas |
-| ESC-09.16 | Contrato — la respuesta real coincide con el OpenAPI publicado | Colección Bruno en el pipeline |
+| ESC-17.1, ESC-17.2 | Unitaria — verificación de firma y selección por `kid` | JUnit 5 |
+| ESC-17.3, ESC-17.4 | Integración — emisión de token de servicio y sus límites | Spring Boot Test |
+| ESC-17.5, ESC-17.6 | Integración contra base real — estado actual frente a estado del token | Testcontainers |
+| ESC-18.1, ESC-18.4, ESC-18.7 | Integración — forma de la respuesta y campos ausentes | Spring Boot Test |
+| ESC-18.2, ESC-18.3 | Integración — lote parcial, límite de 100, duplicados, malformados | Spring Boot Test |
+| ESC-18.5, ESC-18.6 | Integración + auditoría — enmascarado según scope | Testcontainers |
+| ESC-17.7, ESC-17.8 | Seguridad — anti-enumeración y scope insuficiente | Pruebas dedicadas |
+| ESC-17.9 | Contrato — la respuesta real coincide con el OpenAPI publicado | Colección Bruno en el pipeline |
 
 Rendimiento (RNF): introspección por debajo de 200 ms en p95 con 50 usuarios
 concurrentes, medido con JMeter en el Hito 5.
@@ -220,7 +221,7 @@ concurrentes, medido con JMeter en el Hito 5.
 
 ## 6. Definición de hecho para esta semana
 
-- [ ] `SPEC-09-api-identidad.md` aprobada, con el visto bueno de Jose Luis, Eva Lucía y Christian
+- [ ] `SPEC-17-tokens-servicio.md` y `SPEC-18-consulta-identidad.md` aprobadas, con el visto bueno de Jose Luis, Eva Lucía y Christian
 - [ ] `specs/openapi.yaml` pasa `redocly lint` sin errores
 - [ ] Los ocho endpoints tienen ejemplo de éxito **y** de error
 - [ ] `npx prism mock` levanta y responde los ocho

@@ -29,7 +29,7 @@
           "credenciales",
           "correo"
         ],
-        "note": "SPEC-02 valida la contraseña, SPEC-04 pide el segundo factor y SPEC-07 cuenta los fallos."
+        "note": "SPEC-05 valida la contraseña, SPEC-09 pide el segundo factor y SPEC-14 cuenta los fallos."
       },
       {
         "id": "eventos",
@@ -39,7 +39,7 @@
           "roles",
           "rabbit"
         ],
-        "note": "Los siete eventos usuario.* salen de SPEC-01, 05, 07 y 08, siempre tras confirmar la transacción."
+        "note": "Los siete eventos usuario.* salen de SPEC-02, 03, 04, 11, 14, 15 y 16, siempre tras confirmar la transacción."
       },
       {
         "id": "rastro",
@@ -99,7 +99,7 @@
       "id": "autenticacion",
       "type": "backend",
       "label": "Autenticación",
-      "sublabel": "SPEC-02 · SPEC-04",
+      "sublabel": "SPEC-05 · 06 · 09 · 10",
       "tag": "token_refresco · otp",
       "pos": [
         60,
@@ -114,7 +114,7 @@
       "id": "credenciales",
       "type": "backend",
       "label": "Credenciales y bloqueo",
-      "sublabel": "SPEC-03 · SPEC-07",
+      "sublabel": "SPEC-07 · 08 · 14 · 15",
       "tag": "credencial · bloqueo",
       "pos": [
         265,
@@ -129,7 +129,7 @@
       "id": "usuarios",
       "type": "backend",
       "label": "Usuarios y atributos",
-      "sublabel": "SPEC-01 · SPEC-08",
+      "sublabel": "SPEC-01 a 04 · 16",
       "tag": "usuario · direccion",
       "pos": [
         470,
@@ -144,7 +144,7 @@
       "id": "roles",
       "type": "backend",
       "label": "Roles y permisos",
-      "sublabel": "SPEC-05",
+      "sublabel": "SPEC-11",
       "tag": "rol · permiso",
       "pos": [
         675,
@@ -159,7 +159,7 @@
       "id": "auditoria",
       "type": "backend",
       "label": "Auditoría",
-      "sublabel": "SPEC-06",
+      "sublabel": "SPEC-12 · 13",
       "tag": "auditoria_seguridad",
       "pos": [
         880,
@@ -174,7 +174,7 @@
       "id": "identidad",
       "type": "backend",
       "label": "API de identidad",
-      "sublabel": "SPEC-09 · JWKS",
+      "sublabel": "SPEC-17 · 18 · JWKS",
       "tag": "cliente_servicio",
       "pos": [
         1085,
@@ -371,18 +371,18 @@
       "dot": "emerald",
       "title": "Una capacidad, una spec dueña",
       "items": [
-        "El bloqueo lo decide SPEC-07 aunque el login esté en SPEC-02",
-        "La política de contraseñas vive en SPEC-03; registro y alta la invocan",
-        "SPEC-05 es la única que concede permisos; el resto solo los exige"
+        "El bloqueo lo decide SPEC-14 aunque el login esté en SPEC-05",
+        "La política de contraseñas vive en SPEC-07; registro y alta la invocan",
+        "SPEC-11 es la única que concede permisos; el resto solo los exige"
       ]
     },
     {
       "dot": "amber",
       "title": "Hacia fuera",
       "items": [
-        "SPEC-01, 05, 07 y 08 publican los siete eventos usuario.* (también bloqueado y desbloqueado)",
-        "SPEC-03, 04 y 07 envían correos: enlaces, códigos y avisos",
-        "SPEC-09 no tiene pantallas: la consumen máquinas"
+        "SPEC-02, 03, 04, 11, 14, 15 y 16 publican los siete eventos usuario.* (también bloqueado y desbloqueado)",
+        "SPEC-02, 07, 08, 09, 14 y 15 envían correos: enlaces, códigos y avisos",
+        "SPEC-17 y 18 no tienen pantallas: las consumen máquinas"
       ]
     }
   ]

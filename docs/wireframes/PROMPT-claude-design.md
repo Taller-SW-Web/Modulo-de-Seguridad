@@ -4,7 +4,8 @@
 
 > **Actualizado el 18 de septiembre.** Ya hay una primera versión completa en
 > Stitch (proyecto `889177073946089595`, 47 pantallas, todas las specs salvo
-> SPEC-09). Este prompt se corrigió para que coincida con las specs actuales; si
+> la API de identidad). Los artboards de Stitch siguen rotulados con la
+> numeración antigua de 9 specs; la equivalencia está en `specs/trazabilidad.md` §1. Este prompt se corrigió para que coincida con las specs actuales; si
 > lo reutilizas, las specs mandan sobre él.
 
 ## Antes de pegarlo: dos cosas
@@ -114,8 +115,8 @@ Empieza por las pantallas 1, 2 y 4, que son las que enseñamos primero.
 
 ## Después de generarlo
 
-- [ ] Revisar con Juan José las pantallas 2 y 5 (su SPEC-03)
-- [ ] Revisar con Luis David la pantalla 4 (su SPEC-04)
+- [ ] Revisar con Juan José las pantallas 2 y 5 (sus SPEC-07 y SPEC-08)
+- [ ] Revisar con Luis David la pantalla 4 (sus SPEC-09 y SPEC-10)
 - [ ] Revisar con Christian las pantallas 7 y 8 (él las implementa)
 - [ ] Exportar a PDF en esta carpeta, con el nombre `wireframes-hito-1.pdf`
 - [ ] Crear el archivo de Figma y dejar el enlace en `docs/wireframes/README.md`

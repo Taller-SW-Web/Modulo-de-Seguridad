@@ -3,6 +3,22 @@
 **Gestor de accesos del Marketplace Multicanal de Productos Deportivos**
 Grupo 7 — Taller de Construcción de Software Web — UNMSM — Ciclo 2026-II
 
+## Integrantes y roles
+
+| Integrante | Código | Rol |
+|---|---|---|
+| Sergio Alejandro Osorio Montenegro | 20130037 | Product Owner y Arquitecto de solución |
+| Jose Luis Limachi Sarmiento | 22200287 | Tech Lead — Backend |
+| Eva Lucía Moreno Zevallos | 20200277 | Backend |
+| Juan José Cano Vasquez | 19200303 | Full Stack |
+| Luis David Morales Brenis | 23200280 | Full Stack |
+| Valery Cristin Gutierrez Bendezu | 23200263 | Frontend y Diseño (UX) |
+| Christian Gabriel Arancivia Salas | 23200077 | DevOps, QA y Frontend de administración |
+
+Qué spec lleva cada uno y cómo trabajamos: [`docs/responsabilidades.md`](docs/responsabilidades.md).
+
+---
+
 Este módulo es el **proveedor de identidad** del marketplace. Es dueño de la
 entidad usuario —y de sus seis roles: cliente, vendedor y cuatro de gestión— y
 los otros seis módulos
@@ -36,7 +52,7 @@ consultas e introspección cuando hacen falta, y eventos por RabbitMQ.
 
 ### Qué hay dentro
 
-Seis bloques de dominio, uno por grupo de specs, cada uno dueño de sus tablas.
+Seis bloques de dominio, cada uno dueño de sus tablas y de un grupo de specs afines.
 
 ![Estructura del módulo: API, seis bloques de dominio e infraestructura](docs/arquitectura/estructura-modulo.svg)
 
@@ -71,15 +87,17 @@ siguen vivas.
 
 ## Estado
 
-**Semana 4 — Hito 1.** Fase de especificación. Todavía no hay código de
-producción: primero el contrato y las specs, después la implementación.
+**Semana 5 — tras el Hito 1.** Fase de especificación. Todavía no hay código de
+producción: primero el contrato y las specs, después la implementación. Con el
+feedback de la presentación, las specs pasaron de 9 a 18 —una por función— y las
+de interfaz se separaron de las de backend.
 
 | Entregable del Hito 1 | Estado |
 |---|---|
 | Arquitectura preliminar | ✅ [`docs/arquitectura/`](docs/arquitectura/) — 6 diagramas y 4 ADR |
 | Funcionalidades distribuidas | ✅ [`docs/responsabilidades.md`](docs/responsabilidades.md) |
-| 9 especificaciones SDD | 🔶 9 de 9 en `main`, en borrador y pendientes de aprobación — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md) |
-| Wireframes | 🔶 primera versión en Stitch (47 pantallas, SPEC-01 a SPEC-08); falta exportarla a `docs/wireframes/` y pasarla a Figma |
+| Especificaciones SDD | 🔶 **18 specs de backend**, una por función, en borrador y pendientes de aprobación — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md). Specs de interfaz aparte, en [`specs/front/`](specs/front/) |
+| Wireframes | 🔶 primera versión en Stitch (47 pantallas, rotuladas con la numeración antigua de 9 specs); falta exportarla a `docs/wireframes/` y pasarla a Figma |
 | Contrato OpenAPI + mock | 🔶 [`specs/openapi.yaml`](specs/openapi.yaml) — 39 operaciones, valida sin errores y el mock de Prism responde |
 
 ---
@@ -91,8 +109,9 @@ producción: primero el contrato y las specs, después la implementación.
 | Integrante del G7 | [`docs/plan-hito-1.md`](docs/plan-hito-1.md) — tu tarea concreta de esta semana |
 | Integrante nuevo | [`docs/responsabilidades.md`](docs/responsabilidades.md) — quién hace qué y cómo trabajamos |
 | **De otro equipo del curso** | [`specs/openapi.yaml`](specs/openapi.yaml) — el contrato. No necesitas nada más para empezar a programar contra nosotros |
-| Quieres la vista del usuario | [`specs/historias-usuario.md`](specs/historias-usuario.md) — 39 historias, cada una enlazada a sus RF y escenarios |
+| Quieres la vista del usuario | [`specs/historias-usuario.md`](specs/historias-usuario.md) — 41 historias, cada una enlazada a sus RF y escenarios |
 | Vas a escribir una spec | [`specs/_PLANTILLA.md`](specs/_PLANTILLA.md), y después [`specs/trazabilidad.md`](specs/trazabilidad.md) para ver qué endpoints, eventos y pantallas te tocan |
+| Vas a especificar una pantalla | [`specs/front/`](specs/front/) — las specs de interfaz van aparte, con su propia plantilla |
 | Vas a devolver un error | [`specs/catalogo-errores.md`](specs/catalogo-errores.md) — los códigos tienen dueño único |
 | Vas a publicar un evento | [`specs/catalogo-eventos.md`](specs/catalogo-eventos.md) |
 | Vas a cambiar el estado de una cuenta | [`docs/arquitectura/estados-usuario.md`](docs/arquitectura/estados-usuario.md) |
@@ -160,19 +179,3 @@ valida vuestras peticiones. Podéis forzar cualquier respuesta con la cabecera
 > sí lo lleva. Parametrizad la URL base y no tocaréis código al cambiar.
 
 La guía completa está en [`specs/kit-integracion.md`](specs/kit-integracion.md).
-
----
-
-## Equipo
-
-| Integrante | Rol |
-|---|---|
-| Sergio Alejandro Osorio Montenegro | Product Owner y Arquitecto de solución |
-| Jose Luis Limachi Sarmiento | Tech Lead — Backend |
-| Eva Lucía Moreno Zevallos | Backend |
-| Juan José Cano Vasquez | Full Stack |
-| Luis David Morales Brenis | Full Stack |
-| Valery Cristin Gutierrez Bendezu | Frontend y Diseño |
-| Christian Gabriel Arancivia Salas | DevOps, QA y Frontend de administración |
-
-Detalle del reparto en [`docs/responsabilidades.md`](docs/responsabilidades.md).

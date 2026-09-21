@@ -3,7 +3,7 @@
 **Módulo:** Seguridad y autenticación de usuarios (gestor de accesos)
 **Curso:** Taller de Construcción de Software Web — UNMSM — Ciclo 2026-II
 **Repositorio:** https://github.com/Taller-SW-Web/Modulo-de-Seguridad
-**Versión:** 1.0 — Semana 4 (Hito 1)
+**Versión:** 2.0 — Semana 5 (18 specs, tras el feedback del Hito 1)
 
 > Este documento es el entregable del rubro **«Funcionalidades identificadas y
 > distribuidas por cada integrante»** del Hito 1 (Componente 2, 25%).
@@ -19,7 +19,7 @@ consecuencias sobre el reparto:
 
 1. **El contrato de la API tiene dueño único.** Si cada integrante inventara sus
    propios endpoints, los seis equipos consumidores recibirían un contrato
-   inconsistente. Por eso el contrato (SPEC-09) no se reparte: lo lleva el
+   inconsistente. Por eso el contrato (SPEC-17 y SPEC-18) no se reparte: lo lleva el
    Product Owner y todos los demás programan contra él.
 2. **Nadie es dueño exclusivo de una capa.** El curso evalúa el desarrollo
    *individual* en cada revisión semanal. Ningún integrante ocupa un rol que sea
@@ -59,65 +59,101 @@ y se registra el motivo como ADR.
 
 ---
 
-## 3. Reparto de las 9 especificaciones (SDD)
+## 3. Reparto de las 18 especificaciones (SDD)
 
-Las nueve especificaciones son el **backlog completo del ciclo**. Cada una la
-redacta, implementa y prueba su responsable.
+Las dieciocho especificaciones son el **backlog completo del ciclo**. Cada una
+la redacta, implementa y prueba su responsable. Son specs **de backend**: las
+pantallas se especifican aparte, en [`specs/front/`](../specs/front/), y las
+lleva el responsable de UX (ver §3.2).
 
-| SPEC | Funcionalidad | Responsable backend | Responsable interfaz | Hito objetivo |
-|---|---|---|---|---|
-| **SPEC-01** | Registro y gestión de usuarios | Eva Lucía | Valery | Hito 3 (Sem. 8) |
-| **SPEC-02** | Autenticación usuario/contraseña | Jose Luis | Valery | Hito 3 (Sem. 8) |
-| **SPEC-03** | Gestión de credenciales y contraseñas | Juan José | Juan José / Valery | Hito 3 (Sem. 8) |
-| **SPEC-04** | Autenticación por OTP y MFA | Luis David | Luis David | Hito 4 (Sem. 11) |
-| **SPEC-05** | Gestión de roles y permisos | Eva Lucía | Christian | Hito 4 (Sem. 11) |
-| **SPEC-06** | Auditoría y trazabilidad de eventos de seguridad | Christian | Christian | Hito 3 (registro) / Hito 5 (consulta) |
-| **SPEC-07** | Bloqueo y desbloqueo de cuentas | Luis David | Christian | Hito 5 (Sem. 14) |
-| **SPEC-08** | Gestión de atributos de usuarios | Eva Lucía | Christian | Hito 5 (Sem. 14) |
-| **SPEC-09** | API de identidad para los demás módulos | Sergio | — | Hito 1 (contrato) / Hito 4 (implementación) |
+| SPEC | Funcionalidad | Responsable | Hito objetivo |
+|---|---|---|---|
+| **SPEC-01** | Registro de clientes | Eva Lucía | Hito 3 (Sem. 8) |
+| **SPEC-02** | Verificación de correo | Juan José | Hito 3 (Sem. 8) |
+| **SPEC-03** | Alta y consulta administrativa de cuentas | Christian | Hito 3 (Sem. 8) |
+| **SPEC-04** | Baja y reactivación de cuentas | Eva Lucía | Hito 3 (Sem. 8) |
+| **SPEC-05** | Inicio de sesión con correo y contraseña | Jose Luis | Hito 3 (Sem. 8) |
+| **SPEC-06** | Renovación y cierre de sesión | Jose Luis | Hito 3 (Sem. 8) |
+| **SPEC-07** | Política y cambio de contraseña | Juan José | Hito 3 (política) / Hito 4 (cambio) |
+| **SPEC-08** | Recuperación de contraseña | Juan José | Hito 4 (Sem. 11) |
+| **SPEC-09** | Segundo factor en el inicio de sesión (OTP) | Luis David | Hito 4 (Sem. 11) |
+| **SPEC-10** | Activación y desactivación del segundo factor | Luis David | Hito 4 (Sem. 11) |
+| **SPEC-11** | Gestión de roles y permisos | Eva Lucía | Hito 4 (Sem. 11) |
+| **SPEC-12** | Registro de auditoría | Christian | Hito 3 (Sem. 8) |
+| **SPEC-13** | Consulta y exportación de la auditoría | Christian | Hito 5 (Sem. 14) |
+| **SPEC-14** | Bloqueo automático por intentos fallidos | Luis David | Hito 5 (Sem. 14) |
+| **SPEC-15** | Bloqueo y desbloqueo por un administrador | Luis David | Hito 5 (Sem. 14) |
+| **SPEC-16** | Gestión de atributos de usuarios | Eva Lucía | Hito 5 (Sem. 14) |
+| **SPEC-17** | Claves públicas, tokens de servicio e introspección | Sergio | Hito 1 (contrato) / Hito 4 (implementación) |
+| **SPEC-18** | Consulta de identidad para los demás módulos | Sergio | Hito 1 (contrato) / Hito 4 (implementación) |
 
-### Carga por integrante
+### 3.1 Carga por integrante
 
-| Integrante | SPECs propias | Trabajo transversal permanente |
-|---|---|---|
-| Sergio | SPEC-09 | Arquitectura, OpenAPI, mock server, ADRs, coordinación intermódulos, aprobación de las 9 specs |
-| Jose Luis | SPEC-02 | Revisión de código de todos los PR, estructura del proyecto backend, pruebas del núcleo |
-| Eva Lucía | SPEC-01, 05, 08 | Modelo de datos de usuario/rol/permiso y sus migraciones Flyway |
-| Juan José | SPEC-03 | Adaptador de correo (outbox) compartido con SPEC-01 y SPEC-04 |
-| Luis David | SPEC-04, 07 | Tabla `intento_login`, compartida con SPEC-02 |
-| Valery | Interfaz de SPEC-01, 02, 03 | Sistema de diseño, paleta, wireframes, prototipos Figma, 3 propuestas de UX |
-| Christian | SPEC-06 + interfaz de SPEC-05, 07, 08 | Docker, Docker Compose, GitHub Actions, despliegue en nube, JMeter, evidencias de prueba |
+| Integrante | SPECs propias | Requisitos | Trabajo transversal permanente |
+|---|---|---|---|
+| Sergio | SPEC-17, 18 | 17 | Arquitectura, OpenAPI, mock server, ADRs, coordinación intermódulos, aprobación de las 18 specs |
+| Jose Luis | SPEC-05, 06 | 12 | Revisión de código de todos los PR, estructura del proyecto backend, pruebas del núcleo |
+| Eva Lucía | SPEC-01, 04, 11, 16 | 31 | Modelo de datos de usuario/rol/permiso y sus migraciones Flyway |
+| Juan José | SPEC-02, 07, 08 | 25 | Adaptador de correo (outbox) que usan también SPEC-09, SPEC-14, SPEC-15 y SPEC-16 |
+| Luis David | SPEC-09, 10, 14, 15 | 36 | Tabla `intento_login`, compartida con SPEC-05 |
+| Valery | Specs de interfaz (`specs/front/`) | — | Sistema de diseño, paleta, wireframes, prototipos Figma, 3 propuestas de UX |
+| Christian | SPEC-03, 12, 13 | 16 | Docker, Docker Compose, GitHub Actions, despliegue en nube, JMeter, evidencias de prueba, pantallas del panel de administración |
 
-**Por qué así.** Eva concentra las tres specs del dominio «usuario» porque
-comparten tablas (`usuario`, `rol`, `permiso`, `perfil_*`) y partirlas obligaría
-a coordinar migraciones entre dos personas. Juan José lleva una sola spec, pero
-es la más grande del set —doce requisitos y quince escenarios, el ciclo de vida
-completo de una credencial— y además dos pantallas. Luis David recibe una
-vertical completa, backend *más* su pantalla, para poder demostrar una
-funcionalidad de punta a punta en las revisiones semanales. Jose Luis lleva solo
-SPEC-02, pero es la spec más difícil del módulo y además revisa todo lo demás.
-Christian pasa de llevar solo interfaz a ser dueño de SPEC-06, que es la spec
-que alimenta el panel de administración que ya tenía asignado.
+**Por qué así.** Al dividir las specs no se movió ninguna función de dueño salvo
+dos, y las dos por afinidad con lo que la persona ya construye:
 
-### Dos cambios sobre el reparto inicial (13 de septiembre)
+- **La verificación de correo pasa a Juan José**, porque es un enlace de un solo
+  uso enviado por correo: el mismo mecanismo y el mismo adaptador (outbox) que ya
+  construye para la recuperación de contraseña.
+- **El alta y la consulta administrativa de cuentas pasan a Christian**, porque
+  son el backend del panel de administración que ya tenía asignado. Así puede
+  demostrar el panel de punta a punta.
 
-**La política de contraseñas dejó de ser una spec suelta.** El profesor indicó
+Eva conserva el resto del dominio «usuario» —registro, baja, roles y atributos—
+porque comparten tablas (`usuario`, `rol`, `permiso`, `perfil_*`) y partirlas
+obligaría a coordinar migraciones entre dos personas. Luis David conserva sus
+dos verticales completas, backend *más* pantalla, ahora en cuatro specs más
+pequeñas. Jose Luis lleva solo dos specs, pero son el núcleo del módulo y además
+revisa todo lo demás. Christian y Sergio tienen menos requisitos porque cargan
+con el trabajo transversal (DevOps y QA, y contrato y coordinación).
+
+### 3.2 Specs de backend y specs de interfaz
+
+El profesor pidió separar las especificaciones de interfaz. Desde el 20 de
+septiembre:
+
+- Las **18 specs de `specs/`** describen qué hace el servicio: requisitos,
+  escenarios verificables por la API, contrato. No describen pantallas.
+- Las **specs de interfaz de [`specs/front/`](../specs/front/)** describen cada
+  pantalla: estados, validaciones del lado del cliente, mensajes, accesibilidad,
+  y qué spec de backend consume. Las lleva Valery como responsable de UX, con su
+  propia plantilla. Por ahora solo existe la plantilla: se redactarán cuando el
+  equipo lo decida.
+
+### 3.3 Cambios sobre el reparto
+
+**20 de septiembre — de 9 a 18 specs.** Tras la presentación del Hito 1, el
+profesor pidió llegar a más de 10 y menos de 20 specs, con una por función: su
+ejemplo fue que «gestión de usuarios» agrupaba demasiadas funciones. Cada spec
+se partió por sus endpoints, que ya iban separados, sin cambiar ninguna regla;
+dos quedaron enteras porque ya eran una sola función (roles y atributos). El
+contrato publicado no cambió. La equivalencia completa entre números antiguos y
+nuevos está en [`specs/trazabilidad.md`](../specs/trazabilidad.md) §1.1 y §8.
+
+**13 de septiembre — dos cambios sobre el reparto inicial** *(con la numeración
+antigua de 9 specs)*.
+
+*La política de contraseñas dejó de ser una spec suelta.* El profesor indicó
 que no puede sostenerse por sí sola y debe ir dentro de otra. Se fusionó con la
-antigua SPEC-06 —recuperación y cambio— en la actual **SPEC-03, Gestión de
-credenciales y contraseñas**, que cubre el ciclo de vida completo: política de
-robustez, historial, caducidad, recuperación por correo y cambio autenticado.
-La fusión evita además que la regla de complejidad se duplicara en los tres
-flujos que la invocan (registro, cambio y restablecimiento).
+entonces SPEC-06 —recuperación y cambio— en la SPEC-03 antigua, «Gestión de
+credenciales y contraseñas». Al dividir el 20 de septiembre se mantuvo esa
+decisión: la política vive hoy en SPEC-07, junto al cambio de contraseña.
 
-**La auditoría pasó a tener dueño.** Aparecía seis veces como frase suelta en
-los no funcionales de SPEC-01, SPEC-05, SPEC-07 y SPEC-08 —«queda registrada en
-`auditoria_seguridad`»— sin que ninguna spec dijera qué se registra, quién puede
-consultarlo ni cómo se exporta. Dos requisitos ya escritos dependían de esa
-tabla (RF-09.14 y RF-09.12) y la pantalla 8 de los wireframes la dibujaba sin
-respaldo. Ocupa el número **06**, que liberó la fusión anterior.
-
-El total sigue siendo nueve specs y SPEC-09 no se tocó: está publicada y los
-seis equipos consumidores programan contra ella.
+*La auditoría pasó a tener dueño.* Aparecía seis veces como frase suelta en los
+no funcionales de cuatro specs —«queda registrada en `auditoria_seguridad`»— sin
+que ninguna dijera qué se registra, quién puede consultarlo ni cómo se exporta.
+Ocupó el número 06 antiguo, que liberó la fusión anterior. Hoy son SPEC-12
+(registro) y SPEC-13 (consulta y exportación).
 
 ---
 
@@ -173,7 +209,7 @@ Una spec a la que le falte una sección **no se aprueba**. Plantilla en
 ### 5.3 Ramas y revisión
 
 - `main` protegida: nadie commitea directo.
-- Una rama por spec: `spec-01-registro`, `spec-02-login`, …
+- Una rama por spec: `spec-01-registro-clientes`, `spec-05-inicio-sesion`, …
 - Todo PR necesita **una aprobación** de otro integrante. Los que tocan
   autenticación, tokens o permisos necesitan la de Jose Luis.
 - El PR enlaza la spec que implementa y marca qué requisitos cubre.

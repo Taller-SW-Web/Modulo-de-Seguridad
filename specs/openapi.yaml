@@ -46,7 +46,8 @@ info:
     los seis equipos consumidores. Desde el Hito 4 se genera desde el código con
     `springdoc-openapi`, para que no pueda desincronizarse.
 
-    Especificación de origen: `specs/SPEC-09-api-identidad.md`.
+    Especificaciones de origen: `specs/SPEC-17-tokens-servicio.md` y
+    `specs/SPEC-18-consulta-identidad.md`.
     Decisión de idioma: `docs/arquitectura/adr/004-idioma-del-contrato.md`.
 
     ## Convenciones
@@ -96,7 +97,7 @@ tags:
   - name: Contraseñas
     description: |
       Ciclo de vida de una credencial: política de robustez, recuperación por
-      correo y cambio autenticado. Definido por SPEC-03.
+      correo y cambio autenticado. Definido por SPEC-07 y SPEC-08.
   - name: Administración
     description: |
       Alta y baja de usuarios, roles, bloqueos y atributos de perfil. Requiere
@@ -104,7 +105,7 @@ tags:
   - name: Auditoría
     description: |
       Consulta y exportación del registro de eventos de seguridad. Definido por
-      SPEC-06. **No está disponible para los módulos consumidores.**
+      SPEC-13 (el registro lo define SPEC-12). **No está disponible para los módulos consumidores.**
 
 security:
   - tokenUsuario: []
@@ -112,7 +113,7 @@ security:
 paths:
 
   # ---------------------------------------------------------------------------
-  # INTEGRACIÓN — SPEC-09
+  # INTEGRACIÓN — SPEC-17 y SPEC-18
   # ---------------------------------------------------------------------------
 
   /auth/.well-known/jwks.json:
@@ -121,7 +122,7 @@ paths:
       operationId: obtenerJwks
       summary: Clave pública de verificación de firma
       description: |
-        Escenario ESC-09.1 y ESC-09.2 de SPEC-09.
+        Escenario ESC-17.1 y ESC-17.2 de SPEC-17.
 
         **Cachéalo.** Un consumidor que lo descargue en cada validación anula la
         ventaja de validar en local. Si el JWKS no responde y tienes copia en
@@ -182,7 +183,7 @@ paths:
       operationId: obtenerConfiguracionOpenid
       summary: Documento de descubrimiento
       description: |
-        Requisito RF-09.1 de SPEC-09.
+        Requisito RF-17.1 de SPEC-17.
 
         **Esto es lo que hace que la integración sea una línea de configuración
         en vez de código.** Con esta URL, Spring Security resuelve solo dónde
@@ -239,7 +240,7 @@ paths:
       operationId: emitirTokenServicio
       summary: Emite el token de servicio de un módulo consumidor
       description: |
-        Escenarios ESC-09.3 y ESC-09.4 de SPEC-09.
+        Escenarios ESC-17.3 y ESC-17.4 de SPEC-17.
 
         Cada módulo tiene su propio `client_id` y `client_secret`, para que la
         auditoría diga qué módulo consultó qué dato y para poder revocar uno sin
@@ -307,7 +308,7 @@ paths:
       operationId: introspeccionarToken
       summary: Estado actual de un token de usuario
       description: |
-        Escenarios ESC-09.5 y ESC-09.6 de SPEC-09.
+        Escenarios ESC-17.5 y ESC-17.6 de SPEC-17.
 
         Devuelve el estado del usuario **en este instante**, no el que llevaba el
         token cuando se emitió. Úsalo solo antes de operaciones sensibles:
@@ -352,7 +353,7 @@ paths:
                     tipo: acceso
                     exp: 1789276800
                 usuarioDesactivado:
-                  summary: ESC-09.6 — el usuario fue desactivado hace 3 minutos
+                  summary: ESC-17.6 — el usuario fue desactivado hace 3 minutos
                   value:
                     activo: false
                     motivo: USUARIO_INACTIVO
@@ -372,10 +373,10 @@ paths:
       operationId: obtenerUsuario
       summary: Datos básicos de un usuario
       description: |
-        Escenarios ESC-09.7, ESC-09.11 y ESC-09.12 de SPEC-09.
+        Escenarios ESC-18.1, ESC-18.5 y ESC-18.6 de SPEC-18.
 
         **También lo usa el panel de administración**, con el token de un
-        usuario que tenga el permiso `usuario.ver` (SPEC-05). Es el mismo
+        usuario que tenga el permiso `usuario.ver` (SPEC-11). Es el mismo
         endpoint para los dos, no uno por tipo de credencial. Quien quiera
         sus propios datos usa `/auth/me`.
 
@@ -399,7 +400,7 @@ paths:
                 $ref: '#/components/schemas/Usuario'
               examples:
                 conScopeDocumento:
-                  summary: ESC-09.11 — con usuarios:leer:documento, el documento va en claro
+                  summary: ESC-18.5 — con usuarios:leer:documento, el documento va en claro
                   value:
                     id: "11111111-1111-1111-1111-111111111111"
                     nombres: "María"
@@ -413,7 +414,7 @@ paths:
                     tipoDocumento: DNI
                     documento: "45781234"
                 sinScopeDocumento:
-                  summary: ESC-09.12 — sin el scope, el documento va enmascarado
+                  summary: ESC-18.6 — sin el scope, el documento va enmascarado
                   value:
                     id: "11111111-1111-1111-1111-111111111111"
                     nombres: "María"
@@ -449,7 +450,7 @@ paths:
       operationId: desactivarUsuario
       summary: Baja lógica de un usuario
       description: |
-        Definido por SPEC-01. **No borra nada**: la cuenta pasa a `INACTIVO`,
+        Definido por SPEC-04. **No borra nada**: la cuenta pasa a `INACTIVO`,
         se revocan todos sus tokens de refresco y se publica
         `usuario.desactivado`. Exige el permiso `usuario.desactivar`, que solo
         tiene `ADMIN_SISTEMA`. Nadie puede darse de baja a sí mismo por esta vía
@@ -468,8 +469,8 @@ paths:
         '422':
           description: |
             Sobre sí mismo, o sobre el último `ADMIN_SISTEMA` activo. La misma
-            regla protege el bloqueo (SPEC-07), la baja (SPEC-01) y la
-            revocación del rol (SPEC-05).
+            regla protege el bloqueo (SPEC-15), la baja (SPEC-04) y la
+            revocación del rol (SPEC-11).
           content:
             application/problem+json:
               schema:
@@ -488,7 +489,7 @@ paths:
       operationId: reactivarUsuario
       summary: Reactiva una cuenta dada de baja
       description: |
-        Definido por SPEC-01. Exige el permiso `usuario.reactivar`, que solo
+        Definido por SPEC-04. Exige el permiso `usuario.reactivar`, que solo
         tiene `ADMIN_SISTEMA`. La cuenta vuelve a `ACTIVO` con la misma
         identidad, el mismo correo y los mismos roles, sin repetir la
         verificación y sin ninguna sesión abierta. Se publica
@@ -512,7 +513,7 @@ paths:
       operationId: consultarUsuariosPorLote
       summary: Consulta hasta 100 usuarios en una llamada
       description: |
-        Escenarios ESC-09.8 y ESC-09.9 de SPEC-09.
+        Escenarios ESC-18.2 y ESC-18.3 de SPEC-18.
 
         **La petición no falla entera por los identificadores que no existan:**
         los encontrados vuelven en `usuarios` y los demás en `noEncontrados`. Un
@@ -556,7 +557,7 @@ paths:
                 $ref: '#/components/schemas/LoteUsuarios'
               examples:
                 parcial:
-                  summary: ESC-09.8 — dos encontrados, uno no
+                  summary: ESC-18.2 — dos encontrados, uno no
                   value:
                     usuarios:
                       - id: "11111111-1111-1111-1111-111111111111"
@@ -579,7 +580,7 @@ paths:
                 $ref: '#/components/schemas/Problem'
               examples:
                 loteDemasiadoGrande:
-                  summary: ESC-09.9 — más de 100 identificadores
+                  summary: ESC-18.3 — más de 100 identificadores
                   value:
                     type: "https://g7.unmsm.pe/errores/lote-demasiado-grande"
                     title: El lote supera el máximo permitido
@@ -607,10 +608,10 @@ paths:
       operationId: obtenerDireccionesUsuario
       summary: Direcciones de entrega de un cliente
       description: |
-        Escenario ESC-09.10 de SPEC-09.
+        Escenario ESC-18.4 de SPEC-18.
 
         Con token de usuario lo puede leer el titular de la cuenta, o quien
-        tenga el permiso `usuario.ver` (SPEC-05).
+        tenga el permiso `usuario.ver` (SPEC-11).
 
         **No incluye el número de documento ni la fecha de nacimiento:** no
         hacen falta para entregar un paquete.
@@ -667,7 +668,7 @@ paths:
       operationId: agregarDireccion
       summary: Registra una dirección de entrega
       description: |
-        Definido por SPEC-08. El usuario solo puede añadir direcciones a su
+        Definido por SPEC-16. El usuario solo puede añadir direcciones a su
         propia cuenta; `ADMIN_SISTEMA` puede hacerlo sobre cualquiera.
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
@@ -701,12 +702,12 @@ paths:
       operationId: listarRoles
       summary: Catálogo de roles y sus permisos
       description: |
-        Escenario ESC-09.15 de SPEC-09.
+        Escenario ESC-18.7 de SPEC-18.
 
         Consúltalo en vez de codificar los roles a mano: si mañana se añade un
         permiso a `GESTOR_DESPACHO`, tu módulo se entera sin desplegar.
 
-        **Hoy `permisos` solo lleva los de este módulo**, definidos en SPEC-05.
+        **Hoy `permisos` solo lleva los de este módulo**, definidos en SPEC-11.
         Los de cada módulo consumidor se añaden cuando se acuerden con su
         equipo; hasta entonces autoriza por `roles`. Añadir permisos es un
         cambio compatible.
@@ -764,9 +765,9 @@ paths:
       operationId: listarPermisos
       summary: Catálogo de permisos por módulo
       description: |
-        Escenario ESC-09.15 de SPEC-09.
+        Escenario ESC-18.7 de SPEC-18.
 
-        **Hoy devuelve los permisos de este módulo**, definidos en SPEC-05. Los
+        **Hoy devuelve los permisos de este módulo**, definidos en SPEC-11. Los
         de cada módulo consumidor se añaden cuando se acuerden con su equipo, y
         añadirlos no obliga a `v2`.
       security:
@@ -794,7 +795,7 @@ paths:
                       $ref: '#/components/schemas/Permiso'
               examples:
                 moduloSeguridad:
-                  summary: Estado actual — los permisos de este módulo (SPEC-05)
+                  summary: Estado actual — los permisos de este módulo (SPEC-11)
                   value:
                     permisos:
                       - codigo: "usuario.ver"
@@ -819,7 +820,7 @@ paths:
           $ref: '#/components/responses/ScopeInsuficiente'
 
   # ---------------------------------------------------------------------------
-  # AUTENTICACIÓN — SPEC-01, SPEC-02, SPEC-03
+  # AUTENTICACIÓN — SPEC-01, SPEC-05, SPEC-06, SPEC-07
   # La pantalla de login de cualquier módulo llama aquí. Nadie más guarda
   # contraseñas ni usuarios.
   # ---------------------------------------------------------------------------
@@ -830,7 +831,7 @@ paths:
       operationId: registrarCliente
       summary: Autorregistro de un cliente
       description: |
-        Definido por SPEC-01 y SPEC-03.
+        Definido por SPEC-01 y SPEC-07.
 
         La cuenta se crea en estado `PENDIENTE_VERIFICACION` y se envía un correo
         con un enlace de un solo uso válido **24 horas**. Se asigna el rol
@@ -917,7 +918,7 @@ paths:
       operationId: iniciarSesion
       summary: Inicio de sesión con correo y contraseña
       description: |
-        Definido por SPEC-02.
+        Definido por SPEC-05.
 
         **Éste es el endpoint al que llama la pantalla de login de cualquier
         módulo.** Los demás equipos pueden tener su propio formulario en React,
@@ -989,7 +990,7 @@ paths:
             contraseña sea correcta.** Sin la contraseña correcta de una cuenta
             `ACTIVO` la respuesta es siempre este `401`: cualquier otra serviría
             para saber si se acertó la contraseña de una cuenta bloqueada. Quien queda bloqueado se entera
-            por correo (SPEC-07).
+            por correo (SPEC-14).
           content:
             application/problem+json:
               schema:
@@ -1004,7 +1005,7 @@ paths:
                     detail: El correo o la contraseña no son correctos.
         '403':
           description: |
-            La contraseña caducó (SPEC-03). Solo llega aquí quien completó la
+            La contraseña caducó (SPEC-07). Solo llega aquí quien completó la
             autenticación de una cuenta `ACTIVO` con algún rol de gestión. No se
             emiten tokens: el titular debe restablecerla con el flujo de
             recuperación (`/password/recuperar`), que valida la política y el
@@ -1027,7 +1028,7 @@ paths:
       operationId: renovarSesion
       summary: Renueva la sesión rotando el token de refresco
       description: |
-        Definido por SPEC-02.
+        Definido por SPEC-06.
 
         **El refresco se usa una sola vez.** Cada renovación emite uno nuevo e
         invalida el anterior. Si aparece un refresco ya rotado, se asume robo o
@@ -1084,7 +1085,7 @@ paths:
       tags: [Autenticación]
       operationId: cerrarSesion
       summary: Cierra la sesión y revoca el token de refresco
-      description: Definido por SPEC-02. Revoca el refresco presentado.
+      description: Definido por SPEC-06. Revoca el refresco presentado.
       requestBody:
         required: true
         content:
@@ -1107,10 +1108,10 @@ paths:
       operationId: obtenerPerfilPropio
       summary: Datos del usuario del token actual
       description: |
-        Definido por SPEC-02.
+        Definido por SPEC-16.
 
         **Requiere un token de usuario.** Un token de servicio recibe `403`: un
-        módulo no puede actuar en nombre de una persona (ESC-09.4).
+        módulo no puede actuar en nombre de una persona (ESC-17.4).
       responses:
         '200':
           description: Perfil del titular del token
@@ -1147,7 +1148,7 @@ paths:
                     code: TOKEN_NO_APLICABLE
 
   # ---------------------------------------------------------------------------
-  # SEGUNDO FACTOR — SPEC-04
+  # SEGUNDO FACTOR — SPEC-09
   # ---------------------------------------------------------------------------
 
   /auth/otp/solicitar:
@@ -1156,7 +1157,7 @@ paths:
       operationId: solicitarCodigoOtp
       summary: Envía un código de un solo uso
       description: |
-        Definido por SPEC-04.
+        Definido por SPEC-09.
 
         Código de **6 dígitos**, válido **5 minutos**, con un máximo de **3
         intentos** y **3 solicitudes cada 15 minutos**. Se envía por correo; el
@@ -1215,7 +1216,7 @@ paths:
                     detail: Espera unos minutos antes de pedir otro código.
         '401':
           description: |
-            El `challengeToken` no existe o venció (SPEC-04). No se revela si la
+            El `challengeToken` no existe o venció (SPEC-09). No se revela si la
             cuenta existe ni se envía ningún mensaje.
           content:
             application/problem+json:
@@ -1235,7 +1236,7 @@ paths:
       operationId: verificarCodigoOtp
       summary: Canjea el código por el par de tokens
       description: |
-        Definido por SPEC-04. Verifica el código y, si es correcto, emite el par
+        Definido por SPEC-09. Verifica el código y, si es correcto, emite el par
         de tokens definitivo. Al tercer intento fallido el código se invalida
         (`OTP_INTENTOS_AGOTADOS`) y hay que pedir uno nuevo con
         `/auth/otp/solicitar`.
@@ -1288,7 +1289,7 @@ paths:
                     code: CODIGO_INVALIDO
                     intentosRestantes: 2
                 intentosAgotados:
-                  summary: ESC-04 — tercer fallo; el código queda invalidado
+                  summary: ESC-09.5 — tercer fallo; el código queda invalidado
                   value:
                     type: "https://g7.unmsm.pe/errores/otp-intentos-agotados"
                     title: Se agotaron los intentos
@@ -1310,7 +1311,7 @@ paths:
                     code: OTP_EXPIRADO
         '403':
           description: |
-            La contraseña caducó (SPEC-03). Solo llega aquí quien completó la
+            La contraseña caducó (SPEC-07). Solo llega aquí quien completó la
             autenticación de una cuenta `ACTIVO` con algún rol de gestión. No se
             emiten tokens: el titular debe restablecerla con el flujo de
             recuperación (`/password/recuperar`), que valida la política y el
@@ -1328,7 +1329,7 @@ paths:
                     code: PASSWORD_CADUCADA
 
   # ---------------------------------------------------------------------------
-  # CONTRASENAS - SPEC-03
+  # CONTRASENAS - SPEC-07 y SPEC-08
   # ---------------------------------------------------------------------------
 
   /password/politica:
@@ -1337,7 +1338,7 @@ paths:
       operationId: consultarPoliticaPassword
       summary: Reglas vigentes de robustez de contraseña
       description: |
-        Definido por SPEC-03. La SPA construye el medidor de fuerza con **estas**
+        Definido por SPEC-07. La SPA construye el medidor de fuerza con **estas**
         reglas en vez de cablearlas en JavaScript. La lista de contraseñas
         comunes se actualiza sin desplegar código, así que una copia cableada en
         el frontend se desincroniza en silencio.
@@ -1359,7 +1360,7 @@ paths:
       operationId: solicitarRecuperacion
       summary: Solicita el enlace de recuperación
       description: |
-        Definido por SPEC-03. **Responde `202` exista o no el correo, y con la
+        Definido por SPEC-08. **Responde `202` exista o no el correo, y con la
         misma latencia.** Si existe, envía un enlace con un token de un solo uso
         válido 30 minutos; si no existe, no envía nada. Una respuesta distinta
         —o más rápida— permitiría averiguar qué correos están registrados.
@@ -1402,7 +1403,7 @@ paths:
       operationId: restablecerPassword
       summary: Fija una contraseña nueva con el token del enlace
       description: |
-        Definido por SPEC-03. Marca el token como usado, guarda la contraseña en
+        Definido por SPEC-08. Marca el token como usado, guarda la contraseña en
         el historial y **revoca todas las sesiones previas del usuario**.
       security: []
       requestBody:
@@ -1457,7 +1458,7 @@ paths:
       operationId: cambiarPassword
       summary: Cambia la contraseña conociendo la actual
       description: |
-        Definido por SPEC-03. Exige la contraseña actual, la registra en el
+        Definido por SPEC-07. Exige la contraseña actual, la registra en el
         historial y revoca las **demás** sesiones del usuario, conservando la
         que hizo el cambio.
       requestBody:
@@ -1494,7 +1495,7 @@ paths:
           $ref: '#/components/responses/PoliticaIncumplida'
 
   # ---------------------------------------------------------------------------
-  # SEGUNDO FACTOR - SPEC-04 (activacion)
+  # SEGUNDO FACTOR - SPEC-10 (activacion)
   # ---------------------------------------------------------------------------
 
   /auth/otp/habilitar:
@@ -1503,7 +1504,7 @@ paths:
       operationId: habilitarMfa
       summary: Activa el segundo factor de la propia cuenta
       description: |
-        Definido por SPEC-04. Envía un código de confirmación; el MFA queda
+        Definido por SPEC-10. Envía un código de confirmación; el MFA queda
         activo solo cuando ese código se verifica.
       responses:
         '202':
@@ -1517,7 +1518,7 @@ paths:
       operationId: deshabilitarMfa
       summary: Desactiva el segundo factor de la propia cuenta
       description: |
-        Definido por SPEC-04. **Quien tenga algún rol de gestión no puede
+        Definido por SPEC-10. **Quien tenga algún rol de gestión no puede
         desactivarlo** (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`,
         `ADMIN_SISTEMA`): para ellos el segundo factor es obligatorio.
       responses:
@@ -1540,7 +1541,7 @@ paths:
                     code: MFA_OBLIGATORIO
 
   # ---------------------------------------------------------------------------
-  # ADMINISTRACION DE USUARIOS - SPEC-01
+  # ADMINISTRACION DE USUARIOS - SPEC-02, SPEC-03 y SPEC-04
   # ---------------------------------------------------------------------------
 
   /auth/verificar-correo:
@@ -1549,10 +1550,10 @@ paths:
       operationId: verificarCorreo
       summary: Confirma el correo con el token del enlace
       description: |
-        Definido por SPEC-01. La cuenta pasa de `PENDIENTE_VERIFICACION` a
+        Definido por SPEC-02. La cuenta pasa de `PENDIENTE_VERIFICACION` a
         `ACTIVO` y se publica `usuario.creado`. El enlace vale 24 horas.
 
-        **El mismo endpoint confirma un cambio de correo** (SPEC-08): el token
+        **El mismo endpoint confirma un cambio de correo** (SPEC-16): el token
         lleva su propósito, así que no hay un segundo mecanismo de
         verificación que mantener.
       security: []
@@ -1595,7 +1596,7 @@ paths:
       operationId: reenviarVerificacion
       summary: Reenvía el correo de verificación
       description: |
-        Definido por SPEC-01. **Responde `202` exista o no la cuenta, y esté o
+        Definido por SPEC-02. **Responde `202` exista o no la cuenta, y esté o
         no verificada.** Si hay una cuenta `PENDIENTE_VERIFICACION` con ese
         correo, invalida el enlace anterior y envía uno nuevo. Admite 3
         solicitudes por hora **por dirección de correo**, se registre o no, para
@@ -1635,7 +1636,7 @@ paths:
       operationId: listarUsuarios
       summary: Lista las cuentas, con filtros (panel de administración)
       description: |
-        Definido por SPEC-01. Exige el permiso `usuario.ver` (SPEC-05), que
+        Definido por SPEC-03. Exige el permiso `usuario.ver` (SPEC-11), que
         solo tiene `ADMIN_SISTEMA`. Es la pantalla 7 de los wireframes.
       parameters:
         - name: estado
@@ -1670,7 +1671,7 @@ paths:
       operationId: crearUsuario
       summary: Da de alta a un vendedor o a un administrador
       description: |
-        Definido por SPEC-01. **Solo `ADMIN_SISTEMA`.** Crea `VENDEDOR` o
+        Definido por SPEC-03. **Solo `ADMIN_SISTEMA`.** Crea `VENDEDOR` o
         cualquiera de los cuatro roles de gestión. Los clientes no se crean
         aquí: se registran ellos mismos en `/auth/registro`. La cuenta nace
         `ACTIVO`, sin verificación de correo, y se publica `usuario.creado`.
@@ -1708,7 +1709,7 @@ paths:
           $ref: '#/components/responses/PoliticaIncumplida'
 
   # ---------------------------------------------------------------------------
-  # ROLES - SPEC-05
+  # ROLES - SPEC-11
   # ---------------------------------------------------------------------------
 
   /usuarios/{id}/roles:
@@ -1717,7 +1718,7 @@ paths:
       operationId: asignarRol
       summary: Asigna un rol a un usuario
       description: |
-        Definido por SPEC-05. **Solo `ADMIN_SISTEMA`.** Al cambiar los roles se
+        Definido por SPEC-11. **Solo `ADMIN_SISTEMA`.** Al cambiar los roles se
         revocan las sesiones activas del usuario —debe volver a iniciar sesión
         para que su token lleve los permisos nuevos— y se publica
         `usuario.roles_cambiados`.
@@ -1755,7 +1756,7 @@ paths:
       operationId: revocarRol
       summary: Revoca un rol de un usuario
       description: |
-        Definido por SPEC-05. **Solo `ADMIN_SISTEMA`.** Mismo efecto sobre las
+        Definido por SPEC-11. **Solo `ADMIN_SISTEMA`.** Mismo efecto sobre las
         sesiones que la asignación. Un usuario sin ningún rol recibe `403` en
         todo endpoint protegido: no tiene permisos efectivos.
       parameters:
@@ -1777,8 +1778,8 @@ paths:
         '422':
           description: |
             Sobre sí mismo, o sobre el último `ADMIN_SISTEMA` activo. La misma
-            regla protege el bloqueo (SPEC-07), la baja (SPEC-01) y la
-            revocación del rol (SPEC-05).
+            regla protege el bloqueo (SPEC-15), la baja (SPEC-04) y la
+            revocación del rol (SPEC-11).
           content:
             application/problem+json:
               schema:
@@ -1792,7 +1793,7 @@ paths:
                     code: ADMINISTRADOR_PROTEGIDO
 
   # ---------------------------------------------------------------------------
-  # PROTECCION DE CUENTAS - SPEC-07
+  # PROTECCION DE CUENTAS - SPEC-14 y SPEC-15
   # ---------------------------------------------------------------------------
 
   /usuarios/{id}/bloquear:
@@ -1801,7 +1802,7 @@ paths:
       operationId: bloquearUsuario
       summary: Bloquea manualmente una cuenta
       description: |
-        Definido por SPEC-07. **Solo `ADMIN_SISTEMA`.** El bloqueo manual no
+        Definido por SPEC-15. **Solo `ADMIN_SISTEMA`.** El bloqueo manual no
         vence, **reemplaza** a un bloqueo automático en curso y **cierra todas
         las sesiones** de la cuenta. Se notifica al usuario por correo, sin
         enlace de desbloqueo, y se publica `usuario.bloqueado`.
@@ -1857,8 +1858,8 @@ paths:
         '422':
           description: |
             Sobre sí mismo, o sobre el último `ADMIN_SISTEMA` activo. La misma
-            regla protege el bloqueo (SPEC-07), la baja (SPEC-01) y la
-            revocación del rol (SPEC-05).
+            regla protege el bloqueo (SPEC-15), la baja (SPEC-04) y la
+            revocación del rol (SPEC-11).
           content:
             application/problem+json:
               schema:
@@ -1877,7 +1878,7 @@ paths:
       operationId: desbloquearUsuario
       summary: Desbloquea una cuenta
       description: |
-        Definido por SPEC-07. **Solo `ADMIN_SISTEMA`.** Levanta cualquier
+        Definido por SPEC-15. **Solo `ADMIN_SISTEMA`.** Levanta cualquier
         bloqueo, automático o manual. La cuenta vuelve a `ACTIVO`, el contador
         de intentos fallidos se reinicia y se publica `usuario.desbloqueado`.
       parameters:
@@ -1898,7 +1899,7 @@ paths:
       operationId: desbloquearConEnlace
       summary: El titular levanta un bloqueo automático con el enlace del correo
       description: |
-        Definido por SPEC-07. El correo de aviso de un **bloqueo automático**
+        Definido por SPEC-14. El correo de aviso de un **bloqueo automático**
         trae un enlace de un solo uso, válido 30 minutos. Consumirlo devuelve la
         cuenta a `ACTIVO`, reinicia el contador de intentos fallidos y publica
         `usuario.desbloqueado`.
@@ -1950,7 +1951,7 @@ paths:
                     code: TOKEN_DESBLOQUEO_EXPIRADO
 
   # ---------------------------------------------------------------------------
-  # ATRIBUTOS DE PERFIL - SPEC-08
+  # ATRIBUTOS DE PERFIL - SPEC-16
   # ---------------------------------------------------------------------------
 
   /usuarios/{id}/atributos:
@@ -1959,7 +1960,7 @@ paths:
       operationId: actualizarAtributos
       summary: Actualiza los atributos de perfil
       description: |
-        Definido por SPEC-08. **Un usuario solo puede modificar los suyos**;
+        Definido por SPEC-16. **Un usuario solo puede modificar los suyos**;
         quien tenga el permiso `atributos.editar` (`ADMIN_SISTEMA`) puede
         modificar los de cualquiera. Los atributos de vendedor no son
         aplicables a un cliente ni al revés. El correo no se cambia aquí: tiene
@@ -2010,10 +2011,10 @@ paths:
       operationId: solicitarCambioCorreo
       summary: El titular solicita cambiar su correo
       description: |
-        Definido por SPEC-08. **Solo el titular**, y con su contraseña actual:
+        Definido por SPEC-16. **Solo el titular**, y con su contraseña actual:
         cambiar el correo es la forma más rápida de quedarse con una cuenta
         ajena. Se envía un enlace a la dirección nueva, que se confirma con
-        `POST /auth/verificar-correo` —el mismo mecanismo de SPEC-01—, y un
+        `POST /auth/verificar-correo` —el mismo mecanismo de SPEC-02—, y un
         aviso a la dirección anterior. Hasta que se confirma, se sigue usando
         la anterior.
       parameters:
@@ -2058,7 +2059,7 @@ paths:
                     code: CORREO_NO_DISPONIBLE
 
   # ---------------------------------------------------------------------------
-  # AUDITORIA - SPEC-06
+  # AUDITORIA - SPEC-13
   # ---------------------------------------------------------------------------
 
   /auditoria:
@@ -2067,7 +2068,7 @@ paths:
       operationId: consultarAuditoria
       summary: Consulta filtrada del registro de seguridad
       description: |
-        Definido por SPEC-06. Exige el permiso `auditoria.ver`, que solo tiene
+        Definido por SPEC-13. Exige el permiso `auditoria.ver`, que solo tiene
         `ADMIN_SISTEMA`. **La propia consulta queda auditada**, y un intento sin
         permiso también.
 
@@ -2121,7 +2122,7 @@ paths:
       operationId: exportarAuditoria
       summary: Exporta el resultado de un filtro
       description: |
-        Definido por SPEC-06. Acepta los mismos filtros que `GET /auditoria` y
+        Definido por SPEC-13. Acepta los mismos filtros que `GET /auditoria` y
         devuelve **exactamente los mismos registros**, sin paginar. Un filtro que
         abarque más de 100 000 registros se rechaza en vez de intentar
         materializarlo.
@@ -2178,7 +2179,7 @@ paths:
       operationId: consultarActividadPropia
       summary: Historial de seguridad de la propia cuenta
       description: |
-        Definido por SPEC-06. Cualquier usuario autenticado, **sin permiso de
+        Definido por SPEC-13. Cualquier usuario autenticado, **sin permiso de
         administración**, ve los eventos de su propia cuenta: inicios de sesión
         con su IP y fecha, cambios de contraseña, bloqueos. Nunca los de otro.
 
@@ -2217,7 +2218,7 @@ components:
         | `sub` | Identificador del usuario |
         | `email` | Correo electrónico |
         | `roles` | Códigos de rol, p. ej. `["VENDEDOR"]` |
-        | `permisos` | Permisos efectivos, sin duplicados, escritos con punto (`usuario.ver`). Hoy, los de este módulo (SPEC-05) |
+        | `permisos` | Permisos efectivos, sin duplicados, escritos con punto (`usuario.ver`). Hoy, los de este módulo (SPEC-11) |
         | `tipo` | `acceso`, `refresco` o `servicio` |
         | `iss` | Emisor: el módulo de seguridad |
         | `iat` / `exp` | Emisión y expiración. El acceso dura 15 minutos |
@@ -2322,7 +2323,7 @@ components:
 
     PoliticaIncumplida:
       description: |
-        La contraseña no cumple la política de SPEC-03. **Un solo `code` para
+        La contraseña no cumple la política de SPEC-07. **Un solo `code` para
         todas las reglas**: cuál falló va en `errores`. Así, añadir una regla
         nueva no obliga a los consumidores a conocer un código más.
       content:
@@ -2463,7 +2464,7 @@ components:
           items: { $ref: '#/components/schemas/CodigoRol' }
         permisos:
           type: array
-          description: Permisos con punto. Hoy, los de este módulo (SPEC-05); los de cada módulo consumidor se añaden cuando se acuerden.
+          description: Permisos con punto. Hoy, los de este módulo (SPEC-11); los de cada módulo consumidor se añaden cuando se acuerden.
           items: { type: string }
         tipo: { type: string, enum: [acceso, refresco, servicio] }
         exp: { type: integer }
@@ -2508,7 +2509,7 @@ components:
         correoVerificado: { type: boolean }
         celularVerificado:
           type: boolean
-          description: '`false` tras cambiar el celular, hasta verificarlo por SMS (SPEC-08 RF-08.7).'
+          description: '`false` tras cambiar el celular, hasta verificarlo por SMS (SPEC-16 RF-16.7).'
         roles:
           type: array
           items: { $ref: '#/components/schemas/CodigoRol' }
@@ -2525,7 +2526,7 @@ components:
         bloqueo:
           type: [object, "null"]
           description: |
-            Presente solo si `estado` es `BLOQUEADO` (SPEC-07, RF-07.18).
+            Presente solo si `estado` es `BLOQUEADO` (SPEC-15, RF-15.6).
             `motivo` solo llega a un token de usuario con el permiso
             `usuario.ver`; un token de servicio nunca lo recibe.
           required: [tipo, hasta]
@@ -2581,7 +2582,7 @@ components:
         descripcion: { type: string }
         permisos:
           type: array
-          description: Permisos con punto. Hoy, los de este módulo (SPEC-05); los de cada módulo consumidor se añaden cuando se acuerden.
+          description: Permisos con punto. Hoy, los de este módulo (SPEC-11); los de cada módulo consumidor se añaden cuando se acuerden.
           items: { type: string }
 
     Permiso:
@@ -2604,20 +2605,20 @@ components:
           description: |
             Mínimo 10 caracteres, con mayúscula, minúscula, dígito y carácter
             especial. No puede ser una contraseña común ni contener el nombre o
-            el correo del usuario. La política la define SPEC-03.
+            el correo del usuario. La política la define SPEC-07.
         nombres: { type: string }
         apellidos: { type: string }
         celular:
           type: string
           pattern: '^\+51[0-9]{9}$'
-          description: '`+51` seguido de 9 dígitos (SPEC-01, RF-01.17).'
+          description: '`+51` seguido de 9 dígitos (SPEC-01, RF-01.5).'
           examples: ["+51987654321"]
         aceptaTerminos:
           type: boolean
           const: true
           description: |
             Aceptación expresa de los términos y del tratamiento de datos
-            personales (Ley N.º 29733, SPEC-01 RF-01.16). Si falta o es `false`
+            personales (Ley N.º 29733, SPEC-01 RF-01.4). Si falta o es `false`
             responde `400 VALIDACION`. El servidor guarda la fecha y la versión
             de los términos aceptados.
 
@@ -2698,7 +2699,7 @@ components:
         contrasena:
           type: string
           format: password
-          description: Debe cumplir la política de SPEC-03.
+          description: Debe cumplir la política de SPEC-07.
         rol: { $ref: '#/components/schemas/CodigoRol' }
         nombres: { type: string }
         apellidos: { type: string }
@@ -2725,7 +2726,7 @@ components:
           description: |
             `+51` seguido de 9 dígitos. Cambiarlo deja `celularVerificado` en
             `false` hasta completar un código por SMS con `/auth/otp/solicitar`
-            y `/auth/otp/verificar` (SPEC-08 RF-08.7).
+            y `/auth/otp/verificar` (SPEC-16 RF-16.7).
           examples: ["+51987654321"]
         codigoVendedor:
           type: string
@@ -2742,7 +2743,7 @@ components:
       type: object
       description: |
         Un hecho, no un dato. Nunca contiene contraseñas, códigos OTP, tokens
-        completos ni el número de documento en claro. Definido por SPEC-06.
+        completos ni el número de documento en claro. Definido por SPEC-12.
       required: [id, fecha, accion, resultado, actorTipo]
       properties:
         id: { type: string, format: uuid }
@@ -2752,7 +2753,7 @@ components:
           description: Instante del evento, en UTC.
         accion:
           type: string
-          description: Código del catálogo cerrado de SPEC-06.
+          description: Código del catálogo cerrado de SPEC-12.
           examples: ["SESION_FALLIDA"]
         resultado: { type: string, enum: [EXITO, FALLO] }
         actorTipo: { type: string, enum: [USUARIO, MODULO, SISTEMA] }

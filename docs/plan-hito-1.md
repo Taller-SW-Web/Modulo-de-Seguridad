@@ -4,6 +4,11 @@
 **Hoy:** sábado 12 de septiembre de 2026 — quedan **7 días**
 **Peso:** 25% del Componente 2 (que a su vez vale 40% de la nota)
 
+> **Actualizado el 20 de septiembre.** Tras la presentación, el profesor pidió
+> una spec por función: las 9 specs se dividieron en 18. Las rutas y el reparto
+> de este plan ya usan la numeración nueva; la equivalencia está en
+> [`specs/trazabilidad.md`](../specs/trazabilidad.md) §1.
+
 ---
 
 ## 1. Qué evalúa exactamente el profesor
@@ -64,15 +69,17 @@ equipos el viernes 18 y no el mismo día de la presentación.
 
 - [x] `docs/arquitectura/` — diagramas de contexto, componentes, secuencia de login y de renovación de token
 - [x] `docs/arquitectura/adr/` — 3 ADRs: RS256 frente a HS256, validación local frente a introspección, integración asíncrona por eventos
-- [ ] `specs/SPEC-09-api-identidad.md`
+- [ ] `specs/SPEC-17-tokens-servicio.md`
+- [ ] `specs/SPEC-18-consulta-identidad.md`
 - [ ] `specs/openapi.yaml` — todos los endpoints del contrato
 - [ ] Mock server levantado y documentado en el README
-- [ ] Aprobar las 8 specs de los demás
+- [ ] Aprobar las 16 specs de los demás
 - [ ] Comunicar el contrato a los 6 equipos (viernes)
 
 ### Jose Luis — Tech Lead, Backend
 
-- [ ] `specs/SPEC-02-autenticacion.md`
+- [ ] `specs/SPEC-05-inicio-sesion.md`
+- [ ] `specs/SPEC-06-renovacion-cierre-sesion.md`
 - [ ] Estructura de paquetes del backend documentada en `docs/arquitectura/implementacion.md`
 - [ ] Prueba de concepto de login con Spring Security + JWT, **sin base de datos** (para descubrir los problemas ahora, no en la semana 7)
 - [ ] Configurar la protección de `main` y la plantilla de PR
@@ -80,20 +87,25 @@ equipos el viernes 18 y no el mismo día de la presentación.
 
 ### Eva Lucía — Backend
 
-- [ ] `specs/SPEC-01-registro.md`
-- [ ] `specs/SPEC-05-roles-permisos.md`
-- [ ] `specs/SPEC-08-atributos.md`
+- [ ] `specs/SPEC-01-registro-clientes.md`
+- [ ] `specs/SPEC-04-baja-reactivacion.md`
+- [ ] `specs/SPEC-11-roles-permisos.md`
+- [ ] `specs/SPEC-16-atributos.md`
 - [ ] `docs/arquitectura/modelo-datos.md` — las 17 tablas con sus relaciones (diagrama entidad-relación)
 
 ### Juan José — Full Stack
 
-- [ ] `specs/SPEC-03-gestion-credenciales.md` — la spec más grande del set: política de robustez, historial, caducidad, recuperación y cambio
+- [ ] `specs/SPEC-02-verificacion-correo.md`
+- [ ] `specs/SPEC-07-politica-cambio-contrasena.md` — política de robustez, historial, caducidad y cambio
+- [ ] `specs/SPEC-08-recuperacion-contrasena.md`
 - [ ] Revisar los wireframes de sus dos pantallas (2 y 5) con Valery
 
 ### Luis David — Full Stack
 
-- [ ] `specs/SPEC-04-otp-mfa.md`
-- [ ] `specs/SPEC-07-bloqueo-cuentas.md`
+- [ ] `specs/SPEC-09-mfa-inicio-sesion.md`
+- [ ] `specs/SPEC-10-activacion-mfa.md`
+- [ ] `specs/SPEC-14-bloqueo-automatico.md`
+- [ ] `specs/SPEC-15-bloqueo-manual.md`
 - [ ] Revisar los wireframes de sus dos pantallas con Valery
 
 ### Valery — Frontend y Diseño
@@ -108,9 +120,11 @@ equipos el viernes 18 y no el mismo día de la presentación.
 - [ ] Crear la cuenta de nube del grupo y documentar límites del nivel gratuito
 - [ ] `docs/arquitectura/despliegue.md` — cómo se despliega el módulo (aunque todavía no se despliegue)
 - [ ] Esqueleto del `docker-compose.yml` (backend, frontend, PostgreSQL, RabbitMQ) — sin implementación, solo la topología
-- [ ] `specs/SPEC-06-auditoria.md` — **borrador ya disponible en el repo**, revisarlo y hacerlo suyo
+- [ ] `specs/SPEC-03-alta-consulta-cuentas.md`
+- [ ] `specs/SPEC-12-registro-auditoria.md` — **borrador ya disponible en el repo**, revisarlo y hacerlo suyo
+- [ ] `specs/SPEC-13-consulta-auditoria.md`
 - [ ] Wireframes del panel de administración, coordinados con Valery
-- [ ] Montar el tablero de GitHub Projects con las 9 specs como épicas
+- [ ] Montar el tablero de GitHub Projects con las 18 specs como épicas
 
 ---
 
@@ -119,14 +133,14 @@ equipos el viernes 18 y no el mismo día de la presentación.
 
 | #   | Pantalla                                                                | SPEC que la origina       |
 | --- | ----------------------------------------------------------------------- | ------------------------- |
-| 1   | Inicio de sesión (error genérico, idéntico con la cuenta bloqueada; contraseña caducada) | SPEC-02, SPEC-03, SPEC-07 |
-| 2   | Registro de cliente (con medidor de fuerza de contraseña)               | SPEC-01, SPEC-03          |
-| 3   | Verificación de correo (esperando / éxito / enlace vencido)             | SPEC-01                   |
-| 4   | Desafío de código OTP (6 dígitos, reenvío, intentos restantes)          | SPEC-04                   |
-| 5   | Recuperar contraseña — solicitud y nueva contraseña                     | SPEC-03                   |
-| 6   | Mi cuenta — datos de perfil y direcciones                               | SPEC-08                   |
-| 7   | Panel admin — listado de usuarios con filtros y acciones                | SPEC-01, SPEC-05, SPEC-07 |
-| 8   | Panel admin — detalle de usuario: roles, bloqueos, historial de accesos | SPEC-05, SPEC-06, SPEC-07 |
+| 1   | Inicio de sesión (error genérico, idéntico con la cuenta bloqueada; contraseña caducada) | SPEC-05, SPEC-07, SPEC-14 |
+| 2   | Registro de cliente (con medidor de fuerza de contraseña)               | SPEC-01, SPEC-07          |
+| 3   | Verificación de correo (esperando / éxito / enlace vencido)             | SPEC-02                   |
+| 4   | Desafío de código OTP (6 dígitos, reenvío, intentos restantes)          | SPEC-09                   |
+| 5   | Recuperar contraseña — solicitud y nueva contraseña                     | SPEC-08                   |
+| 6   | Mi cuenta — datos de perfil y direcciones                               | SPEC-16                   |
+| 7   | Panel admin — listado de usuarios con filtros y acciones                | SPEC-03, SPEC-04, SPEC-11, SPEC-15 |
+| 8   | Panel admin — detalle de usuario: roles, bloqueos, historial de accesos | SPEC-11, SPEC-13, SPEC-15 |
 
 
 ---
@@ -154,7 +168,7 @@ podrá enseñar el sábado.
 
 El Hito 1 está listo cuando:
 
-- [ ] Las 9 specs están en `main`, con las 7 secciones, aprobadas por el PO
+- [ ] Las 18 specs están en `main`, con las 7 secciones, aprobadas por el PO
 - [ ] Cada integrante tiene al menos un commit propio en `main`
 - [ ] `openapi.yaml` valida sin errores y el mock responde
 - [ ] Los diagramas de arquitectura están en el repo y exportados para la PPT
