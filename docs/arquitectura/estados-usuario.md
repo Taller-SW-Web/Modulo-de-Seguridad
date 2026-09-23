@@ -63,18 +63,18 @@ stateDiagram-v2
 | Desde | Hasta | Quién la dispara | Spec | Efectos colaterales |
 |---|---|---|---|---|
 | — | `PENDIENTE_VERIFICACION` | El propio cliente al registrarse | 01 | Se envía el correo de verificación, token válido 24 h |
-| — | `ACTIVO` | `ADMIN_SISTEMA` al dar de alta a un vendedor o admin | 01 | Publica `usuario.creado` |
-| `PENDIENTE_VERIFICACION` | `ACTIVO` | El usuario, al consumir el enlace | 01 | Publica `usuario.creado` |
-| `PENDIENTE_VERIFICACION` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | Publica `usuario.desactivado` |
-| `ACTIVO` | `BLOQUEADO` | El sistema, tras 5 intentos fallidos consecutivos | 07 | `bloqueado_hasta` = ahora + 1, 2 o 4 min según sea el 1.º, 2.º o 3.º bloqueo seguido; **desde el 4.º, `null`** · **no** cierra sesiones · correo con enlace de desbloqueo · `usuario.bloqueado` |
-| `ACTIVO` | `BLOQUEADO` | `ADMIN_SISTEMA`, con motivo; nunca sobre sí mismo ni sobre el último `ADMIN_SISTEMA` activo | 07 | `bloqueado_hasta` = `null` · **cierra todas sus sesiones** · correo sin enlace · `usuario.bloqueado` |
-| `ACTIVO` | `INACTIVO` | `ADMIN_SISTEMA`; nunca sobre sí mismo ni sobre el último `ADMIN_SISTEMA` activo | 01 | **Revoca todos sus tokens de refresco** · `usuario.desactivado` |
-| `BLOQUEADO` | `ACTIVO` | Nadie: vence `bloqueado_hasta` | 07 | El estado se **calcula**, no lo cambia ningún proceso · contador a cero · **sin evento**: los módulos ya conocen `hasta` |
-| `BLOQUEADO` | `ACTIVO` | El titular, con el enlace de desbloqueo o restableciendo la contraseña. Solo si el bloqueo es automático | 07, 03 | Contador a cero · `usuario.desbloqueado` |
-| `BLOQUEADO` | `ACTIVO` | `ADMIN_SISTEMA` | 07 | Contador a cero · `usuario.desbloqueado` |
-| `BLOQUEADO` | `BLOQUEADO` | `ADMIN_SISTEMA` sobre un bloqueo automático | 07 | El manual reemplaza al automático: `bloqueado_hasta` pasa a `null` |
-| `BLOQUEADO` | `INACTIVO` | `ADMIN_SISTEMA` | 01 | Revoca sus tokens · `usuario.desactivado` |
-| `INACTIVO` | `ACTIVO` | `ADMIN_SISTEMA`, con `POST /usuarios/{id}/reactivar` | 01 | Conserva identidad, correo y roles · sin sesiones · sin repetir la verificación · `usuario.reactivado` |
+| — | `ACTIVO` | `ADMIN_SISTEMA` al dar de alta a un vendedor o admin | 03 | Publica `usuario.creado` |
+| `PENDIENTE_VERIFICACION` | `ACTIVO` | El usuario, al consumir el enlace | 02 | Publica `usuario.creado` |
+| `PENDIENTE_VERIFICACION` | `INACTIVO` | `ADMIN_SISTEMA` | 04 | Publica `usuario.desactivado` |
+| `ACTIVO` | `BLOQUEADO` | El sistema, tras 5 intentos fallidos consecutivos | 14 | `bloqueado_hasta` = ahora + 1, 2 o 4 min según sea el 1.º, 2.º o 3.º bloqueo seguido; **desde el 4.º, `null`** · **no** cierra sesiones · correo con enlace de desbloqueo · `usuario.bloqueado` |
+| `ACTIVO` | `BLOQUEADO` | `ADMIN_SISTEMA`, con motivo; nunca sobre sí mismo ni sobre el último `ADMIN_SISTEMA` activo | 15 | `bloqueado_hasta` = `null` · **cierra todas sus sesiones** · correo sin enlace · `usuario.bloqueado` |
+| `ACTIVO` | `INACTIVO` | `ADMIN_SISTEMA`; nunca sobre sí mismo ni sobre el último `ADMIN_SISTEMA` activo | 04 | **Revoca todos sus tokens de refresco** · `usuario.desactivado` |
+| `BLOQUEADO` | `ACTIVO` | Nadie: vence `bloqueado_hasta` | 14 | El estado se **calcula**, no lo cambia ningún proceso · contador a cero · **sin evento**: los módulos ya conocen `hasta` |
+| `BLOQUEADO` | `ACTIVO` | El titular, con el enlace de desbloqueo o restableciendo la contraseña. Solo si el bloqueo es automático | 14, 08 | Contador a cero · `usuario.desbloqueado` |
+| `BLOQUEADO` | `ACTIVO` | `ADMIN_SISTEMA` | 15 | Contador a cero · `usuario.desbloqueado` |
+| `BLOQUEADO` | `BLOQUEADO` | `ADMIN_SISTEMA` sobre un bloqueo automático | 15 | El manual reemplaza al automático: `bloqueado_hasta` pasa a `null` |
+| `BLOQUEADO` | `INACTIVO` | `ADMIN_SISTEMA` | 04 | Revoca sus tokens · `usuario.desactivado` |
+| `INACTIVO` | `ACTIVO` | `ADMIN_SISTEMA`, con `POST /usuarios/{id}/reactivar` | 04 | Conserva identidad, correo y roles · sin sesiones · sin repetir la verificación · `usuario.reactivado` |
 
 ---
 
