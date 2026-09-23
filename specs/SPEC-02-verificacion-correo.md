@@ -50,6 +50,7 @@ El resultado observable es la transición de la cuenta de `PENDIENTE_VERIFICACIO
 | RF-02.5 | El sistema debe publicar el evento `usuario.creado` en RabbitMQ inmediatamente después de que la cuenta pase al estado `ACTIVO`. |
 | RF-02.6 | El token de verificación de correo es el **único** mecanismo de confirmación de correo del módulo. SPEC-16 lo reutiliza para confirmar un cambio de correo, con otro propósito, a través del mismo `POST /api/v1/auth/verificar-correo`. |
 | RF-02.7 | La verificación correcta y los intentos con enlaces vencidos o usados deben registrarse mediante SPEC-12 (`USUARIO_VERIFICADO`). |
+| RF-02.8 | El enlace del correo debe llevar a la pantalla del canal donde se originó el registro. El canal llega en `canalOrigen` del registro, es una **lista cerrada** (`WEB`, `CHATBOT`, `RETAIL`, `MARKETPLACE`) y la URL de cada uno se resuelve desde la configuración del servicio. El sistema **no debe aceptar una URL de destino en la petición**: sería una redirección abierta, y el token de verificación viaja en el enlace. Sin `canalOrigen`, el destino es `WEB`. |
 
 ---
 
@@ -119,6 +120,7 @@ condiciones límite, de error o de seguridad.
 - El registro de la cuenta, que es de SPEC-01.
 - La solicitud de cambio de correo, que es de SPEC-16: esta spec solo aporta el mecanismo de confirmación.
 - La verificación del celular por código, que es de SPEC-10.
+- Alojar la pantalla de verificación en el frontend de otro módulo, o aceptar una URL de destino en la petición (RF-02.8).
 - Las cuentas creadas por un administrador, que nacen `ACTIVO` y no se verifican (SPEC-03).
 
 ---
@@ -129,6 +131,7 @@ condiciones límite, de error o de seguridad.
 |---|---|---|
 | `POST /api/v1/auth/verificar-correo` | Utiliza contrato existente; lo reutiliza SPEC-16 | ⬜ |
 | `POST /api/v1/auth/verificar-correo/reenviar` | Añade | ⬜ |
+| `POST /api/v1/auth/registro` | Modifica: añade `canalOrigen` opcional, de lista cerrada (RF-02.8). Acuerdo A1 con el canal Chatbot | ⬜ |
 | `usuario.creado` | Publica evento | ⬜ |
 
 ---
