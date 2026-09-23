@@ -100,6 +100,7 @@ condiciones límite, de error o de seguridad.
 - La generación, el envío y la verificación de los códigos, que son de SPEC-09: aquí se reutilizan.
 - El cambio de celular, que es de SPEC-16: esta spec solo aporta la verificación posterior.
 - Códigos de respaldo para recuperar el segundo factor.
+- **El endpoint y el scope de la validación de contacto por un canal autorizado (RF-10.4): no se definen en este ciclo.** Decisión del 23 de septiembre, acuerdo A2: el SMS usa un adaptador simulado hasta el final del curso, y el correo ya queda verificado por el registro de SPEC-01 y SPEC-02. Se reevalúa en el Hito 4 si aparece un caso que el registro no cubra.
 - Que un administrador desactive el segundo factor de otra cuenta.
 
 ---
@@ -110,7 +111,7 @@ condiciones límite, de error o de seguridad.
 |---|---|---|
 | `POST /api/v1/auth/otp/habilitar` | Utiliza contrato existente | ⬜ |
 | `POST /api/v1/auth/otp/deshabilitar` | Utiliza contrato existente | ⬜ |
-| Validación de correo/celular por consumidor autorizado | Requiere confirmar payload y scope con el PO | ⬜ |
+| Validación de correo/celular por consumidor autorizado | **No se define en este ciclo** (acuerdo A2, 23-sep). RF-10.4 queda especificado, sin endpoint ni scope | ✅ decidido |
 | `MFA_ACTIVADO` · `MFA_DESACTIVADO` | Catálogo de auditoría de SPEC-12 | ⬜ |
 
 ---

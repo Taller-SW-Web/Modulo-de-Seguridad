@@ -837,6 +837,9 @@ paths:
         con un enlace de un solo uso válido **24 horas**. Se asigna el rol
         `CLIENTE` por defecto.
 
+        Con `canalOrigen` el enlace del correo lleva a la pantalla del canal que
+        originó el registro; la URL de cada canal la resolvemos nosotros.
+
         **El mensaje de error no permite deducir si el correo ya existe.** Un
         correo repetido responde `409` con un texto que no confirma ni niega la
         existencia previa de la cuenta.
@@ -856,6 +859,7 @@ paths:
                   apellidos: "Quispe Rojas"
                   celular: "+51987654321"
                   aceptaTerminos: true
+                  canalOrigen: CHATBOT
       responses:
         '201':
           description: Cuenta creada, pendiente de verificación de correo
@@ -2613,6 +2617,17 @@ components:
           pattern: '^\+51[0-9]{9}$'
           description: '`+51` seguido de 9 dígitos (SPEC-01, RF-01.5).'
           examples: ["+51987654321"]
+        canalOrigen:
+          type: string
+          enum: [WEB, CHATBOT, RETAIL, MARKETPLACE]
+          default: WEB
+          description: |
+            Canal donde se originó el registro (SPEC-02, RF-02.8). Decide a qué
+            pantalla lleva el enlace de verificación que enviamos por correo:
+            cada canal tiene su URL configurada **de nuestro lado**. Es opcional;
+            si falta, vale `WEB`. **No acepta una URL**: un destino libre sería
+            una redirección abierta, y el token de verificación viaja en el
+            enlace. Para añadir un canal a la lista, pídanlo por issue.
         aceptaTerminos:
           type: boolean
           const: true

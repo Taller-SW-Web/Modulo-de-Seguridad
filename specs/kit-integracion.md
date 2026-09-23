@@ -264,13 +264,18 @@ Un reporte de 50 clientes en el que uno se dio de baja sigue funcionando.
 
 ## 5. Qué scope pide cada módulo
 
-Los scopes se conceden por escrito en la sincronización entre equipos. Si
-necesitan un campo que su scope no cubre, pídanlo en esa reunión.
+Los scopes se conceden por escrito y quedan publicados en esta tabla. Si
+necesitan uno que no tienen, pídanlo por issue con la etiqueta `integracion`;
+las decisiones se registran en
+[`../docs/integracion/acuerdos.md`](../docs/integracion/acuerdos.md).
+
+> **Las credenciales reales (`client_id` y `client_secret`) se crean en el Hito 4.**
+> Hasta entonces, contra el mock funcionan las de prueba de la sección 6.
 
 | Módulo | Scopes | Para qué |
 |---|---|---|
 | Marketplace Cliente | `usuarios:leer` | Mostrar el nombre del comprador |
-| Chatbot Cliente | `usuarios:leer` | Confirmar identidad en la conversación |
+| Chatbot Cliente | `usuarios:leer`, `tokens:introspeccion` | Confirmar identidad en la conversación y la sesión antes de cobrar |
 | Retail Vendedor | `usuarios:leer`, `roles:leer` | Buscar clientes y comprobar el rol del vendedor |
 | Ventas y Postventa | `usuarios:leer`, `usuarios:leer:documento`, `tokens:introspeccion` | Emitir boletas y autorizar anulaciones |
 | Despacho y Entrega | `usuarios:leer`, `direcciones:leer` | Entregar el paquete |
@@ -415,26 +420,45 @@ distinto, serviría para averiguar qué correos están registrados.
 
 ### Lo que no hacemos en el registro
 
-- **No les decimos si un correo o un celular ya existen.** No hay ningún endpoint
+- **No les decimos si un correo o un celular ya existen** ([ADR-006](../docs/arquitectura/adr/006-sin-consulta-por-correo-ni-celular.md)). No hay ningún endpoint
   para preguntarlo, y `409 CORREO_NO_DISPONIBLE` está redactado para no
   confirmarlo. Permitiría enumerar las cuentas del marketplace.
-- **No tenemos cuenta de invitado.** O hay cuenta real, con su verificación, o
+- **No tenemos cuenta de invitado** ([ADR-005](../docs/arquitectura/adr/005-sin-cuenta-de-invitado.md)). O hay cuenta real, con su verificación, o
   el pedido va sin cuenta y el invitado lo llevan ustedes. Cuando después
   exista cuenta, enlazan el pedido por el identificador de usuario.
 - **No devolvemos tokens al registrar.** Para tener sesión, `POST /auth/login`
   después de verificar el correo.
 
-### Dos cosas pendientes de acordar
+### A dónde lleva el enlace de verificación
 
-Si su canal necesita alguna, pídanla en la sincronización de líderes; no
-las den por hechas:
+Manden `canalOrigen` en el registro y el enlace del correo llevará a la pantalla
+de su canal:
 
-1. **Que el enlace de verificación vuelva al frontend de ustedes** en vez de al
-   nuestro, cuando el registro se origine en su canal. Se resolverá con un
-   canal declarado, de una lista cerrada; nunca con una URL que nos envíen.
-2. **Validar un correo o un celular con un código de un solo uso**, a petición
-   de su canal. Está especificado en nuestra SPEC-10, pero su endpoint y su
-   scope todavía no están definidos.
+```json
+{ "correo": "...", "contrasena": "...", "nombres": "...", "apellidos": "...",
+  "celular": "+51987654321", "aceptaTerminos": true, "canalOrigen": "CHATBOT" }
+```
+
+Es una **lista cerrada** —`WEB`, `CHATBOT`, `RETAIL`, `MARKETPLACE`— y la URL de
+cada canal la resolvemos nosotros desde configuración. **No aceptamos una URL en
+la petición**: un destino libre sería una redirección abierta, y el token de
+verificación viaja en el enlace. Si falta el campo, el destino es `WEB`. Para
+sumar un canal a la lista, pídanlo por issue.
+
+> Acuerdo A1, decidido el 23 de septiembre. Se implementa en el Hito 3; el campo
+> ya está en el contrato.
+
+### Validar un celular desde su canal: no en este ciclo
+
+Lo pidieron y la respuesta es no, por ahora. El SMS usa un adaptador simulado
+hasta el final del curso, así que un código por SMS no prueba nada; y el correo
+ya queda verificado por el registro. RF-10.4 de nuestra SPEC-10 queda
+especificado, pero **sin endpoint ni scope**.
+
+Si tienen un caso que el registro con enlace no cubra, cuéntenlo en un issue y
+lo reevaluamos para el Hito 4.
+
+> Acuerdo A2, decidido el 23 de septiembre.
 
 ---
 
@@ -555,7 +579,11 @@ Todos pueden devolver `VALIDACION` (400), `TOKEN_INVALIDO` (401) y
 | Retirada | Un campo en desuso convive con su sustituto hasta que confirmen que migraron |
 
 **Congelamiento del contrato: jueves 17 de septiembre.** A partir de ahí, todo
-cambio pasa por el canal de líderes.
+cambio se pide con un issue con la etiqueta `integracion` en
+`Taller-SW-Web/Modulo-de-Seguridad`. Lo respondemos en la misma semana y la
+decisión queda en
+[`../docs/integracion/acuerdos.md`](../docs/integracion/acuerdos.md), que es la
+única fuente: un acuerdo que no está ahí, no existe.
 
 Dudas: **Sergio Osorio**, Product Owner del G7, en el canal de líderes de
 módulo.
