@@ -487,7 +487,65 @@ Para que nadie lo asuma por interpretación:
 
 ---
 
-## 11. Cómo cambia este contrato
+## 11. Mapa rápido: endpoint, spec y errores
+
+Para que no tengan que deducirlo. **Esta tabla es la referencia**: si en algún
+documento ven otro número de spec, manda este. La numeración cambió el 20 de
+septiembre, cuando pasamos de 9 specs a 18; la equivalencia con los números
+viejos está en [`trazabilidad.md`](trazabilidad.md) §8.
+
+### Lo que llama su módulo con su token de servicio
+
+| Endpoint | Para qué | Spec | Scope | Errores propios |
+|---|---|---|---|---|
+| `GET /auth/.well-known/jwks.json` | Validar tokens en local | 17 | Público | — |
+| `GET /auth/.well-known/openid-configuration` | Descubrir el emisor | 17 | Público | — |
+| `POST /auth/token` | Su token de servicio | 17 | `client_id` + `client_secret` | `CLIENTE_INVALIDO` |
+| `POST /auth/introspeccion` | ¿La sesión sigue viva? | 17 | `tokens:introspeccion` | — |
+| `GET /usuarios/{id}` | Datos básicos | 18 | `usuarios:leer` | `NO_ENCONTRADO` |
+| `POST /usuarios/lote` | Hasta 100 de una vez | 18 | `usuarios:leer` | `LOTE_DEMASIADO_GRANDE` |
+| `GET /usuarios/{id}/direcciones` | Dirección de entrega | 16 · 18 | `direcciones:leer` | `NO_ENCONTRADO` |
+| `GET /roles` · `GET /permisos` | Catálogos | 11 · 18 | `roles:leer` | — |
+
+Todos pueden devolver `TOKEN_INVALIDO` (401) y `SCOPE_INSUFICIENTE` (403).
+
+### Lo que llama su frontend en nombre de una persona
+
+Con el token del usuario, nunca con el de servicio.
+
+| Endpoint | Para qué | Spec | Errores propios |
+|---|---|---|---|
+| `POST /auth/registro` | Autorregistro de un cliente | 01 · 07 | `CORREO_NO_DISPONIBLE`, `POLITICA_INCUMPLIDA` |
+| `GET /password/politica` | Reglas para el medidor de fuerza | 07 | — |
+| `POST /auth/verificar-correo` | Confirmar el correo | 02 | `ENLACE_EXPIRADO`, `ENLACE_YA_USADO` |
+| `POST /auth/verificar-correo/reenviar` | Otro enlace | 02 | `DEMASIADAS_SOLICITUDES` |
+| `POST /auth/login` | Iniciar sesión | 05 | `CREDENCIALES_INVALIDAS`, `PASSWORD_CADUCADA` |
+| `POST /auth/otp/solicitar` · `/verificar` | Segundo factor del login | 09 | `CODIGO_INVALIDO`, `OTP_EXPIRADO`, `OTP_INTENTOS_AGOTADOS`, `DEMASIADAS_SOLICITUDES` |
+| `POST /auth/refresh` | Renovar la sesión | 06 | `REFRESCO_INVALIDO` |
+| `POST /auth/logout` | Cerrar sesión | 06 | — |
+| `GET /auth/me` | Perfil del usuario del token | 16 | `TOKEN_NO_APLICABLE` |
+| `POST /password/recuperar` · `/restablecer` | Recuperar la contraseña | 08 | `TOKEN_RECUPERACION_INVALIDO`, `TOKEN_RECUPERACION_EXPIRADO` |
+| `POST /password/cambiar` | Cambiarla con sesión iniciada | 07 | `CREDENCIALES_INVALIDAS`, `POLITICA_INCUMPLIDA` |
+
+Todos pueden devolver `VALIDACION` (400), `TOKEN_INVALIDO` (401) y
+`NO_DISPONIBLE` (503).
+
+### Tres confusiones que vemos seguido
+
+1. **El login nunca devuelve `CUENTA_NO_DISPONIBLE`.** Cuenta bloqueada,
+   inactiva o sin verificar responden `401 CREDENCIALES_INVALIDAS`, igual que
+   una contraseña incorrecta. Si respondiera distinto, serviría para averiguar
+   cuáles existen. `CUENTA_NO_DISPONIBLE` solo aparece cuando un administrador
+   intenta bloquear una cuenta que no está operativa.
+2. **`GET /auth/me` y cualquier endpoint de usuario rechazan el token de
+   servicio** con `403 TOKEN_NO_APLICABLE`. Un módulo no actúa en nombre de una
+   persona; para eso está el token del usuario.
+3. **Las direcciones con token de servicio exigen `direcciones:leer`**, que hoy
+   solo tiene Despacho. Con el token del titular no hace falta scope.
+
+---
+
+## 12. Cómo cambia este contrato
 
 | Regla | Detalle |
 |---|---|

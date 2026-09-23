@@ -76,18 +76,18 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 | Código | HTTP | Spec | Cuándo se devuelve |
 |---|---|---|---|
 | `VALIDACION` ✅ | 400 | Todas | El cuerpo de la petición no cumple el esquema: falta un campo, el tipo no corresponde, el formato del correo es inválido |
-| `LOTE_DEMASIADO_GRANDE` ✅ | 400 | 09 | La consulta por lote trae más de 100 identificadores |
+| `LOTE_DEMASIADO_GRANDE` ✅ | 400 | 18 | La consulta por lote trae más de 100 identificadores |
 | `TOKEN_INVALIDO` ✅ | 401 | Todas | Falta el token, la firma no valida o ya venció |
-| `CREDENCIALES_INVALIDAS` ✅ | 401 | 02 | Correo o contraseña incorrectos, **o el correo no existe, o la cuenta no está `ACTIVO`** |
-| `REFRESCO_INVALIDO` ✅ | 401 | 02 | El token de refresco no existe, ya se usó o fue revocado |
-| `CODIGO_INVALIDO` ✅ | 401 | 04 | El código OTP no coincide con el desafío |
-| `CLIENTE_INVALIDO` ✅ | 401 | 09 | El `client_id` o el `client_secret` del módulo consumidor no son válidos |
-| `CUENTA_NO_DISPONIBLE` ✅ | 403 | 07 | Un administrador intenta bloquear una cuenta `INACTIVO` o `PENDIENTE_VERIFICACION`. **Ya no lo devuelve el login**, que responde `401` |
-| `TOKEN_NO_APLICABLE` ✅ | 403 | 09 | Un token de servicio intenta una operación que actúa en nombre de una persona |
-| `SCOPE_INSUFICIENTE` ✅ | 403 | 01, 05, 06, 07, 08, 09 | El token es válido pero no tiene el permiso necesario. **No se revela cuál haría falta** |
-| `NO_ENCONTRADO` ✅ | 404 | 01, 05, 07, 08, 09 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
-| `CORREO_NO_DISPONIBLE` ✅ | 409 | 01 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
-| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 01, 03, 04 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, o recuperaciones repetidas |
+| `CREDENCIALES_INVALIDAS` ✅ | 401 | 05 | Correo o contraseña incorrectos, **o el correo no existe, o la cuenta no está `ACTIVO`** |
+| `REFRESCO_INVALIDO` ✅ | 401 | 06 | El token de refresco no existe, ya se usó o fue revocado |
+| `CODIGO_INVALIDO` ✅ | 401 | 09 | El código OTP no coincide con el desafío |
+| `CLIENTE_INVALIDO` ✅ | 401 | 17 | El `client_id` o el `client_secret` del módulo consumidor no son válidos |
+| `CUENTA_NO_DISPONIBLE` ✅ | 403 | 15 | Un administrador intenta bloquear una cuenta `INACTIVO` o `PENDIENTE_VERIFICACION`. **Ya no lo devuelve el login**, que responde `401` |
+| `TOKEN_NO_APLICABLE` ✅ | 403 | 17 | Un token de servicio intenta una operación que actúa en nombre de una persona |
+| `SCOPE_INSUFICIENTE` ✅ | 403 | 03, 04, 11, 13, 15, 16, 17, 18 | El token es válido pero no tiene el permiso necesario. **No se revela cuál haría falta** |
+| `NO_ENCONTRADO` ✅ | 404 | 03, 04, 11, 15, 16, 18 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
+| `CORREO_NO_DISPONIBLE` ✅ | 409 | 01, 03 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
+| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, o recuperaciones repetidas |
 | `NO_DISPONIBLE` ✅ | 503 | Todas | Dependencia caída: base de datos, cola de correo o auditoría crítica |
 
 ---
