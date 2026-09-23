@@ -148,23 +148,23 @@ plan de pruebas: se traducen a pruebas automatizadas antes de implementar.
 
 ## Para los otros seis equipos
 
-Tenéis tres formas de relacionaros con nosotros. Ninguna incluye tocar nuestra
+Tienen tres formas de relacionarse con nosotros. Ninguna incluye tocar nuestra
 base de datos.
 
 | Vía | Cuándo usarla | Coste |
 |---|---|---|
 | **Validación local del token** con la clave pública de `/api/v1/auth/.well-known/jwks.json` | En cada petición ordinaria. Es el caso normal | Ninguna llamada de red. No detecta cambios de estado hasta que el token vence (15 min) |
 | **Introspección remota** `POST /api/v1/auth/introspeccion` | Antes de operaciones sensibles: anulaciones, reembolsos, cambios de precio | Una llamada de red y dependencia de nuestra disponibilidad |
-| **Eventos asíncronos** en RabbitMQ | Para enteraros de bajas, bloqueos y cambios de rol sin preguntar | Ninguna, pero es eventualmente consistente |
+| **Eventos asíncronos** en RabbitMQ | Para enterarse de bajas, bloqueos y cambios de rol sin preguntar | Ninguna, pero es eventualmente consistente |
 
-El token se firma con **RS256 y no con HS256** precisamente por esto: recibís la
-clave **pública** y podéis verificar sin poder firmar. Con una clave simétrica
+El token se firma con **RS256 y no con HS256** precisamente por esto: reciben la
+clave **pública** y pueden verificar sin poder firmar. Con una clave simétrica
 habría que repartir la clave de firma y cualquiera de los seis equipos podría
 emitir un token de administrador.
 
-### Programad contra nosotros antes de que existamos
+### Programen contra nosotros antes de que existamos
 
-El contrato está publicado antes que el código. Levantad el mock:
+El contrato está publicado antes que el código. Levanten el mock:
 
 ```bash
 npx @stoplight/prism-cli mock specs/openapi.yaml -p 4010
@@ -172,10 +172,10 @@ curl http://localhost:4010/auth/.well-known/jwks.json
 ```
 
 Responde con los ejemplos reales del contrato, incluidos los caminos de error, y
-valida vuestras peticiones. Podéis forzar cualquier respuesta con la cabecera
-`Prefer` —`Prefer: code=401`— para probar vuestros caminos de fallo.
+valida sus peticiones. Pueden forzar cualquier respuesta con la cabecera
+`Prefer` —`Prefer: code=401`— para probar sus caminos de fallo.
 
 > **Ojo con el prefijo.** Prism sirve las rutas sin `/api/v1`; el backend real
-> sí lo lleva. Parametrizad la URL base y no tocaréis código al cambiar.
+> sí lo lleva. Parametricen la URL base y no tocarán código al cambiar.
 
 La guía completa está en [`specs/kit-integracion.md`](specs/kit-integracion.md).
