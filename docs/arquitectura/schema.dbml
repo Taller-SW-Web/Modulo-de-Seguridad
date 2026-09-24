@@ -1,0 +1,384 @@
+// Modelo de datos — Módulo de Seguridad y Autenticación (G7)
+// Generado desde drawdb (anatoly-lab/drawdb-mcp). 20 tablas, 17 relaciones, 9 enums + estado efectivo.
+//
+// NOTAS DE DISEÑO (lo que DBML no expresa del todo):
+//  * BLOQUEADO es estado EFECTIVO (estado_cuenta_efectivo), calculado desde "bloqueo".
+//    usuario.estado persiste solo ciclo de vida (estado_cuenta).
+//  * FK compuesta otp(desafio_id, usuario_id) -> desafio_mfa(id, usuario_id), MATCH SIMPLE.
+//  * Índice único parcial direccion(usuario_id) WHERE es_predeterminada = true.
+//  * Índice único funcional usuario(lower(correo)).
+
+enum estado_cuenta {
+	ACTIVO
+	INACTIVO
+	PENDIENTE_VERIFICACION
+}
+
+enum codigo_rol {
+	CLIENTE
+	VENDEDOR
+	ADMIN_VENTAS
+	GESTOR_DESPACHO
+	GESTOR_COMERCIAL
+	ADMIN_SISTEMA
+}
+
+enum tipo_documento {
+	DNI
+	CE
+	PASAPORTE
+}
+
+enum canal_origen {
+	WEB
+	CHATBOT
+	RETAIL
+	MARKETPLACE
+}
+
+enum canal_otp {
+	EMAIL
+	SMS
+}
+
+enum tipo_bloqueo {
+	AUTOMATICO
+	MANUAL
+}
+
+enum resultado {
+	EXITO
+	FALLO
+}
+
+enum actor_tipo {
+	USUARIO
+	MODULO
+	SISTEMA
+}
+
+enum proposito_token {
+	VERIFICAR_CORREO
+	CAMBIO_CORREO
+	RECUPERACION
+	DESBLOQUEO
+}
+
+enum estado_cuenta_efectivo {
+	ACTIVO
+	INACTIVO
+	BLOQUEADO
+	PENDIENTE_VERIFICACION
+}
+
+Table usuario [headercolor: #175e7a] {
+	id uuid [ pk, not null ]
+	correo varchar [ not null, unique ]
+	nombres varchar [ not null ]
+	apellidos varchar [ not null ]
+	celular varchar [ note: '+51 + 9 dígitos' ]
+	estado estado_cuenta [ not null, note: 'Ciclo de vida persistido (sin BLOQUEADO). BLOQUEADO es estado efectivo, derivado de la tabla bloqueo.' ]
+	correo_verificado boolean [ not null, default: false ]
+	celular_verificado boolean [ not null, default: false ]
+	mfa_habilitado boolean [ not null, default: false ]
+	acepta_terminos boolean [ not null ]
+	fecha_aceptacion timestamptz
+	version_terminos varchar
+	canal_origen canal_origen [ not null, default: WEB ]
+	intentos_fallidos_consecutivos integer [ not null, default: 0, note: 'Fuente de verdad del contador; se actualiza en la misma transacción que intento_login.' ]
+	bloqueos_seguidos integer [ not null, default: 0, note: 'Escalera 1/2/4/null; solo vuelve a cero con login correcto.' ]
+	creado_en timestamptz [ not null ]
+	actualizado_en timestamptz
+
+	Note: 'Entidad central (dueña SPEC-01). Un solo dueño de identidad en el marketplace.'
+}
+
+Table credencial [headercolor: #8b5cf6] {
+	usuario_id uuid [ pk, not null ]
+	hash_contrasena varchar [ not null, note: 'bcrypt/argon2id, nunca texto plano' ]
+	ultimo_cambio timestamptz [ not null ]
+	requiere_cambio boolean [ not null, default: false ]
+
+	Note: 'Hash de contraseña, separado para no exponerlo en lecturas de perfil (SPEC-07).'
+}
+
+Table password_historial [headercolor: #8b5cf6] {
+	id uuid [ pk, not null ]
+	usuario_id uuid [ not null ]
+	hash_contrasena varchar [ not null ]
+	creado_en timestamptz [ not null ]
+
+	Note: 'Últimas 5 contraseñas para impedir reutilización (SPEC-07).'
+}
+
+Table perfil_cliente [headercolor: #175e7a] {
+	usuario_id uuid [ pk, not null ]
+	tipo_documento tipo_documento
+	documento_cifrado text [ note: 'AES; se expone enmascarado *****234' ]
+	fecha_nacimiento date
+	documento_key_id varchar [ note: 'key_id de la clave AES, para rotación sin re-cifrar.' ]
+
+	Note: 'Atributos de CLIENTE (SPEC-16). Documento cifrado AES con clave fuera de BD.'
+}
+
+Table perfil_vendedor [headercolor: #175e7a] {
+	usuario_id uuid [ pk, not null ]
+	codigo_vendedor varchar
+	tienda varchar
+	fecha_ingreso date
+
+	Note: 'Atributos de VENDEDOR (SPEC-16). "tienda" es un nombre, no una FK (la entidad tienda vive en otro módulo).'
+}
+
+Table direccion [headercolor: #175e7a] {
+	id uuid [ pk, not null ]
+	usuario_id uuid [ not null ]
+	etiqueta varchar
+	departamento varchar [ not null ]
+	provincia varchar [ not null ]
+	distrito varchar [ not null ]
+	direccion varchar [ not null ]
+	referencia varchar
+	es_predeterminada boolean [ not null, default: false, note: 'Solo una por usuario (índice único parcial).' ]
+
+	Note: 'Direcciones de entrega del cliente (SPEC-16, expuesta por SPEC-18).'
+}
+
+Table bloqueo [headercolor: #dc2626] {
+	usuario_id uuid [ pk, not null ]
+	tipo tipo_bloqueo [ not null ]
+	bloqueado_hasta timestamptz [ note: 'null = no vence (manual, o automático desde el 4º)' ]
+	motivo varchar [ note: 'Solo manual; nunca a token de servicio' ]
+	creado_en timestamptz [ not null ]
+
+	Note: 'Bloqueo vigente (1:1). Fuente de verdad del estado BLOQUEADO (efectivo). Manual no vence; automático según escalera 1/2/4/null (SPEC-14/15).'
+}
+
+Table intento_login [headercolor: #dc2626] {
+	id uuid [ pk, not null ]
+	usuario_id uuid [ note: 'null si el correo no existe' ]
+	correo_intentado varchar
+	resultado resultado [ not null ]
+	ip varchar
+	user_agent varchar
+	fecha timestamptz [ not null ]
+
+	indexes {
+		(usuario_id, fecha) [ name: 'idx_intento_login_usuario_fecha' ]
+		(ip, fecha) [ name: 'idx_intento_login_ip_fecha' ]
+	}
+
+	Note: 'Intentos de login (append-only, 90 días). Registro de hechos; el contador vive en usuario (SPEC-14).'
+}
+
+Table token_refresco [headercolor: #8b5cf6] {
+	jti uuid [ pk, not null ]
+	usuario_id uuid [ not null ]
+	familia_id uuid [ not null, note: 'una sesión = una familia' ]
+	hash_token varchar [ not null ]
+	revocado boolean [ not null, default: false ]
+	usado boolean [ not null, default: false ]
+	expiracion timestamptz [ not null ]
+	creado_en timestamptz [ not null ]
+
+	indexes {
+		(familia_id) [ name: 'idx_token_refresco_familia' ]
+	}
+
+	Note: 'Refresh tokens con familia. Rotación en cada uso; reutilización revoca la familia (SPEC-06).'
+}
+
+Table desafio_mfa [headercolor: #8b5cf6] {
+	id uuid [ pk, not null ]
+	usuario_id uuid [ not null ]
+	hash_token varchar [ not null ]
+	expiracion timestamptz [ not null ]
+	consumido boolean [ not null, default: false ]
+	creado_en timestamptz [ not null ]
+
+	indexes {
+		(id, usuario_id) [ name: 'uq_desafio_id_usuario', unique ]
+	}
+
+	Note: 'challengeToken del login con segundo factor (SPEC-09). UNIQUE(id, usuario_id) habilita la FK compuesta desde otp.'
+}
+
+Table otp [headercolor: #8b5cf6] {
+	id uuid [ pk, not null ]
+	usuario_id uuid [ not null ]
+	desafio_id uuid [ note: 'null para validación de contacto sin login' ]
+	hash_codigo varchar [ not null, note: 'HMAC-SHA256 con clave de servidor (6 dígitos = baja entropía). Nunca hash simple.' ]
+	canal canal_otp [ not null ]
+	intentos integer [ not null, default: 0 ]
+	expiracion timestamptz [ not null ]
+	usado boolean [ not null, default: false ]
+	creado_en timestamptz [ not null ]
+
+	Note: 'Código OTP de 6 dígitos, solo hash, 5 min, máx 3 intentos (SPEC-09). FK compuesta (desafio_id, usuario_id) -> desafio_mfa.'
+}
+
+Table token_un_uso [headercolor: #8b5cf6] {
+	id uuid [ pk, not null ]
+	proposito proposito_token [ not null ]
+	usuario_id uuid [ not null ]
+	hash_token varchar [ not null ]
+	destino varchar [ note: 'nuevo correo en CAMBIO_CORREO' ]
+	expiracion timestamptz [ not null ]
+	usado boolean [ not null, default: false ]
+	creado_en timestamptz [ not null ]
+
+	Note: 'Tokens de un solo uso: verificación (24h), recuperación (30m), desbloqueo (30m) (SPEC-02/08/14).'
+}
+
+Table rol [headercolor: #16a34a] {
+	codigo codigo_rol [ pk, not null ]
+	nombre varchar [ not null ]
+	descripcion varchar
+
+	Note: 'Catálogo cerrado de 6 roles (SPEC-11). Se siembra, no se inserta en runtime.'
+}
+
+Table permiso [headercolor: #16a34a] {
+	codigo varchar [ pk, not null, note: 'recurso.accion' ]
+	modulo varchar [ not null ]
+	descripcion varchar
+
+	Note: 'Permisos recurso.accion (SPEC-11). Hoy los del módulo; se añaden los de consumidores.'
+}
+
+Table rol_permiso [headercolor: #16a34a] {
+	rol_codigo codigo_rol [ pk, not null ]
+	permiso_codigo varchar [ pk, not null ]
+
+	Note: 'N:N rol-permiso (fuente de permisos efectivos).'
+}
+
+Table usuario_rol [headercolor: #16a34a] {
+	usuario_id uuid [ pk, not null ]
+	rol_codigo codigo_rol [ pk, not null ]
+
+	Note: 'N:N usuario-rol. Asignación de a uno en uno (SPEC-11).'
+}
+
+Table auditoria_seguridad [headercolor: #6b7280] {
+	id bigint [ pk, increment, not null ]
+	fecha timestamptz [ not null ]
+	accion varchar [ not null ]
+	resultado resultado [ not null ]
+	actor_tipo actor_tipo [ not null ]
+	actor_id varchar [ note: 'uuid usuario o client_id' ]
+	objetivo_usuario_id uuid
+	ip varchar
+	agente varchar
+	detalle jsonb
+
+	indexes {
+		(objetivo_usuario_id) [ name: 'idx_auditoria_objetivo' ]
+		(actor_id) [ name: 'idx_auditoria_actor' ]
+		(accion) [ name: 'idx_auditoria_accion' ]
+		(fecha) [ name: 'idx_auditoria_fecha' ]
+	}
+
+	Note: 'Solo-anexado, sin UPDATE/DELETE para la app, retención 90 días configurable (SPEC-12).'
+}
+
+Table cliente_servicio [headercolor: #d97706] {
+	client_id varchar [ pk, not null ]
+	client_secret_hash varchar [ not null ]
+	nombre varchar
+	activo boolean [ not null, default: true ]
+
+	Note: 'Los seis módulos consumidores (SPEC-17). client_secret siempre hasheado.'
+}
+
+Table cliente_servicio_scope [headercolor: #d97706] {
+	client_id varchar [ pk, not null ]
+	scope varchar [ pk, not null ]
+
+	Note: 'Scopes concedidos por módulo (SPEC-17).'
+}
+
+Table outbox [headercolor: #6b7280] {
+	id uuid [ pk, not null ]
+	topico varchar [ not null ]
+	payload jsonb [ not null ]
+	estado varchar [ not null, default: PENDIENTE ]
+	creado_en timestamptz [ not null ]
+	intentos integer [ not null, default: 0, note: 'reintentos de envío del mensaje' ]
+	procesado_en timestamptz [ note: 'cuándo se despachó el mensaje' ]
+
+	indexes {
+		(estado, creado_en) [ name: 'idx_outbox_estado_creado' ]
+	}
+
+	Note: 'Outbox transaccional: correos asíncronos y eventos after-commit (SPEC-02/12/14).'
+}
+
+Ref fk_credencial_usuario {
+	credencial.usuario_id - usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_password_historial_usuario {
+	password_historial.usuario_id > usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_perfil_cliente_usuario {
+	perfil_cliente.usuario_id - usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_perfil_vendedor_usuario {
+	perfil_vendedor.usuario_id - usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_direccion_usuario {
+	direccion.usuario_id > usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_bloqueo_usuario {
+	bloqueo.usuario_id - usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_intento_login_usuario {
+	intento_login.usuario_id > usuario.id [ delete: set null, update: no action ]
+}
+
+Ref fk_token_refresco_usuario {
+	token_refresco.usuario_id > usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_desafio_mfa_usuario {
+	desafio_mfa.usuario_id > usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_otp_usuario {
+	otp.usuario_id > usuario.id [ delete: cascade, update: no action ]
+}
+
+// FK compuesta: OTP y desafío del mismo usuario (ESC-09.9). MATCH SIMPLE, desafio_id nullable.
+Ref fk_otp_desafio_usuario {
+	otp.(desafio_id, usuario_id) > desafio_mfa.(id, usuario_id) [ delete: cascade, update: no action ]
+}
+
+Ref fk_token_un_uso_usuario {
+	token_un_uso.usuario_id > usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_rol_permiso_rol {
+	rol_permiso.rol_codigo > rol.codigo [ delete: cascade, update: no action ]
+}
+
+Ref fk_rol_permiso_permiso {
+	rol_permiso.permiso_codigo > permiso.codigo [ delete: cascade, update: no action ]
+}
+
+Ref fk_usuario_rol_usuario {
+	usuario_rol.usuario_id > usuario.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_usuario_rol_rol {
+	usuario_rol.rol_codigo > rol.codigo [ delete: cascade, update: no action ]
+}
+
+Ref fk_cliente_scope_servicio {
+	cliente_servicio_scope.client_id > cliente_servicio.client_id [ delete: cascade, update: no action ]
+}
