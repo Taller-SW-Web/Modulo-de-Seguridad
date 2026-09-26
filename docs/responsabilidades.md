@@ -35,7 +35,7 @@ consecuencias sobre el reparto:
 | 2 | **Jose Luis Limachi Sarmiento** | 22200287 | Tech Lead — Backend | Arquitectura interna del servicio, núcleo de autenticación, emisión y rotación de tokens, revisión de código del equipo |
 | 3 | **Eva Lucía Moreno Zevallos** | 20200277 | Backend | Dominio de usuario: registro, ciclo de vida de la cuenta, roles, permisos y atributos de perfil |
 | 4 | **Juan José Cano Vasquez** | 19200303 | Full Stack | Vertical de credenciales: política de contraseñas, recuperación y cambio (backend + sus pantallas) |
-| 5 | **Luis David Morales Brenis** | 23200280 | Full Stack | Vertical de protección: OTP/MFA y bloqueo de cuentas (backend + sus pantallas) |
+| 5 | **Luis David Morales Brenis** | 23200280 | Pasivo / Versatil | Vertical de protección: OTP/MFA y bloqueo de cuentas (backend + sus pantallas) |
 | 6 | **Valery Cristin Gutierrez Bendezu** | 23200263 | Frontend y Diseño | Sistema de diseño, paleta de colores, wireframes, prototipos en Figma y pantallas públicas de la SPA |
 | 7 | **Christian Gabriel Arancivia Salas** | 23200077 | DevOps, QA y Frontend de administración | Contenedores, CI/CD, despliegue en nube, estrategia de pruebas y panel de administración |
 
