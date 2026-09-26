@@ -11,7 +11,7 @@ Grupo 7 — Taller de Construcción de Software Web — UNMSM — Ciclo 2026-II
 | Jose Luis Limachi Sarmiento | 22200287 | Tech Lead — Backend |
 | Eva Lucía Moreno Zevallos | 20200277 | Backend |
 | Juan José Cano Vasquez | 19200303 | Full Stack |
-| Luis David Morales Brenis | 23200280 | Full Stack |
+| Luis David Morales Brenis | 23200280 |  Pasivo / Versatil |
 | Valery Cristin Gutierrez Bendezu | 23200263 | Frontend y Diseño (UX) |
 | Christian Gabriel Arancivia Salas | 23200077 | DevOps, QA y Frontend de administración |
 
