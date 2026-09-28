@@ -2233,6 +2233,12 @@ components:
       description: |
         El token propio de cada módulo consumidor. Identifica a un **módulo**, no
         a una persona: lleva `tipo: "servicio"` y el `client_id` en `sub`.
+
+        Claims: `iss` (igual al `issuer` del descubrimiento), `sub`, `aud` (lista
+        de APIs dueñas de los scopes concedidos: `api-seguridad`, `api-despacho`…),
+        `tipo`, `scope` (texto separado por espacios), `iat`, `exp` (1 hora) y
+        `jti`. Aquí se listan solo los scopes de esta API; los de otros módulos
+        están en el kit de integración §5 (acuerdo A4).
       flows:
         clientCredentials:
           tokenUrl: /auth/token

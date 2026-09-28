@@ -86,6 +86,10 @@ introspección en cada petición nos convierte en su punto único de fallo.
 | RF-17.9 | Una petición con token válido pero scope insuficiente debe responder `403` sin revelar qué scope habría hecho falta. |
 | RF-17.10 | Todos los errores de la API deben responder con `application/problem+json` (RFC 7807) y un `code` estable sobre el que los consumidores puedan ramificar. |
 | RF-17.11 | Debe existir un entorno simulado con datos y credenciales de prueba conocidas, disponible desde la semana 4, antes de que exista la implementación. |
+| RF-17.12 | El token de servicio debe llevar en `aud` la lista de las APIs dueñas de los scopes concedidos (`api-seguridad`, `api-despacho`…), para que cada API rechace los tokens que no van dirigidos a ella. |
+| RF-17.13 | El token de servicio debe llevar los scopes concedidos en el claim `scope`, como texto separado por espacios (RFC 9068). La respuesta de `POST /auth/token` los devuelve además como arreglo en `scopes`. |
+| RF-17.14 | El `iss` de todo token emitido debe ser idéntico al `issuer` que publica el documento de descubrimiento. |
+| RF-17.15 | El sistema debe poder conceder scopes que pertenecen a la API de otro módulo. El dueño de la API define el scope y lo que autoriza; nosotros lo registramos, lo concedemos al `client_id` acordado y lo emitimos en el token. |
 
 ### Códigos de rol del contrato
 
@@ -114,6 +118,38 @@ Se conceden por escrito en la sincronización entre equipos, no por petición.
 | `usuarios:leer:documento` | El número de documento en claro en vez de enmascarado | SPEC-18 |
 | `direcciones:leer` | Direcciones de entrega del cliente | SPEC-18 |
 | `roles:leer` | Catálogo de roles y de permisos | SPEC-18 |
+
+Todos estos llevan `aud: "api-seguridad"`.
+
+### Scopes de APIs de otros módulos
+
+Acuerdo A4 ([`acuerdos.md`](../docs/integracion/acuerdos.md)). El módulo dueño
+de la API define el scope y qué autoriza, y es quien responde `401`/`403` en sus
+endpoints. Nosotros solo lo registramos, lo concedemos y lo emitimos.
+
+| Scope | API dueña (`aud`) | Qué autoriza |
+|---|---|---|
+| `cotizaciones:calcular` | `api-despacho` | Calcular cobertura, costo y plazo de envío |
+| `seguimientos:leer` | `api-despacho` | Consultar el seguimiento por `idPedido` |
+
+**Token de servicio, claims completos:**
+
+```json
+{
+  "iss": "http://localhost:8080/api/v1/auth",
+  "sub": "modulo-marketplace",
+  "aud": ["api-despacho"],
+  "tipo": "servicio",
+  "scope": "cotizaciones:calcular seguimientos:leer",
+  "iat": 1789270000,
+  "exp": 1789273600,
+  "jti": "2b7c0e51-9d4a-4f0e-8a3b-6c1d2e9f7a40"
+}
+```
+
+- **Duración:** 1 hora, sin token de refresco. El módulo pide otro antes de que venza.
+- **Rotación del `client_secret`:** si se filtra o hay que cambiarlo, se emite uno nuevo por canal seguro y se revoca el anterior. Los tokens ya emitidos mueren en su `exp`, como mucho una hora después. No hay certificados de cliente en este ciclo.
+- **Lo que valida la API que recibe el token:** firma con el JWKS, `iss` exacto, que `aud` incluya su API, `tipo: "servicio"`, `exp` y el scope de la operación. `401` si falla cualquiera salvo el scope; `403` si solo falta el scope, sin decir cuál.
 
 ---
 
@@ -196,6 +232,7 @@ condiciones límite, de error o de seguridad.
 
 - **La consulta de datos de usuario, direcciones y catálogos**, que es de SPEC-18.
 - **Los eventos asíncronos** (vía 3), que se especifican en [`catalogo-eventos.md`](catalogo-eventos.md) y los publica cada spec dueña del cambio.
+- **La validación de los tokens en las APIs de otros módulos** y sus respuestas `401`/`403`: las aplica cada módulo dueño del scope.
 - **La autorización de las operaciones de negocio.** Entregamos identidad, roles y permisos; qué permite hacer cada módulo con ellos lo decide ese módulo.
 - **La pasarela de API centralizada** del marketplace y la infraestructura de red compartida.
 - **La limitación de tasa por módulo consumidor.**
