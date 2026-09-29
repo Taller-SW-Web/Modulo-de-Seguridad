@@ -185,13 +185,12 @@ Los seis códigos de rol del marketplace:
 | `GESTOR_COMERCIAL` | Administra catálogo, precios y promociones |
 | `ADMIN_SISTEMA` | Personal de la plataforma |
 
-> **`permisos` todavía no lleva los de ustedes.** Hoy solo contiene los de
-> nuestro módulo (`usuario.ver`, `auditoria.ver`…), definidos en SPEC-11. Los
-> de cada módulo (`pedido.crear`, `producto.editar`…) se acuerdan con cada
-> equipo. **Autorizad por `roles` mientras tanto.** Cuando se acuerden, la
-> lista crecerá sin que cambie nada del contrato: añadir permisos es
-> compatible. Fijaos en el punto: los permisos se escriben `recurso.accion`;
-> los dos puntos son de los scopes.
+> **`permisos` solo lleva los de nuestro módulo** (`usuario.ver`,
+> `auditoria.ver`…), definidos en SPEC-11. No guardamos los de ustedes: **autoricen
+> por `roles` y con sus propios datos.** Si su módulo tiene un perfil que no está
+> entre los seis roles —un repartidor, por ejemplo—, ese perfil vive en su base de
+> datos, enlazado al `sub` del usuario (acuerdo A5). Fíjense en el punto: los
+> permisos se escriben `recurso.accion`; los dos puntos son de los scopes.
 
 ---
 

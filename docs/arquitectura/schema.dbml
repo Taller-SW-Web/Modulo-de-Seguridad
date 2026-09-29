@@ -1,5 +1,5 @@
 // Modelo de datos — Módulo de Seguridad y Autenticación (G7)
-// Generado desde drawdb (anatoly-lab/drawdb-mcp). 20 tablas, 17 relaciones, 9 enums + estado efectivo.
+// Generado desde drawdb (anatoly-lab/drawdb-mcp). 21 tablas, 18 relaciones, 9 enums + estado efectivo.
 //
 // NOTAS DE DISEÑO (lo que DBML no expresa del todo):
 //  * BLOQUEADO es estado EFECTIVO (estado_cuenta_efectivo), calculado desde "bloqueo".
@@ -84,7 +84,7 @@ Table usuario [headercolor: #175e7a] {
 	acepta_terminos boolean [ not null ]
 	fecha_aceptacion timestamptz
 	version_terminos varchar
-	canal_origen canal_origen [ not null, default: WEB ]
+	canal_origen canal_origen [ not null, default: 'WEB' ]
 	intentos_fallidos_consecutivos integer [ not null, default: 0, note: 'Fuente de verdad del contador; se actualiza en la misma transacción que intento_login.' ]
 	bloqueos_seguidos integer [ not null, default: 0, note: 'Escalera 1/2/4/null; solo vuelve a cero con login correcto.' ]
 	creado_en timestamptz [ not null ]
@@ -243,7 +243,7 @@ Table permiso [headercolor: #16a34a] {
 	modulo varchar [ not null ]
 	descripcion varchar
 
-	Note: 'Permisos recurso.accion (SPEC-11). Hoy los del módulo; se añaden los de consumidores.'
+	Note: 'Permisos recurso.accion (SPEC-11). Solo los de este módulo: los demás autorizan por roles y con sus propios datos.'
 }
 
 Table rol_permiso [headercolor: #16a34a] {
@@ -298,11 +298,19 @@ Table cliente_servicio_scope [headercolor: #d97706] {
 	Note: 'Scopes concedidos por módulo (SPEC-17).'
 }
 
+Table scope [headercolor: #d97706] {
+	codigo varchar [ pk, not null, note: 'recurso:accion, p. ej. usuarios:leer, cotizaciones:calcular' ]
+	audiencia varchar [ not null, note: 'API dueña del scope, va al claim aud: api-seguridad, api-despacho…' ]
+	descripcion varchar
+
+	Note: 'Catálogo de scopes que emitimos (SPEC-17, acuerdo A4). El dueño de la API lo define y lo valida; nosotros solo lo registramos y lo copiamos al token.'
+}
+
 Table outbox [headercolor: #6b7280] {
 	id uuid [ pk, not null ]
 	topico varchar [ not null ]
 	payload jsonb [ not null ]
-	estado varchar [ not null, default: PENDIENTE ]
+	estado varchar [ not null, default: 'PENDIENTE' ]
 	creado_en timestamptz [ not null ]
 	intentos integer [ not null, default: 0, note: 'reintentos de envío del mensaje' ]
 	procesado_en timestamptz [ note: 'cuándo se despachó el mensaje' ]
@@ -381,4 +389,8 @@ Ref fk_usuario_rol_rol {
 
 Ref fk_cliente_scope_servicio {
 	cliente_servicio_scope.client_id > cliente_servicio.client_id [ delete: cascade, update: no action ]
+}
+
+Ref fk_cliente_scope_scope {
+	cliente_servicio_scope.scope > scope.codigo [ delete: restrict, update: no action ]
 }

@@ -1,6 +1,6 @@
 -- Modelo de datos — Módulo de Seguridad y Autenticación (G7)
 -- PostgreSQL. Generado desde drawdb (anatoly-lab/drawdb-mcp).
--- 20 tablas, 17 relaciones, 9 enums (+ estado efectivo), índices y notas de diseño.
+-- 21 tablas, 18 relaciones, 9 enums (+ estado efectivo), índices y notas de diseño.
 --
 -- NOTAS DE DISEÑO (seguridad / integridad, ver specs):
 --  * BLOQUEADO es estado EFECTIVO, calculado desde "bloqueo" (RF-14.7). "usuario.estado"
@@ -267,7 +267,7 @@ CREATE TABLE IF NOT EXISTS "permiso" (
 	"descripcion" varchar(255),
 	PRIMARY KEY("codigo")
 );
-COMMENT ON TABLE "permiso" IS 'Permisos recurso.accion (SPEC-11). Hoy los del módulo; se añaden los de consumidores.';
+COMMENT ON TABLE "permiso" IS 'Permisos recurso.accion (SPEC-11). Solo los de este módulo: los demás autorizan por roles y con sus propios datos.';
 COMMENT ON COLUMN "permiso"."codigo" IS 'recurso.accion';
 
 CREATE TABLE IF NOT EXISTS "rol_permiso" (
@@ -319,6 +319,16 @@ CREATE TABLE IF NOT EXISTS "cliente_servicio_scope" (
 	PRIMARY KEY("client_id", "scope")
 );
 COMMENT ON TABLE "cliente_servicio_scope" IS 'Scopes concedidos por módulo (SPEC-17).';
+
+CREATE TABLE IF NOT EXISTS "scope" (
+	"codigo" varchar(50) NOT NULL,
+	"audiencia" varchar(50) NOT NULL,
+	"descripcion" varchar(255),
+	PRIMARY KEY("codigo")
+);
+COMMENT ON TABLE "scope" IS 'Catálogo de scopes que emitimos (SPEC-17, acuerdo A4). El dueño de la API lo define y lo valida; nosotros solo lo registramos y lo copiamos al token.';
+COMMENT ON COLUMN "scope"."codigo" IS 'recurso:accion, p. ej. usuarios:leer, cotizaciones:calcular';
+COMMENT ON COLUMN "scope"."audiencia" IS 'API dueña del scope, va al claim aud: api-seguridad, api-despacho…';
 
 CREATE TABLE IF NOT EXISTS "outbox" (
 	"id" uuid NOT NULL,
@@ -388,3 +398,6 @@ ON UPDATE NO ACTION ON DELETE CASCADE;
 ALTER TABLE "cliente_servicio_scope"
 ADD FOREIGN KEY("client_id") REFERENCES "cliente_servicio"("client_id")
 ON UPDATE NO ACTION ON DELETE CASCADE;
+ALTER TABLE "cliente_servicio_scope"
+ADD FOREIGN KEY("scope") REFERENCES "scope"("codigo")
+ON UPDATE NO ACTION ON DELETE RESTRICT;
