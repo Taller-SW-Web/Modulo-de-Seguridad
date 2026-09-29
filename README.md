@@ -87,18 +87,25 @@ siguen vivas.
 
 ## Estado
 
-**Semana 5 — tras el Hito 1.** Fase de especificación. Todavía no hay código de
-producción: primero el contrato y las specs, después la implementación. Con el
-feedback de la presentación, las specs pasaron de 9 a 18 —una por función— y las
-de interfaz se separaron de las de backend.
+**Semana 6 — Hito 2 en curso** (presentación: sábado 3 de octubre). El Hito 1
+se presentó el 19 de septiembre; con su feedback las specs pasaron de 9 a 18
+—una por función— y las de interfaz se separaron de las de backend. Todavía no
+hay código de producción: esta semana se implementan los repositorios de datos.
 
-| Entregable del Hito 1 | Estado |
+| Entregable del Hito 2 | Estado |
 |---|---|
-| Arquitectura preliminar | ✅ [`docs/arquitectura/`](docs/arquitectura/) — 6 diagramas y 4 ADR |
-| Funcionalidades distribuidas | ✅ [`docs/responsabilidades.md`](docs/responsabilidades.md) |
-| Especificaciones SDD | 🔶 **18 specs de backend**, una por función, en borrador y pendientes de aprobación — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md). Specs de interfaz aparte, en [`specs/front/`](specs/front/) |
-| Wireframes | 🔶 primera versión en Stitch (47 pantallas, rotuladas con la numeración antigua de 9 specs); falta exportarla a `docs/wireframes/` y pasarla a Figma |
-| Contrato OpenAPI + mock | 🔶 [`specs/openapi.yaml`](specs/openapi.yaml) — 39 operaciones, valida sin errores y el mock de Prism responde |
+| Repositorio con evidencia de uso de todos los integrantes | 🔶 Una rama y un PR por persona — issues [#21 a #25](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues?q=label%3Ahito-2) |
+| Diseño e implementación de los repositorios de BD | 🔶 Esquema de 21 tablas en [`docs/arquitectura/schema.sql`](docs/arquitectura/schema.sql); migraciones Flyway `V1` a `V4` en curso |
+| Mockups y sistema de diseño | 🔶 Guía en [`docs/diseno/sistema-diseno.md`](docs/diseno/sistema-diseno.md); biblioteca y mockups en Figma en curso |
+| Experiencia de usuario (3 propuestas) | 🔶 En curso — [#25](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/25) |
+
+| Base del Hito 1 | Dónde |
+|---|---|
+| Arquitectura | [`docs/arquitectura/`](docs/arquitectura/) — 6 diagramas y 6 ADR |
+| Funcionalidades distribuidas | [`docs/responsabilidades.md`](docs/responsabilidades.md) |
+| Especificaciones SDD | 18 specs de backend en borrador — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md) —, 15 de interfaz en [`specs/front/`](specs/front/) y 15 de componentes React en [`specs/componentes-react/`](specs/componentes-react/) |
+| Contrato OpenAPI + mock | [`specs/openapi.yaml`](specs/openapi.yaml) — valida sin errores y el mock de Prism responde |
+| Acuerdos con los otros módulos | [`docs/integracion/acuerdos.md`](docs/integracion/acuerdos.md) — A1 a A5 |
 
 ---
 
