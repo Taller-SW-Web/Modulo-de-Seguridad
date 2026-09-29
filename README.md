@@ -95,7 +95,7 @@ hay código de producción: esta semana se implementan los repositorios de datos
 | Entregable del Hito 2 | Estado |
 |---|---|
 | Repositorio con evidencia de uso de todos los integrantes | 🔶 Una rama y un PR por persona — issues [#21 a #25](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues?q=label%3Ahito-2) |
-| Diseño e implementación de los repositorios de BD | 🔶 Esquema de 21 tablas en [`docs/arquitectura/schema.sql`](docs/arquitectura/schema.sql); migraciones Flyway `V1` a `V4` en curso |
+| Diseño e implementación de los repositorios de BD | 🔶 Esquema auditado y probado en PostgreSQL en [`docs/arquitectura/schema.sql`](docs/arquitectura/schema.sql); migraciones Flyway `V1` a `V4` en curso |
 | Mockups y sistema de diseño | 🔶 Guía en [`docs/diseno/sistema-diseno.md`](docs/diseno/sistema-diseno.md); biblioteca y mockups en Figma en curso |
 | Experiencia de usuario (3 propuestas) | 🔶 En curso — [#25](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/25) |
 
