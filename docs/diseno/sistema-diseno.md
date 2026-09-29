@@ -1,5 +1,12 @@
 # **Guía UX/UI del Módulo de Seguridad y Autenticación (G7)**
 
+| Campo | Valor |
+|---|---|
+| **Autor** | Luis David Morales Brenis |
+| **Responsable** | Valery Cristin Gutierrez Bendezu — sistema de diseño y biblioteca en Figma ([`responsabilidades.md`](../responsabilidades.md)) |
+| **Estado** | Primera versión. Los apartados marcados `[PENDIENTE]` se completan al construir la biblioteca en Figma |
+| **Se implementa en** | [`specs/componentes-react/`](../../specs/componentes-react/) |
+
 ## *Referencia práctica para el proyecto del curso*
 
 Esta guía reúne las reglas de UX/UI que deben consultar los compañeros antes de diseñar o implementar una pantalla del proyecto. Su objetivo es mantener una experiencia consistente entre todos los módulos del marketplace; este módulo, como **proveedor de identidad**, adopta la misma base compartida y solo define lo específico de sus pantallas (autenticación, gestión de cuenta y panel de administración).

@@ -5,6 +5,8 @@
 | **Dueño** | Valery Cristin Gutierrez Bendezu — responsable de UX |
 | **Estado** | Primera redacción de las 15 specs, todas en **Borrador** y sin responsable asignado |
 | **Plantilla** | [`_PLANTILLA-FRONT.md`](_PLANTILLA-FRONT.md) |
+| **Cómo se programa** | [`../componentes-react/`](../componentes-react/): una spec de componentes React por pantalla, con el mismo número |
+| **Sistema de diseño** | [`../../docs/diseno/sistema-diseno.md`](../../docs/diseno/sistema-diseno.md) |
 
 Las 18 specs de `specs/` son **de backend**: dicen qué hace el servicio y se
 verifican contra su API. Esta carpeta guarda las **specs de interfaz**: cómo se

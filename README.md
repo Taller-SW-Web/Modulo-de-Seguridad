@@ -112,6 +112,7 @@ de interfaz se separaron de las de backend.
 | Quieres la vista del usuario | [`specs/historias-usuario.md`](specs/historias-usuario.md) — 41 historias, cada una enlazada a sus RF y escenarios |
 | Vas a escribir una spec | [`specs/_PLANTILLA.md`](specs/_PLANTILLA.md), y después [`specs/trazabilidad.md`](specs/trazabilidad.md) para ver qué endpoints, eventos y pantallas te tocan |
 | Vas a especificar una pantalla | [`specs/front/`](specs/front/) — las specs de interfaz van aparte, con su propia plantilla |
+| Vas a programar una pantalla | [`specs/componentes-react/`](specs/componentes-react/) — archivos, componentes y hooks de cada pantalla, y [`docs/diseno/sistema-diseno.md`](docs/diseno/sistema-diseno.md) para el sistema de diseño |
 | Vas a devolver un error | [`specs/catalogo-errores.md`](specs/catalogo-errores.md) — los códigos tienen dueño único |
 | Vas a publicar un evento | [`specs/catalogo-eventos.md`](specs/catalogo-eventos.md) |
 | Vas a cambiar el estado de una cuenta | [`docs/arquitectura/estados-usuario.md`](docs/arquitectura/estados-usuario.md) |
