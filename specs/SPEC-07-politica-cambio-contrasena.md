@@ -48,7 +48,7 @@ El resultado observable es un único `422 POLITICA_INCUMPLIDA` con las reglas fa
 | RF-07.4 | El sistema debe impedir la reutilización de cualquiera de las **últimas cinco contraseñas** utilizadas. |
 | RF-07.5 | Las reglas de validación deben aplicarse obligatoriamente en el **backend**, independientemente del cliente. |
 | RF-07.6 | Las contraseñas deben almacenarse mediante un mecanismo de **hash seguro** y nunca en texto claro. |
-| RF-07.7 | Las contraseñas de las cuentas con algún rol de gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA`) deben expirar cada **90 días**. Al completar la autenticación con una contraseña caducada no se emiten tokens: se responde `403 PASSWORD_CADUCADA` y el titular la restablece con el flujo de recuperación (RF-08.1 a RF-08.5). |
+| RF-07.7 | Las contraseñas de las cuentas con algún rol de gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA`) deben expirar cada **90 días**: el día 90 ya cuenta como caducada. Al completar la autenticación con una contraseña caducada no se emiten tokens: se responde `403 PASSWORD_CADUCADA` y el titular la restablece con el flujo de recuperación (RF-08.1 a RF-08.5). |
 | RF-07.8 | El cambio de contraseña de un usuario autenticado debe requerir la verificación de su contraseña actual y validar la nueva contraseña. |
 | RF-07.9 | El sistema debe notificar al usuario por correo después de un cambio de contraseña exitoso. |
 | RF-07.10 | El cambio de contraseña debe registrarse mediante SPEC-12 como `CONTRASENA_CAMBIADA` (acción crítica). |

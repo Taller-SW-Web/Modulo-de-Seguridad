@@ -556,7 +556,7 @@ Con el token del usuario, nunca con el de servicio.
 | `POST /auth/login` | Iniciar sesión | 05 | `CREDENCIALES_INVALIDAS`, `PASSWORD_CADUCADA` |
 | `POST /auth/otp/solicitar` · `/verificar` | Segundo factor del login | 09 | `CODIGO_INVALIDO`, `OTP_EXPIRADO`, `OTP_INTENTOS_AGOTADOS`, `DEMASIADAS_SOLICITUDES` |
 | `POST /auth/refresh` | Renovar la sesión | 06 | `REFRESCO_INVALIDO` |
-| `POST /auth/logout` | Cerrar sesión | 06 | — |
+| `POST /auth/logout` | Cerrar sesión. Basta el `refreshToken`: no hace falta un token de acceso vigente | 06 | — |
 | `GET /auth/me` | Perfil del usuario del token | 16 | `TOKEN_NO_APLICABLE` |
 | `POST /password/recuperar` · `/restablecer` | Recuperar la contraseña | 08 | `TOKEN_RECUPERACION_INVALIDO`, `TOKEN_RECUPERACION_EXPIRADO` |
 | `POST /password/cambiar` | Cambiarla con sesión iniciada | 07 | `CREDENCIALES_INVALIDAS`, `POLITICA_INCUMPLIDA` |

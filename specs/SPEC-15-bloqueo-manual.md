@@ -50,6 +50,7 @@ El resultado observable es una cuenta `BLOQUEADO` sin vencimiento, con todas sus
 | RF-15.5 | Una cuenta `INACTIVO` o `PENDIENTE_VERIFICACION` no debe entrar en estado `BLOQUEADO`; los módulos consumidores solo pueden leer el estado y no modificarlo. |
 | RF-15.6 | Mientras la cuenta está `BLOQUEADO`, `GET /api/v1/usuarios/{id}` debe incluir el objeto `bloqueo` con `tipo` (`AUTOMATICO` o `MANUAL`) y `hasta` (`null` si no vence). El `motivo` del bloqueo manual solo se incluye para un token de usuario con el permiso `usuario.ver`; un token de servicio nunca lo recibe. |
 | RF-15.7 | El bloqueo y el desbloqueo manual deben notificar al titular por correo —sin enlace de desbloqueo—, publicar `usuario.bloqueado` o `usuario.desbloqueado` con `via: "ADMINISTRADOR"` y registrarse en SPEC-12, con las mismas reglas de RF-14.8 a RF-14.10. |
+| RF-15.8 | Desbloquear una cuenta que no está `BLOQUEADO` no hace nada: no cambia su estado ni su contador, no publica evento ni notifica, y responde `204`, igual que un desbloqueo real. |
 
 ---
 
@@ -111,6 +112,12 @@ condiciones límite, de error o de seguridad.
 - **Dado** una cuenta con bloqueo manual y motivo «Actividad sospechosa»,
 - **Cuando** un `ADMIN_SISTEMA` consulta `GET /api/v1/usuarios/{id}` y, por separado, un módulo lo consulta con un token de servicio,
 - **Entonces** el administrador recibe `bloqueo: { tipo: MANUAL, hasta: null, motivo: "Actividad sospechosa" }` y el módulo recibe `bloqueo: { tipo: MANUAL, hasta: null }`, sin el motivo.
+
+### ESC-15.10 Desbloquear una cuenta que no está bloqueada *(caso borde)*
+
+- **Dado** una cuenta `ACTIVO` sin bloqueo y un `ADMIN_SISTEMA` autorizado,
+- **Cuando** hace `POST /api/v1/usuarios/{id}/desbloquear`,
+- **Entonces** el sistema responde `204`, la cuenta no cambia y no se publica `usuario.desbloqueado`.
 
 ---
 
