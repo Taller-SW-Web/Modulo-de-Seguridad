@@ -199,11 +199,14 @@ nadie.
 | `credencial` · `password_historial` | 07 | 01, 03, 05, 08 |
 | `token_refresco` | 06 | 04, 05, 08, 09, 11, 15 |
 | `otp` · `desafio_mfa` | 09 | 05, 10 |
-| `rol` · `permiso` · `usuario_rol` | 11 | 01, 03, 05, 18 |
+| `rol` · `permiso` · `rol_permiso` · `usuario_rol` | 11 | 01, 03, 05, 18 |
 | `auditoria_seguridad` | **12** | Todas la escriben; la lee 13 |
 | `intento_login` · `bloqueo` | 14 | 05, 08, 15 |
 | `perfil_cliente` · `perfil_vendedor` · `direccion` | 16 | 01, 18 |
-| `cliente_servicio` · `cliente_servicio_scope` | 17 | 18 |
+| `cliente_servicio` · `cliente_servicio_scope` · `scope` | 17 | 18 |
+| `token_un_uso` | 02 | 08, 14, 16 |
+| `solicitud_limitada` | 02 | 08 |
+| `outbox` | Transversal (adaptador de Juan José) | 02, 04, 08, 09, 11, 12, 14, 15, 16 |
 
 ---
 

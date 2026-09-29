@@ -1,5 +1,6 @@
 // Modelo de datos — Módulo de Seguridad y Autenticación (G7)
-// Generado desde drawdb (anatoly-lab/drawdb-mcp). 21 tablas, 18 relaciones, 9 enums + estado efectivo.
+// Diagrama del esquema. La FUENTE DE VERDAD de las migraciones es schema.sql (auditoría del 29-sep).
+// 22 tablas, 18 relaciones, 11 enums.
 //
 // NOTAS DE DISEÑO (lo que DBML no expresa del todo):
 //  * BLOQUEADO es estado EFECTIVO (estado_cuenta_efectivo), calculado desde "bloqueo".
@@ -7,6 +8,12 @@
 //  * FK compuesta otp(desafio_id, usuario_id) -> desafio_mfa(id, usuario_id), MATCH SIMPLE.
 //  * Índice único parcial direccion(usuario_id) WHERE es_predeterminada = true.
 //  * Índice único funcional usuario(lower(correo)).
+//  * Vista usuario_estado_efectivo (usuario + bloqueo) y trigger de solo anexado en
+//    auditoria_seguridad: solo en schema.sql.
+//  * Restricciones CHECK (formato de correo y celular, bloqueo manual con motivo,
+//    intentos del OTP, destino del token, documento completo, formato de permiso y
+//    scope, estados del outbox): solo en schema.sql; aquí van como nota.
+//  * Todos los hash_token son UNIQUE: los tokens se buscan por su hash.
 
 enum estado_cuenta {
 	ACTIVO
@@ -71,17 +78,22 @@ enum estado_cuenta_efectivo {
 	PENDIENTE_VERIFICACION
 }
 
+enum tipo_limite {
+	REENVIO_VERIFICACION
+	RECUPERACION
+}
+
 Table usuario [headercolor: #175e7a] {
-	id uuid [ pk, not null ]
-	correo varchar [ not null, unique ]
+	id uuid [ pk, not null, default: `gen_random_uuid()` ]
+	correo varchar [ not null, unique, note: 'En minúsculas (CHECK)' ]
 	nombres varchar [ not null ]
 	apellidos varchar [ not null ]
-	celular varchar [ note: '+51 + 9 dígitos' ]
+	celular varchar [ note: '+51 + 9 dígitos (CHECK)' ]
 	estado estado_cuenta [ not null, note: 'Ciclo de vida persistido (sin BLOQUEADO). BLOQUEADO es estado efectivo, derivado de la tabla bloqueo.' ]
 	correo_verificado boolean [ not null, default: false ]
 	celular_verificado boolean [ not null, default: false ]
 	mfa_habilitado boolean [ not null, default: false ]
-	acepta_terminos boolean [ not null ]
+	acepta_terminos boolean [ not null, default: false, note: 'Si es true, fecha_aceptacion y version_terminos son obligatorias (CHECK). Las altas administrativas no pasan por el consentimiento.' ]
 	fecha_aceptacion timestamptz
 	version_terminos varchar
 	canal_origen canal_origen [ not null, default: 'WEB' ]
@@ -108,6 +120,10 @@ Table password_historial [headercolor: #8b5cf6] {
 	hash_contrasena varchar [ not null ]
 	creado_en timestamptz [ not null ]
 
+	indexes {
+		(usuario_id, creado_en) [ name: 'idx_password_historial_usuario_fecha' ]
+	}
+
 	Note: 'Últimas 5 contraseñas para impedir reutilización (SPEC-07).'
 }
 
@@ -116,7 +132,7 @@ Table perfil_cliente [headercolor: #175e7a] {
 	tipo_documento tipo_documento
 	documento_cifrado text [ note: 'AES; se expone enmascarado *****234' ]
 	fecha_nacimiento date
-	documento_key_id varchar [ note: 'key_id de la clave AES, para rotación sin re-cifrar.' ]
+	documento_key_id varchar [ note: 'key_id de la clave AES, para rotación sin re-cifrar. Tipo, documento y clave van juntos o ninguno (CHECK).' ]
 
 	Note: 'Atributos de CLIENTE (SPEC-16). Documento cifrado AES con clave fuera de BD.'
 }
@@ -141,6 +157,10 @@ Table direccion [headercolor: #175e7a] {
 	referencia varchar
 	es_predeterminada boolean [ not null, default: false, note: 'Solo una por usuario (índice único parcial).' ]
 
+	indexes {
+		(usuario_id) [ name: 'idx_direccion_usuario' ]
+	}
+
 	Note: 'Direcciones de entrega del cliente (SPEC-16, expuesta por SPEC-18).'
 }
 
@@ -148,7 +168,7 @@ Table bloqueo [headercolor: #dc2626] {
 	usuario_id uuid [ pk, not null ]
 	tipo tipo_bloqueo [ not null ]
 	bloqueado_hasta timestamptz [ note: 'null = no vence (manual, o automático desde el 4º)' ]
-	motivo varchar [ note: 'Solo manual; nunca a token de servicio' ]
+	motivo varchar [ note: 'Obligatorio en MANUAL y vacío en AUTOMATICO (CHECK); hasta 500 caracteres; nunca a token de servicio' ]
 	creado_en timestamptz [ not null ]
 
 	Note: 'Bloqueo vigente (1:1). Fuente de verdad del estado BLOQUEADO (efectivo). Manual no vence; automático según escalera 1/2/4/null (SPEC-14/15).'
@@ -166,6 +186,7 @@ Table intento_login [headercolor: #dc2626] {
 	indexes {
 		(usuario_id, fecha) [ name: 'idx_intento_login_usuario_fecha' ]
 		(ip, fecha) [ name: 'idx_intento_login_ip_fecha' ]
+		(fecha) [ name: 'idx_intento_login_fecha' ]
 	}
 
 	Note: 'Intentos de login (append-only, 90 días). Registro de hechos; el contador vive en usuario (SPEC-14).'
@@ -183,6 +204,8 @@ Table token_refresco [headercolor: #8b5cf6] {
 
 	indexes {
 		(familia_id) [ name: 'idx_token_refresco_familia' ]
+		(hash_token) [ name: 'uq_token_refresco_hash', unique ]
+		(usuario_id) [ name: 'idx_token_refresco_usuario' ]
 	}
 
 	Note: 'Refresh tokens con familia. Rotación en cada uso; reutilización revoca la familia (SPEC-06).'
@@ -198,6 +221,8 @@ Table desafio_mfa [headercolor: #8b5cf6] {
 
 	indexes {
 		(id, usuario_id) [ name: 'uq_desafio_id_usuario', unique ]
+		(hash_token) [ name: 'uq_desafio_mfa_hash', unique ]
+		(usuario_id) [ name: 'idx_desafio_mfa_usuario' ]
 	}
 
 	Note: 'challengeToken del login con segundo factor (SPEC-09). UNIQUE(id, usuario_id) habilita la FK compuesta desde otp.'
@@ -209,10 +234,15 @@ Table otp [headercolor: #8b5cf6] {
 	desafio_id uuid [ note: 'null para validación de contacto sin login' ]
 	hash_codigo varchar [ not null, note: 'HMAC-SHA256 con clave de servidor (6 dígitos = baja entropía). Nunca hash simple.' ]
 	canal canal_otp [ not null ]
-	intentos integer [ not null, default: 0 ]
+	intentos integer [ not null, default: 0, note: 'Entre 0 y 3 (CHECK)' ]
 	expiracion timestamptz [ not null ]
 	usado boolean [ not null, default: false ]
 	creado_en timestamptz [ not null ]
+
+	indexes {
+		(usuario_id, creado_en) [ name: 'idx_otp_usuario_fecha' ]
+		(desafio_id) [ name: 'idx_otp_desafio' ]
+	}
 
 	Note: 'Código OTP de 6 dígitos, solo hash, 5 min, máx 3 intentos (SPEC-09). FK compuesta (desafio_id, usuario_id) -> desafio_mfa.'
 }
@@ -222,12 +252,30 @@ Table token_un_uso [headercolor: #8b5cf6] {
 	proposito proposito_token [ not null ]
 	usuario_id uuid [ not null ]
 	hash_token varchar [ not null ]
-	destino varchar [ note: 'nuevo correo en CAMBIO_CORREO' ]
+	destino varchar [ note: 'Nuevo correo: obligatorio en CAMBIO_CORREO y vacío en los demás (CHECK)' ]
 	expiracion timestamptz [ not null ]
 	usado boolean [ not null, default: false ]
 	creado_en timestamptz [ not null ]
 
+	indexes {
+		(hash_token) [ name: 'uq_token_un_uso_hash', unique ]
+		(usuario_id, proposito) [ name: 'idx_token_un_uso_usuario_proposito' ]
+	}
+
 	Note: 'Tokens de un solo uso: verificación (24h), recuperación (30m), desbloqueo (30m) (SPEC-02/08/14).'
+}
+
+Table solicitud_limitada [headercolor: #dc2626] {
+	id bigint [ pk, increment, not null ]
+	tipo tipo_limite [ not null ]
+	clave_hash varchar [ not null, note: 'HMAC-SHA256 en hex del correo en minúsculas, con clave de servidor' ]
+	creado_en timestamptz [ not null, default: `now()` ]
+
+	indexes {
+		(tipo, clave_hash, creado_en) [ name: 'idx_solicitud_limitada' ]
+	}
+
+	Note: 'Límites por correo que cuentan aunque la cuenta no exista (RF-02.4, RF-08.8). Guarda el HMAC del correo, no el correo (Ley 29733). Se purga pasada la hora.'
 }
 
 Table rol [headercolor: #16a34a] {
@@ -239,7 +287,7 @@ Table rol [headercolor: #16a34a] {
 }
 
 Table permiso [headercolor: #16a34a] {
-	codigo varchar [ pk, not null, note: 'recurso.accion' ]
+	codigo varchar [ pk, not null, note: 'recurso.accion, con punto (CHECK)' ]
 	modulo varchar [ not null ]
 	descripcion varchar
 
@@ -250,12 +298,20 @@ Table rol_permiso [headercolor: #16a34a] {
 	rol_codigo codigo_rol [ pk, not null ]
 	permiso_codigo varchar [ pk, not null ]
 
+	indexes {
+		(permiso_codigo) [ name: 'idx_rol_permiso_permiso' ]
+	}
+
 	Note: 'N:N rol-permiso (fuente de permisos efectivos).'
 }
 
 Table usuario_rol [headercolor: #16a34a] {
 	usuario_id uuid [ pk, not null ]
 	rol_codigo codigo_rol [ pk, not null ]
+
+	indexes {
+		(rol_codigo) [ name: 'idx_usuario_rol_rol' ]
+	}
 
 	Note: 'N:N usuario-rol. Asignación de a uno en uno (SPEC-11).'
 }
@@ -273,13 +329,13 @@ Table auditoria_seguridad [headercolor: #6b7280] {
 	detalle jsonb
 
 	indexes {
-		(objetivo_usuario_id) [ name: 'idx_auditoria_objetivo' ]
-		(actor_id) [ name: 'idx_auditoria_actor' ]
-		(accion) [ name: 'idx_auditoria_accion' ]
+		(objetivo_usuario_id, fecha) [ name: 'idx_auditoria_objetivo_fecha' ]
+		(actor_id, fecha) [ name: 'idx_auditoria_actor_fecha' ]
+		(accion, fecha) [ name: 'idx_auditoria_accion_fecha' ]
 		(fecha) [ name: 'idx_auditoria_fecha' ]
 	}
 
-	Note: 'Solo-anexado, sin UPDATE/DELETE para la app, retención 90 días configurable (SPEC-12).'
+	Note: 'Solo-anexado (trigger contra UPDATE; la app sin UPDATE/DELETE), retención 90 días configurable (SPEC-12). Sin FK a usuario a propósito: el registro sobrevive a la cuenta.'
 }
 
 Table cliente_servicio [headercolor: #d97706] {
@@ -295,12 +351,16 @@ Table cliente_servicio_scope [headercolor: #d97706] {
 	client_id varchar [ pk, not null ]
 	scope varchar [ pk, not null ]
 
+	indexes {
+		(scope) [ name: 'idx_cliente_servicio_scope_scope' ]
+	}
+
 	Note: 'Scopes concedidos por módulo (SPEC-17).'
 }
 
 Table scope [headercolor: #d97706] {
 	codigo varchar [ pk, not null, note: 'recurso:accion, p. ej. usuarios:leer, cotizaciones:calcular' ]
-	audiencia varchar [ not null, note: 'API dueña del scope, va al claim aud: api-seguridad, api-despacho…' ]
+	audiencia varchar [ not null, note: 'API dueña del scope, va al claim aud: api-seguridad, api-despacho… (CHECK: api-*)' ]
 	descripcion varchar
 
 	Note: 'Catálogo de scopes que emitimos (SPEC-17, acuerdo A4). El dueño de la API lo define y lo valida; nosotros solo lo registramos y lo copiamos al token.'
@@ -310,7 +370,7 @@ Table outbox [headercolor: #6b7280] {
 	id uuid [ pk, not null ]
 	topico varchar [ not null ]
 	payload jsonb [ not null ]
-	estado varchar [ not null, default: 'PENDIENTE' ]
+	estado varchar [ not null, default: 'PENDIENTE', note: 'PENDIENTE, ENVIADO o FALLIDO (CHECK)' ]
 	creado_en timestamptz [ not null ]
 	intentos integer [ not null, default: 0, note: 'reintentos de envío del mensaje' ]
 	procesado_en timestamptz [ note: 'cuándo se despachó el mensaje' ]
@@ -372,11 +432,11 @@ Ref fk_token_un_uso_usuario {
 }
 
 Ref fk_rol_permiso_rol {
-	rol_permiso.rol_codigo > rol.codigo [ delete: cascade, update: no action ]
+	rol_permiso.rol_codigo > rol.codigo [ delete: restrict, update: no action ]
 }
 
 Ref fk_rol_permiso_permiso {
-	rol_permiso.permiso_codigo > permiso.codigo [ delete: cascade, update: no action ]
+	rol_permiso.permiso_codigo > permiso.codigo [ delete: restrict, update: no action ]
 }
 
 Ref fk_usuario_rol_usuario {
@@ -384,7 +444,7 @@ Ref fk_usuario_rol_usuario {
 }
 
 Ref fk_usuario_rol_rol {
-	usuario_rol.rol_codigo > rol.codigo [ delete: cascade, update: no action ]
+	usuario_rol.rol_codigo > rol.codigo [ delete: restrict, update: no action ]
 }
 
 Ref fk_cliente_scope_servicio {
