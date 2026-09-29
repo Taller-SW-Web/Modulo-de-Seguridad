@@ -167,7 +167,7 @@ builder.Services
   "roles": ["CLIENTE"],
   "permisos": [],
   "tipo": "acceso",
-  "iss": "auth-service",
+  "iss": "http://localhost:8080/api/v1/auth",
   "iat": 1789270000,
   "exp": 1789270900,
   "jti": "8f2a91c4-b7e5-4d03-a1f6-2c9b8e0d4a77"
@@ -275,11 +275,22 @@ las decisiones se registran en
 | Módulo | Scopes | Para qué |
 |---|---|---|
 | Marketplace Cliente | `usuarios:leer` | Mostrar el nombre del comprador |
+| Marketplace Cliente | `cotizaciones:calcular`, `seguimientos:leer` *(API de Despacho, acuerdo A4)* | Cotizar el envío y consultar su seguimiento |
 | Chatbot Cliente | `usuarios:leer`, `tokens:introspeccion` | Confirmar identidad en la conversación y la sesión antes de cobrar |
 | Retail Vendedor | `usuarios:leer`, `roles:leer` | Buscar clientes y comprobar el rol del vendedor |
 | Ventas y Postventa | `usuarios:leer`, `usuarios:leer:documento`, `tokens:introspeccion` | Emitir boletas y autorizar anulaciones |
 | Despacho y Entrega | `usuarios:leer`, `direcciones:leer` | Entregar el paquete |
 | Productos y Ofertas | `tokens:introspeccion`, `roles:leer` | Autorizar cambios de precio |
+
+### Scopes de la API de otro módulo
+
+Emitimos también los scopes que otro módulo define para **su** API (acuerdo
+A4). El token lleva en `aud` la lista de APIs dueñas de los scopes concedidos
+(`api-seguridad`, `api-despacho`…) y los scopes en el claim `scope`, separados
+por espacio. Dura una hora. Quien recibe el token comprueba `iss`, `aud`,
+`tipo`, `exp` y el scope, y responde sus propios `401`/`403`. Para pedir uno,
+abran un issue con `integracion` indicando cliente, scopes y API dueña. Detalle
+en [SPEC-17](SPEC-17-tokens-servicio.md#scopes-de-apis-de-otros-módulos).
 
 ### El documento se enmascara según el scope
 
