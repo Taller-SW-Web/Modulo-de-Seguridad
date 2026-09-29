@@ -26,8 +26,8 @@ definir · 🟡 documentación desalineada · 🟢 menor.
 | # | Inconsistencia | Dónde | Dueño | Gravedad |
 |---|---|---|---|---|
 | 1 | Una contraseña corta en el registro recibe `400` en vez de `422` | `openapi.yaml`, SPEC-07 | PO, Juan José | 🔴 |
-| 2 | `iss` tiene dos valores distintos | Kit, `openapi.yaml` | PO | 🔴 |
-| 3 | No está escrito cómo viajan los scopes dentro del token, ni si se exige `aud` | SPEC-17, `openapi.yaml` | PO | 🔴 |
+| 2 | ~~`iss` tiene dos valores distintos~~ ✅ resuelto | Kit, `openapi.yaml` | PO | 🔴 |
+| 3 | ~~No está escrito cómo viajan los scopes dentro del token, ni si se exige `aud`~~ ✅ resuelto | SPEC-17, `openapi.yaml` | PO | 🔴 |
 | 4 | `mfa_requerido` frente a `mfaRequerido` | SPEC-05, contrato | Jose Luis | 🔴 |
 | 5 | `caducidadDiasAdmin` depende del rol en un endpoint público | `openapi.yaml`, SPEC-07 | PO, Juan José | 🟠 |
 | 6 | El límite de 90 días es «más de» en un sitio y «o más» en otro | SPEC-07, catálogo, contrato | Juan José | 🟠 |
@@ -37,7 +37,7 @@ definir · 🟡 documentación desalineada · 🟢 menor.
 | 10 | Casos sin respuesta definida en desbloquear y reactivar | SPEC-15, SPEC-04, contrato | Luis David, Eva Lucía | 🟠 |
 | 11 | Nadie define el «canal preferido» del segundo factor | `openapi.yaml`, SPEC-09 | Luis David | 🟠 |
 | 12 | Se cita la decisión «Q10», que no existe | SPEC-01, SPEC-04 | PO | 🟠 |
-| 13 | SPEC-17 y el kit dicen cosas distintas sobre cómo se piden los scopes | SPEC-17, kit | PO | 🟡 |
+| 13 | ~~SPEC-17 y el kit dicen cosas distintas sobre cómo se piden los scopes~~ ✅ resuelto | SPEC-17, kit | PO | 🟡 |
 | 14 | La trazabilidad cuenta 7 requisitos en SPEC-02, que tiene 8 | `trazabilidad.md` | PO | 🟡 |
 | 15 | El catálogo atribuye `CREDENCIALES_INVALIDAS` solo a SPEC-05 | Catálogo de errores | PO | 🟡 |
 | 16 | `NoEncontrado` dice que solo se alcanza con token de servicio | `openapi.yaml` | PO | 🟡 |
@@ -80,6 +80,10 @@ Despacho pide confirmar el valor (§3.3 y §8.1 de su `api-contract.md`).
 **Por decidir:** un único valor de `iss`, igual en el kit, en el documento de
 descubrimiento y en los tokens emitidos.
 
+> ✅ **Resuelto** en el acuerdo A4 (PR #13): `iss` = `issuer` del descubrimiento
+> (RF-17.14) y el kit ya lo usa. **Falta avisar a Chatbot**, que programa contra
+> `auth-service`.
+
 ### 3. No está escrito cómo viajan los scopes dentro del token, ni si se exige `aud`
 
 - `specs/openapi.yaml:2454` — la respuesta de `POST /auth/token` trae `scopes`
@@ -93,6 +97,9 @@ Despacho pregunta las dos cosas por escrito en su contrato y, hasta tener
 respuesta, no puede validar los tokens de servicio.
 
 **Por decidir:** nombre y forma del claim de scopes, y si existe `aud`.
+
+> ✅ **Resuelto** en el acuerdo A4 (PR #13): claim `scope` en texto (RF-17.13) y
+> `aud` con las APIs dueñas (RF-17.12), que salen de la tabla `scope`.
 
 ### 4. `mfa_requerido` frente a `mfaRequerido`
 
@@ -196,6 +203,8 @@ define) o si el campo vale siempre `EMAIL` mientras el SMS siga simulado.
   **issue** con la etiqueta `integracion`».
 
 **Corrección:** alinear SPEC-17 con el proceso del kit, que es el que se usó para A1, A2 y A3.
+
+> ✅ **Resuelto**: SPEC-17 ya dice que se piden por issue y se conceden en `acuerdos.md`.
 
 ### 14. La trazabilidad cuenta 7 requisitos en SPEC-02, que tiene 8
 

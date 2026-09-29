@@ -134,7 +134,8 @@ _Avoid_: administrador a secas, rol admin, rol privilegiado, staff
 
 **Permiso**:
 Una capacidad concreta que un rol concede a una **persona**, nombrada por
-recurso y acción separados por un punto (`pedido.crear`, `producto.editar`).
+recurso y acción separados por un punto (`usuario.ver`, `rol.asignar`). Solo
+existen los de este módulo; los demás autorizan por **rol** y con sus datos.
 _Avoid_: privilegio, autorización, capacidad, usar «permiso» para un scope, y
 escribirlo con dos puntos
 
@@ -144,9 +145,10 @@ lo que viaja en su token y lo que un módulo consumidor evalúa.
 _Avoid_: permisos del usuario, permisos totales, permisos resueltos
 
 **Scope**:
-Lo que un **módulo consumidor** puede leer de esta API, concedido a su token de
-servicio y escrito con dos puntos (`usuarios:leer`, `tokens:introspeccion`). Un
-scope habla de módulos y de lectura; un permiso habla de personas y de acciones.
+Lo que un **módulo** puede hacer en una API, concedido a su token de servicio y
+escrito con dos puntos (`usuarios:leer`, `cotizaciones:calcular`). Lo define el
+dueño de la API —esta u otra— y nosotros lo emitimos. Un scope habla de módulos;
+un permiso, de personas.
 _Avoid_: permiso del módulo, alcance, autorización de servicio
 
 ### Integración entre módulos
