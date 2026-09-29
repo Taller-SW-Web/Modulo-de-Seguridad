@@ -36,7 +36,7 @@ enum canal_origen {
 	MARKETPLACE
 }
 
-enum canal_otp {
+enum canal_otp {q
 	EMAIL
 	SMS
 }
