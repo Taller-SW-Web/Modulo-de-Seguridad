@@ -46,8 +46,8 @@ info:
     los seis equipos consumidores. Desde el Hito 4 se genera desde el código con
     `springdoc-openapi`, para que no pueda desincronizarse.
 
-    Especificaciones de origen: `specs/SPEC-17-tokens-servicio.md` y
-    `specs/SPEC-18-consulta-identidad.md`.
+    Especificaciones de origen: las 18 specs de `specs/`. El mapa endpoint → spec
+    está en `specs/trazabilidad.md` §2.
     Decisión de idioma: `docs/arquitectura/adr/004-idioma-del-contrato.md`.
 
     ## Convenciones
@@ -2318,7 +2318,7 @@ components:
     NoEncontrado:
       description: |
         No existe un usuario con ese identificador. Solo se llega aquí con un
-        token de servicio válido y el scope correcto.
+        token válido y el permiso o scope necesario.
       content:
         application/problem+json:
           schema:

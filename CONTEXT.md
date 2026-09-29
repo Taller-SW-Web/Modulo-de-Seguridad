@@ -97,7 +97,8 @@ automático y el manual
 La desactivación de una cuenta que la deja inutilizable sin borrarla de la base
 de datos. Ninguna cuenta se elimina físicamente, y por eso una baja puede
 deshacerse.
-_Avoid_: eliminar, borrar, dar de baja, soft delete
+Verbo aceptado: **dar de baja** (así hablan las specs, el contrato y las pantallas).
+_Avoid_: eliminar, borrar, soft delete
 
 **Reactivación**:
 La vuelta de una cuenta dada de baja al estado `ACTIVO`, conservando su
@@ -148,7 +149,8 @@ _Avoid_: permisos del usuario, permisos totales, permisos resueltos
 Lo que un **módulo** puede hacer en una API, concedido a su token de servicio y
 escrito con dos puntos (`usuarios:leer`, `cotizaciones:calcular`). Lo define el
 dueño de la API —esta u otra— y nosotros lo emitimos. Un scope habla de módulos;
-un permiso, de personas.
+un permiso, de personas. **Excepción publicada:** el error `SCOPE_INSUFICIENTE`
+se devuelve también a una persona a la que le falta un permiso; no se renombra.
 _Avoid_: permiso del módulo, alcance, autorización de servicio
 
 ### Integración entre módulos

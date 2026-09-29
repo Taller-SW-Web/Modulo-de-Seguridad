@@ -40,6 +40,9 @@ cliente— van aparte, en [`front/`](front/), y las lleva el responsable de UX.
 | 17 | Claves públicas, tokens de servicio e introspección | Sergio | 1 · 4 | [`SPEC-17-tokens-servicio.md`](SPEC-17-tokens-servicio.md) | 🔶 Borrador · contrato publicado |
 | 18 | Consulta de identidad para los demás módulos | Sergio | 1 · 4 | [`SPEC-18-consulta-identidad.md`](SPEC-18-consulta-identidad.md) | 🔶 Borrador · contrato publicado |
 
+Además, [`SPEC-17-18-api-identidad.plan.md`](SPEC-17-18-api-identidad.plan.md) es el **plan de
+implementación** de SPEC-17 y SPEC-18, no una spec: por eso no lleva número propio.
+
 ### 1.1 De nueve a dieciocho (20 de septiembre)
 
 En la presentación del Hito 1 el profesor pidió **una spec por función**: el set
@@ -213,7 +216,7 @@ uno de ellos caso borde.
 | SPEC | Requisitos | Escenarios | Marcados caso borde | Cumple la regla |
 |---|---|---|---|---|
 | 01 | 7 | 4 | 3 | 🔶 Por revisar |
-| 02 | 7 | 5 | 3 | 🔶 Por revisar |
+| 02 | 8 | 5 | 3 | 🔶 Por revisar |
 | 03 | 4 | 4 | 3 | 🔶 Por revisar |
 | 04 | 4 | 3 | 1 | 🔶 Por revisar |
 | 05 | 7 | 5 | 0 | 🔶 Faltan marcas de caso borde |
@@ -243,7 +246,7 @@ Lo que hoy sabemos que falta. Se cierra o se convierte en decisión escrita.
 
 | Hueco | Quién | Para cuándo |
 |---|---|---|
-| Los permisos de los módulos consumidores (`pedido.crear`…) no están acordados; hoy `permisos` solo lleva los de este módulo | Eva Lucía | Hito 4 |
+| **Q10** · ¿Puede el titular darse de baja a sí mismo? Hoy solo da de baja un administrador (SPEC-01, SPEC-04, FRONT-06) | Sergio | Hito 3 |
 | Los `client_id` y `client_secret` de los seis módulos no están creados | Christian | Hito 4 |
 | El catálogo de eventos no está acordado con los seis equipos | Sergio | Hito 2 |
 | Cada responsable revisa su spec dividida, confirma los *valores propuestos* y la aprueba con su propio commit | Los siete | Hito 2 |

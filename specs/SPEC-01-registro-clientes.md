@@ -111,7 +111,7 @@ condiciones límite, de error o de seguridad.
 - Autenticación por proveedores OAuth2 / Social Login.
 - Asignación pública de roles privilegiados.
 - Los atributos de perfil, el documento de identidad y las direcciones, que son de SPEC-16.
-- La baja por decisión del propio titular: está pendiente de decisión (Q10).
+- La baja por decisión del propio titular: está pendiente de decisión (Q10, en [`trazabilidad.md`](trazabilidad.md) §7).
 
 ---
 
