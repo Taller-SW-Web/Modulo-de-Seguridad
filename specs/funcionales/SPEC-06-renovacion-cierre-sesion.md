@@ -46,6 +46,7 @@ El resultado observable es un par de tokens nuevo en cada renovación, un `401` 
 | RF-06.3 | Si el sistema detecta que un refreshToken previamente utilizado vuelve a ser presentado, debe revocar todos los refreshToken pertenecientes a la familia de esa sesión y rechazar la solicitud. |
 | RF-06.4 | Un `refreshToken` vencido o revocado debe responder `401` sin emitir tokens nuevos. |
 | RF-06.5 | El cierre de sesión y la detección de reutilización deben registrarse mediante SPEC-12 (`SESION_CERRADA`, `REFRESCO_REUTILIZADO`). |
+| RF-06.6 | `POST /api/v1/auth/logout` es **público**: se autoriza solo con el `refreshToken` del cuerpo y no exige un token de acceso vigente. Responde `204` también si ese refresco ya estaba revocado, vencido o no existe. |
 
 ---
 
@@ -100,6 +101,14 @@ Entonces el sistema debe responder con código HTTP 401.
 
 La sesión debe considerarse expirada y no deben generarse nuevos tokens.
 
+### ESC-06.5 Cierre de sesión con el token de acceso vencido *(caso borde)*
+
+Dado un usuario cuyo token de acceso ya venció, pero que conserva su refreshToken.
+
+Cuando realiza una solicitud POST /auth/logout con ese refreshToken, sin token de acceso.
+
+Entonces el sistema revoca el refreshToken y responde 204, sin pedir que renueve la sesión antes.
+
 ---
 
 ## Requisitos no funcionales — ¿con qué condiciones?
@@ -124,7 +133,7 @@ La sesión debe considerarse expirada y no deben generarse nuevos tokens.
 | Endpoint / evento | Añade, modifica o elimina | Acordado con el PO |
 |---|---|---|
 | `POST /api/v1/auth/refresh` | Añade | ⬜ |
-| `POST /api/v1/auth/logout` | Añade | ⬜ |
+| `POST /api/v1/auth/logout` | Añade · público, autorizado por el `refreshToken` del cuerpo (RF-06.6) | ⬜ |
 
 ---
 

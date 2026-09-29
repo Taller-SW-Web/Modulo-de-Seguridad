@@ -27,7 +27,7 @@ lotes.
 ## Convenciones comunes (todas las pantallas)
 
 - **Stack**: React 18 + Vite + TypeScript + Mantine. Tema en
-  `src/theme.ts` según [`docs/sistema-diseño`](../docs/sistema-diseño).
+  `src/theme.ts` según [`docs/diseno/sistema-diseno.md`](../../docs/diseno/sistema-diseno.md).
 - **Color de acción**: `signal` (índigo) en pantallas de autenticación; `orange`
   en el panel de administración y «Mi cuenta».
 - **Errores**: se ramifica por `code`, nunca por `detail`. Ningún mensaje revela

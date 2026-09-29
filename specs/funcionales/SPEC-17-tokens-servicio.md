@@ -109,7 +109,7 @@ unilateralmente. La decisión de fijarlos en español está registrada en
 
 ### Scopes del token de servicio
 
-Se conceden por escrito en la sincronización entre equipos, no por petición.
+Se piden por issue con la etiqueta `integracion` y se conceden por escrito en [`acuerdos.md`](../docs/integracion/acuerdos.md), como indica el kit §5.
 
 | Scope | Qué autoriza | Spec |
 |---|---|---|
@@ -125,7 +125,10 @@ Todos estos llevan `aud: "api-seguridad"`.
 
 Acuerdo A4 ([`acuerdos.md`](../docs/integracion/acuerdos.md)). El módulo dueño
 de la API define el scope y qué autoriza, y es quien responde `401`/`403` en sus
-endpoints. Nosotros solo lo registramos, lo concedemos y lo emitimos.
+endpoints. Nosotros solo lo registramos, lo concedemos y lo emitimos: no
+programamos nada que dependa de lo que significa. Cada scope se guarda en la
+tabla `scope` con su `audiencia` (la API dueña), y el `aud` del token es la lista
+sin repetidos de las audiencias de los scopes concedidos.
 
 | Scope | API dueña (`aud`) | Qué autoriza |
 |---|---|---|

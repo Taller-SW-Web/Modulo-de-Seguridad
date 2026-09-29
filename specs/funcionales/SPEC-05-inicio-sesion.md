@@ -115,7 +115,7 @@ No se debe revelar que la cuenta está bloqueada ni el motivo: el titular se ent
 **Entonces** el sistema debe responder con código HTTP `200` y retornar:
 
 {
-  "mfa_requerido": true,
+  "mfaRequerido": true,
   "challengeToken": "..."
 }
 

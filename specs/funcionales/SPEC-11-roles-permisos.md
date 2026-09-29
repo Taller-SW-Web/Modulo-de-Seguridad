@@ -13,7 +13,7 @@
 
 ## Contexto — ¿por qué?
 
-El marketplace opera con un modelo de control de acceso basado en roles (RBAC). Para garantizar la segregación de funciones entre los diferentes módulos consumidores (Ventas, Despacho, Productos, etc.), el proveedor de identidad debe calcular de manera centralizada los permisos efectivos que posee cada persona y empaquetarlos dentro de su `accessToken`.
+El marketplace opera con un modelo de control de acceso basado en roles (RBAC). El proveedor de identidad asigna a cada persona sus roles del catálogo cerrado y los empaqueta en su `accessToken`, junto con los permisos efectivos de **este** módulo. Los demás módulos (Ventas, Despacho, Productos, etc.) autorizan con esos roles y con sus propios datos: qué puede hacer un `ADMIN_VENTAS` en Ventas, o quién es repartidor en Despacho, lo decide cada uno (acuerdo A5).
 
 Dado que un usuario puede tener asignado más de un rol simultáneamente, el cálculo de los permisos efectivos debe realizarse de forma eficiente sin que los demás módulos tengan que consultar la base de datos de seguridad.
 
@@ -59,7 +59,7 @@ Esta especificación comprende:
 | RF-11.6 | Tras modificar exitosamente los roles de un usuario, el sistema debe publicar el evento `usuario.roles_cambiados` en RabbitMQ. |
 | RF-11.7 | Un `ADMIN_SISTEMA` no puede quitarse a sí mismo el rol `ADMIN_SISTEMA`, y nadie puede quitárselo al último `ADMIN_SISTEMA` activo: responde `422 ADMINISTRADOR_PROTEGIDO`, la misma regla que aplican SPEC-04 a la baja y SPEC-15 al bloqueo. |
 | RF-11.8 | Toda asignación o modificación de roles debe quedar registrada mediante el módulo de auditoría de SPEC-12. |
-| RF-11.9 | El sistema debe definir el catálogo de permisos de este módulo (tabla siguiente) y concederlo solo a `ADMIN_SISTEMA`. Los permisos de cada módulo consumidor se acuerdan con su equipo y se añaden a este catálogo; hasta entonces, `permisos` lleva solo los de este módulo y los consumidores autorizan por `roles`. |
+| RF-11.9 | El sistema debe definir el catálogo de permisos de este módulo (tabla siguiente) y concederlo solo a `ADMIN_SISTEMA`. `permisos` lleva solo los de este módulo: no se cargan permisos de los módulos consumidores, que autorizan por `roles` y con sus propios datos (acuerdo A5). |
 | RF-11.10 | Las acciones de un usuario sobre su propia cuenta —ver su perfil, editar sus atributos, cambiar su contraseña— no requieren permiso: se autorizan por titularidad, comparando el `sub` del token con la cuenta afectada. |
 
 ### Catálogo de permisos de este módulo
@@ -116,11 +116,11 @@ condiciones límite, de error o de seguridad.
 
 ### ESC-11.4 Cálculo de permisos efectivos en la emisión del token
 
-**Dado** un usuario que posee los roles `ADMIN_VENTAS` (permisos: `pedido.leer`, `pedido.aprobar`) y `GESTOR_COMERCIAL` (permisos: `producto.crear`, `pedido.leer`). *Son permisos de ejemplo de los módulos consumidores, pendientes de acordar con sus equipos.*
+**Dado** un usuario que posee los roles `ADMIN_SISTEMA` (los ocho permisos del catálogo) y `VENDEDOR` (ninguno).
 
 **Cuando** se emite o renueva su `accessToken`.
 
-**Entonces** el array de permisos efectivos en las claims del JWT debe contener exactamente la lista sin duplicados: `["pedido.leer", "pedido.aprobar", "producto.crear"]`.
+**Entonces** el array de permisos efectivos en las claims del JWT debe contener exactamente los ocho permisos del catálogo, sin duplicados, y `roles` debe llevar `["ADMIN_SISTEMA", "VENDEDOR"]`.
 
 ### ESC-11.5 Prevención de eliminación del último administrador *(caso borde)*
 

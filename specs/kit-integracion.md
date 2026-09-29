@@ -185,13 +185,12 @@ Los seis códigos de rol del marketplace:
 | `GESTOR_COMERCIAL` | Administra catálogo, precios y promociones |
 | `ADMIN_SISTEMA` | Personal de la plataforma |
 
-> **`permisos` todavía no lleva los de ustedes.** Hoy solo contiene los de
-> nuestro módulo (`usuario.ver`, `auditoria.ver`…), definidos en SPEC-11. Los
-> de cada módulo (`pedido.crear`, `producto.editar`…) se acuerdan con cada
-> equipo. **Autorizad por `roles` mientras tanto.** Cuando se acuerden, la
-> lista crecerá sin que cambie nada del contrato: añadir permisos es
-> compatible. Fijaos en el punto: los permisos se escriben `recurso.accion`;
-> los dos puntos son de los scopes.
+> **`permisos` solo lleva los de nuestro módulo** (`usuario.ver`,
+> `auditoria.ver`…), definidos en SPEC-11. No guardamos los de ustedes: **autoricen
+> por `roles` y con sus propios datos.** Si su módulo tiene un perfil que no está
+> entre los seis roles —un repartidor, por ejemplo—, ese perfil vive en su base de
+> datos, enlazado al `sub` del usuario (acuerdo A5). Fíjense en el punto: los
+> permisos se escriben `recurso.accion`; los dos puntos son de los scopes.
 
 ---
 
@@ -557,7 +556,7 @@ Con el token del usuario, nunca con el de servicio.
 | `POST /auth/login` | Iniciar sesión | 05 | `CREDENCIALES_INVALIDAS`, `PASSWORD_CADUCADA` |
 | `POST /auth/otp/solicitar` · `/verificar` | Segundo factor del login | 09 | `CODIGO_INVALIDO`, `OTP_EXPIRADO`, `OTP_INTENTOS_AGOTADOS`, `DEMASIADAS_SOLICITUDES` |
 | `POST /auth/refresh` | Renovar la sesión | 06 | `REFRESCO_INVALIDO` |
-| `POST /auth/logout` | Cerrar sesión | 06 | — |
+| `POST /auth/logout` | Cerrar sesión. Basta el `refreshToken`: no hace falta un token de acceso vigente | 06 | — |
 | `GET /auth/me` | Perfil del usuario del token | 16 | `TOKEN_NO_APLICABLE` |
 | `POST /password/recuperar` · `/restablecer` | Recuperar la contraseña | 08 | `TOKEN_RECUPERACION_INVALIDO`, `TOKEN_RECUPERACION_EXPIRADO` |
 | `POST /password/cambiar` | Cambiarla con sesión iniciada | 07 | `CREDENCIALES_INVALIDAS`, `POLITICA_INCUMPLIDA` |

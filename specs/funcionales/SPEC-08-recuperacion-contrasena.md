@@ -49,6 +49,7 @@ El resultado observable es una contraseña nueva que cumple la política de SPEC
 | RF-08.5 | Después de un restablecimiento exitoso, el sistema debe validar la nueva contraseña e invalidar los tokens o sesiones anteriores asociados a la cuenta. Si la cuenta tiene un bloqueo automático, el restablecimiento lo levanta (ver SPEC-14). La recuperación funciona aunque la cuenta esté bloqueada. |
 | RF-08.6 | El sistema debe notificar al usuario por correo después de un restablecimiento exitoso. |
 | RF-08.7 | La solicitud y el restablecimiento deben registrarse mediante SPEC-12 (`RECUPERACION_SOLICITADA`, `CONTRASENA_RESTABLECIDA`). |
+| RF-08.8 | El sistema debe admitir como máximo **3 solicitudes de recuperación por hora y por dirección de correo**; a la cuarta responde `429 DEMASIADAS_SOLICITUDES`. El límite se cuenta por correo, exista o no la cuenta, igual que el reenvío de verificación (RF-02.4), para que ni la respuesta ni el límite revelen qué cuentas existen. |
 
 ---
 
@@ -93,6 +94,12 @@ condiciones límite, de error o de seguridad.
 **Cuando** se establece la nueva contraseña,
 **Entonces** el sistema invalida las sesiones o tokens anteriores y registra `CONTRASENA_RESTABLECIDA`.
 
+### ESC-08.7 Demasiadas solicitudes para el mismo correo *(caso borde)*
+
+**Dado** que se pidieron 3 recuperaciones para el mismo correo en la última hora,
+**Cuando** se pide la cuarta,
+**Entonces** el sistema responde `429 DEMASIADAS_SOLICITUDES` sin enviar correo, **igual si la cuenta existe que si no**.
+
 ---
 
 ## Requisitos no funcionales — ¿con qué condiciones?
@@ -117,7 +124,7 @@ condiciones límite, de error o de seguridad.
 
 | Endpoint / evento | Añade, modifica o elimina | Acordado con el PO |
 |---|---|---|
-| `POST /api/v1/password/recuperar` | Utiliza contrato existente | ⬜ |
+| `POST /api/v1/password/recuperar` | Utiliza contrato existente · el `429` aplica el límite de RF-08.8 | ⬜ |
 | `POST /api/v1/password/restablecer` | Utiliza contrato existente | ⬜ |
 | `RECUPERACION_SOLICITADA` · `CONTRASENA_RESTABLECIDA` | Acciones del catálogo de auditoría de SPEC-12 | ⬜ |
 

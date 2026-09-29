@@ -78,16 +78,16 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 | `VALIDACION` ✅ | 400 | Todas | El cuerpo de la petición no cumple el esquema: falta un campo, el tipo no corresponde, el formato del correo es inválido |
 | `LOTE_DEMASIADO_GRANDE` ✅ | 400 | 18 | La consulta por lote trae más de 100 identificadores |
 | `TOKEN_INVALIDO` ✅ | 401 | Todas | Falta el token, la firma no valida o ya venció |
-| `CREDENCIALES_INVALIDAS` ✅ | 401 | 05 | Correo o contraseña incorrectos, **o el correo no existe, o la cuenta no está `ACTIVO`** |
+| `CREDENCIALES_INVALIDAS` ✅ | 401 | 05, 07, 16 | En el login (05): correo o contraseña incorrectos, **o el correo no existe, o la cuenta no está `ACTIVO`**. En el cambio de contraseña (07) y de correo (16): la contraseña actual no coincide |
 | `REFRESCO_INVALIDO` ✅ | 401 | 06 | El token de refresco no existe, ya se usó o fue revocado |
 | `CODIGO_INVALIDO` ✅ | 401 | 09 | El código OTP no coincide con el desafío |
 | `CLIENTE_INVALIDO` ✅ | 401 | 17 | El `client_id` o el `client_secret` del módulo consumidor no son válidos |
 | `CUENTA_NO_DISPONIBLE` ✅ | 403 | 15 | Un administrador intenta bloquear una cuenta `INACTIVO` o `PENDIENTE_VERIFICACION`. **Ya no lo devuelve el login**, que responde `401` |
 | `TOKEN_NO_APLICABLE` ✅ | 403 | 17 | Un token de servicio intenta una operación que actúa en nombre de una persona |
-| `SCOPE_INSUFICIENTE` ✅ | 403 | 03, 04, 11, 13, 15, 16, 17, 18 | El token es válido pero no tiene el permiso necesario. **No se revela cuál haría falta** |
+| `SCOPE_INSUFICIENTE` ✅ | 403 | 03, 04, 11, 13, 15, 16, 17, 18 | El token es válido pero le falta el scope (a un módulo) o el permiso (a una persona) necesario. **No se revela cuál haría falta**. El nombre dice *scope* por razones históricas: ya está publicado y no se renombra |
 | `NO_ENCONTRADO` ✅ | 404 | 03, 04, 11, 15, 16, 18 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
 | `CORREO_NO_DISPONIBLE` ✅ | 409 | 01, 03 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
-| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, o recuperaciones repetidas |
+| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, o más de 3 recuperaciones en una hora para el mismo correo |
 | `NO_DISPONIBLE` ✅ | 503 | Todas | Dependencia caída: base de datos, cola de correo o auditoría crítica |
 
 ---
@@ -109,7 +109,7 @@ Si una spec necesita uno nuevo, se añade aquí y al contrato en el mismo cambio
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `POLITICA_INCUMPLIDA` | 422 | La contraseña no cumple la política. **Un solo código para todas las reglas**, historial incluido; cuál falló va en el array `errores` (`LONGITUD_MINIMA`, `MAYUSCULA`, `MINUSCULA`, `DIGITO`, `CARACTER_ESPECIAL`, `CONTRASENA_COMUN`, `DATOS_PERSONALES`, `YA_UTILIZADA`) |
-| `PASSWORD_CADUCADA` | 403 | Quien tiene un rol de gestión completa la autenticación con una contraseña de más de 90 días. No recibe tokens: la restablece con el flujo de recuperación. Lo devuelven `/auth/login` y `/auth/otp/verificar` |
+| `PASSWORD_CADUCADA` | 403 | Quien tiene un rol de gestión completa la autenticación con una contraseña de 90 días o más de antigüedad. No recibe tokens: la restablece con el flujo de recuperación. Lo devuelven `/auth/login` y `/auth/otp/verificar` |
 
 > **Por qué un solo `POLITICA_INCUMPLIDA` y no cinco códigos.** Las specs en PDF
 > proponían `PASSWORD_DEMASIADO_CORTA`, `PASSWORD_SIN_CARACTER_ESPECIAL`,

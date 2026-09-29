@@ -40,6 +40,9 @@ cliente— van aparte, en [`front/`](front/), y las lleva el responsable de UX.
 | 17 | Claves públicas, tokens de servicio e introspección | Sergio | 1 · 4 | [`SPEC-17-tokens-servicio.md`](SPEC-17-tokens-servicio.md) | 🔶 Borrador · contrato publicado |
 | 18 | Consulta de identidad para los demás módulos | Sergio | 1 · 4 | [`SPEC-18-consulta-identidad.md`](SPEC-18-consulta-identidad.md) | 🔶 Borrador · contrato publicado |
 
+Además, [`SPEC-17-18-api-identidad.plan.md`](SPEC-17-18-api-identidad.plan.md) es el **plan de
+implementación** de SPEC-17 y SPEC-18, no una spec: por eso no lleva número propio.
+
 ### 1.1 De nueve a dieciocho (20 de septiembre)
 
 En la presentación del Hito 1 el profesor pidió **una spec por función**: el set
@@ -196,11 +199,14 @@ nadie.
 | `credencial` · `password_historial` | 07 | 01, 03, 05, 08 |
 | `token_refresco` | 06 | 04, 05, 08, 09, 11, 15 |
 | `otp` · `desafio_mfa` | 09 | 05, 10 |
-| `rol` · `permiso` · `usuario_rol` | 11 | 01, 03, 05, 18 |
+| `rol` · `permiso` · `rol_permiso` · `usuario_rol` | 11 | 01, 03, 05, 18 |
 | `auditoria_seguridad` | **12** | Todas la escriben; la lee 13 |
 | `intento_login` · `bloqueo` | 14 | 05, 08, 15 |
 | `perfil_cliente` · `perfil_vendedor` · `direccion` | 16 | 01, 18 |
-| `cliente_servicio` · `cliente_servicio_scope` | 17 | 18 |
+| `cliente_servicio` · `cliente_servicio_scope` · `scope` | 17 | 18 |
+| `token_un_uso` | 02 | 08, 14, 16 |
+| `solicitud_limitada` | 02 | 08 |
+| `outbox` | Transversal (adaptador de Juan José) | 02, 04, 08, 09, 11, 12, 14, 15, 16 |
 
 ---
 
@@ -213,20 +219,20 @@ uno de ellos caso borde.
 | SPEC | Requisitos | Escenarios | Marcados caso borde | Cumple la regla |
 |---|---|---|---|---|
 | 01 | 7 | 4 | 3 | 🔶 Por revisar |
-| 02 | 7 | 5 | 3 | 🔶 Por revisar |
+| 02 | 8 | 5 | 3 | 🔶 Por revisar |
 | 03 | 4 | 4 | 3 | 🔶 Por revisar |
-| 04 | 4 | 3 | 1 | 🔶 Por revisar |
+| 04 | 5 | 4 | 2 | 🔶 Por revisar |
 | 05 | 7 | 5 | 0 | 🔶 Faltan marcas de caso borde |
-| 06 | 5 | 4 | 0 | 🔶 Faltan marcas de caso borde |
+| 06 | 6 | 5 | 1 | 🔶 Faltan marcas de caso borde |
 | 07 | 11 | 9 | 0 | 🔶 Faltan marcas de caso borde |
-| 08 | 7 | 6 | 0 | 🔶 Faltan marcas de caso borde |
-| 09 | 12 | 11 | 6 | 🔶 Por revisar |
+| 08 | 8 | 7 | 1 | 🔶 Faltan marcas de caso borde |
+| 09 | 13 | 11 | 6 | 🔶 Por revisar |
 | 10 | 5 | 5 | 2 | 🔶 Por revisar |
 | 11 | 10 | 7 | 3 | 🔶 Por revisar |
 | 12 | 7 | 7 | 4 | 🔶 Por revisar |
 | 13 | 5 | 6 | 2 | 🔶 Por revisar |
 | 14 | 12 | 16 | 9 | 🔶 Por revisar |
-| 15 | 7 | 9 | 6 | 🔶 Por revisar |
+| 15 | 8 | 10 | 7 | 🔶 Por revisar |
 | 16 | 10 | 10 | 4 | 🔶 Por revisar |
 | 17 | 11 | 9 | 5 | ✅ |
 | 18 | 6 | 7 | 3 | ✅ |
@@ -243,7 +249,7 @@ Lo que hoy sabemos que falta. Se cierra o se convierte en decisión escrita.
 
 | Hueco | Quién | Para cuándo |
 |---|---|---|
-| Los permisos de los módulos consumidores (`pedido.crear`…) no están acordados; hoy `permisos` solo lleva los de este módulo | Eva Lucía | Hito 4 |
+| **Q10** · ¿Puede el titular darse de baja a sí mismo? Hoy solo da de baja un administrador (SPEC-01, SPEC-04, FRONT-06) | Sergio | Hito 3 |
 | Los `client_id` y `client_secret` de los seis módulos no están creados | Christian | Hito 4 |
 | El catálogo de eventos no está acordado con los seis equipos | Sergio | Hito 2 |
 | Cada responsable revisa su spec dividida, confirma los *valores propuestos* y la aprueba con su propio commit | Los siete | Hito 2 |

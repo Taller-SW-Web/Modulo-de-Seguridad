@@ -280,8 +280,7 @@
       "dot": "amber",
       "title": "Piden sus repos y aún no cubrimos",
       "items": [
-        "Despacho: roles REPARTIDOR y GESTOR_FLOTA",
-        "Despacho: claim idRepartidor",
+        "Despacho: repartidor en su BD, no como rol (A5)",
         "Chatbot: buscar cliente por correo"
       ]
     }
