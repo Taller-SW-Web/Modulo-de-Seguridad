@@ -55,6 +55,7 @@ El resultado observable es un `challengeToken` de corta duración que no concede
 | RF-09.10 | La verificación correcta del desafío debe emitir el token de acceso de 15 minutos y el token de refresco de 7 días definidos por SPEC-05. |
 | RF-09.11 | Al verificar el desafío (`POST /api/v1/auth/otp/verificar`) y antes de emitir tokens, el sistema debe aplicar la comprobación de caducidad de contraseña de SPEC-07: si caducó, responde `403 PASSWORD_CADUCADA` y no emite tokens. SPEC-09 invoca la regla; no la reimplementa. |
 | RF-09.12 | El sistema debe registrar mediante SPEC-12 las solicitudes, las verificaciones exitosas y las fallidas (`OTP_SOLICITADO`, `OTP_VERIFICADO`, `OTP_FALLIDO`), sin registrar nunca el código. |
+| RF-09.13 | En este ciclo no existe un canal preferido por cuenta: el `canal` del desafío (`DesafioMfa`) vale siempre `EMAIL`, porque el SMS es simulado. Quien quiera probar el SMS lo pide explícitamente en `POST /api/v1/auth/otp/solicitar`. |
 
 ---
 
@@ -127,7 +128,7 @@ condiciones límite, de error o de seguridad.
 
 - **Dado** un `challengeToken` inexistente, vencido o manipulado,
 - **Cuando** se solicita o verifica un OTP,
-- **Entonces** el sistema responde `401 TOKEN_INVALIDO` o `401 CODIGO_INVALIDO`, no revela si la cuenta existe y no envía mensajes.
+- **Entonces** el sistema responde `401 TOKEN_INVALIDO` en los dos endpoints —el problema es el desafío, no el código—, no revela si la cuenta existe y no envía mensajes.
 
 ---
 

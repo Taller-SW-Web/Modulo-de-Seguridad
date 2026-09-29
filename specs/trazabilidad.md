@@ -218,18 +218,18 @@ uno de ellos caso borde.
 | 01 | 7 | 4 | 3 | 🔶 Por revisar |
 | 02 | 8 | 5 | 3 | 🔶 Por revisar |
 | 03 | 4 | 4 | 3 | 🔶 Por revisar |
-| 04 | 4 | 3 | 1 | 🔶 Por revisar |
+| 04 | 5 | 4 | 2 | 🔶 Por revisar |
 | 05 | 7 | 5 | 0 | 🔶 Faltan marcas de caso borde |
-| 06 | 5 | 4 | 0 | 🔶 Faltan marcas de caso borde |
+| 06 | 6 | 5 | 1 | 🔶 Faltan marcas de caso borde |
 | 07 | 11 | 9 | 0 | 🔶 Faltan marcas de caso borde |
-| 08 | 7 | 6 | 0 | 🔶 Faltan marcas de caso borde |
-| 09 | 12 | 11 | 6 | 🔶 Por revisar |
+| 08 | 8 | 7 | 1 | 🔶 Faltan marcas de caso borde |
+| 09 | 13 | 11 | 6 | 🔶 Por revisar |
 | 10 | 5 | 5 | 2 | 🔶 Por revisar |
 | 11 | 10 | 7 | 3 | 🔶 Por revisar |
 | 12 | 7 | 7 | 4 | 🔶 Por revisar |
 | 13 | 5 | 6 | 2 | 🔶 Por revisar |
 | 14 | 12 | 16 | 9 | 🔶 Por revisar |
-| 15 | 7 | 9 | 6 | 🔶 Por revisar |
+| 15 | 8 | 10 | 7 | 🔶 Por revisar |
 | 16 | 10 | 10 | 4 | 🔶 Por revisar |
 | 17 | 11 | 9 | 5 | ✅ |
 | 18 | 6 | 7 | 3 | ✅ |

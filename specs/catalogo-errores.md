@@ -87,7 +87,7 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 | `SCOPE_INSUFICIENTE` ✅ | 403 | 03, 04, 11, 13, 15, 16, 17, 18 | El token es válido pero le falta el scope (a un módulo) o el permiso (a una persona) necesario. **No se revela cuál haría falta**. El nombre dice *scope* por razones históricas: ya está publicado y no se renombra |
 | `NO_ENCONTRADO` ✅ | 404 | 03, 04, 11, 15, 16, 18 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
 | `CORREO_NO_DISPONIBLE` ✅ | 409 | 01, 03 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
-| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, o recuperaciones repetidas |
+| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, o más de 3 recuperaciones en una hora para el mismo correo |
 | `NO_DISPONIBLE` ✅ | 503 | Todas | Dependencia caída: base de datos, cola de correo o auditoría crítica |
 
 ---
@@ -109,7 +109,7 @@ Si una spec necesita uno nuevo, se añade aquí y al contrato en el mismo cambio
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `POLITICA_INCUMPLIDA` | 422 | La contraseña no cumple la política. **Un solo código para todas las reglas**, historial incluido; cuál falló va en el array `errores` (`LONGITUD_MINIMA`, `MAYUSCULA`, `MINUSCULA`, `DIGITO`, `CARACTER_ESPECIAL`, `CONTRASENA_COMUN`, `DATOS_PERSONALES`, `YA_UTILIZADA`) |
-| `PASSWORD_CADUCADA` | 403 | Quien tiene un rol de gestión completa la autenticación con una contraseña de más de 90 días. No recibe tokens: la restablece con el flujo de recuperación. Lo devuelven `/auth/login` y `/auth/otp/verificar` |
+| `PASSWORD_CADUCADA` | 403 | Quien tiene un rol de gestión completa la autenticación con una contraseña de 90 días o más de antigüedad. No recibe tokens: la restablece con el flujo de recuperación. Lo devuelven `/auth/login` y `/auth/otp/verificar` |
 
 > **Por qué un solo `POLITICA_INCUMPLIDA` y no cinco códigos.** Las specs en PDF
 > proponían `PASSWORD_DEMASIADO_CORTA`, `PASSWORD_SIN_CARACTER_ESPECIAL`,

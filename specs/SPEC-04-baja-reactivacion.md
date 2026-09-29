@@ -45,6 +45,7 @@ El resultado observable es el paso de la cuenta a `INACTIVO` con sus sesiones ce
 | RF-04.2 | Nadie puede darse de baja a sí mismo por esta vía, ni dar de baja al último `ADMIN_SISTEMA` activo: responde `422 ADMINISTRADOR_PROTEGIDO`, la misma regla que aplican SPEC-11 al revocar el rol y SPEC-15 al bloquear. |
 | RF-04.3 | Un `ADMIN_SISTEMA` debe poder reactivar una cuenta `INACTIVO` (`POST /api/v1/usuarios/{id}/reactivar`): vuelve a `ACTIVO` con la misma identidad, el mismo correo y los mismos roles, sin repetir la verificación y sin sesiones abiertas, y se publica `usuario.reactivado`. |
 | RF-04.4 | La baja y la reactivación deben registrarse mediante SPEC-12 (`USUARIO_DESACTIVADO`, `USUARIO_REACTIVADO`). Ambas son acciones **críticas**: si no se pueden auditar, la operación se revierte. |
+| RF-04.5 | Reactivar una cuenta que no está `INACTIVO` no hace nada: no cambia su estado, no publica evento y responde `204`, igual que una reactivación real. |
 
 ---
 
@@ -76,6 +77,14 @@ condiciones límite, de error o de seguridad.
 **Cuando** envía `POST /api/v1/usuarios/{id}/reactivar`.
 
 **Entonces** la cuenta vuelve a `ACTIVO` con el mismo identificador, correo y roles, sin repetir la verificación y sin ninguna sesión abierta; se registra `USUARIO_REACTIVADO` y se publica `usuario.reactivado`, **no** `usuario.creado`.
+
+### ESC-04.4 Reactivar una cuenta que no está dada de baja *(caso borde)*
+
+**Dado** una cuenta `ACTIVO` y un `ADMIN_SISTEMA` autenticado.
+
+**Cuando** envía `POST /api/v1/usuarios/{id}/reactivar`.
+
+**Entonces** el sistema responde `204`, la cuenta no cambia y no se publica `usuario.reactivado`.
 
 ---
 

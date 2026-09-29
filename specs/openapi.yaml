@@ -494,7 +494,7 @@ paths:
         identidad, el mismo correo y los mismos roles, sin repetir la
         verificación y sin ninguna sesión abierta. Se publica
         `usuario.reactivado`. Sobre una cuenta que no está `INACTIVO` no hace
-        nada y responde igual.
+        nada y responde igual (RF-04.5).
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       responses:
@@ -1089,7 +1089,15 @@ paths:
       tags: [Autenticación]
       operationId: cerrarSesion
       summary: Cierra la sesión y revoca el token de refresco
-      description: Definido por SPEC-06. Revoca el refresco presentado.
+      description: |
+        Definido por SPEC-06. Revoca el refresco presentado.
+
+        **Es público:** se autoriza con el `refreshToken` del cuerpo y no exige
+        un token de acceso vigente, para poder cerrar la sesión aunque el acceso
+        haya vencido (RF-06.6). Responde `204` también si el refresco ya estaba
+        revocado, vencido o no existe: cerrar sesión es idempotente y la
+        respuesta no revela nada.
+      security: []
       requestBody:
         required: true
         content:
@@ -1102,9 +1110,9 @@ paths:
                   type: string
       responses:
         '204':
-          description: Sesión cerrada
-        '401':
-          $ref: '#/components/responses/NoAutenticado'
+          description: Sesión cerrada, o ya lo estaba
+        '400':
+          $ref: '#/components/responses/Validacion'
 
   /auth/me:
     get:
@@ -1279,12 +1287,22 @@ paths:
                       correo: "carlos@ejemplo.com"
                       roles: ["VENDEDOR"]
         '401':
-          description: Código incorrecto, o se agotaron los 3 intentos del código
+          description: |
+            Código incorrecto (`CODIGO_INVALIDO`), se agotaron los 3 intentos del
+            código (`OTP_INTENTOS_AGOTADOS`), o el `challengeToken` no existe,
+            venció o fue manipulado (`TOKEN_INVALIDO`, ESC-09.11).
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
+                desafioInvalido:
+                  summary: ESC-09.11 — el desafío no existe o venció
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-invalido"
+                    title: Token inválido
+                    status: 401
+                    code: TOKEN_INVALIDO
                 codigoIncorrecto:
                   value:
                     type: "https://g7.unmsm.pe/errores/codigo-invalido"
@@ -1388,7 +1406,9 @@ paths:
           description: |
             Solicitud aceptada. **No confirma ni niega que la cuenta exista.**
         '429':
-          description: Demasiadas solicitudes de recuperación
+          description: |
+            Más de 3 solicitudes en una hora para el mismo correo (RF-08.8). Se
+            responde igual exista o no la cuenta.
           content:
             application/problem+json:
               schema:
@@ -1885,6 +1905,8 @@ paths:
         Definido por SPEC-15. **Solo `ADMIN_SISTEMA`.** Levanta cualquier
         bloqueo, automático o manual. La cuenta vuelve a `ACTIVO`, el contador
         de intentos fallidos se reinicia y se publica `usuario.desbloqueado`.
+        Sobre una cuenta que no está `BLOQUEADO` no hace nada y responde igual
+        (RF-15.8).
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       responses:
@@ -2611,11 +2633,13 @@ components:
         contrasena:
           type: string
           format: password
-          minLength: 10
           description: |
             Mínimo 10 caracteres, con mayúscula, minúscula, dígito y carácter
             especial. No puede ser una contraseña común ni contener el nombre o
-            el correo del usuario. La política la define SPEC-07.
+            el correo del usuario. La política la define SPEC-07 y la valida el
+            servicio, **longitud incluida**: si no se cumple responde
+            `422 POLITICA_INCUMPLIDA` con las reglas falladas, nunca `400`. Por
+            eso el esquema no declara `minLength`.
         nombres: { type: string }
         apellidos: { type: string }
         celular:
@@ -2677,8 +2701,10 @@ components:
           type: string
           enum: [EMAIL, SMS]
           description: |
-            Canal preferido de la cuenta. Todavía no se ha enviado ningún
-            código: se pide con `/auth/otp/solicitar`.
+            Canal por el que se enviará el código. En este ciclo vale siempre
+            `EMAIL`: el SMS es simulado y la cuenta no guarda un canal preferido
+            (RF-09.13). Todavía no se ha enviado ningún código: se pide con
+            `/auth/otp/solicitar`.
         expiraEn:
           type: integer
           description: Segundos de validez del desafío (no del código).
@@ -2707,8 +2733,13 @@ components:
           description: Cuántas contraseñas anteriores no se pueden reutilizar.
           examples: [5]
         caducidadDiasAdmin:
-          type: [integer, "null"]
-          description: Días tras los que caduca la contraseña de un administrador. `null` para el resto de roles.
+          type: integer
+          description: |
+            Días tras los que caduca la contraseña de una cuenta con algún rol de
+            gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`,
+            `ADMIN_SISTEMA`). Vale siempre lo mismo, sin importar quién pregunte:
+            el endpoint es público y no conoce el rol. Las cuentas `CLIENTE` y
+            `VENDEDOR` no caducan.
           examples: [90]
 
     CrearUsuarioRequest:
