@@ -28,7 +28,7 @@ definir · 🟡 documentación desalineada · 🟢 menor.
 | 1 | Una contraseña corta en el registro recibe `400` en vez de `422` | `openapi.yaml`, SPEC-07 | PO, Juan José | 🔴 |
 | 2 | ~~`iss` tiene dos valores distintos~~ ✅ resuelto | Kit, `openapi.yaml` | PO | 🔴 |
 | 3 | ~~No está escrito cómo viajan los scopes dentro del token, ni si se exige `aud`~~ ✅ resuelto | SPEC-17, `openapi.yaml` | PO | 🔴 |
-| 4 | `mfa_requerido` frente a `mfaRequerido` | SPEC-05, contrato | Jose Luis | 🔴 |
+| 4 | ~~`mfa_requerido` frente a `mfaRequerido`~~ ✅ resuelto | SPEC-05, contrato | Jose Luis | 🔴 |
 | 5 | `caducidadDiasAdmin` depende del rol en un endpoint público | `openapi.yaml`, SPEC-07 | PO, Juan José | 🟠 |
 | 6 | El límite de 90 días es «más de» en un sitio y «o más» en otro | SPEC-07, catálogo, contrato | Juan José | 🟠 |
 | 7 | La recuperación responde `429` sin que SPEC-08 defina el límite | SPEC-08, catálogo, contrato | Juan José | 🟠 |
@@ -36,15 +36,15 @@ definir · 🟡 documentación desalineada · 🟢 menor.
 | 9 | Cerrar sesión exige un token de acceso vigente | `openapi.yaml`, SPEC-06 | Jose Luis | 🟠 |
 | 10 | Casos sin respuesta definida en desbloquear y reactivar | SPEC-15, SPEC-04, contrato | Luis David, Eva Lucía | 🟠 |
 | 11 | Nadie define el «canal preferido» del segundo factor | `openapi.yaml`, SPEC-09 | Luis David | 🟠 |
-| 12 | Se cita la decisión «Q10», que no existe | SPEC-01, SPEC-04 | PO | 🟠 |
+| 12 | ~~Se cita la decisión «Q10», que no existe~~ ✅ resuelto | SPEC-01, SPEC-04 | PO | 🟠 |
 | 13 | ~~SPEC-17 y el kit dicen cosas distintas sobre cómo se piden los scopes~~ ✅ resuelto | SPEC-17, kit | PO | 🟡 |
-| 14 | La trazabilidad cuenta 7 requisitos en SPEC-02, que tiene 8 | `trazabilidad.md` | PO | 🟡 |
-| 15 | El catálogo atribuye `CREDENCIALES_INVALIDAS` solo a SPEC-05 | Catálogo de errores | PO | 🟡 |
-| 16 | `NoEncontrado` dice que solo se alcanza con token de servicio | `openapi.yaml` | PO | 🟡 |
-| 17 | La cabecera del contrato cita solo SPEC-17 y SPEC-18 | `openapi.yaml` | PO | 🟢 |
-| 18 | Un plan de specs no figura en ningún índice | `specs/` | PO | 🟢 |
-| 19 | El glosario prohíbe «dar de baja», que usan las specs y el contrato | `CONTEXT.md` | PO | 🟢 |
-| 20 | `SCOPE_INSUFICIENTE` se devuelve a personas sin permiso, no solo a módulos | Glosario, catálogo | PO | 🟢 |
+| 14 | ~~La trazabilidad cuenta 7 requisitos en SPEC-02, que tiene 8~~ ✅ resuelto | `trazabilidad.md` | PO | 🟡 |
+| 15 | ~~El catálogo atribuye `CREDENCIALES_INVALIDAS` solo a SPEC-05~~ ✅ resuelto | Catálogo de errores | PO | 🟡 |
+| 16 | ~~`NoEncontrado` dice que solo se alcanza con token de servicio~~ ✅ resuelto | `openapi.yaml` | PO | 🟡 |
+| 17 | ~~La cabecera del contrato cita solo SPEC-17 y SPEC-18~~ ✅ resuelto | `openapi.yaml` | PO | 🟢 |
+| 18 | ~~Un plan de specs no figura en ningún índice~~ ✅ resuelto | `specs/` | PO | 🟢 |
+| 19 | ~~El glosario prohíbe «dar de baja», que usan las specs y el contrato~~ ✅ resuelto | `CONTEXT.md` | PO | 🟢 |
+| 20 | ~~`SCOPE_INSUFICIENTE` se devuelve a personas sin permiso, no solo a módulos~~ ✅ resuelto | Glosario, catálogo | PO | 🟢 |
 
 Aparte, cuatro documentos se citan y todavía no existen (ver [al final](#documentos-citados-que-no-existen)).
 
@@ -109,6 +109,8 @@ respuesta, no puede validar los tokens de servicio.
 Una prueba escrita a partir de SPEC-05 fallará contra el contrato.
 
 **Corrección:** cambiar ESC-05.5 a `mfaRequerido`, que es el nombre publicado.
+
+> ✅ **Resuelto** en el PR de correcciones mecánicas.
 
 ---
 
@@ -191,6 +193,8 @@ define) o si el campo vale siempre `EMAIL` mientras el SMS siga simulado.
 **Por decidir:** registrar la pregunta donde se lleven las decisiones abiertas
 (`trazabilidad.md` §7 o un issue) y citar ese lugar.
 
+> ✅ **Resuelto** en el PR de correcciones mecánicas.
+
 ---
 
 ## 🟡 Documentación desalineada
@@ -215,6 +219,8 @@ Se comprobaron las 18 filas de la tabla §6: es la única que no coincide.
 
 **Corrección:** 8 requisitos en la fila de SPEC-02.
 
+> ✅ **Resuelto** en el PR de correcciones mecánicas.
+
 ### 15. El catálogo atribuye `CREDENCIALES_INVALIDAS` solo a SPEC-05
 
 - `specs/catalogo-errores.md:81` — columna Spec: `05`.
@@ -222,6 +228,8 @@ Se comprobaron las 18 filas de la tabla §6: es la única que no coincide.
   `POST /usuarios/{id}/correo` (SPEC-16), cuando la contraseña actual no coincide.
 
 **Corrección:** `05, 07, 16`, y mencionar ese segundo significado en la descripción.
+
+> ✅ **Resuelto** en el PR de correcciones mecánicas.
 
 ### 16. `NoEncontrado` dice que solo se alcanza con token de servicio
 
@@ -232,12 +240,16 @@ Se comprobaron las 18 filas de la tabla §6: es la única que no coincide.
 
 **Corrección:** «con un token válido y el permiso o scope necesario».
 
+> ✅ **Resuelto** en el PR de correcciones mecánicas.
+
 ### 17. La cabecera del contrato cita solo SPEC-17 y SPEC-18
 
 - `specs/openapi.yaml:49` — «Especificaciones de origen: SPEC-17 y SPEC-18».
 - Hoy el contrato cubre las 18 specs.
 
 **Corrección:** citar `specs/trazabilidad.md` §2, que tiene el mapa endpoint → spec.
+
+> ✅ **Resuelto** en el PR de correcciones mecánicas.
 
 ### 18. Un plan de specs no figura en ningún índice
 
@@ -246,6 +258,8 @@ Se comprobaron las 18 filas de la tabla §6: es la única que no coincide.
 
 **Por decidir:** enlazarlo desde la trazabilidad o moverlo fuera de `specs/`,
 donde su nombre se confunde con el de una spec.
+
+> ✅ **Resuelto** en el PR de correcciones mecánicas.
 
 ---
 
@@ -260,6 +274,8 @@ donde su nombre se confunde con el de una spec.
 **Por decidir:** aceptarlo en el glosario como el verbo de *baja lógica*, o
 reemplazarlo en todos los documentos. Lo primero es más barato y es como habla el equipo.
 
+> ✅ **Resuelto** en el PR de correcciones mecánicas.
+
 ### 20. `SCOPE_INSUFICIENTE` se devuelve a personas sin permiso, no solo a módulos
 
 - `CONTEXT.md` separa *scope* (módulos) de *permiso* (personas).
@@ -269,6 +285,8 @@ reemplazarlo en todos los documentos. Lo primero es más barato y es como habla 
 El código ya está publicado y no se renombra.
 
 **Corrección:** dejar escrita la excepción en el glosario y en el catálogo.
+
+> ✅ **Resuelto** en el PR de correcciones mecánicas.
 
 ---
 
