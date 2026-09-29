@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **Dueño** | Product Owner |
-| **Revisión** | 26 al 28 de septiembre de 2026, sobre `main` en `6e14777` |
+| **Revisión** | 26 al 28 de septiembre de 2026, sobre `main` en `6e14777`; los archivos citados no cambian hasta `1b8f2e3` |
 | **Alcance** | Specs de backend, `openapi.yaml`, catálogos, kit de integración, glosario y documentos de `docs/` |
 | **Estado** | Abierto: ninguna corregida todavía |
 
