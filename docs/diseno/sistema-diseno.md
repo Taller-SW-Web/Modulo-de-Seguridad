@@ -4,7 +4,8 @@
 |---|---|
 | **Autor** | Luis David Morales Brenis |
 | **Responsable** | Valery Cristin Gutierrez Bendezu — sistema de diseño y biblioteca en Figma ([`responsabilidades.md`](../responsabilidades.md)) |
-| **Estado** | Primera versión. Los apartados marcados `[PENDIENTE]` se completan al construir la biblioteca en Figma |
+| **Estado** | Biblioteca en Figma publicada. Mockups y propuestas de UX en proceso.|
+| **Figma** | [Ver Biblioteca en Figma](https://www.figma.com/design/J95xYLdhSO9rzyO1i5awnn/Inka-Athletics-%E2%80%93-Design-System?node-id=3-5&t=5b3CaYqdA2Xzb9m7-1)) |
 | **Se implementa en** | [`specs/componentes-react/`](../../specs/componentes-react/) |
 
 ## *Referencia práctica para el proyecto del curso*
