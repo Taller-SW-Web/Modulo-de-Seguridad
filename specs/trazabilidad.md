@@ -107,6 +107,9 @@ pertenece al menos a una historia.
 | `POST /auth/verificar-correo/reenviar` | 02 | ✅ |
 | `GET /usuarios` | 03 | ✅ |
 | `POST /usuarios` | 03 | ✅ |
+| `POST /usuarios/clientes` | 03 | ✅ |
+| `POST /usuarios/busqueda-documento` | 03 | ✅ |
+| `POST /auth/activar-cuenta` | 03 | ✅ |
 | `DELETE /usuarios/{id}` | 04 | ✅ |
 | `POST /usuarios/{id}/reactivar` | 04 | ✅ |
 | `POST /auth/login` | 05 | ✅ |
@@ -220,7 +223,7 @@ uno de ellos caso borde.
 |---|---|---|---|---|
 | 01 | 7 | 4 | 3 | 🔶 Por revisar |
 | 02 | 8 | 5 | 3 | 🔶 Por revisar |
-| 03 | 4 | 4 | 3 | 🔶 Por revisar |
+| 03 | 9 | 13 | 8 | 🔶 Por revisar |
 | 04 | 5 | 4 | 2 | 🔶 Por revisar |
 | 05 | 7 | 5 | 0 | 🔶 Faltan marcas de caso borde |
 | 06 | 6 | 5 | 1 | 🔶 Faltan marcas de caso borde |
@@ -249,7 +252,7 @@ Lo que hoy sabemos que falta. Se cierra o se convierte en decisión escrita.
 
 | Hueco | Quién | Para cuándo |
 |---|---|---|
-| **Q10** · ¿Puede el titular darse de baja a sí mismo? Hoy solo da de baja un administrador (SPEC-01, SPEC-04, FRONT-06) | Sergio | Hito 3 |
+| ~~**Q10** · ¿Puede el titular darse de baja a sí mismo?~~ ✅ Decidido el 2-oct: **no en este ciclo**; lo pide a soporte y la hace un `ADMIN_SISTEMA` | Sergio | — |
 | Los `client_id` y `client_secret` de los seis módulos no están creados | Christian | Hito 4 |
 | El catálogo de eventos no está acordado con los seis equipos | Sergio | Hito 2 |
 | Cada responsable revisa su spec dividida, confirma los *valores propuestos* y la aprueba con su propio commit | Los siete | Hito 2 |

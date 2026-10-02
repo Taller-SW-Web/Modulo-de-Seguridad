@@ -38,9 +38,11 @@ o si la cuenta existe. Ver `specs/catalogo-errores.md`.
 ```mermaid
 stateDiagram-v2
     [*] --> PENDIENTE_VERIFICACION: registro de cliente (SPEC-01)
-    [*] --> ACTIVO: alta por ADMIN_SISTEMA (SPEC-03)
+    [*] --> PENDIENTE_VERIFICACION: alta por ADMIN_SISTEMA o registro en tienda (SPEC-03)
 
     PENDIENTE_VERIFICACION --> ACTIVO: verifica su correo (SPEC-02)
+    PENDIENTE_VERIFICACION --> ACTIVO: activa su cuenta con el enlace (SPEC-03)
+    PENDIENTE_VERIFICACION --> [*]: 30 días sin activar una cuenta creada por otro (SPEC-03)
     PENDIENTE_VERIFICACION --> INACTIVO: baja lógica (SPEC-04)
 
     ACTIVO --> BLOQUEADO: 5 intentos fallidos consecutivos (SPEC-14)
@@ -63,8 +65,10 @@ stateDiagram-v2
 | Desde | Hasta | Quién la dispara | Spec | Efectos colaterales |
 |---|---|---|---|---|
 | — | `PENDIENTE_VERIFICACION` | El propio cliente al registrarse | 01 | Se envía el correo de verificación, token válido 24 h |
-| — | `ACTIVO` | `ADMIN_SISTEMA` al dar de alta a un vendedor o admin | 03 | Publica `usuario.creado` |
+| — | `PENDIENTE_VERIFICACION` | `ADMIN_SISTEMA` al dar de alta una cuenta de personal, o un `VENDEDOR` al registrar a un cliente en tienda | 03 | Se envía el enlace de activación, válido 72 h · **sin evento** todavía |
 | `PENDIENTE_VERIFICACION` | `ACTIVO` | El usuario, al consumir el enlace | 02 | Publica `usuario.creado` |
+| `PENDIENTE_VERIFICACION` | `ACTIVO` | El titular de una cuenta creada por otro, al activarla con su contraseña | 03 | Correo verificado · términos aceptados · `usuario.creado` |
+| `PENDIENTE_VERIFICACION` | — (eliminada) | El sistema, si una cuenta creada por otro no se activa en 30 días | 03 | **Única eliminación física**: sus datos se tomaron sin consentimiento escrito · sin evento |
 | `PENDIENTE_VERIFICACION` | `INACTIVO` | `ADMIN_SISTEMA` | 04 | Publica `usuario.desactivado` |
 | `ACTIVO` | `BLOQUEADO` | El sistema, tras 5 intentos fallidos consecutivos | 14 | `bloqueado_hasta` = ahora + 1, 2 o 4 min según sea el 1.º, 2.º o 3.º bloqueo seguido; **desde el 4.º, `null`** · **no** cierra sesiones · correo con enlace de desbloqueo · `usuario.bloqueado` |
 | `ACTIVO` | `BLOQUEADO` | `ADMIN_SISTEMA`, con motivo; nunca sobre sí mismo ni sobre el último `ADMIN_SISTEMA` activo | 15 | `bloqueado_hasta` = `null` · **cierra todas sus sesiones** · correo sin enlace · `usuario.bloqueado` |

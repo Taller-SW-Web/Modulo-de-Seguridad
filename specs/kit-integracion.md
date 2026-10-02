@@ -276,8 +276,10 @@ las decisiones se registran en
 | Marketplace Cliente | `usuarios:leer` | Mostrar el nombre del comprador |
 | Marketplace Cliente | `cotizaciones:calcular`, `seguimientos:leer` *(API de Despacho, acuerdo A4)* | Cotizar el envío y consultar su seguimiento |
 | Chatbot Cliente | `usuarios:leer`, `tokens:introspeccion` | Confirmar identidad en la conversación y la sesión antes de cobrar |
-| Retail Vendedor | `usuarios:leer`, `roles:leer` | Buscar clientes y comprobar el rol del vendedor |
-| Ventas y Postventa | `usuarios:leer`, `usuarios:leer:documento`, `tokens:introspeccion` | Emitir boletas y autorizar anulaciones |
+| Chatbot Cliente | `cotizaciones:calcular`, `seguimientos:leer` *(API de Despacho, acuerdo A8)* | Cotizar el envío y mostrar el seguimiento |
+| Chatbot Cliente | `catalogo:leer`, `precios:leer`, `promociones:leer`, `promociones:evaluar`, `cupones:validar`, `recomendaciones:leer`, `inventario:disponibilidad:leer` *(API de Productos, acuerdo A9: **pendiente de que Productos confirme su lista**)* | Catálogo, precios, ofertas y stock en la conversación |
+| Retail Vendedor | `usuarios:leer`, `roles:leer` | Consultar clientes por `id` y comprobar el rol del vendedor. **Buscar por documento y registrar clientes no va con este token**, sino con el del vendedor (§8) |
+| Ventas y Postventa | `usuarios:leer`, `usuarios:leer:documento`, `tokens:introspeccion` | Emitir boletas y autorizar anulaciones. **Provisional:** Ventas no ha confirmado que necesite el documento en claro |
 | Despacho y Entrega | `usuarios:leer`, `direcciones:leer` | Entregar el paquete |
 | Productos y Ofertas | `tokens:introspeccion`, `roles:leer` | Autorizar cambios de precio |
 
@@ -450,13 +452,32 @@ de su canal:
 ```
 
 Es una **lista cerrada** —`WEB`, `CHATBOT`, `RETAIL`, `MARKETPLACE`— y la URL de
-cada canal la resolvemos nosotros desde configuración. **No aceptamos una URL en
+cada canal la resolvemos nosotros desde configuración. `CHATBOT` usa su propia
+pantalla; los otros tres, la nuestra, y al terminar `MARKETPLACE` y `RETAIL`
+vuelven al inicio de sesión de Marketplace. **No aceptamos una URL en
 la petición**: un destino libre sería una redirección abierta, y el token de
 verificación viaja en el enlace. Si falta el campo, el destino es `WEB`. Para
 sumar un canal a la lista, pídanlo por issue.
 
 > Acuerdo A1, decidido el 23 de septiembre. Se implementa en el Hito 3; el campo
 > ya está en el contrato.
+
+### Si su vendedor registra o busca clientes en tienda (Retail)
+
+Acuerdos A6 y A7. Estas dos operaciones van con el **token del vendedor** que
+inició sesión, no con el de servicio de su módulo: así la auditoría dice qué
+persona registró o buscó a quién.
+
+- `POST /usuarios/clientes` — registra al cliente con correo, nombres, apellidos
+  y, si los tienen, celular y documento. **Sin contraseña ni términos**: el
+  cliente recibe un enlace, define su contraseña y acepta los términos en
+  nuestra pantalla. Reciben el `id` en el momento, así que la venta no espera.
+  Si no la activa en 30 días, la cuenta se elimina.
+- `POST /usuarios/busqueda-documento` — encuentra a un cliente por tipo y número
+  de documento **exactos** (`DNI`, `CE` o `PASAPORTE`). Devuelve solo `id`,
+  nombre, documento enmascarado y estado. Máximo 60 por hora y vendedor, y cada
+  búsqueda queda auditada. **No hay búsqueda por `RUC`**: los datos de una
+  empresa para facturar son de Ventas.
 
 ### Validar un celular desde su canal: no en este ciclo
 

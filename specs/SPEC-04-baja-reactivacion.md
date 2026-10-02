@@ -100,7 +100,7 @@ condiciones límite, de error o de seguridad.
 ## Fuera de alcance — ¿qué NO hará?
 
 - El borrado físico de la cuenta o de su historial.
-- La baja por decisión del propio titular: está pendiente de decisión (Q10, en [`trazabilidad.md`](trazabilidad.md) §7). Hoy solo da de baja un administrador.
+- La baja por decisión del propio titular: queda fuera de este ciclo (Q10, decidido el 2 de octubre): el titular la pide a soporte y la hace un `ADMIN_SISTEMA`. Hoy solo da de baja un administrador.
 - El bloqueo, que es un estado distinto y pertenece a SPEC-14 y SPEC-15.
 - La revocación de roles, que es de SPEC-11.
 

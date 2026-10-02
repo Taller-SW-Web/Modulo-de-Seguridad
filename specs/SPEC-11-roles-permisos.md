@@ -59,7 +59,7 @@ Esta especificación comprende:
 | RF-11.6 | Tras modificar exitosamente los roles de un usuario, el sistema debe publicar el evento `usuario.roles_cambiados` en RabbitMQ. |
 | RF-11.7 | Un `ADMIN_SISTEMA` no puede quitarse a sí mismo el rol `ADMIN_SISTEMA`, y nadie puede quitárselo al último `ADMIN_SISTEMA` activo: responde `422 ADMINISTRADOR_PROTEGIDO`, la misma regla que aplican SPEC-04 a la baja y SPEC-15 al bloqueo. |
 | RF-11.8 | Toda asignación o modificación de roles debe quedar registrada mediante el módulo de auditoría de SPEC-12. |
-| RF-11.9 | El sistema debe definir el catálogo de permisos de este módulo (tabla siguiente) y concederlo solo a `ADMIN_SISTEMA`. `permisos` lleva solo los de este módulo: no se cargan permisos de los módulos consumidores, que autorizan por `roles` y con sus propios datos (acuerdo A5). |
+| RF-11.9 | El sistema debe definir el catálogo de permisos de este módulo (tabla siguiente) y concederlo a `ADMIN_SISTEMA`, salvo `cliente.registrar` y `cliente.buscar`, que son de `VENDEDOR`. `permisos` lleva solo los de este módulo: no se cargan permisos de los módulos consumidores, que autorizan por `roles` y con sus propios datos (acuerdo A5). |
 | RF-11.10 | Las acciones de un usuario sobre su propia cuenta —ver su perfil, editar sus atributos, cambiar su contraseña— no requieren permiso: se autorizan por titularidad, comparando el `sub` del token con la cuenta afectada. |
 
 ### Catálogo de permisos de este módulo
@@ -78,6 +78,8 @@ nunca.
 | `auditoria.ver` | Consultar y exportar la auditoría | SPEC-13 | `ADMIN_SISTEMA` |
 | `cuenta.bloquear` | Bloquear y desbloquear cuentas | SPEC-15 | `ADMIN_SISTEMA` |
 | `atributos.editar` | Editar los atributos de cualquier cuenta | SPEC-16 | `ADMIN_SISTEMA` |
+| `cliente.registrar` | Registrar a un cliente en tienda (A6) | SPEC-03 | `VENDEDOR` |
+| `cliente.buscar` | Encontrar a un cliente por su documento (A7) | SPEC-03 | `VENDEDOR` |
 
 ---
 
@@ -116,11 +118,11 @@ condiciones límite, de error o de seguridad.
 
 ### ESC-11.4 Cálculo de permisos efectivos en la emisión del token
 
-**Dado** un usuario que posee los roles `ADMIN_SISTEMA` (los ocho permisos del catálogo) y `VENDEDOR` (ninguno).
+**Dado** un usuario que posee los roles `ADMIN_SISTEMA` (ocho permisos) y `VENDEDOR` (`cliente.registrar` y `cliente.buscar`).
 
 **Cuando** se emite o renueva su `accessToken`.
 
-**Entonces** el array de permisos efectivos en las claims del JWT debe contener exactamente los ocho permisos del catálogo, sin duplicados, y `roles` debe llevar `["ADMIN_SISTEMA", "VENDEDOR"]`.
+**Entonces** el array de permisos efectivos en las claims del JWT debe contener exactamente los diez permisos del catálogo, sin duplicados, y `roles` debe llevar `["ADMIN_SISTEMA", "VENDEDOR"]`.
 
 ### ESC-11.5 Prevención de eliminación del último administrador *(caso borde)*
 
