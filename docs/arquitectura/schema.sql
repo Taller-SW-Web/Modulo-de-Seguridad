@@ -33,8 +33,9 @@
 -- token_un_uso, solicitud_limitada) · V3 Jose Luis (token_refresco, desafio_mfa,
 -- intento_login, bloqueo, vista usuario_estado_efectivo) · V4 Christian (auditoria_seguridad
 -- y su trigger, cliente_servicio, scope, cliente_servicio_scope, outbox). Cada tipo enum va
--- en la migración de la primera tabla que lo usa; otp debe crearse después de desafio_mfa
--- (FK compuesta), así que su FK a desafio_mfa se añade en V3.
+-- en la migración de la primera tabla que lo usa. La FK compuesta otp -> desafio_mfa
+-- necesita las dos tablas (V2 y V3) y una migración aplicada no se edita: va en V5.
+-- Las migraciones viven en backend/src/main/resources/db/migration/.
 
 CREATE TYPE "estado_cuenta" AS ENUM (
 	'ACTIVO',

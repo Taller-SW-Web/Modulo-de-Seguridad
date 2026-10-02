@@ -1,7 +1,7 @@
 package com.marketplace.auth.proteccion.repository;
 
 import com.marketplace.auth.proteccion.entity.IntentoLogin;
-import com.marketplace.auth.sesion.entity.Resultado;
+import com.marketplace.auth.proteccion.entity.Resultado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;

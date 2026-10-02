@@ -477,9 +477,10 @@ Desde `specs/trazabilidad.md` §5. Cada tabla tiene **dueña única** (escribe l
 | Migración | Archivo | Dueño | Contenido |
 |---|---|---|---|
 | **V1** | `V1__usuario_y_roles.sql` | **Eva** | Enums V1, `usuario`, `perfil_cliente`, `perfil_vendedor`, `direccion`, `rol`, `permiso`, `rol_permiso`, `usuario_rol`, FKs |
-| **V2** | `V2__credenciales_otp_tokens.sql` | Juan José | `credencial`, `password_historial`, `otp`, `token_un_uso`, `solicitud_limitada` (enum `tipo_limite` aquí) |
-| **V3** | `V3__sesiones_mfa_bloqueos.sql` | Jose Luis / Luis David | `token_refresco`, `desafio_mfa`, `intento_login`, `bloqueo`, vista `usuario_estado_efectiva` (enum `estado_cuenta_efectivo` aquí), FK compuesta `otp` → `desafio_mfa` |
-| **V4** | `V4__auditoria_oidc_outbox.sql` | Christian / Sergio | `auditoria_seguridad` + trigger, `cliente_servicio`, `scope`, `cliente_servicio_scope`, `outbox` |
+| **V2** | `V2__credenciales.sql` | Juan José | `credencial`, `password_historial`, `otp`, `token_un_uso`, `solicitud_limitada` (enum `tipo_limite` aquí) |
+| **V3** | `V3__sesion_y_bloqueo.sql` | Jose Luis | `token_refresco`, `desafio_mfa`, `intento_login`, `bloqueo`, vista `usuario_estado_efectivo` (enums `resultado`, `tipo_bloqueo` y `estado_cuenta_efectivo` aquí) |
+| **V4** | `V4__auditoria_y_clientes.sql` | Christian / Sergio | `auditoria_seguridad` + trigger, `cliente_servicio`, `scope`, `cliente_servicio_scope`, `outbox` |
+| **V5** | `V5__fk_otp_desafio.sql` | Juan José | FK compuesta `otp(desafio_id, usuario_id)` → `desafio_mfa(id, usuario_id)`: necesita `otp` (V2) y `desafio_mfa` (V3), y una migración ya aplicada no se edita |
 | **V100** | `V100__datos_semilla.sql` | **Eva** | 6 roles, 8 permisos (solo `ADMIN_SISTEMA`), `rol_permiso`, usuarios de prueba (kit §6) |
 
-Cada tipo enum va en la migración de la **primera tabla que lo usa**; `otp` debe crearse después de `desafio_mfa` (FK compuesta), así que su FK a `desafio_mfa` se añade en V3.
+Cada tipo enum va en la migración de la **primera tabla que lo usa**; `otp` debe crearse después de `desafio_mfa` (FK compuesta), así que su FK a `desafio_mfa` va en V5. Las migraciones viven en `backend/src/main/resources/db/migration/`.

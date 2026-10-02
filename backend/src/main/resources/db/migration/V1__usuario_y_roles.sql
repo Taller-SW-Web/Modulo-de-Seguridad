@@ -34,19 +34,9 @@ CREATE TYPE canal_origen AS ENUM (
     'MARKETPLACE'
 );
 
-CREATE TYPE tipo_bloqueo AS ENUM (
-    'AUTOMATICO',
-    'MANUAL'
-);
-
--- estado_cuenta_efectivo se usa en la vista (V3), pero el enum se crea aquí
--- porque usuario.estado castea a él en la vista
-CREATE TYPE estado_cuenta_efectivo AS ENUM (
-    'ACTIVO',
-    'INACTIVO',
-    'BLOQUEADO',
-    'PENDIENTE_VERIFICACION'
-);
+-- tipo_bloqueo y estado_cuenta_efectivo NO van aquí: los crea V3, junto con la
+-- tabla bloqueo y la vista que los usan (regla de schema.sql). Si se crearan en
+-- los dos sitios, V3 fallaría con «type already exists».
 
 -- ============================================================
 -- TABLA: usuario
