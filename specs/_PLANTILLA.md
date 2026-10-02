@@ -7,6 +7,8 @@
 | **Estado** | Borrador / En revisión / **Aprobada** |
 | **Aprobada por** | <PO> el <fecha> |
 
+> **Plantilla de specs de backend.** Las de interfaz usan [`front/_PLANTILLA-FRONT.md`](front/_PLANTILLA-FRONT.md).
+>
 > **Cómo usar esta plantilla.** Copia este archivo a
 > `specs/SPEC-0X-nombre-corto.md`, borra los comentarios en cursiva y rellena las
 > siete secciones. **Una spec a la que le falte una sección no se aprueba.**

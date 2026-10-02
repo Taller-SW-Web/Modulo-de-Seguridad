@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **Dueño** | Product Owner — igual que el contrato |
-| **Aplica a** | Las nueve specs y `specs/openapi.yaml` |
+| **Aplica a** | Las 18 specs y `specs/openapi.yaml` |
 | **Estado** | Borrador — los códigos marcados ✅ ya están publicados y no se tocan |
 
 Este documento existe porque los códigos de error estaban dispersos: cada spec
@@ -54,11 +54,18 @@ Por eso:
 |---|---|
 | Contraseña incorrecta | `401 CREDENCIALES_INVALIDAS` |
 | El correo no está registrado | `401 CREDENCIALES_INVALIDAS` — idéntico |
-| Cuenta bloqueada | `403 CUENTA_NO_DISPONIBLE` |
-| Cuenta inactiva | `403 CUENTA_NO_DISPONIBLE` — idéntico |
-| Cuenta sin verificar | `403 CUENTA_NO_DISPONIBLE` — idéntico |
+| Cuenta bloqueada, **con cualquier contraseña** | `401 CREDENCIALES_INVALIDAS` — idéntico |
+| Cuenta inactiva, con cualquier contraseña | `401 CREDENCIALES_INVALIDAS` — idéntico |
+| Cuenta sin verificar, con cualquier contraseña | `401 CREDENCIALES_INVALIDAS` — idéntico |
 | Recuperación con correo existente | `202` sin cuerpo |
 | Recuperación con correo inexistente | `202` sin cuerpo — idéntico, y con la misma latencia |
+
+**Sin la contraseña correcta de una cuenta `ACTIVO`, el login responde siempre
+el mismo `401`.** Si una cuenta bloqueada respondiera distinto con la contraseña
+correcta, el bloqueo no frenaría un ataque de fuerza bruta, solo le cambiaría el
+mensaje de éxito. Quien queda bloqueado se entera por el correo de aviso que
+exigen SPEC-14 y SPEC-15. Solo quien completa la autenticación de una cuenta `ACTIVO` puede
+recibir otra cosa: tokens, un desafío, o `403 PASSWORD_CADUCADA`.
 
 ---
 
@@ -69,43 +76,41 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 | Código | HTTP | Spec | Cuándo se devuelve |
 |---|---|---|---|
 | `VALIDACION` ✅ | 400 | Todas | El cuerpo de la petición no cumple el esquema: falta un campo, el tipo no corresponde, el formato del correo es inválido |
-| `LOTE_DEMASIADO_GRANDE` ✅ | 400 | 09 | La consulta por lote trae más de 100 identificadores |
+| `LOTE_DEMASIADO_GRANDE` ✅ | 400 | 18 | La consulta por lote trae más de 100 identificadores |
 | `TOKEN_INVALIDO` ✅ | 401 | Todas | Falta el token, la firma no valida o ya venció |
-| `CREDENCIALES_INVALIDAS` ✅ | 401 | 02 | Correo o contraseña incorrectos, **o el correo no existe** |
-| `REFRESCO_INVALIDO` ✅ | 401 | 02 | El token de refresco no existe, ya se usó o fue revocado |
-| `CODIGO_INVALIDO` ✅ | 401 | 04 | El código OTP no coincide con el desafío |
-| `CLIENTE_INVALIDO` ✅ | 401 | 09 | El `client_id` o el `client_secret` del módulo consumidor no son válidos |
-| `CUENTA_NO_DISPONIBLE` ✅ | 403 | 02, 07 | La cuenta está bloqueada, inactiva o pendiente de verificación. **No se revela cuál** |
-| `TOKEN_NO_APLICABLE` ✅ | 403 | 09 | Un token de servicio intenta una operación que actúa en nombre de una persona |
-| `SCOPE_INSUFICIENTE` ✅ | 403 | 05, 06, 09 | El token es válido pero no tiene el permiso necesario. **No se revela cuál haría falta** |
-| `NO_ENCONTRADO` ✅ | 404 | 01, 08, 09 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
-| `CORREO_NO_DISPONIBLE` ✅ | 409 | 01 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
-| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 03, 04 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, o recuperaciones repetidas |
+| `CREDENCIALES_INVALIDAS` ✅ | 401 | 05, 07, 16 | En el login (05): correo o contraseña incorrectos, **o el correo no existe, o la cuenta no está `ACTIVO`**. En el cambio de contraseña (07) y de correo (16): la contraseña actual no coincide |
+| `REFRESCO_INVALIDO` ✅ | 401 | 06 | El token de refresco no existe, ya se usó o fue revocado |
+| `CODIGO_INVALIDO` ✅ | 401 | 09 | El código OTP no coincide con el desafío |
+| `CLIENTE_INVALIDO` ✅ | 401 | 17 | El `client_id` o el `client_secret` del módulo consumidor no son válidos |
+| `CUENTA_NO_DISPONIBLE` ✅ | 403 | 15 | Un administrador intenta bloquear una cuenta `INACTIVO` o `PENDIENTE_VERIFICACION`. **Ya no lo devuelve el login**, que responde `401` |
+| `TOKEN_NO_APLICABLE` ✅ | 403 | 17 | Un token de servicio intenta una operación que actúa en nombre de una persona |
+| `SCOPE_INSUFICIENTE` ✅ | 403 | 03, 04, 11, 13, 15, 16, 17, 18 | El token es válido pero le falta el scope (a un módulo) o el permiso (a una persona) necesario. **No se revela cuál haría falta**. El nombre dice *scope* por razones históricas: ya está publicado y no se renombra |
+| `NO_ENCONTRADO` ✅ | 404 | 03, 04, 11, 15, 16, 18 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
+| `CORREO_NO_DISPONIBLE` ✅ | 409 | 01, 03 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
+| `DOCUMENTO_NO_DISPONIBLE` | 409 | 03 | En el registro asistido, el documento ya pertenece a una cuenta: el vendedor debe buscarlo (A6, A7) |
+| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 03, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, más de 3 recuperaciones en una hora para el mismo correo, o más de 60 búsquedas por documento en una hora por vendedor |
 | `NO_DISPONIBLE` ✅ | 503 | Todas | Dependencia caída: base de datos, cola de correo o auditoría crítica |
 
 ---
 
-## Códigos que faltan y hay que añadir al contrato
+## Códigos propios de cada spec
 
-Los piden las specs pero todavía no están en `openapi.yaml`. Se añaden antes del
-congelamiento del jueves.
+Nacieron al redactar las specs y **ya están todos publicados en `openapi.yaml`**.
+Si una spec necesita uno nuevo, se añade aquí y al contrato en el mismo cambio.
 
-### SPEC-01 — Registro
+### SPEC-02 — Verificación de correo
 
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `ENLACE_EXPIRADO` | 410 | El enlace de verificación de correo tiene más de 24 h |
 | `ENLACE_YA_USADO` | 410 | El enlace de verificación ya se consumió |
 
-### SPEC-03 — Credenciales y contraseñas
+### SPEC-07 — Política y cambio de contraseña
 
 | Código | HTTP | Cuándo |
 |---|---|---|
-| `POLITICA_INCUMPLIDA` | 422 | La contraseña no cumple la política. **Un solo código para las cinco reglas**; cuál falló va en el array `errores` |
-| `PASSWORD_YA_UTILIZADA` | 422 | Está entre las últimas 5 del historial |
-| `PASSWORD_CADUCADA` | 403 | Un administrador con contraseña de más de 90 días inicia sesión: debe cambiarla antes de continuar |
-| `TOKEN_RECUPERACION_INVALIDO` | 401 | El token de recuperación no existe, ya se usó, o fue reemplazado por una solicitud posterior |
-| `TOKEN_RECUPERACION_EXPIRADO` | 410 | El token de recuperación tiene más de 30 minutos |
+| `POLITICA_INCUMPLIDA` | 422 | La contraseña no cumple la política. **Un solo código para todas las reglas**, historial incluido; cuál falló va en el array `errores` (`LONGITUD_MINIMA`, `MAYUSCULA`, `MINUSCULA`, `DIGITO`, `CARACTER_ESPECIAL`, `CONTRASENA_COMUN`, `DATOS_PERSONALES`, `YA_UTILIZADA`) |
+| `PASSWORD_CADUCADA` | 403 | Quien tiene un rol de gestión completa la autenticación con una contraseña de 90 días o más de antigüedad. No recibe tokens: la restablece con el flujo de recuperación. Lo devuelven `/auth/login` y `/auth/otp/verificar` |
 
 > **Por qué un solo `POLITICA_INCUMPLIDA` y no cinco códigos.** Las specs en PDF
 > proponían `PASSWORD_DEMASIADO_CORTA`, `PASSWORD_SIN_CARACTER_ESPECIAL`,
@@ -125,21 +130,46 @@ congelamiento del jueves.
 > }
 > ```
 
-### SPEC-04 — OTP y MFA
+### SPEC-08 — Recuperación de contraseña
+
+| Código | HTTP | Cuándo |
+|---|---|---|
+| `TOKEN_RECUPERACION_INVALIDO` | 401 | El token de recuperación no existe, ya se usó, o fue reemplazado por una solicitud posterior |
+| `TOKEN_RECUPERACION_EXPIRADO` | 410 | El token de recuperación tiene más de 30 minutos |
+
+### SPEC-09 — Segundo factor en el inicio de sesión
 
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `OTP_EXPIRADO` | 410 | El código tiene más de 5 minutos |
 | `OTP_INTENTOS_AGOTADOS` | 401 | Se agotaron los 3 intentos; el OTP queda invalidado |
-| `MFA_OBLIGATORIO` | 422 | Un `ADMIN_SISTEMA` intenta desactivar su segundo factor |
 
-### SPEC-06 — Auditoría
+### SPEC-10 — Activación del segundo factor
+
+| Código | HTTP | Cuándo |
+|---|---|---|
+| `MFA_OBLIGATORIO` | 422 | Una cuenta con algún rol de gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA`) intenta desactivar su segundo factor. Si tiene varios roles, manda el más estricto |
+
+### SPEC-13 — Consulta y exportación de la auditoría
 
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `EXPORTACION_DEMASIADO_GRANDE` | 413 | El filtro abarca más de 100 000 registros |
 
-### SPEC-08 — Atributos
+### SPEC-14 — Bloqueo automático
+
+| Código | HTTP | Cuándo |
+|---|---|---|
+| `TOKEN_DESBLOQUEO_INVALIDO` | 401 | El enlace de desbloqueo no existe, ya se usó o fue reemplazado por un bloqueo posterior |
+| `TOKEN_DESBLOQUEO_EXPIRADO` | 410 | El enlace de desbloqueo tiene más de 30 minutos |
+
+### SPEC-15 — Bloqueo manual
+
+| Código | HTTP | Cuándo |
+|---|---|---|
+| `ADMINISTRADOR_PROTEGIDO` | 422 | Un administrador intenta bloquearse, darse de baja o quitarse el rol `ADMIN_SISTEMA` a sí mismo, o hacerlo con el último `ADMIN_SISTEMA` activo. **Un solo código para SPEC-04, SPEC-11 y SPEC-15**, porque es una sola regla |
+
+### SPEC-16 — Atributos
 
 | Código | HTTP | Cuándo |
 |---|---|---|
@@ -154,18 +184,22 @@ información o duplica algo que ya existe.
 
 | No usar | Usar en su lugar | Por qué |
 |---|---|---|
-| `423 Locked` con el motivo del bloqueo | `403 CUENTA_NO_DISPONIBLE` | Un `423` confirma que la cuenta existe **y** que está bloqueada. Con eso se enumera y además se sabe a quién se ha conseguido bloquear |
+| `423 Locked` con el motivo del bloqueo | `401 CREDENCIALES_INVALIDAS` | Un `423` confirma que la cuenta existe **y** que está bloqueada. Con eso se enumera y además se sabe a quién se ha conseguido bloquear |
+| `403 CUENTA_NO_DISPONIBLE` en el login | `401 CREDENCIALES_INVALIDAS` | Con la contraseña correcta, un `403` le avisa al atacante de que acertó, aunque la cuenta esté bloqueada |
 | `AUTH_EMAIL_YA_REGISTRADO` | `CORREO_NO_DISPONIBLE` | Mismo significado, nombre que afirma de más |
-| `PASSWORD_DEMASIADO_CORTA` y las cuatro hermanas | `POLITICA_INCUMPLIDA` + `errores[]` | Ver el recuadro de SPEC-03 |
+| `TOKEN_EXPIRED` / `TOKEN_INVALID` (verificación de correo) | `ENLACE_EXPIRADO` / `ENLACE_YA_USADO` | Los códigos van en español (ADR-004) y ya existen |
+| `BAD_REQUEST`, `FORBIDDEN`, `UNPROCESSABLE_ENTITY` | `VALIDACION`, `SCOPE_INSUFICIENTE`, el código concreto del caso | Son nombres de estado HTTP, no códigos: no dicen nada que el `status` no diga ya |
+| `SCOPE_INSUFFICIENT` | `SCOPE_INSUFICIENTE` | Errata en inglés de un código publicado |
+| `BLOQUEO_NO_PERMITIDO` | `ADMINISTRADOR_PROTEGIDO` | Retirado el mismo día en que se creó: la misma protección cubre también la baja y la revocación del rol |
+| `PASSWORD_DEMASIADO_CORTA` y las cuatro hermanas | `POLITICA_INCUMPLIDA` + `errores[]` | Ver el recuadro de SPEC-07 |
+| `PASSWORD_YA_UTILIZADA` | `POLITICA_INCUMPLIDA` con la regla `YA_UTILIZADA` | El historial es una regla más de la política: un código aparte obligaba al cliente a tratar dos errores para lo mismo |
 | `TOKEN_RECUPERACION_USADO` | `TOKEN_RECUPERACION_INVALIDO` | Distinguir «usado» de «inexistente» dice si alguien pidió recuperación para ese correo |
 | Cualquier código que empiece por `AUTH_` | El equivalente de este catálogo | El prefijo no aporta: toda la API es de autenticación |
 
-> **Nota para SPEC-02 y SPEC-07.** Los dos borradores en PDF especifican
-> `423 Locked` en sus escenarios de cuenta bloqueada. Al redactarlas hay que
-> cambiarlo por `403 CUENTA_NO_DISPONIBLE`, que es lo que ya responde el
-> contrato publicado. Si alguien cree que el `423` es preferible, es una
-> discusión legítima, pero hay que tenerla **antes** del jueves y cambiar el
-> contrato, no después y cambiar el código.
+> **Decisión del 17 de septiembre.** El login con una cuenta bloqueada, inactiva
+> o sin verificar responde `401 CREDENCIALES_INVALIDAS`, igual que una
+> contraseña incorrecta. Sustituye tanto al `423 Locked` de los borradores en PDF
+> como al `403 CUENTA_NO_DISPONIBLE` que respondía el contrato hasta esa fecha.
 
 ---
 

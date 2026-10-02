@@ -3,8 +3,25 @@
 **Gestor de accesos del Marketplace Multicanal de Productos Deportivos**
 Grupo 7 — Taller de Construcción de Software Web — UNMSM — Ciclo 2026-II
 
+## Integrantes y roles
+
+| Integrante | Código | Rol |
+|---|---|---|
+| Sergio Alejandro Osorio Montenegro | 20130037 | Product Owner y Arquitecto de solución |
+| Jose Luis Limachi Sarmiento | 22200287 | Tech Lead — Backend |
+| Eva Lucía Moreno Zevallos | 20200277 | Backend |
+| Juan José Cano Vasquez | 19200303 | Full Stack |
+| Luis David Morales Brenis | 23200280 |  Pasivo / Versatil |
+| Valery Cristin Gutierrez Bendezu | 23200263 | Frontend y Diseño (UX) |
+| Christian Gabriel Arancivia Salas | 23200077 | DevOps, QA y Frontend de administración |
+
+Qué spec lleva cada uno y cómo trabajamos: [`docs/responsabilidades.md`](docs/responsabilidades.md).
+
+---
+
 Este módulo es el **proveedor de identidad** del marketplace. Es dueño de la
-entidad usuario (cliente, vendedor, administrador) y los otros seis módulos
+entidad usuario —y de sus seis roles: cliente, vendedor y cuatro de gestión— y
+los otros seis módulos
 dependen de él para autenticar, validar tokens y consultar usuarios.
 
 > **Regla de integración del curso:** ningún módulo accede a la base de datos de
@@ -25,15 +42,30 @@ del JWKS —el caso normal, sin llamarnos—, **preguntando por introspección**
 antes de operaciones sensibles, y **suscribiéndose a eventos** para enterarse de
 bajas y bloqueos sin preguntar.
 
+### Cómo nos llaman los demás módulos
+
+El recorrido completo de las tres vías, con los endpoints reales del contrato:
+token de servicio y JWKS al arrancar, validación local en cada petición,
+consultas e introspección cuando hacen falta, y eventos por RabbitMQ.
+
+![Secuencia de integración de los demás módulos con Seguridad](docs/arquitectura/comunicacion-modulos.svg)
+
 ### Qué hay dentro
+
+Seis bloques de dominio, cada uno dueño de sus tablas y de un grupo de specs afines.
+
+![Estructura del módulo: API, seis bloques de dominio e infraestructura](docs/arquitectura/estructura-modulo.svg)
+
+La vista por tecnologías y capas técnicas (Spring, JPA, outbox):
 
 ![Componentes internos del AUTH-SERVICE](docs/arquitectura/componentes.svg)
 
 ### Cómo se inicia sesión
 
-Una contraseña correcta no basta si la cuenta tiene segundo factor: el servicio
-responde con un desafío, no con una sesión. El par de tokens se firma solo
-después de verificar el código.
+Una contraseña correcta no basta si la cuenta tiene segundo factor —obligatorio
+para los cuatro roles de gestión—: el servicio responde con un `challengeToken`,
+no con una sesión. La SPA pide el código con `/auth/otp/solicitar` y el par de
+tokens se firma solo después de verificarlo.
 
 ![Secuencia de inicio de sesión con segundo factor](docs/arquitectura/secuencia-login.svg)
 
@@ -41,7 +73,8 @@ después de verificar el código.
 
 El token de refresco se usa **una sola vez**. Si aparece uno ya rotado, o lo
 robaron o se duplicó la sesión: no hay forma de saber cuál es el legítimo, así
-que se revoca la familia entera.
+que se revoca la familia entera de esa sesión. Las demás sesiones del usuario
+siguen vivas.
 
 ![Secuencia de rotación del token de refresco y detección de reúso](docs/arquitectura/secuencia-refresco.svg)
 
@@ -54,16 +87,25 @@ que se revoca la familia entera.
 
 ## Estado
 
-**Semana 4 — Hito 1.** Fase de especificación. Todavía no hay código de
-producción: primero el contrato y las specs, después la implementación.
+**Semana 6 — Hito 2 en curso** (presentación: sábado 3 de octubre). El Hito 1
+se presentó el 19 de septiembre; con su feedback las specs pasaron de 9 a 18
+—una por función— y las de interfaz se separaron de las de backend. Todavía no
+hay código de producción: esta semana se implementan los repositorios de datos.
 
-| Entregable del Hito 1 | Estado |
+| Entregable del Hito 2 | Estado |
 |---|---|
-| Arquitectura preliminar | ✅ [`docs/arquitectura/`](docs/arquitectura/) — 4 diagramas y 4 ADR |
-| Funcionalidades distribuidas | ✅ [`docs/responsabilidades.md`](docs/responsabilidades.md) |
-| 9 especificaciones SDD | 🔶 2 de 9 — [`SPEC-06`](specs/SPEC-06-auditoria.md) y [`SPEC-09`](specs/SPEC-09-api-identidad.md), en borrador |
-| Wireframes | ⬜ sin empezar |
-| Contrato OpenAPI + mock | 🔶 [`specs/openapi.yaml`](specs/openapi.yaml) — 34 operaciones; congelamiento el jueves 17 |
+| Repositorio con evidencia de uso de todos los integrantes | 🔶 Una rama y un PR por persona — issues [#21 a #25](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues?q=label%3Ahito-2) |
+| Diseño e implementación de los repositorios de BD | 🔶 Esquema auditado y probado en PostgreSQL en [`docs/arquitectura/schema.sql`](docs/arquitectura/schema.sql); migraciones Flyway `V1` a `V4` en curso |
+| Mockups y sistema de diseño | 🔶 Guía en [`docs/diseno/sistema-diseno.md`](docs/diseno/sistema-diseno.md); biblioteca y mockups en Figma en curso |
+| Experiencia de usuario (3 propuestas) | 🔶 En curso — [#25](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/25) |
+
+| Base del Hito 1 | Dónde |
+|---|---|
+| Arquitectura | [`docs/arquitectura/`](docs/arquitectura/) — 6 diagramas y 6 ADR |
+| Funcionalidades distribuidas | [`docs/responsabilidades.md`](docs/responsabilidades.md) |
+| Especificaciones SDD | ✅ 18 specs de backend **aprobadas** el 2-oct — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md) —, 15 de interfaz en [`specs/front/`](specs/front/) y 15 de componentes React en [`specs/componentes-react/`](specs/componentes-react/) |
+| Contrato OpenAPI + mock | [`specs/openapi.yaml`](specs/openapi.yaml) — valida sin errores y el mock de Prism responde |
+| Acuerdos con los otros módulos | [`docs/integracion/acuerdos.md`](docs/integracion/acuerdos.md) — A1 a A5 |
 
 ---
 
@@ -74,7 +116,10 @@ producción: primero el contrato y las specs, después la implementación.
 | Integrante del G7 | [`docs/plan-hito-1.md`](docs/plan-hito-1.md) — tu tarea concreta de esta semana |
 | Integrante nuevo | [`docs/responsabilidades.md`](docs/responsabilidades.md) — quién hace qué y cómo trabajamos |
 | **De otro equipo del curso** | [`specs/openapi.yaml`](specs/openapi.yaml) — el contrato. No necesitas nada más para empezar a programar contra nosotros |
+| Quieres la vista del usuario | [`specs/historias-usuario.md`](specs/historias-usuario.md) — 41 historias, cada una enlazada a sus RF y escenarios |
 | Vas a escribir una spec | [`specs/_PLANTILLA.md`](specs/_PLANTILLA.md), y después [`specs/trazabilidad.md`](specs/trazabilidad.md) para ver qué endpoints, eventos y pantallas te tocan |
+| Vas a especificar una pantalla | [`specs/front/`](specs/front/) — las specs de interfaz van aparte, con su propia plantilla |
+| Vas a programar una pantalla | [`specs/componentes-react/`](specs/componentes-react/) — archivos, componentes y hooks de cada pantalla, y [`docs/diseno/sistema-diseno.md`](docs/diseno/sistema-diseno.md) para el sistema de diseño |
 | Vas a devolver un error | [`specs/catalogo-errores.md`](specs/catalogo-errores.md) — los códigos tienen dueño único |
 | Vas a publicar un evento | [`specs/catalogo-eventos.md`](specs/catalogo-eventos.md) |
 | Vas a cambiar el estado de una cuenta | [`docs/arquitectura/estados-usuario.md`](docs/arquitectura/estados-usuario.md) |
@@ -111,23 +156,23 @@ plan de pruebas: se traducen a pruebas automatizadas antes de implementar.
 
 ## Para los otros seis equipos
 
-Tenéis tres formas de relacionaros con nosotros. Ninguna incluye tocar nuestra
+Tienen tres formas de relacionarse con nosotros. Ninguna incluye tocar nuestra
 base de datos.
 
 | Vía | Cuándo usarla | Coste |
 |---|---|---|
-| **Validación local del token** con la clave pública de `/.well-known/jwks.json` | En cada petición ordinaria. Es el caso normal | Ninguna llamada de red. No detecta cambios de estado hasta que el token vence (15 min) |
+| **Validación local del token** con la clave pública de `/api/v1/auth/.well-known/jwks.json` | En cada petición ordinaria. Es el caso normal | Ninguna llamada de red. No detecta cambios de estado hasta que el token vence (15 min) |
 | **Introspección remota** `POST /api/v1/auth/introspeccion` | Antes de operaciones sensibles: anulaciones, reembolsos, cambios de precio | Una llamada de red y dependencia de nuestra disponibilidad |
-| **Eventos asíncronos** en RabbitMQ | Para enteraros de bajas, bloqueos y cambios de rol sin preguntar | Ninguna, pero es eventualmente consistente |
+| **Eventos asíncronos** en RabbitMQ | Para enterarse de bajas, bloqueos y cambios de rol sin preguntar | Ninguna, pero es eventualmente consistente |
 
-El token se firma con **RS256 y no con HS256** precisamente por esto: recibís la
-clave **pública** y podéis verificar sin poder firmar. Con una clave simétrica
+El token se firma con **RS256 y no con HS256** precisamente por esto: reciben la
+clave **pública** y pueden verificar sin poder firmar. Con una clave simétrica
 habría que repartir la clave de firma y cualquiera de los seis equipos podría
 emitir un token de administrador.
 
-### Programad contra nosotros antes de que existamos
+### Programen contra nosotros antes de que existamos
 
-El contrato se congela antes que el código. Cuando esté publicado:
+El contrato está publicado antes que el código. Levanten el mock:
 
 ```bash
 npx @stoplight/prism-cli mock specs/openapi.yaml -p 4010
@@ -135,26 +180,10 @@ curl http://localhost:4010/auth/.well-known/jwks.json
 ```
 
 Responde con los ejemplos reales del contrato, incluidos los caminos de error, y
-valida vuestras peticiones. Podéis forzar cualquier respuesta con la cabecera
-`Prefer` —`Prefer: code=401`— para probar vuestros caminos de fallo.
+valida sus peticiones. Pueden forzar cualquier respuesta con la cabecera
+`Prefer` —`Prefer: code=401`— para probar sus caminos de fallo.
 
 > **Ojo con el prefijo.** Prism sirve las rutas sin `/api/v1`; el backend real
-> sí lo lleva. Parametrizad la URL base y no tocaréis código al cambiar.
+> sí lo lleva. Parametricen la URL base y no tocarán código al cambiar.
 
 La guía completa está en [`specs/kit-integracion.md`](specs/kit-integracion.md).
-
----
-
-## Equipo
-
-| Integrante | Rol |
-|---|---|
-| Sergio Alejandro Osorio Montenegro | Product Owner y Arquitecto de solución |
-| Jose Luis Limachi Sarmiento | Tech Lead — Backend |
-| Eva Lucía Moreno Zevallos | Backend |
-| Juan José Cano Vasquez | Full Stack |
-| Luis David Morales Brenis | Full Stack |
-| Valery Cristin Gutierrez Bendezu | Frontend y Diseño |
-| Christian Gabriel Arancivia Salas | DevOps, QA y Frontend de administración |
-
-Detalle del reparto en [`docs/responsabilidades.md`](docs/responsabilidades.md).

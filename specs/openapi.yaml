@@ -46,7 +46,8 @@ info:
     los seis equipos consumidores. Desde el Hito 4 se genera desde el código con
     `springdoc-openapi`, para que no pueda desincronizarse.
 
-    Especificación de origen: `specs/SPEC-09-api-identidad.md`.
+    Especificaciones de origen: las 18 specs de `specs/`. El mapa endpoint → spec
+    está en `specs/trazabilidad.md` §2.
     Decisión de idioma: `docs/arquitectura/adr/004-idioma-del-contrato.md`.
 
     ## Convenciones
@@ -96,7 +97,7 @@ tags:
   - name: Contraseñas
     description: |
       Ciclo de vida de una credencial: política de robustez, recuperación por
-      correo y cambio autenticado. Definido por SPEC-03.
+      correo y cambio autenticado. Definido por SPEC-07 y SPEC-08.
   - name: Administración
     description: |
       Alta y baja de usuarios, roles, bloqueos y atributos de perfil. Requiere
@@ -104,7 +105,7 @@ tags:
   - name: Auditoría
     description: |
       Consulta y exportación del registro de eventos de seguridad. Definido por
-      SPEC-06. **No está disponible para los módulos consumidores.**
+      SPEC-13 (el registro lo define SPEC-12). **No está disponible para los módulos consumidores.**
 
 security:
   - tokenUsuario: []
@@ -112,7 +113,7 @@ security:
 paths:
 
   # ---------------------------------------------------------------------------
-  # INTEGRACIÓN — SPEC-09
+  # INTEGRACIÓN — SPEC-17 y SPEC-18
   # ---------------------------------------------------------------------------
 
   /auth/.well-known/jwks.json:
@@ -121,7 +122,7 @@ paths:
       operationId: obtenerJwks
       summary: Clave pública de verificación de firma
       description: |
-        Escenario ESC-09.1 y ESC-09.2 de SPEC-09.
+        Escenario ESC-17.1 y ESC-17.2 de SPEC-17.
 
         **Cachéalo.** Un consumidor que lo descargue en cada validación anula la
         ventaja de validar en local. Si el JWKS no responde y tienes copia en
@@ -182,7 +183,7 @@ paths:
       operationId: obtenerConfiguracionOpenid
       summary: Documento de descubrimiento
       description: |
-        Requisito RF-09.1 de SPEC-09.
+        Requisito RF-17.1 de SPEC-17.
 
         **Esto es lo que hace que la integración sea una línea de configuración
         en vez de código.** Con esta URL, Spring Security resuelve solo dónde
@@ -239,7 +240,7 @@ paths:
       operationId: emitirTokenServicio
       summary: Emite el token de servicio de un módulo consumidor
       description: |
-        Escenarios ESC-09.3 y ESC-09.4 de SPEC-09.
+        Escenarios ESC-17.3 y ESC-17.4 de SPEC-17.
 
         Cada módulo tiene su propio `client_id` y `client_secret`, para que la
         auditoría diga qué módulo consultó qué dato y para poder revocar uno sin
@@ -307,7 +308,7 @@ paths:
       operationId: introspeccionarToken
       summary: Estado actual de un token de usuario
       description: |
-        Escenarios ESC-09.5 y ESC-09.6 de SPEC-09.
+        Escenarios ESC-17.5 y ESC-17.6 de SPEC-17.
 
         Devuelve el estado del usuario **en este instante**, no el que llevaba el
         token cuando se emitió. Úsalo solo antes de operaciones sensibles:
@@ -352,7 +353,7 @@ paths:
                     tipo: acceso
                     exp: 1789276800
                 usuarioDesactivado:
-                  summary: ESC-09.6 — el usuario fue desactivado hace 3 minutos
+                  summary: ESC-17.6 — el usuario fue desactivado hace 3 minutos
                   value:
                     activo: false
                     motivo: USUARIO_INACTIVO
@@ -372,7 +373,12 @@ paths:
       operationId: obtenerUsuario
       summary: Datos básicos de un usuario
       description: |
-        Escenarios ESC-09.7, ESC-09.11 y ESC-09.12 de SPEC-09.
+        Escenarios ESC-18.1, ESC-18.5 y ESC-18.6 de SPEC-18.
+
+        **También lo usa el panel de administración**, con el token de un
+        usuario que tenga el permiso `usuario.ver` (SPEC-11). Es el mismo
+        endpoint para los dos, no uno por tipo de credencial. Quien quiera
+        sus propios datos usa `/auth/me`.
 
         **Exposición selectiva por scope.** El número de documento llega en
         claro solo si tu token de servicio tiene `usuarios:leer:documento`; en
@@ -382,6 +388,7 @@ paths:
         Nunca se devuelve el hash de contraseña.
       security:
         - tokenServicio: [usuarios:leer]
+        - tokenUsuario: []
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       responses:
@@ -393,7 +400,7 @@ paths:
                 $ref: '#/components/schemas/Usuario'
               examples:
                 conScopeDocumento:
-                  summary: ESC-09.11 — con usuarios:leer:documento, el documento va en claro
+                  summary: ESC-18.5 — con usuarios:leer:documento, el documento va en claro
                   value:
                     id: "11111111-1111-1111-1111-111111111111"
                     nombres: "María"
@@ -407,7 +414,7 @@ paths:
                     tipoDocumento: DNI
                     documento: "45781234"
                 sinScopeDocumento:
-                  summary: ESC-09.12 — sin el scope, el documento va enmascarado
+                  summary: ESC-18.6 — sin el scope, el documento va enmascarado
                   value:
                     id: "11111111-1111-1111-1111-111111111111"
                     nombres: "María"
@@ -443,14 +450,56 @@ paths:
       operationId: desactivarUsuario
       summary: Baja lógica de un usuario
       description: |
-        Definido por SPEC-01. **No borra nada**: la cuenta pasa a `INACTIVO`,
+        Definido por SPEC-04. **No borra nada**: la cuenta pasa a `INACTIVO`,
         se revocan todos sus tokens de refresco y se publica
-        `usuario.desactivado`. Solo `ADMIN_SISTEMA`.
+        `usuario.desactivado`. Exige el permiso `usuario.desactivar`, que solo
+        tiene `ADMIN_SISTEMA`. Nadie puede darse de baja a sí mismo por esta vía
+        ni dar de baja al último `ADMIN_SISTEMA` activo.
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       responses:
         '204':
           description: La cuenta quedó inactiva y sus sesiones revocadas
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '422':
+          description: |
+            Sobre sí mismo, o sobre el último `ADMIN_SISTEMA` activo. La misma
+            regla protege el bloqueo (SPEC-15), la baja (SPEC-04) y la
+            revocación del rol (SPEC-11).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                protegido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/administrador-protegido"
+                    title: Operación no permitida sobre este administrador
+                    status: 422
+                    code: ADMINISTRADOR_PROTEGIDO
+
+  /usuarios/{id}/reactivar:
+    post:
+      tags: [Administración]
+      operationId: reactivarUsuario
+      summary: Reactiva una cuenta dada de baja
+      description: |
+        Definido por SPEC-04. Exige el permiso `usuario.reactivar`, que solo
+        tiene `ADMIN_SISTEMA`. La cuenta vuelve a `ACTIVO` con la misma
+        identidad, el mismo correo y los mismos roles, sin repetir la
+        verificación y sin ninguna sesión abierta. Se publica
+        `usuario.reactivado`. Sobre una cuenta que no está `INACTIVO` no hace
+        nada y responde igual (RF-04.5).
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      responses:
+        '204':
+          description: La cuenta está `ACTIVO`
         '401':
           $ref: '#/components/responses/NoAutenticado'
         '403':
@@ -464,7 +513,7 @@ paths:
       operationId: consultarUsuariosPorLote
       summary: Consulta hasta 100 usuarios en una llamada
       description: |
-        Escenarios ESC-09.8 y ESC-09.9 de SPEC-09.
+        Escenarios ESC-18.2 y ESC-18.3 de SPEC-18.
 
         **La petición no falla entera por los identificadores que no existan:**
         los encontrados vuelven en `usuarios` y los demás en `noEncontrados`. Un
@@ -508,7 +557,7 @@ paths:
                 $ref: '#/components/schemas/LoteUsuarios'
               examples:
                 parcial:
-                  summary: ESC-09.8 — dos encontrados, uno no
+                  summary: ESC-18.2 — dos encontrados, uno no
                   value:
                     usuarios:
                       - id: "11111111-1111-1111-1111-111111111111"
@@ -531,7 +580,7 @@ paths:
                 $ref: '#/components/schemas/Problem'
               examples:
                 loteDemasiadoGrande:
-                  summary: ESC-09.9 — más de 100 identificadores
+                  summary: ESC-18.3 — más de 100 identificadores
                   value:
                     type: "https://g7.unmsm.pe/errores/lote-demasiado-grande"
                     title: El lote supera el máximo permitido
@@ -559,12 +608,16 @@ paths:
       operationId: obtenerDireccionesUsuario
       summary: Direcciones de entrega de un cliente
       description: |
-        Escenario ESC-09.10 de SPEC-09.
+        Escenario ESC-18.4 de SPEC-18.
+
+        Con token de usuario lo puede leer el titular de la cuenta, o quien
+        tenga el permiso `usuario.ver` (SPEC-11).
 
         **No incluye el número de documento ni la fecha de nacimiento:** no
         hacen falta para entregar un paquete.
       security:
         - tokenServicio: [direcciones:leer]
+        - tokenUsuario: []
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       responses:
@@ -615,7 +668,7 @@ paths:
       operationId: agregarDireccion
       summary: Registra una dirección de entrega
       description: |
-        Definido por SPEC-08. El usuario solo puede añadir direcciones a su
+        Definido por SPEC-16. El usuario solo puede añadir direcciones a su
         propia cuenta; `ADMIN_SISTEMA` puede hacerlo sobre cualquiera.
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
@@ -649,14 +702,15 @@ paths:
       operationId: listarRoles
       summary: Catálogo de roles y sus permisos
       description: |
-        Escenario ESC-09.15 de SPEC-09.
+        Escenario ESC-18.7 de SPEC-18.
 
         Consúltalo en vez de codificar los roles a mano: si mañana se añade un
         permiso a `GESTOR_DESPACHO`, tu módulo se entera sin desplegar.
 
-        **Hoy `permisos` viaja vacío.** El catálogo de permisos lo define
-        SPEC-05, que todavía está en redacción; hasta entonces autoriza por
-        `roles`. Añadir contenido a una lista vacía es un cambio compatible.
+        **Hoy `permisos` solo lleva los de este módulo**, definidos en SPEC-11.
+        Los de cada módulo consumidor se añaden cuando se acuerden con su
+        equipo; hasta entonces autoriza por `roles`. Añadir permisos es un
+        cambio compatible.
       security:
         - tokenServicio: [roles:leer]
       responses:
@@ -711,11 +765,11 @@ paths:
       operationId: listarPermisos
       summary: Catálogo de permisos por módulo
       description: |
-        Escenario ESC-09.15 de SPEC-09.
+        Escenario ESC-18.7 de SPEC-18.
 
-        **Devuelve una lista vacía hasta que SPEC-05 defina el catálogo.** Se
-        publica ahora para que el endpoint exista en `v1` y añadirle contenido
-        no obligue a `v2`.
+        **Hoy devuelve los permisos de este módulo**, definidos en SPEC-11. Los
+        de cada módulo consumidor se añaden cuando se acuerden con su equipo, y
+        añadirlos no obliga a `v2`.
       security:
         - tokenServicio: [roles:leer]
       parameters:
@@ -740,18 +794,24 @@ paths:
                     items:
                       $ref: '#/components/schemas/Permiso'
               examples:
-                pendienteDeSpec05:
-                  summary: Estado actual — el catálogo lo define SPEC-05
-                  value:
-                    permisos: []
-                formatoPrevisto:
-                  summary: Forma que tendrá cuando SPEC-05 lo defina
+                moduloSeguridad:
+                  summary: Estado actual — los permisos de este módulo (SPEC-11)
                   value:
                     permisos:
-                      - codigo: "pedido:crear"
+                      - codigo: "usuario.ver"
+                        modulo: seguridad
+                        descripcion: Consultar y listar cualquier cuenta.
+                      - codigo: "auditoria.ver"
+                        modulo: seguridad
+                        descripcion: Consultar y exportar la auditoría de seguridad.
+                moduloConsumidor:
+                  summary: Forma que tendrán los de cada módulo cuando se acuerden
+                  value:
+                    permisos:
+                      - codigo: "pedido.crear"
                         modulo: ventas
                         descripcion: Generar un pedido.
-                      - codigo: "pedido:anular"
+                      - codigo: "pedido.anular"
                         modulo: ventas
                         descripcion: Anular un pedido según las reglas de negocio.
         '401':
@@ -760,7 +820,7 @@ paths:
           $ref: '#/components/responses/ScopeInsuficiente'
 
   # ---------------------------------------------------------------------------
-  # AUTENTICACIÓN — SPEC-01, SPEC-02, SPEC-03
+  # AUTENTICACIÓN — SPEC-01, SPEC-05, SPEC-06, SPEC-07
   # La pantalla de login de cualquier módulo llama aquí. Nadie más guarda
   # contraseñas ni usuarios.
   # ---------------------------------------------------------------------------
@@ -771,11 +831,17 @@ paths:
       operationId: registrarCliente
       summary: Autorregistro de un cliente
       description: |
-        Definido por SPEC-01 y SPEC-03.
+        Definido por SPEC-01 y SPEC-07.
 
         La cuenta se crea en estado `PENDIENTE_VERIFICACION` y se envía un correo
         con un enlace de un solo uso válido **24 horas**. Se asigna el rol
         `CLIENTE` por defecto.
+
+        Con `canalOrigen` el enlace del correo lleva a la pantalla del canal que
+        originó el registro; la URL de cada canal la resolvemos nosotros.
+        `CHATBOT` tiene su propia pantalla; `WEB`, `MARKETPLACE` y `RETAIL` usan
+        la nuestra, y al terminar `MARKETPLACE` y `RETAIL` redirigen al inicio
+        de sesión de Marketplace (acuerdo A1, revisado el 2 de octubre).
 
         **El mensaje de error no permite deducir si el correo ya existe.** Un
         correo repetido responde `409` con un texto que no confirma ni niega la
@@ -795,6 +861,8 @@ paths:
                   nombres: "María"
                   apellidos: "Quispe Rojas"
                   celular: "+51987654321"
+                  aceptaTerminos: true
+                  canalOrigen: CHATBOT
       responses:
         '201':
           description: Cuenta creada, pendiente de verificación de correo
@@ -816,23 +884,25 @@ paths:
                     id: "11111111-1111-1111-1111-111111111111"
                     estado: PENDIENTE_VERIFICACION
         '400':
-          description: La contraseña no cumple la política, o faltan datos
+          description: Faltan datos o no tienen el formato esperado
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
-                contrasenaDebil:
+                faltanDatos:
                   value:
                     type: "https://g7.unmsm.pe/errores/validacion"
                     title: Datos de entrada inválidos
                     status: 400
                     code: VALIDACION
                     errores:
-                      - campo: contrasena
-                        mensaje: Debe tener al menos 10 caracteres.
-                      - campo: contrasena
-                        mensaje: Debe incluir un carácter especial.
+                      - campo: correo
+                        mensaje: No es un correo válido.
+                      - campo: nombres
+                        mensaje: Es obligatorio.
+        '422':
+          $ref: '#/components/responses/PoliticaIncumplida'
         '409':
           description: Ya existe una cuenta con ese correo
           content:
@@ -855,7 +925,7 @@ paths:
       operationId: iniciarSesion
       summary: Inicio de sesión con correo y contraseña
       description: |
-        Definido por SPEC-02.
+        Definido por SPEC-05.
 
         **Éste es el endpoint al que llama la pantalla de login de cualquier
         módulo.** Los demás equipos pueden tener su propio formulario en React,
@@ -922,7 +992,12 @@ paths:
                     expiraEn: 300
         '401':
           description: |
-            Credenciales inválidas. **Idéntico si el correo no existe.**
+            Credenciales inválidas. **Idéntico si el correo no existe, y también
+            si la cuenta está bloqueada, inactiva o sin verificar, aunque la
+            contraseña sea correcta.** Sin la contraseña correcta de una cuenta
+            `ACTIVO` la respuesta es siempre este `401`: cualquier otra serviría
+            para saber si se acertó la contraseña de una cuenta bloqueada. Quien queda bloqueado se entera
+            por correo (SPEC-14).
           content:
             application/problem+json:
               schema:
@@ -937,20 +1012,22 @@ paths:
                     detail: El correo o la contraseña no son correctos.
         '403':
           description: |
-            La cuenta no está disponible: bloqueada, inactiva o pendiente de
-            verificación. **No se revela cuál de las tres.**
+            La contraseña caducó (SPEC-07). Solo llega aquí quien completó la
+            autenticación de una cuenta `ACTIVO` con algún rol de gestión. No se
+            emiten tokens: el titular debe restablecerla con el flujo de
+            recuperación (`/password/recuperar`), que valida la política y el
+            historial.
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
-                cuentaNoDisponible:
+                passwordCaducada:
                   value:
-                    type: "https://g7.unmsm.pe/errores/cuenta-no-disponible"
-                    title: La cuenta no está disponible
+                    type: "https://g7.unmsm.pe/errores/password-caducada"
+                    title: La contraseña caducó
                     status: 403
-                    code: CUENTA_NO_DISPONIBLE
-                    detail: No es posible iniciar sesión con esta cuenta en este momento.
+                    code: PASSWORD_CADUCADA
 
   /auth/refresh:
     post:
@@ -958,7 +1035,7 @@ paths:
       operationId: renovarSesion
       summary: Renueva la sesión rotando el token de refresco
       description: |
-        Definido por SPEC-02.
+        Definido por SPEC-06.
 
         **El refresco se usa una sola vez.** Cada renovación emite uno nuevo e
         invalida el anterior. Si aparece un refresco ya rotado, se asume robo o
@@ -1015,7 +1092,15 @@ paths:
       tags: [Autenticación]
       operationId: cerrarSesion
       summary: Cierra la sesión y revoca el token de refresco
-      description: Definido por SPEC-02. Revoca el refresco presentado.
+      description: |
+        Definido por SPEC-06. Revoca el refresco presentado.
+
+        **Es público:** se autoriza con el `refreshToken` del cuerpo y no exige
+        un token de acceso vigente, para poder cerrar la sesión aunque el acceso
+        haya vencido (RF-06.6). Responde `204` también si el refresco ya estaba
+        revocado, vencido o no existe: cerrar sesión es idempotente y la
+        respuesta no revela nada.
+      security: []
       requestBody:
         required: true
         content:
@@ -1028,9 +1113,9 @@ paths:
                   type: string
       responses:
         '204':
-          description: Sesión cerrada
-        '401':
-          $ref: '#/components/responses/NoAutenticado'
+          description: Sesión cerrada, o ya lo estaba
+        '400':
+          $ref: '#/components/responses/Validacion'
 
   /auth/me:
     get:
@@ -1038,10 +1123,10 @@ paths:
       operationId: obtenerPerfilPropio
       summary: Datos del usuario del token actual
       description: |
-        Definido por SPEC-02.
+        Definido por SPEC-16.
 
         **Requiere un token de usuario.** Un token de servicio recibe `403`: un
-        módulo no puede actuar en nombre de una persona (ESC-09.4).
+        módulo no puede actuar en nombre de una persona (ESC-17.4).
       responses:
         '200':
           description: Perfil del titular del token
@@ -1078,7 +1163,7 @@ paths:
                     code: TOKEN_NO_APLICABLE
 
   # ---------------------------------------------------------------------------
-  # SEGUNDO FACTOR — SPEC-04
+  # SEGUNDO FACTOR — SPEC-09
   # ---------------------------------------------------------------------------
 
   /auth/otp/solicitar:
@@ -1087,7 +1172,7 @@ paths:
       operationId: solicitarCodigoOtp
       summary: Envía un código de un solo uso
       description: |
-        Definido por SPEC-04.
+        Definido por SPEC-09.
 
         Código de **6 dígitos**, válido **5 minutos**, con un máximo de **3
         intentos** y **3 solicitudes cada 15 minutos**. Se envía por correo; el
@@ -1144,6 +1229,21 @@ paths:
                     status: 429
                     code: DEMASIADAS_SOLICITUDES
                     detail: Espera unos minutos antes de pedir otro código.
+        '401':
+          description: |
+            El `challengeToken` no existe o venció (SPEC-09). No se revela si la
+            cuenta existe ni se envía ningún mensaje.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                desafioInvalido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-invalido"
+                    title: Token inválido
+                    status: 401
+                    code: TOKEN_INVALIDO
 
   /auth/otp/verificar:
     post:
@@ -1151,9 +1251,10 @@ paths:
       operationId: verificarCodigoOtp
       summary: Canjea el código por el par de tokens
       description: |
-        Definido por SPEC-04. Verifica el código y, si es correcto, emite el par
-        de tokens definitivo. Al tercer intento fallido el desafío se invalida y
-        hay que volver a iniciar sesión.
+        Definido por SPEC-09. Verifica el código y, si es correcto, emite el par
+        de tokens definitivo. Al tercer intento fallido el código se invalida
+        (`OTP_INTENTOS_AGOTADOS`) y hay que pedir uno nuevo con
+        `/auth/otp/solicitar`.
       security: []
       requestBody:
         required: true
@@ -1189,12 +1290,22 @@ paths:
                       correo: "carlos@ejemplo.com"
                       roles: ["VENDEDOR"]
         '401':
-          description: Código incorrecto, vencido o desafío agotado
+          description: |
+            Código incorrecto (`CODIGO_INVALIDO`), se agotaron los 3 intentos del
+            código (`OTP_INTENTOS_AGOTADOS`), o el `challengeToken` no existe,
+            venció o fue manipulado (`TOKEN_INVALIDO`, ESC-09.11).
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
+                desafioInvalido:
+                  summary: ESC-09.11 — el desafío no existe o venció
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-invalido"
+                    title: Token inválido
+                    status: 401
+                    code: TOKEN_INVALIDO
                 codigoIncorrecto:
                   value:
                     type: "https://g7.unmsm.pe/errores/codigo-invalido"
@@ -1202,9 +1313,48 @@ paths:
                     status: 401
                     code: CODIGO_INVALIDO
                     intentosRestantes: 2
+                intentosAgotados:
+                  summary: ESC-09.5 — tercer fallo; el código queda invalidado
+                  value:
+                    type: "https://g7.unmsm.pe/errores/otp-intentos-agotados"
+                    title: Se agotaron los intentos
+                    status: 401
+                    code: OTP_INTENTOS_AGOTADOS
+                    detail: Pide un código nuevo.
+        '410':
+          description: El código tiene más de 5 minutos. No cambia el contador de la cuenta
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                codigoVencido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/otp-expirado"
+                    title: El código venció
+                    status: 410
+                    code: OTP_EXPIRADO
+        '403':
+          description: |
+            La contraseña caducó (SPEC-07). Solo llega aquí quien completó la
+            autenticación de una cuenta `ACTIVO` con algún rol de gestión. No se
+            emiten tokens: el titular debe restablecerla con el flujo de
+            recuperación (`/password/recuperar`), que valida la política y el
+            historial.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                passwordCaducada:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/password-caducada"
+                    title: La contraseña caducó
+                    status: 403
+                    code: PASSWORD_CADUCADA
 
   # ---------------------------------------------------------------------------
-  # CONTRASENAS - SPEC-03
+  # CONTRASENAS - SPEC-07 y SPEC-08
   # ---------------------------------------------------------------------------
 
   /password/politica:
@@ -1213,7 +1363,7 @@ paths:
       operationId: consultarPoliticaPassword
       summary: Reglas vigentes de robustez de contraseña
       description: |
-        Definido por SPEC-03. La SPA construye el medidor de fuerza con **estas**
+        Definido por SPEC-07. La SPA construye el medidor de fuerza con **estas**
         reglas en vez de cablearlas en JavaScript. La lista de contraseñas
         comunes se actualiza sin desplegar código, así que una copia cableada en
         el frontend se desincroniza en silencio.
@@ -1235,7 +1385,7 @@ paths:
       operationId: solicitarRecuperacion
       summary: Solicita el enlace de recuperación
       description: |
-        Definido por SPEC-03. **Responde `202` exista o no el correo, y con la
+        Definido por SPEC-08. **Responde `202` exista o no el correo, y con la
         misma latencia.** Si existe, envía un enlace con un token de un solo uso
         válido 30 minutos; si no existe, no envía nada. Una respuesta distinta
         —o más rápida— permitiría averiguar qué correos están registrados.
@@ -1259,7 +1409,9 @@ paths:
           description: |
             Solicitud aceptada. **No confirma ni niega que la cuenta exista.**
         '429':
-          description: Demasiadas solicitudes de recuperación
+          description: |
+            Más de 3 solicitudes en una hora para el mismo correo (RF-08.8). Se
+            responde igual exista o no la cuenta.
           content:
             application/problem+json:
               schema:
@@ -1278,7 +1430,7 @@ paths:
       operationId: restablecerPassword
       summary: Fija una contraseña nueva con el token del enlace
       description: |
-        Definido por SPEC-03. Marca el token como usado, guarda la contraseña en
+        Definido por SPEC-08. Marca el token como usado, guarda la contraseña en
         el historial y **revoca todas las sesiones previas del usuario**.
       security: []
       requestBody:
@@ -1333,7 +1485,7 @@ paths:
       operationId: cambiarPassword
       summary: Cambia la contraseña conociendo la actual
       description: |
-        Definido por SPEC-03. Exige la contraseña actual, la registra en el
+        Definido por SPEC-07. Exige la contraseña actual, la registra en el
         historial y revoca las **demás** sesiones del usuario, conservando la
         que hizo el cambio.
       requestBody:
@@ -1370,7 +1522,7 @@ paths:
           $ref: '#/components/responses/PoliticaIncumplida'
 
   # ---------------------------------------------------------------------------
-  # SEGUNDO FACTOR - SPEC-04 (activacion)
+  # SEGUNDO FACTOR - SPEC-10 (activacion)
   # ---------------------------------------------------------------------------
 
   /auth/otp/habilitar:
@@ -1379,7 +1531,7 @@ paths:
       operationId: habilitarMfa
       summary: Activa el segundo factor de la propia cuenta
       description: |
-        Definido por SPEC-04. Envía un código de confirmación; el MFA queda
+        Definido por SPEC-10. Envía un código de confirmación; el MFA queda
         activo solo cuando ese código se verifica.
       responses:
         '202':
@@ -1393,8 +1545,9 @@ paths:
       operationId: deshabilitarMfa
       summary: Desactiva el segundo factor de la propia cuenta
       description: |
-        Definido por SPEC-04. **Un `ADMIN_SISTEMA` no puede desactivarlo**: para
-        ese rol el segundo factor es obligatorio.
+        Definido por SPEC-10. **Quien tenga algún rol de gestión no puede
+        desactivarlo** (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`,
+        `ADMIN_SISTEMA`): para ellos el segundo factor es obligatorio.
       responses:
         '204':
           description: Segundo factor desactivado
@@ -1415,7 +1568,7 @@ paths:
                     code: MFA_OBLIGATORIO
 
   # ---------------------------------------------------------------------------
-  # ADMINISTRACION DE USUARIOS - SPEC-01
+  # ADMINISTRACION DE USUARIOS - SPEC-02, SPEC-03 y SPEC-04
   # ---------------------------------------------------------------------------
 
   /auth/verificar-correo:
@@ -1424,8 +1577,12 @@ paths:
       operationId: verificarCorreo
       summary: Confirma el correo con el token del enlace
       description: |
-        Definido por SPEC-01. La cuenta pasa de `PENDIENTE_VERIFICACION` a
+        Definido por SPEC-02. La cuenta pasa de `PENDIENTE_VERIFICACION` a
         `ACTIVO` y se publica `usuario.creado`. El enlace vale 24 horas.
+
+        **El mismo endpoint confirma un cambio de correo** (SPEC-16): el token
+        lleva su propósito, así que no hay un segundo mecanismo de
+        verificación que mantener.
       security: []
       requestBody:
         required: true
@@ -1453,16 +1610,153 @@ paths:
                     title: El enlace de verificación expiró
                     status: 410
                     code: ENLACE_EXPIRADO
+                yaUsado:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/enlace-ya-usado"
+                    title: El enlace de verificación ya se usó
+                    status: 410
+                    code: ENLACE_YA_USADO
+
+  /auth/activar-cuenta:
+    post:
+      tags: [Autenticación]
+      operationId: activarCuenta
+      summary: Activa una cuenta creada por otra persona
+      description: |
+        Definido por SPEC-03 (acuerdo A6). **Público.** Lo usa quien recibió el
+        enlace de activación: una cuenta de personal creada por un
+        `ADMIN_SISTEMA` o un cliente registrado en tienda. Define la contraseña,
+        acepta los términos y la cuenta pasa a `ACTIVO` con el correo
+        verificado; entonces se publica `usuario.creado`.
+
+        El enlace es de un solo uso y vale **72 horas**. Si venció, un
+        administrador o el vendedor puede reenviarlo con un alta nueva sobre la
+        misma cuenta, o el titular puede usar la recuperación de contraseña.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivarCuentaRequest'
+      responses:
+        '204':
+          description: Cuenta activa
+        '400':
+          $ref: '#/components/responses/Validacion'
+        '410':
+          description: El enlace venció o ya se usó
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                vencido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/enlace-expirado"
+                    title: El enlace venció
+                    status: 410
+                    code: ENLACE_EXPIRADO
+                usado:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/enlace-ya-usado"
+                    title: El enlace ya se usó
+                    status: 410
+                    code: ENLACE_YA_USADO
+        '422':
+          $ref: '#/components/responses/PoliticaIncumplida'
+
+  /auth/verificar-correo/reenviar:
+    post:
+      tags: [Autenticación]
+      operationId: reenviarVerificacion
+      summary: Reenvía el correo de verificación
+      description: |
+        Definido por SPEC-02. **Responde `202` exista o no la cuenta, y esté o
+        no verificada.** Si hay una cuenta `PENDIENTE_VERIFICACION` con ese
+        correo, invalida el enlace anterior y envía uno nuevo. Admite 3
+        solicitudes por hora **por dirección de correo**, se registre o no, para
+        que el límite tampoco revele qué cuentas existen.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [correo]
+              properties:
+                correo:
+                  type: string
+                  format: email
+      responses:
+        '202':
+          description: Solicitud aceptada. **No confirma ni niega nada.**
+        '429':
+          description: Más de 3 solicitudes en una hora para ese correo
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                demasiadas:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/demasiadas-solicitudes"
+                    title: Demasiadas solicitudes
+                    status: 429
+                    code: DEMASIADAS_SOLICITUDES
 
   /usuarios:
+    get:
+      tags: [Administración]
+      operationId: listarUsuarios
+      summary: Lista las cuentas, con filtros (panel de administración)
+      description: |
+        Definido por SPEC-03. Exige el permiso `usuario.ver` (SPEC-11), que
+        solo tiene `ADMIN_SISTEMA`. Es la pantalla 7 de los wireframes.
+      parameters:
+        - name: estado
+          in: query
+          schema: { $ref: '#/components/schemas/EstadoCuenta' }
+        - name: rol
+          in: query
+          schema: { $ref: '#/components/schemas/CodigoRol' }
+        - name: correo
+          in: query
+          description: Fragmento del correo, sin distinguir mayúsculas.
+          schema: { type: string }
+        - name: pagina
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: tamano
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+      responses:
+        '200':
+          description: Página de cuentas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaUsuarios'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
     post:
       tags: [Administración]
       operationId: crearUsuario
-      summary: Da de alta a un vendedor o a un administrador
+      summary: Da de alta una cuenta de personal (vendedor, gestión o perfil de otro módulo)
       description: |
-        Definido por SPEC-01. **Solo `ADMIN_SISTEMA`.** Los clientes no se crean
-        aquí: se registran ellos mismos en `/auth/registro`. La cuenta nace
-        `ACTIVO` y se publica `usuario.creado`.
+        Definido por SPEC-03. **Solo `ADMIN_SISTEMA`** (permiso `usuario.crear`).
+        Crea una cuenta con rol `VENDEDOR`, con uno de los cuatro de gestión, o
+        **sin rol** para un perfil que vive en otro módulo, como el repartidor de
+        Despacho (acuerdos A5 y A6). Los clientes no se crean aquí.
+
+        **El administrador no define la contraseña** (acuerdo A6): la cuenta
+        nace `PENDIENTE_VERIFICACION` y se envía al correo un enlace de
+        activación de un solo uso, válido **72 horas**. La persona define su
+        contraseña y acepta los términos en `POST /auth/activar-cuenta`; solo
+        entonces pasa a `ACTIVO` y se publica `usuario.creado`.
       requestBody:
         required: true
         content:
@@ -1471,7 +1765,7 @@ paths:
               $ref: '#/components/schemas/CrearUsuarioRequest'
       responses:
         '201':
-          description: Usuario creado
+          description: Cuenta creada en `PENDIENTE_VERIFICACION`; enlace de activación enviado
           content:
             application/json:
               schema:
@@ -1493,11 +1787,122 @@ paths:
                     title: No se pudo usar ese correo
                     status: 409
                     code: CORREO_NO_DISPONIBLE
-        '422':
-          $ref: '#/components/responses/PoliticaIncumplida'
+
+  /usuarios/clientes:
+    post:
+      tags: [Administración]
+      operationId: registrarClienteAsistido
+      summary: El vendedor registra a un cliente en tienda (registro asistido)
+      description: |
+        Definido por SPEC-03 (acuerdo A6). Exige un **token de usuario** con el
+        permiso `cliente.registrar`, que tiene `VENDEDOR`; un token de servicio
+        recibe `403`. La cuenta nace `PENDIENTE_VERIFICACION` con rol `CLIENTE` y
+        `canalOrigen: RETAIL`, y se envía al correo un enlace de activación
+        válido **72 horas**: el cliente define ahí su contraseña y acepta los
+        términos. Se devuelve el `id` al momento, así que la venta no espera a la
+        activación.
+
+        Si la cuenta no se activa en **30 días**, se elimina con sus datos: se
+        tomaron sin consentimiento escrito (Ley N.º 29733).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroAsistidoRequest'
+      responses:
+        '201':
+          description: Cuenta creada; enlace de activación enviado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, estado]
+                properties:
+                  id: { type: string, format: uuid }
+                  estado: { type: string, enum: [PENDIENTE_VERIFICACION] }
+        '400':
+          $ref: '#/components/responses/Validacion'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '409':
+          description: El correo o el documento ya pertenecen a una cuenta
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                correoNoDisponible:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/correo-no-disponible"
+                    title: No se pudo usar ese correo
+                    status: 409
+                    code: CORREO_NO_DISPONIBLE
+                documentoNoDisponible:
+                  summary: El cliente ya existe; búsquelo por documento
+                  value:
+                    type: "https://g7.unmsm.pe/errores/documento-no-disponible"
+                    title: No se pudo usar ese documento
+                    status: 409
+                    code: DOCUMENTO_NO_DISPONIBLE
+
+  /usuarios/busqueda-documento:
+    post:
+      tags: [Administración]
+      operationId: buscarClientePorDocumento
+      summary: El vendedor encuentra a un cliente por su documento
+      description: |
+        Definido por SPEC-03 (acuerdo A7, ADR-007). Exige un **token de
+        usuario** con el permiso `cliente.buscar`, que tiene `VENDEDOR`; un
+        token de servicio recibe `403`. Va por `POST` para que el número no
+        quede en URLs ni en registros.
+
+        - Solo coincidencia **exacta** de tipo y número; nunca parcial.
+        - Solo cuentas con rol `CLIENTE` en `ACTIVO` o `PENDIENTE_VERIFICACION`;
+          cualquier otra responde `404`, igual que una inexistente.
+        - Como máximo **60 búsquedas por hora y vendedor**.
+        - Cada búsqueda queda auditada con quién buscó y el resultado.
+
+        No hay búsqueda por correo ni por celular (ADR-006).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusquedaDocumentoRequest'
+      responses:
+        '200':
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClienteEncontrado'
+        '400':
+          $ref: '#/components/responses/Validacion'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '429':
+          description: Más de 60 búsquedas en una hora por el mismo vendedor
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                demasiadas:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/demasiadas-solicitudes"
+                    title: Demasiadas solicitudes
+                    status: 429
+                    code: DEMASIADAS_SOLICITUDES
 
   # ---------------------------------------------------------------------------
-  # ROLES - SPEC-05
+  # ROLES - SPEC-11
   # ---------------------------------------------------------------------------
 
   /usuarios/{id}/roles:
@@ -1506,7 +1911,7 @@ paths:
       operationId: asignarRol
       summary: Asigna un rol a un usuario
       description: |
-        Definido por SPEC-05. **Solo `ADMIN_SISTEMA`.** Al cambiar los roles se
+        Definido por SPEC-11. **Solo `ADMIN_SISTEMA`.** Al cambiar los roles se
         revocan las sesiones activas del usuario —debe volver a iniciar sesión
         para que su token lleve los permisos nuevos— y se publica
         `usuario.roles_cambiados`.
@@ -1529,6 +1934,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Usuario'
+        '400':
+          $ref: '#/components/responses/Validacion'
         '401':
           $ref: '#/components/responses/NoAutenticado'
         '403':
@@ -1542,7 +1949,7 @@ paths:
       operationId: revocarRol
       summary: Revoca un rol de un usuario
       description: |
-        Definido por SPEC-05. **Solo `ADMIN_SISTEMA`.** Mismo efecto sobre las
+        Definido por SPEC-11. **Solo `ADMIN_SISTEMA`.** Mismo efecto sobre las
         sesiones que la asignación. Un usuario sin ningún rol recibe `403` en
         todo endpoint protegido: no tiene permisos efectivos.
       parameters:
@@ -1561,9 +1968,25 @@ paths:
           $ref: '#/components/responses/ScopeInsuficiente'
         '404':
           $ref: '#/components/responses/NoEncontrado'
+        '422':
+          description: |
+            Sobre sí mismo, o sobre el último `ADMIN_SISTEMA` activo. La misma
+            regla protege el bloqueo (SPEC-15), la baja (SPEC-04) y la
+            revocación del rol (SPEC-11).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                protegido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/administrador-protegido"
+                    title: Operación no permitida sobre este administrador
+                    status: 422
+                    code: ADMINISTRADOR_PROTEGIDO
 
   # ---------------------------------------------------------------------------
-  # PROTECCION DE CUENTAS - SPEC-07
+  # PROTECCION DE CUENTAS - SPEC-14 y SPEC-15
   # ---------------------------------------------------------------------------
 
   /usuarios/{id}/bloquear:
@@ -1572,9 +1995,15 @@ paths:
       operationId: bloquearUsuario
       summary: Bloquea manualmente una cuenta
       description: |
-        Definido por SPEC-07. **Solo `ADMIN_SISTEMA`.** El bloqueo manual no
-        vence y **reemplaza** a un bloqueo automático en curso. Se notifica al
-        usuario por correo y se publica `usuario.bloqueado`.
+        Definido por SPEC-15. **Solo `ADMIN_SISTEMA`.** El bloqueo manual no
+        vence, **reemplaza** a un bloqueo automático en curso y **cierra todas
+        las sesiones** de la cuenta. Se notifica al usuario por correo, sin
+        enlace de desbloqueo, y se publica `usuario.bloqueado`.
+
+        Nadie puede bloquearse a sí mismo, y no se puede bloquear al último
+        `ADMIN_SISTEMA` activo. Una cuenta `INACTIVO` o
+        `PENDIENTE_VERIFICACION` no se puede bloquear: responde
+        `403 CUENTA_NO_DISPONIBLE`.
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       requestBody:
@@ -1591,13 +2020,50 @@ paths:
                   examples: ["Actividad sospechosa reportada por el canal retail"]
       responses:
         '204':
-          description: Cuenta bloqueada sin vencimiento
+          description: Cuenta bloqueada sin vencimiento y sesiones cerradas
+        '400':
+          $ref: '#/components/responses/Validacion'
         '401':
           $ref: '#/components/responses/NoAutenticado'
         '403':
-          $ref: '#/components/responses/ScopeInsuficiente'
+          description: |
+            Sin el permiso `cuenta.bloquear` (`SCOPE_INSUFICIENTE`), o la cuenta
+            está `INACTIVO` o `PENDIENTE_VERIFICACION` (`CUENTA_NO_DISPONIBLE`).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                scopeInsuficiente:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/scope-insuficiente"
+                    title: Permisos insuficientes
+                    status: 403
+                    code: SCOPE_INSUFICIENTE
+                cuentaNoDisponible:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/cuenta-no-disponible"
+                    title: La cuenta no se puede bloquear en su estado actual
+                    status: 403
+                    code: CUENTA_NO_DISPONIBLE
         '404':
           $ref: '#/components/responses/NoEncontrado'
+        '422':
+          description: |
+            Sobre sí mismo, o sobre el último `ADMIN_SISTEMA` activo. La misma
+            regla protege el bloqueo (SPEC-15), la baja (SPEC-04) y la
+            revocación del rol (SPEC-11).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                protegido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/administrador-protegido"
+                    title: Operación no permitida sobre este administrador
+                    status: 422
+                    code: ADMINISTRADOR_PROTEGIDO
 
   /usuarios/{id}/desbloquear:
     post:
@@ -1605,9 +2071,11 @@ paths:
       operationId: desbloquearUsuario
       summary: Desbloquea una cuenta
       description: |
-        Definido por SPEC-07. **Solo `ADMIN_SISTEMA`.** La cuenta vuelve a
-        `ACTIVO`, el contador de intentos fallidos se reinicia y se publica
-        `usuario.desbloqueado`.
+        Definido por SPEC-15. **Solo `ADMIN_SISTEMA`.** Levanta cualquier
+        bloqueo, automático o manual. La cuenta vuelve a `ACTIVO`, el contador
+        de intentos fallidos se reinicia y se publica `usuario.desbloqueado`.
+        Sobre una cuenta que no está `BLOQUEADO` no hace nada y responde igual
+        (RF-15.8).
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       responses:
@@ -1620,8 +2088,65 @@ paths:
         '404':
           $ref: '#/components/responses/NoEncontrado'
 
+  /auth/desbloquear:
+    post:
+      tags: [Autenticación]
+      operationId: desbloquearConEnlace
+      summary: El titular levanta un bloqueo automático con el enlace del correo
+      description: |
+        Definido por SPEC-14. El correo de aviso de un **bloqueo automático**
+        trae un enlace de un solo uso, válido 30 minutos. Consumirlo devuelve la
+        cuenta a `ACTIVO`, reinicia el contador de intentos fallidos y publica
+        `usuario.desbloqueado`.
+
+        Así, quien conozca el correo de alguien puede provocarle un bloqueo,
+        pero solo el dueño de ese correo puede levantarlo sin esperar a un
+        administrador. **Un bloqueo manual no genera enlace.** Cada bloqueo
+        nuevo invalida el enlace anterior.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+                  description: El token del enlace recibido por correo.
+      responses:
+        '204':
+          description: Cuenta desbloqueada
+        '401':
+          description: El token no existe, ya se usó o fue reemplazado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                tokenInvalido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-desbloqueo-invalido"
+                    title: Enlace de desbloqueo no válido
+                    status: 401
+                    code: TOKEN_DESBLOQUEO_INVALIDO
+        '410':
+          description: El token venció (más de 30 minutos)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                tokenExpirado:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/token-desbloqueo-expirado"
+                    title: El enlace de desbloqueo expiró
+                    status: 410
+                    code: TOKEN_DESBLOQUEO_EXPIRADO
+
   # ---------------------------------------------------------------------------
-  # ATRIBUTOS DE PERFIL - SPEC-08
+  # ATRIBUTOS DE PERFIL - SPEC-16
   # ---------------------------------------------------------------------------
 
   /usuarios/{id}/atributos:
@@ -1630,9 +2155,12 @@ paths:
       operationId: actualizarAtributos
       summary: Actualiza los atributos de perfil
       description: |
-        Definido por SPEC-08. **Un usuario solo puede modificar los suyos**; un
-        `ADMIN_SISTEMA` puede modificar los de cualquiera. Los atributos de
-        vendedor no son aplicables a un cliente ni al revés.
+        Definido por SPEC-16. **Un usuario solo puede modificar los suyos**;
+        quien tenga el permiso `atributos.editar` (`ADMIN_SISTEMA`) puede
+        modificar los de cualquiera. Los atributos de vendedor no son
+        aplicables a un cliente ni al revés. El correo no se cambia aquí: tiene
+        su propio flujo en `/usuarios/{id}/correo`. Para leer los propios
+        atributos se usa `/auth/me`.
 
         Publica `usuario.atributos_actualizados` con la lista de campos que
         cambiaron, nunca con sus valores.
@@ -1672,8 +2200,61 @@ paths:
                     code: ATRIBUTO_NO_APLICABLE
                     detail: "codigoVendedor no aplica a una cuenta con rol CLIENTE."
 
+  /usuarios/{id}/correo:
+    post:
+      tags: [Administración]
+      operationId: solicitarCambioCorreo
+      summary: El titular solicita cambiar su correo
+      description: |
+        Definido por SPEC-16. **Solo el titular**, y con su contraseña actual:
+        cambiar el correo es la forma más rápida de quedarse con una cuenta
+        ajena. Se envía un enlace a la dirección nueva, que se confirma con
+        `POST /auth/verificar-correo` —el mismo mecanismo de SPEC-02—, y un
+        aviso a la dirección anterior. Hasta que se confirma, se sigue usando
+        la anterior.
+      parameters:
+        - $ref: '#/components/parameters/UsuarioId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nuevoCorreo, contrasenaActual]
+              properties:
+                nuevoCorreo:
+                  type: string
+                  format: email
+                contrasenaActual:
+                  type: string
+                  format: password
+      responses:
+        '202':
+          description: Enlace enviado a la dirección nueva
+        '401':
+          description: La contraseña actual no coincide
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '409':
+          description: La dirección nueva ya está registrada
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                correoNoDisponible:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/correo-no-disponible"
+                    title: No se pudo usar ese correo
+                    status: 409
+                    code: CORREO_NO_DISPONIBLE
+
   # ---------------------------------------------------------------------------
-  # AUDITORIA - SPEC-06
+  # AUDITORIA - SPEC-13
   # ---------------------------------------------------------------------------
 
   /auditoria:
@@ -1682,7 +2263,7 @@ paths:
       operationId: consultarAuditoria
       summary: Consulta filtrada del registro de seguridad
       description: |
-        Definido por SPEC-06. Exige el permiso `auditoria:leer`, que solo tiene
+        Definido por SPEC-13. Exige el permiso `auditoria.ver`, que solo tiene
         `ADMIN_SISTEMA`. **La propia consulta queda auditada**, y un intento sin
         permiso también.
 
@@ -1736,7 +2317,7 @@ paths:
       operationId: exportarAuditoria
       summary: Exporta el resultado de un filtro
       description: |
-        Definido por SPEC-06. Acepta los mismos filtros que `GET /auditoria` y
+        Definido por SPEC-13. Acepta los mismos filtros que `GET /auditoria` y
         devuelve **exactamente los mismos registros**, sin paginar. Un filtro que
         abarque más de 100 000 registros se rechaza en vez de intentar
         materializarlo.
@@ -1793,7 +2374,7 @@ paths:
       operationId: consultarActividadPropia
       summary: Historial de seguridad de la propia cuenta
       description: |
-        Definido por SPEC-06. Cualquier usuario autenticado, **sin permiso de
+        Definido por SPEC-13. Cualquier usuario autenticado, **sin permiso de
         administración**, ve los eventos de su propia cuenta: inicios de sesión
         con su IP y fecha, cambios de contraseña, bloqueos. Nunca los de otro.
 
@@ -1832,7 +2413,7 @@ components:
         | `sub` | Identificador del usuario |
         | `email` | Correo electrónico |
         | `roles` | Códigos de rol, p. ej. `["VENDEDOR"]` |
-        | `permisos` | Permisos efectivos, sin duplicados. **Vacío hasta SPEC-05** |
+        | `permisos` | Permisos efectivos, sin duplicados, escritos con punto (`usuario.ver`). Hoy, los de este módulo (SPEC-11) |
         | `tipo` | `acceso`, `refresco` o `servicio` |
         | `iss` | Emisor: el módulo de seguridad |
         | `iat` / `exp` | Emisión y expiración. El acceso dura 15 minutos |
@@ -1843,6 +2424,12 @@ components:
       description: |
         El token propio de cada módulo consumidor. Identifica a un **módulo**, no
         a una persona: lleva `tipo: "servicio"` y el `client_id` en `sub`.
+
+        Claims: `iss` (igual al `issuer` del descubrimiento), `sub`, `aud` (lista
+        de APIs dueñas de los scopes concedidos: `api-seguridad`, `api-despacho`…),
+        `tipo`, `scope` (texto separado por espacios), `iat`, `exp` (1 hora) y
+        `jti`. Aquí se listan solo los scopes de esta API; los de otros módulos
+        están en el kit de integración §5 (acuerdo A4).
       flows:
         clientCredentials:
           tokenUrl: /auth/token
@@ -1884,6 +2471,25 @@ components:
                 status: 401
                 code: TOKEN_INVALIDO
 
+    Validacion:
+      description: |
+        El cuerpo no cumple el esquema: falta un campo obligatorio, el tipo no
+        corresponde o el valor no pertenece a un catálogo cerrado.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            validacion:
+              value:
+                type: "https://g7.unmsm.pe/errores/validacion"
+                title: Datos de entrada inválidos
+                status: 400
+                code: VALIDACION
+                errores:
+                  - campo: motivo
+                    mensaje: Es obligatorio.
+
     ScopeInsuficiente:
       description: |
         El token es válido pero no tiene el scope necesario. **No se revela qué
@@ -1903,7 +2509,7 @@ components:
     NoEncontrado:
       description: |
         No existe un usuario con ese identificador. Solo se llega aquí con un
-        token de servicio válido y el scope correcto.
+        token válido y el permiso o scope necesario.
       content:
         application/problem+json:
           schema:
@@ -1918,7 +2524,7 @@ components:
 
     PoliticaIncumplida:
       description: |
-        La contraseña no cumple la política de SPEC-03. **Un solo `code` para
+        La contraseña no cumple la política de SPEC-07. **Un solo `code` para
         todas las reglas**: cuál falló va en `errores`. Así, añadir una regla
         nueva no obliga a los consumidores a conocer un código más.
       content:
@@ -1945,7 +2551,8 @@ components:
                             - CONTRASENA_COMUN
                             - DATOS_PERSONALES
                             - YA_UTILIZADA
-                        esperado: {}
+                        esperado:
+                          description: Valor que exige la regla, por ejemplo la longitud mínima.
           examples:
             cortaYSinSimbolo:
               value:
@@ -1994,18 +2601,24 @@ components:
           description: Referencia de la petición, útil para soporte.
         errores:
           type: array
-          description: Presente solo en `VALIDACION`.
+          description: |
+            Presente solo en `VALIDACION` (con `campo` y `mensaje`) y en
+            `POLITICA_INCUMPLIDA` (con `regla` y, si aplica, `esperado`).
           items:
             type: object
             properties:
               campo: { type: string }
               mensaje: { type: string }
+              regla: { type: string }
+              esperado:
+                description: Valor que exige la regla, por ejemplo la longitud mínima.
         intentosRestantes:
           type: integer
           description: |
-            Presente solo en `CODIGO_INVALIDO` y en los errores de credenciales.
-            Cuántos intentos quedan antes de invalidar el desafío o bloquear la
-            cuenta. RFC 7807 admite extensiones como ésta.
+            Presente solo en `CODIGO_INVALIDO`: cuántos intentos quedan antes de
+            invalidar el código OTP. RFC 7807 admite extensiones como ésta.
+            **Nunca acompaña a `CREDENCIALES_INVALIDAS`**: un correo inexistente
+            no tiene contador, así que el campo delataría qué cuentas existen.
 
     Jwks:
       type: object
@@ -2052,7 +2665,7 @@ components:
           items: { $ref: '#/components/schemas/CodigoRol' }
         permisos:
           type: array
-          description: Vacío hasta que SPEC-05 defina el catálogo.
+          description: Permisos con punto. Hoy, los de este módulo (SPEC-11); los de cada módulo consumidor se añaden cuando se acuerden.
           items: { type: string }
         tipo: { type: string, enum: [acceso, refresco, servicio] }
         exp: { type: integer }
@@ -2088,13 +2701,16 @@ components:
       required: [id, nombreCompleto, correo, estado, roles]
       properties:
         id: { type: string, format: uuid }
-        nombres: { type: string }
-        apellidos: { type: string }
+        nombres: { type: string, maxLength: 100 }
+        apellidos: { type: string, maxLength: 100 }
         nombreCompleto: { type: string }
-        correo: { type: string, format: email }
+        correo: { type: string, format: email, maxLength: 254 }
         celular: { type: string }
         estado: { $ref: '#/components/schemas/EstadoCuenta' }
         correoVerificado: { type: boolean }
+        celularVerificado:
+          type: boolean
+          description: '`false` tras cambiar el celular, hasta verificarlo por SMS (SPEC-16 RF-16.7).'
         roles:
           type: array
           items: { $ref: '#/components/schemas/CodigoRol' }
@@ -2108,6 +2724,29 @@ components:
           type: string
           description: Últimos tres dígitos. Sin el scope anterior.
           examples: ["*****234"]
+        bloqueo:
+          type: [object, "null"]
+          description: |
+            Presente solo si `estado` es `BLOQUEADO` (SPEC-15, RF-15.6).
+            `motivo` solo llega a un token de usuario con el permiso
+            `usuario.ver`; un token de servicio nunca lo recibe.
+          required: [tipo, hasta]
+          properties:
+            tipo:
+              type: string
+              enum: [AUTOMATICO, MANUAL]
+            hasta:
+              type: [string, "null"]
+              format: date-time
+              description: Vencimiento del bloqueo. `null` si no vence (manual, o automático desde el cuarto seguido).
+            motivo:
+              type: string
+              maxLength: 500
+              description: Solo en bloqueos manuales y solo para administradores.
+          examples:
+            - tipo: MANUAL
+              hasta: null
+              motivo: "Actividad sospechosa reportada por el canal retail"
 
     LoteUsuarios:
       type: object
@@ -2127,12 +2766,12 @@ components:
       required: [id, departamento, provincia, distrito, direccion]
       properties:
         id: { type: string, format: uuid }
-        etiqueta: { type: string, examples: [Casa] }
-        departamento: { type: string }
-        provincia: { type: string }
-        distrito: { type: string }
-        direccion: { type: string }
-        referencia: { type: string }
+        etiqueta: { type: string, maxLength: 50, examples: [Casa] }
+        departamento: { type: string, maxLength: 100 }
+        provincia: { type: string, maxLength: 100 }
+        distrito: { type: string, maxLength: 100 }
+        direccion: { type: string, maxLength: 255 }
+        referencia: { type: string, maxLength: 255 }
         esPredeterminada: { type: boolean }
 
     Rol:
@@ -2144,33 +2783,58 @@ components:
         descripcion: { type: string }
         permisos:
           type: array
-          description: Vacío hasta que SPEC-05 defina el catálogo.
+          description: Permisos con punto. Hoy, los de este módulo (SPEC-11); los de cada módulo consumidor se añaden cuando se acuerden.
           items: { type: string }
 
     Permiso:
       type: object
       required: [codigo, modulo]
       properties:
-        codigo: { type: string, examples: ["pedido:crear"] }
+        codigo: { type: string, examples: ["usuario.ver"] }
         modulo: { type: string, examples: [ventas] }
         descripcion: { type: string }
 
     RegistroRequest:
       type: object
-      required: [correo, contrasena, nombres, apellidos, celular]
+      required: [correo, contrasena, nombres, apellidos, celular, aceptaTerminos]
       properties:
-        correo: { type: string, format: email }
+        correo: { type: string, format: email, maxLength: 254 }
         contrasena:
           type: string
           format: password
-          minLength: 10
           description: |
             Mínimo 10 caracteres, con mayúscula, minúscula, dígito y carácter
             especial. No puede ser una contraseña común ni contener el nombre o
-            el correo del usuario. La política la define SPEC-03.
-        nombres: { type: string }
-        apellidos: { type: string }
-        celular: { type: string, examples: ["+51987654321"] }
+            el correo del usuario. La política la define SPEC-07 y la valida el
+            servicio, **longitud incluida**: si no se cumple responde
+            `422 POLITICA_INCUMPLIDA` con las reglas falladas, nunca `400`. Por
+            eso el esquema no declara `minLength`.
+        nombres: { type: string, maxLength: 100 }
+        apellidos: { type: string, maxLength: 100 }
+        celular:
+          type: string
+          pattern: '^\+51[0-9]{9}$'
+          description: '`+51` seguido de 9 dígitos (SPEC-01, RF-01.5).'
+          examples: ["+51987654321"]
+        canalOrigen:
+          type: string
+          enum: [WEB, CHATBOT, RETAIL, MARKETPLACE]
+          default: WEB
+          description: |
+            Canal donde se originó el registro (SPEC-02, RF-02.8). Decide a qué
+            pantalla lleva el enlace de verificación que enviamos por correo:
+            cada canal tiene su URL configurada **de nuestro lado**. Es opcional;
+            si falta, vale `WEB`. **No acepta una URL**: un destino libre sería
+            una redirección abierta, y el token de verificación viaja en el
+            enlace. Para añadir un canal a la lista, pídanlo por issue.
+        aceptaTerminos:
+          type: boolean
+          const: true
+          description: |
+            Aceptación expresa de los términos y del tratamiento de datos
+            personales (Ley N.º 29733, SPEC-01 RF-01.4). Si falta o es `false`
+            responde `400 VALIDACION`. El servidor guarda la fecha y la versión
+            de los términos aceptados.
 
     SesionIniciada:
       type: object
@@ -2202,10 +2866,17 @@ components:
       properties:
         mfaRequerido: { type: boolean, enum: [true] }
         challengeToken: { type: string }
-        canal: { type: string, enum: [EMAIL, SMS] }
+        canal:
+          type: string
+          enum: [EMAIL, SMS]
+          description: |
+            Canal por el que se enviará el código. En este ciclo vale siempre
+            `EMAIL`: el SMS es simulado y la cuenta no guarda un canal preferido
+            (RF-09.13). Todavía no se ha enviado ningún código: se pide con
+            `/auth/otp/solicitar`.
         expiraEn:
           type: integer
-          description: Segundos de validez del desafío.
+          description: Segundos de validez del desafío (no del código).
           examples: [300]
 
     PoliticaPassword:
@@ -2232,23 +2903,90 @@ components:
           examples: [5]
         caducidadDiasAdmin:
           type: integer
-          nullable: true
-          description: Días tras los que caduca la contraseña de un administrador. `null` para el resto de roles.
+          description: |
+            Días tras los que caduca la contraseña de una cuenta con algún rol de
+            gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`,
+            `ADMIN_SISTEMA`). Vale siempre lo mismo, sin importar quién pregunte:
+            el endpoint es público y no conoce el rol. Las cuentas `CLIENTE` y
+            `VENDEDOR` no caducan.
           examples: [90]
 
     CrearUsuarioRequest:
       type: object
-      description: Alta de un vendedor o administrador por `ADMIN_SISTEMA`.
-      required: [correo, contrasena, rol]
+      description: |
+        Alta de una cuenta de personal por `ADMIN_SISTEMA`. Sin contraseña: la
+        define la persona con el enlace de activación (acuerdo A6).
+      required: [correo, nombres, apellidos]
       properties:
-        correo: { type: string, format: email }
+        correo: { type: string, format: email, maxLength: 254 }
+        nombres: { type: string, minLength: 1, maxLength: 100 }
+        apellidos: { type: string, minLength: 1, maxLength: 100 }
+        rol:
+          $ref: '#/components/schemas/CodigoRol'
+          description: |
+            `VENDEDOR` o uno de gestión. Se omite para un perfil que vive en otro
+            módulo (repartidor de Despacho, A5): la cuenta tendrá `roles: []`.
+            `CLIENTE` no se acepta por esta vía.
+
+    RegistroAsistidoRequest:
+      type: object
+      description: |
+        Datos que el vendedor toma en tienda (acuerdo A6). Sin contraseña ni
+        términos: los define el cliente al activar su cuenta.
+      required: [correo, nombres, apellidos]
+      properties:
+        correo: { type: string, format: email, maxLength: 254 }
+        nombres: { type: string, minLength: 1, maxLength: 100 }
+        apellidos: { type: string, minLength: 1, maxLength: 100 }
+        celular:
+          type: string
+          pattern: '^\+51[0-9]{9}$'
+          examples: ["+51987654321"]
+        tipoDocumento: { type: string, enum: [DNI, CE, PASAPORTE] }
+        numeroDocumento:
+          type: string
+          maxLength: 20
+          writeOnly: true
+          description: Obligatorio si llega `tipoDocumento`. Permite encontrarlo después por documento (A7).
+
+    ActivarCuentaRequest:
+      type: object
+      required: [token, contrasena, aceptaTerminos]
+      properties:
+        token:
+          type: string
+          description: El token del enlace de activación recibido por correo.
         contrasena:
           type: string
           format: password
-          description: Debe cumplir la política de SPEC-03.
-        rol: { $ref: '#/components/schemas/CodigoRol' }
-        nombres: { type: string }
-        apellidos: { type: string }
+          description: Debe cumplir la política de SPEC-07; si no, `422 POLITICA_INCUMPLIDA`.
+        aceptaTerminos:
+          type: boolean
+          enum: [true]
+          description: Consentimiento expreso (Ley N.º 29733). Se guardan la fecha y la versión aceptada.
+
+    BusquedaDocumentoRequest:
+      type: object
+      required: [tipoDocumento, numeroDocumento]
+      properties:
+        tipoDocumento:
+          type: string
+          enum: [DNI, CE, PASAPORTE]
+          description: "Sin `RUC`: los datos de una empresa para facturar son de Ventas (A7)."
+        numeroDocumento: { type: string, minLength: 1, maxLength: 20, examples: ["45781234"] }
+
+    ClienteEncontrado:
+      type: object
+      description: Lo mínimo para atender al cliente en tienda. Nunca el documento en claro ni el correo.
+      required: [id, nombreCompleto, documentoEnmascarado, estado]
+      properties:
+        id: { type: string, format: uuid }
+        nombreCompleto: { type: string, examples: ["María Quispe Rojas"] }
+        documentoEnmascarado: { type: string, examples: ["*****234"] }
+        estado:
+          type: string
+          enum: [ACTIVO, PENDIENTE_VERIFICACION]
+          description: "`PENDIENTE_VERIFICACION` si se registró en tienda y todavía no activó su cuenta."
 
     AtributosUsuario:
       type: object
@@ -2258,21 +2996,32 @@ components:
         `422 ATRIBUTO_NO_APLICABLE`. El número de documento se cifra con AES y
         se devuelve enmascarado salvo con el scope `usuarios:leer:documento`.
       properties:
-        nombres: { type: string }
-        apellidos: { type: string }
+        nombres: { type: string, maxLength: 100 }
+        apellidos: { type: string, maxLength: 100 }
         tipoDocumento: { type: string, enum: [DNI, CE, PASAPORTE] }
         numeroDocumento:
           type: string
           description: Solo escritura. Nunca se devuelve en claro sin scope.
           writeOnly: true
         fechaNacimiento: { type: string, format: date }
-        telefono: { type: string, examples: ["+51 987 654 321"] }
+        celular:
+          type: string
+          pattern: '^\+51[0-9]{9}$'
+          description: |
+            `+51` seguido de 9 dígitos. Cambiarlo deja `celularVerificado` en
+            `false` hasta completar un código por SMS con `/auth/otp/solicitar`
+            y `/auth/otp/verificar` (SPEC-16 RF-16.7).
+          examples: ["+51987654321"]
         codigoVendedor:
           type: string
-          description: Solo para cuentas con rol `VENDEDOR`.
+          maxLength: 50
+          description: Solo para cuentas con rol `VENDEDOR`. Formato propuesto por Retail, por confirmar.
+          examples: ["VEND-1042"]
         tienda:
           type: string
-          description: Solo para cuentas con rol `VENDEDOR`.
+          maxLength: 100
+          description: Solo para cuentas con rol `VENDEDOR`. Código de la tienda en Retail, no una referencia a otra base.
+          examples: ["TIENDA-MIRAFLORES"]
         fechaIngreso:
           type: string
           format: date
@@ -2282,7 +3031,7 @@ components:
       type: object
       description: |
         Un hecho, no un dato. Nunca contiene contraseñas, códigos OTP, tokens
-        completos ni el número de documento en claro. Definido por SPEC-06.
+        completos ni el número de documento en claro. Definido por SPEC-12.
       required: [id, fecha, accion, resultado, actorTipo]
       properties:
         id: { type: string, format: uuid }
@@ -2292,24 +3041,21 @@ components:
           description: Instante del evento, en UTC.
         accion:
           type: string
-          description: Código del catálogo cerrado de SPEC-06.
+          description: Código del catálogo cerrado de SPEC-12.
           examples: ["SESION_FALLIDA"]
         resultado: { type: string, enum: [EXITO, FALLO] }
         actorTipo: { type: string, enum: [USUARIO, MODULO, SISTEMA] }
         actorId:
-          type: string
-          nullable: true
+          type: [string, "null"]
           description: Identificador del usuario, o `client_id` del módulo. Ausente si el actor no llegó a identificarse.
         objetivoUsuarioId:
-          type: string
+          type: [string, "null"]
           format: uuid
-          nullable: true
           description: La cuenta afectada, si el evento recae sobre una.
-        ip: { type: string, nullable: true }
-        agente: { type: string, nullable: true, maxLength: 255 }
+        ip: { type: [string, "null"] }
+        agente: { type: [string, "null"], maxLength: 255 }
         detalle:
-          type: object
-          nullable: true
+          type: [object, "null"]
           description: Contexto específico de la acción.
           additionalProperties: true
 
@@ -2326,3 +3072,17 @@ components:
           type: integer
           description: Coincidencias totales del filtro, para poder paginar.
           examples: [237]
+
+    PaginaUsuarios:
+      type: object
+      required: [usuarios, pagina, tamano, total]
+      properties:
+        usuarios:
+          type: array
+          items: { $ref: '#/components/schemas/Usuario' }
+        pagina: { type: integer, examples: [1] }
+        tamano: { type: integer, examples: [20] }
+        total:
+          type: integer
+          description: Coincidencias totales del filtro, para poder paginar.
+          examples: [184]

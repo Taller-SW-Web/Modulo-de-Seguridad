@@ -9,7 +9,7 @@ las decisiones tomadas y las desviaciones respecto de lo planificado.
 
 ---
 
-## Los cuatro diagramas
+## Los seis diagramas
 
 Son HTML autocontenidos: se abren con doble clic, sin servidor y sin internet.
 Traen tema claro y oscuro, zoom, búsqueda, recorridos guiados y exportación a
@@ -18,7 +18,9 @@ PNG, SVG y WebM para la PPT.
 | Diagrama | Qué responde | Archivo |
 |---|---|---|
 | **Contexto** | Quién nos consume y por qué vía | [`contexto.html`](contexto.html) |
-| **Componentes** | Qué hay dentro del servicio y quién es responsable de cada capa | [`componentes.html`](componentes.html) |
+| **Integración con los módulos** | Cómo nos llaman los otros seis módulos, paso a paso, por las tres vías | [`comunicacion-modulos.html`](comunicacion-modulos.html) |
+| **Estructura del módulo** | Los seis bloques de dominio, sus specs, sus tablas y la infraestructura | [`estructura-modulo.html`](estructura-modulo.html) |
+| **Componentes** | Qué hay dentro del servicio por capas técnicas y quién es responsable de cada una | [`componentes.html`](componentes.html) |
 | **Secuencia — login con MFA** | Cómo se autentica un usuario y cuándo se emiten los tokens | [`secuencia-login.html`](secuencia-login.html) |
 | **Secuencia — rotación del refresco** | Cómo se renueva la sesión y qué pasa si roban un token | [`secuencia-refresco.html`](secuencia-refresco.html) |
 
@@ -27,7 +29,7 @@ diagrama se edita el JSON y se vuelve a generar, nunca se toca el HTML.
 
 ### Las versiones animadas del README
 
-Los cuatro `.svg` de esta carpeta son las versiones que se incrustan en el
+Los seis `.svg` de esta carpeta son las versiones que se incrustan en el
 README. GitHub no renderiza HTML, pero **sí ejecuta animación CSS dentro de un
 SVG referenciado como imagen**, así que el diagrama se construye solo al cargar
 la página, sin subir nada a ningún servicio.
@@ -54,7 +56,8 @@ diagrama resalta solo esa parte. Para el sábado:
 |---|---|---|
 | «Qué construimos» | Contexto | Nuestro alcance |
 | «Por qué los seis dependen de nosotros» | Contexto | Vías 1, 2 y 3, una tras otra |
-| «Qué hay dentro» | Componentes | Capas de dominio |
+| «Cómo nos llaman» | Integración con los módulos | Las cinco vistas en orden |
+| «Qué hay dentro» | Estructura del módulo | Quién entra · Rastro de auditoría |
 | «Cómo funciona el login» | Secuencia login | Los dos recorridos |
 | «El caso borde del que estamos orgullosos» | Secuencia refresco | Reúso detectado |
 
@@ -82,13 +85,15 @@ node bin/archify.mjs deliver architecture docs/arquitectura/contexto.json      d
 node bin/archify.mjs deliver architecture docs/arquitectura/componentes.json   docs/arquitectura/componentes.html   --quality showcase
 node bin/archify.mjs deliver sequence     docs/arquitectura/secuencia-login.json    docs/arquitectura/secuencia-login.html    --quality showcase
 node bin/archify.mjs deliver sequence     docs/arquitectura/secuencia-refresco.json docs/arquitectura/secuencia-refresco.html --quality showcase
+node bin/archify.mjs deliver architecture docs/arquitectura/estructura-modulo.json   docs/arquitectura/estructura-modulo.html   --quality showcase
+node bin/archify.mjs deliver sequence     docs/arquitectura/comunicacion-modulos.json docs/arquitectura/comunicacion-modulos.html --quality showcase
 ```
 
 ---
 
 ## Lo que todavía falta para cerrar el Hito 1
 
-- [ ] `modelo-datos.md` — diagrama entidad-relación de las 15 tablas (**Eva Lucía**)
+- [ ] `modelo-datos.md` — diagrama entidad-relación de las 17 tablas de `specs/trazabilidad.md` §5 (**Eva Lucía**)
 - [ ] `implementacion.md` — estructura de paquetes y capas del backend (**Jose Luis**)
 - [ ] `despliegue.md` — topología de despliegue y contenedores (**Christian**)
-- [ ] `../../specs/openapi.yaml` — contrato publicado y mock levantado (**Sergio**)
+- [x] `../../specs/openapi.yaml` — contrato publicado y mock levantado (**Sergio**)

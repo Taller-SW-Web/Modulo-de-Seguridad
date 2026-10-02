@@ -60,7 +60,7 @@
       "id": "usuarios",
       "type": "external",
       "label": "Clientes, vendedores",
-      "sublabel": "y administradores",
+      "sublabel": "y personal de gestión",
       "pos": [
         40,
         110
@@ -357,7 +357,7 @@
       "title": "Qué construye el G7",
       "items": [
         "Un microservicio de identidad y su propia SPA en React",
-        "Es dueño de la entidad usuario: cliente, vendedor y administrador",
+        "Es dueño de la entidad usuario y de sus seis roles: cliente, vendedor y cuatro de gestión",
         "Los seis módulos restantes dependen de él; él no depende de ninguno"
       ]
     },

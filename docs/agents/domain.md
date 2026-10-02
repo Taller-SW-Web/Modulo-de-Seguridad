@@ -44,7 +44,7 @@ Este repositorio es de **contexto único**: no es un monorepo y no hay
 │   │   └── estados-usuario.md
 │   ├── plan-hito-1.md
 │   └── responsabilidades.md
-└── specs/                          ← las nueve specs SDD y el contrato
+└── specs/                          ← las 18 specs SDD de backend, las de interfaz (front/) y el contrato
     ├── SPEC-0X-*.md
     ├── openapi.yaml
     ├── catalogo-errores.md

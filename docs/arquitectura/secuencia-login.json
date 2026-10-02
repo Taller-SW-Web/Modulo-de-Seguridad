@@ -42,7 +42,7 @@
       "id": "usuario",
       "type": "external",
       "label": "Usuario",
-      "sublabel": "cliente o vendedor"
+      "sublabel": "cuenta con MFA"
     },
     {
       "id": "spa",
@@ -77,13 +77,13 @@
   ],
   "segments": [
     {
-      "from": 180,
-      "to": 346,
+      "from": 177,
+      "to": 362,
       "label": "1 · Credenciales y desafío de segundo factor"
     },
     {
-      "from": 354,
-      "to": 497,
+      "from": 382,
+      "to": 490,
       "label": "2 · Verificación del código y emisión de tokens"
     }
   ],
@@ -92,7 +92,7 @@
       "id": "credenciales",
       "from": "usuario",
       "to": "spa",
-      "y": 185,
+      "y": 182,
       "label": "correo y contraseña",
       "variant": "default"
     },
@@ -100,7 +100,7 @@
       "id": "post-login",
       "from": "spa",
       "to": "api",
-      "y": 214,
+      "y": 210,
       "label": "POST /auth/login",
       "variant": "emphasis"
     },
@@ -108,7 +108,7 @@
       "id": "verifica-bcrypt",
       "from": "api",
       "to": "db",
-      "y": 243,
+      "y": 238,
       "label": "verifica BCrypt y estado",
       "variant": "default"
     },
@@ -116,31 +116,39 @@
       "id": "mfa-activo",
       "from": "db",
       "to": "api",
-      "y": 272,
+      "y": 266,
       "label": "válido · MFA activo",
       "variant": "return"
-    },
-    {
-      "id": "envia-otp",
-      "from": "api",
-      "to": "correo",
-      "y": 301,
-      "label": "OTP de 6 dígitos · 5 min",
-      "variant": "dashed"
     },
     {
       "id": "desafio",
       "from": "api",
       "to": "spa",
-      "y": 330,
-      "label": "202 mfa_requerido",
+      "y": 294,
+      "label": "200 · mfaRequerido + challengeToken",
       "variant": "return"
+    },
+    {
+      "id": "solicita-otp",
+      "from": "spa",
+      "to": "api",
+      "label": "POST /auth/otp/solicitar",
+      "variant": "default",
+      "y": 322
+    },
+    {
+      "id": "envia-otp",
+      "from": "api",
+      "to": "correo",
+      "y": 350,
+      "label": "OTP de 6 dígitos · 5 min",
+      "variant": "dashed"
     },
     {
       "id": "teclea-codigo",
       "from": "usuario",
       "to": "spa",
-      "y": 365,
+      "y": 392,
       "label": "introduce el código",
       "variant": "default"
     },
@@ -148,7 +156,7 @@
       "id": "post-otp",
       "from": "spa",
       "to": "api",
-      "y": 394,
+      "y": 420,
       "label": "POST /auth/otp/verificar",
       "variant": "emphasis"
     },
@@ -156,56 +164,48 @@
       "id": "firma",
       "from": "api",
       "to": "jwt",
-      "y": 423,
-      "label": "firma el par de tokens",
+      "y": 448,
+      "label": "firma el par de tokens (RS256)",
       "variant": "security"
-    },
-    {
-      "id": "tokens",
-      "from": "jwt",
-      "to": "api",
-      "y": 452,
-      "label": "acceso 15 min · refresco 7 d hasheado",
-      "variant": "return"
     },
     {
       "id": "respuesta-tokens",
       "from": "api",
       "to": "spa",
-      "y": 481,
-      "label": "200 con ambos tokens",
+      "y": 476,
+      "label": "200 · acceso 15 min · refresco 7 d",
       "variant": "return"
     }
   ],
   "activations": [
     {
       "participant": "spa",
-      "from": 209,
-      "to": 487,
+      "from": 205,
+      "to": 482,
       "type": "frontend"
     },
     {
       "participant": "api",
-      "from": 214,
-      "to": 481,
+      "from": 210,
+      "to": 476,
       "type": "backend"
     },
     {
       "participant": "db",
-      "from": 239,
-      "to": 278,
+      "from": 234,
+      "to": 272,
       "type": "database"
     },
     {
       "participant": "jwt",
-      "from": 419,
-      "to": 456,
+      "from": 444,
+      "to": 466,
       "type": "security"
     },
     {
       "participant": "correo",
-      "from": 297,
-      "to": 316,
+      "from": 346,
+      "to": 365,
       "type": "external"
     }
   ],
@@ -214,7 +214,7 @@
       "dot": "emerald",
       "title": "Lo que hay que contar el sábado",
       "items": [
-        "La contraseña correcta no basta: si hay MFA, devuelve un desafío",
+        "La contraseña correcta no basta: si hay MFA, devuelve un challengeToken",
         "El par de tokens solo se firma tras verificar el código",
         "El acceso dura 15 minutos; el refresco, 7 días"
       ]
@@ -223,7 +223,7 @@
       "dot": "rose",
       "title": "Decisiones de seguridad visibles",
       "items": [
-        "La contraseña se compara con BCrypt de coste 12, nunca en claro",
+        "La contraseña se guarda con BCrypt (coste ≥ 12) o Argon2id, nunca en claro",
         "El OTP se guarda hasheado: 6 dígitos, 5 minutos, 3 intentos",
         "El refresco se guarda hasheado y se rota en cada uso"
       ]
