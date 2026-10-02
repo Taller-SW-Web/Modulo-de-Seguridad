@@ -21,24 +21,24 @@ cliente— van aparte, en [`front/`](front/), y las lleva el responsable de UX.
 
 | SPEC | Funcionalidad | Responsable | Hito | Archivo | Estado |
 |---|---|---|---|---|---|
-| 01 | Registro de clientes | Eva Lucía | 3 | [`SPEC-01-registro-clientes.md`](SPEC-01-registro-clientes.md) | 🔶 Borrador |
-| 02 | Verificación de correo | Juan José | 3 | [`SPEC-02-verificacion-correo.md`](SPEC-02-verificacion-correo.md) | 🔶 Borrador |
-| 03 | Alta y consulta administrativa de cuentas | Christian | 3 | [`SPEC-03-alta-consulta-cuentas.md`](SPEC-03-alta-consulta-cuentas.md) | 🔶 Borrador |
-| 04 | Baja y reactivación de cuentas | Eva Lucía | 3 | [`SPEC-04-baja-reactivacion.md`](SPEC-04-baja-reactivacion.md) | 🔶 Borrador |
-| 05 | Inicio de sesión con correo y contraseña | Jose Luis | 3 | [`SPEC-05-inicio-sesion.md`](SPEC-05-inicio-sesion.md) | 🔶 Borrador |
-| 06 | Renovación y cierre de sesión | Jose Luis | 3 | [`SPEC-06-renovacion-cierre-sesion.md`](SPEC-06-renovacion-cierre-sesion.md) | 🔶 Borrador |
-| 07 | Política y cambio de contraseña | Juan José | 3 · 4 | [`SPEC-07-politica-cambio-contrasena.md`](SPEC-07-politica-cambio-contrasena.md) | 🔶 Borrador |
-| 08 | Recuperación de contraseña | Juan José | 4 | [`SPEC-08-recuperacion-contrasena.md`](SPEC-08-recuperacion-contrasena.md) | 🔶 Borrador |
-| 09 | Segundo factor en el inicio de sesión (OTP) | Luis David | 4 | [`SPEC-09-mfa-inicio-sesion.md`](SPEC-09-mfa-inicio-sesion.md) | 🔶 Borrador |
-| 10 | Activación y desactivación del segundo factor | Luis David | 4 | [`SPEC-10-activacion-mfa.md`](SPEC-10-activacion-mfa.md) | 🔶 Borrador |
-| 11 | Gestión de roles y permisos | Eva Lucía | 4 | [`SPEC-11-roles-permisos.md`](SPEC-11-roles-permisos.md) | 🔶 Borrador |
-| 12 | Registro de auditoría | Christian | 3 | [`SPEC-12-registro-auditoria.md`](SPEC-12-registro-auditoria.md) | 🔶 Borrador |
-| 13 | Consulta y exportación de la auditoría | Christian | 5 | [`SPEC-13-consulta-auditoria.md`](SPEC-13-consulta-auditoria.md) | 🔶 Borrador |
-| 14 | Bloqueo automático por intentos fallidos | Luis David | 5 | [`SPEC-14-bloqueo-automatico.md`](SPEC-14-bloqueo-automatico.md) | 🔶 Borrador |
-| 15 | Bloqueo y desbloqueo por un administrador | Luis David | 5 | [`SPEC-15-bloqueo-manual.md`](SPEC-15-bloqueo-manual.md) | 🔶 Borrador |
-| 16 | Gestión de atributos de usuarios | Eva Lucía | 5 | [`SPEC-16-atributos.md`](SPEC-16-atributos.md) | 🔶 Borrador |
-| 17 | Claves públicas, tokens de servicio e introspección | Sergio | 1 · 4 | [`SPEC-17-tokens-servicio.md`](SPEC-17-tokens-servicio.md) | 🔶 Borrador · contrato publicado |
-| 18 | Consulta de identidad para los demás módulos | Sergio | 1 · 4 | [`SPEC-18-consulta-identidad.md`](SPEC-18-consulta-identidad.md) | 🔶 Borrador · contrato publicado |
+| 01 | Registro de clientes | Eva Lucía | 3 | [`SPEC-01-registro-clientes.md`](SPEC-01-registro-clientes.md) | ✅ Aprobada |
+| 02 | Verificación de correo | Juan José | 3 | [`SPEC-02-verificacion-correo.md`](SPEC-02-verificacion-correo.md) | ✅ Aprobada |
+| 03 | Alta y consulta administrativa de cuentas | Christian | 3 | [`SPEC-03-alta-consulta-cuentas.md`](SPEC-03-alta-consulta-cuentas.md) | ✅ Aprobada |
+| 04 | Baja y reactivación de cuentas | Eva Lucía | 3 | [`SPEC-04-baja-reactivacion.md`](SPEC-04-baja-reactivacion.md) | ✅ Aprobada |
+| 05 | Inicio de sesión con correo y contraseña | Jose Luis | 3 | [`SPEC-05-inicio-sesion.md`](SPEC-05-inicio-sesion.md) | ✅ Aprobada |
+| 06 | Renovación y cierre de sesión | Jose Luis | 3 | [`SPEC-06-renovacion-cierre-sesion.md`](SPEC-06-renovacion-cierre-sesion.md) | ✅ Aprobada |
+| 07 | Política y cambio de contraseña | Juan José | 3 · 4 | [`SPEC-07-politica-cambio-contrasena.md`](SPEC-07-politica-cambio-contrasena.md) | ✅ Aprobada |
+| 08 | Recuperación de contraseña | Juan José | 4 | [`SPEC-08-recuperacion-contrasena.md`](SPEC-08-recuperacion-contrasena.md) | ✅ Aprobada |
+| 09 | Segundo factor en el inicio de sesión (OTP) | Luis David | 4 | [`SPEC-09-mfa-inicio-sesion.md`](SPEC-09-mfa-inicio-sesion.md) | ✅ Aprobada |
+| 10 | Activación y desactivación del segundo factor | Luis David | 4 | [`SPEC-10-activacion-mfa.md`](SPEC-10-activacion-mfa.md) | ✅ Aprobada |
+| 11 | Gestión de roles y permisos | Eva Lucía | 4 | [`SPEC-11-roles-permisos.md`](SPEC-11-roles-permisos.md) | ✅ Aprobada |
+| 12 | Registro de auditoría | Christian | 3 | [`SPEC-12-registro-auditoria.md`](SPEC-12-registro-auditoria.md) | ✅ Aprobada |
+| 13 | Consulta y exportación de la auditoría | Christian | 5 | [`SPEC-13-consulta-auditoria.md`](SPEC-13-consulta-auditoria.md) | ✅ Aprobada |
+| 14 | Bloqueo automático por intentos fallidos | Luis David | 5 | [`SPEC-14-bloqueo-automatico.md`](SPEC-14-bloqueo-automatico.md) | ✅ Aprobada |
+| 15 | Bloqueo y desbloqueo por un administrador | Luis David | 5 | [`SPEC-15-bloqueo-manual.md`](SPEC-15-bloqueo-manual.md) | ✅ Aprobada |
+| 16 | Gestión de atributos de usuarios | Eva Lucía | 5 | [`SPEC-16-atributos.md`](SPEC-16-atributos.md) | ✅ Aprobada |
+| 17 | Claves públicas, tokens de servicio e introspección | Sergio | 1 · 4 | [`SPEC-17-tokens-servicio.md`](SPEC-17-tokens-servicio.md) | ✅ Aprobada · contrato publicado |
+| 18 | Consulta de identidad para los demás módulos | Sergio | 1 · 4 | [`SPEC-18-consulta-identidad.md`](SPEC-18-consulta-identidad.md) | ✅ Aprobada · contrato publicado |
 
 Además, [`SPEC-17-18-api-identidad.plan.md`](SPEC-17-18-api-identidad.plan.md) es el **plan de
 implementación** de SPEC-17 y SPEC-18, no una spec: por eso no lleva número propio.
@@ -255,7 +255,7 @@ Lo que hoy sabemos que falta. Se cierra o se convierte en decisión escrita.
 | ~~**Q10** · ¿Puede el titular darse de baja a sí mismo?~~ ✅ Decidido el 2-oct: **no en este ciclo**; lo pide a soporte y la hace un `ADMIN_SISTEMA` | Sergio | — |
 | Los `client_id` y `client_secret` de los seis módulos no están creados | Christian | Hito 4 |
 | El catálogo de eventos no está acordado con los seis equipos | Sergio | Hito 2 |
-| Cada responsable revisa su spec dividida, confirma los *valores propuestos* y la aprueba con su propio commit | Los siete | Hito 2 |
+| ~~Cada responsable revisa su spec dividida, confirma los *valores propuestos* y la aprueba~~ ✅ Las 18 aprobadas el 2-oct | Los siete | — |
 | SPEC-05 a SPEC-08 no rotulan sus casos borde | Jose Luis, Juan José | Hito 2 |
 | SPEC-10 no tiene pantalla en los wireframes | Valery, Luis David | Hito 2 |
 | Los artboards de Stitch siguen con la numeración antigua | Valery | Al pasarlos a Figma |

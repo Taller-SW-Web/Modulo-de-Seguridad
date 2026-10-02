@@ -4,8 +4,8 @@
 |---|---|
 | **Responsable** | Christian Gabriel Arancivia Salas |
 | **Hito objetivo** | Hito 3 (Sem. 8) |
-| **Estado** | Borrador |
-| **Aprobada por** | Product Owner — pendiente de aprobación |
+| **Estado** | ✅ Aprobada |
+| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen.** Sale de dividir la antigua SPEC-01 «Registro y gestión de usuarios» el 20 de septiembre, por indicación del profesor: una spec por función. Pasa a Christian porque es el backend del panel de administración que ya tenía asignado. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
 
