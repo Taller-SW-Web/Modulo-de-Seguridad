@@ -4,8 +4,8 @@
 |---|---|
 | **Responsable** | Christian Gabriel Arancivia Salas |
 | **Hito objetivo** | Hito 3 (Sem. 8) |
-| **Estado** | Borrador |
-| **Aprobada por** | Product Owner — pendiente de aprobación |
+| **Estado** | ✅ Aprobada |
+| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen.** Sale de dividir la antigua SPEC-06 «Auditoría y trazabilidad» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva el registro —catálogo, formato, inmutabilidad y retención—; la consulta y la exportación pasaron a SPEC-13, que ya tenía un hito distinto (Hito 5). La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
 

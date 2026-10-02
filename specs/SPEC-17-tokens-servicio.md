@@ -4,8 +4,8 @@
 |---|---|
 | **Responsable** | Sergio Alejandro Osorio Montenegro (Product Owner) |
 | **Hito objetivo** | Hito 1 (Sem. 4) — contrato · Hito 4 (Sem. 11) — implementación |
-| **Estado** | Borrador |
-| **Aprobada por** | Product Owner — pendiente de aprobación |
+| **Estado** | ✅ Aprobada |
+| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen.** Sale de dividir la antigua SPEC-09 «API de identidad para los demás módulos» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva la verificación de tokens —JWKS, token de servicio, introspección— y las reglas comunes de acceso y error; la consulta de datos de usuario pasó a SPEC-18. El contrato publicado no cambió: solo se repartieron sus requisitos. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
 

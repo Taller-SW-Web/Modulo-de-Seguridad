@@ -4,8 +4,8 @@
 |---|---|
 | **Responsable** | Eva Lucía Moreno Zevallos |
 | **Hito objetivo** | Hito 4 (Sem. 11) |
-| **Estado** | Borrador |
-| **Aprobada por** | Product Owner — pendiente de aprobación |
+| **Estado** | ✅ Aprobada |
+| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen.** Es la antigua SPEC-05 «Gestión de roles y permisos», sin cambios de contenido: solo cambió de número al dividir el set de 9 a 18 specs (20 de septiembre). Ver [`trazabilidad.md`](trazabilidad.md) §1.
 
