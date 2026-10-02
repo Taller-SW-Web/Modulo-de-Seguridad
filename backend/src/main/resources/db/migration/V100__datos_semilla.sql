@@ -25,15 +25,25 @@ INSERT INTO permiso (codigo, modulo, descripcion) VALUES
 ('rol.asignar', 'seguridad', 'Asignar y revocar roles'),
 ('auditoria.ver', 'seguridad', 'Consultar y exportar la auditoría'),
 ('cuenta.bloquear', 'seguridad', 'Bloquear y desbloquear cuentas'),
-('atributos.editar', 'seguridad', 'Editar los atributos de cualquier cuenta')
+('atributos.editar', 'seguridad', 'Editar los atributos de cualquier cuenta'),
+('cliente.registrar', 'seguridad', 'Registrar a un cliente en tienda (A6)'),
+('cliente.buscar', 'seguridad', 'Encontrar a un cliente por su documento (A7)')
 ON CONFLICT (codigo) DO NOTHING;
 
 -- ============================================================
--- 3. ROL_PERMISO - Todos los 8 permisos solo a ADMIN_SISTEMA
+-- 3. ROL_PERMISO - Los 8 de administración a ADMIN_SISTEMA; los 2 de tienda a VENDEDOR
 -- ============================================================
 INSERT INTO rol_permiso (rol_codigo, permiso_codigo)
-SELECT 'ADMIN_SISTEMA', codigo FROM permiso
+SELECT 'ADMIN_SISTEMA', codigo FROM permiso WHERE codigo NOT LIKE 'cliente.%'
 ON CONFLICT (rol_codigo, permiso_codigo) DO NOTHING;
+
+INSERT INTO rol_permiso (rol_codigo, permiso_codigo) VALUES
+('VENDEDOR', 'cliente.registrar'),
+('VENDEDOR', 'cliente.buscar')
+ON CONFLICT (rol_codigo, permiso_codigo) DO NOTHING;
+
+-- Los valores cifrado_* y semilla-hmac-* son marcadores: en ejecución los calcula la
+-- aplicación con sus claves. Sirven para probar el esquema, no para buscar.
 
 -- ============================================================
 -- 4. USUARIOS DE PRUEBA (kit-integracion.md §6)
@@ -59,13 +69,14 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Perfil cliente para el cliente activo
-INSERT INTO perfil_cliente (usuario_id, tipo_documento, documento_cifrado, fecha_nacimiento, documento_key_id)
+INSERT INTO perfil_cliente (usuario_id, tipo_documento, documento_cifrado, fecha_nacimiento, documento_key_id, documento_hmac)
 VALUES (
     '11111111-1111-1111-1111-111111111111',
     'DNI',
     'cifrado_12345678',
     '1990-05-15',
-    'key-001'
+    'key-001',
+    'semilla-hmac-dni-12345678'
 )
 ON CONFLICT (usuario_id) DO NOTHING;
 
@@ -94,15 +105,7 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Perfil cliente para el vendedor (también tiene documento)
-INSERT INTO perfil_cliente (usuario_id, tipo_documento, documento_cifrado, fecha_nacimiento, documento_key_id)
-VALUES (
-    '22222222-2222-2222-2222-222222222222',
-    'DNI',
-    'cifrado_87654321',
-    '1985-10-20',
-    'key-001'
-)
-ON CONFLICT (usuario_id) DO NOTHING;
+-- El vendedor no lleva perfil de cliente: los atributos son excluyentes (RF-16.3).
 
 -- Perfil vendedor
 INSERT INTO perfil_vendedor (usuario_id, codigo_vendedor, tienda, fecha_ingreso)
@@ -139,13 +142,14 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Perfil cliente para usuario desactivado
-INSERT INTO perfil_cliente (usuario_id, tipo_documento, documento_cifrado, fecha_nacimiento, documento_key_id)
+INSERT INTO perfil_cliente (usuario_id, tipo_documento, documento_cifrado, fecha_nacimiento, documento_key_id, documento_hmac)
 VALUES (
     '33333333-3333-3333-3333-333333333333',
     'DNI',
     'cifrado_11112222',
     '1992-03-10',
-    'key-001'
+    'key-001',
+    'semilla-hmac-dni-11112222'
 )
 ON CONFLICT (usuario_id) DO NOTHING;
 

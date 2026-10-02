@@ -3,6 +3,7 @@
 -- desde la auditoría del 29-sep este .sql es la FUENTE DE VERDAD de las migraciones Flyway
 -- y schema.dbml es su diagrama.
 -- 22 tablas, 18 relaciones, 1 vista, 11 enums, restricciones CHECK, índices y notas de diseño.
+-- Actualizado el 2-oct con los acuerdos A6 (activación por enlace) y A7 (búsqueda por documento).
 --
 -- NOTAS DE DISEÑO (seguridad / integridad, ver specs):
 --  * BLOQUEADO es estado EFECTIVO, calculado desde "bloqueo" (RF-14.7). "usuario.estado"
@@ -90,7 +91,8 @@ CREATE TYPE "proposito_token" AS ENUM (
 	'VERIFICAR_CORREO',
 	'CAMBIO_CORREO',
 	'RECUPERACION',
-	'DESBLOQUEO'
+	'DESBLOQUEO',
+	'ACTIVACION'
 );
 
 CREATE TYPE "estado_cuenta_efectivo" AS ENUM (
@@ -102,7 +104,8 @@ CREATE TYPE "estado_cuenta_efectivo" AS ENUM (
 
 CREATE TYPE "tipo_limite" AS ENUM (
 	'REENVIO_VERIFICACION',
-	'RECUPERACION'
+	'RECUPERACION',
+	'BUSQUEDA_DOCUMENTO'
 );
 
 CREATE TABLE IF NOT EXISTS "usuario" (
@@ -133,7 +136,7 @@ COMMENT ON TABLE "usuario" IS 'Entidad central (dueña SPEC-01). Un solo dueño 
 COMMENT ON COLUMN "usuario"."correo" IS 'Se guarda normalizado a minúsculas (ck_usuario_correo_minusculas).';
 COMMENT ON COLUMN "usuario"."celular" IS '+51 + 9 dígitos, igual que el pattern del contrato';
 COMMENT ON COLUMN "usuario"."estado" IS 'Ciclo de vida persistido (sin BLOQUEADO). BLOQUEADO es estado efectivo: ver la vista usuario_estado_efectivo.';
-COMMENT ON COLUMN "usuario"."acepta_terminos" IS 'true en el registro público (SPEC-01). Las cuentas que da de alta un administrador (SPEC-03) no pasan por el consentimiento.';
+COMMENT ON COLUMN "usuario"."acepta_terminos" IS 'true en el registro público (SPEC-01) y al activar una cuenta creada por otro (SPEC-03). Una cuenta sin activar en 30 días se elimina (RF-03.9).';
 COMMENT ON COLUMN "usuario"."intentos_fallidos_consecutivos" IS 'Fuente de verdad del contador (SPEC-14); se actualiza en la misma transacción que intento_login.';
 COMMENT ON COLUMN "usuario"."bloqueos_seguidos" IS 'Escalera de bloqueos 1/2/4/null; solo vuelve a cero con login correcto (RF-14.4).';
 
@@ -167,16 +170,20 @@ CREATE TABLE IF NOT EXISTS "perfil_cliente" (
 	"documento_cifrado" text,
 	"fecha_nacimiento" date,
 	"documento_key_id" varchar(50),
+	"documento_hmac" varchar(64),
 	PRIMARY KEY("usuario_id"),
-	-- Un documento sin tipo, o cifrado sin la clave con que se cifró, no se puede leer.
+	-- Un documento sin tipo, cifrado sin la clave con que se cifró o sin su HMAC no se puede leer ni buscar.
 	CONSTRAINT "ck_perfil_cliente_documento" CHECK (
-		("tipo_documento" IS NULL AND "documento_cifrado" IS NULL AND "documento_key_id" IS NULL)
-		OR ("tipo_documento" IS NOT NULL AND "documento_cifrado" IS NOT NULL AND "documento_key_id" IS NOT NULL)
+		("tipo_documento" IS NULL AND "documento_cifrado" IS NULL AND "documento_key_id" IS NULL AND "documento_hmac" IS NULL)
+		OR ("tipo_documento" IS NOT NULL AND "documento_cifrado" IS NOT NULL AND "documento_key_id" IS NOT NULL AND "documento_hmac" IS NOT NULL)
 	)
 );
 COMMENT ON TABLE "perfil_cliente" IS 'Atributos de CLIENTE (SPEC-16). Documento cifrado AES con clave fuera de BD.';
 COMMENT ON COLUMN "perfil_cliente"."documento_cifrado" IS 'AES; se expone enmascarado *****234';
 COMMENT ON COLUMN "perfil_cliente"."documento_key_id" IS 'key_id de la clave AES, para rotación sin re-cifrar.';
+COMMENT ON COLUMN "perfil_cliente"."documento_hmac" IS 'HMAC-SHA256 en hex de tipo y número normalizados, con clave de servidor: permite buscar sin descifrar (ADR-007, RF-03.8).';
+-- Un documento pertenece a una sola cuenta, y es lo que usa la búsqueda en tienda (RF-03.7).
+CREATE UNIQUE INDEX "uq_perfil_cliente_documento_hmac" ON "perfil_cliente" ("documento_hmac");
 
 CREATE TABLE IF NOT EXISTS "perfil_vendedor" (
 	"usuario_id" uuid NOT NULL,
@@ -310,7 +317,7 @@ CREATE TABLE IF NOT EXISTS "token_un_uso" (
 	CONSTRAINT "ck_token_un_uso_destino" CHECK (("proposito" = 'CAMBIO_CORREO') = ("destino" IS NOT NULL)),
 	CONSTRAINT "ck_token_un_uso_expiracion" CHECK ("expiracion" > "creado_en")
 );
-COMMENT ON TABLE "token_un_uso" IS 'Tokens de un solo uso: verificación (24h), recuperación (30m), desbloqueo (30m) (SPEC-02/08/14).';
+COMMENT ON TABLE "token_un_uso" IS 'Tokens de un solo uso: verificación (24h), recuperación (30m), desbloqueo (30m), activación de una cuenta creada por otro (72h) (SPEC-02/03/08/14).';
 COMMENT ON COLUMN "token_un_uso"."destino" IS 'nuevo correo en CAMBIO_CORREO';
 CREATE UNIQUE INDEX "uq_token_un_uso_hash" ON "token_un_uso" ("hash_token");
 -- Invalidar los anteriores del mismo propósito al emitir uno nuevo (RF-02.4, RF-08.3, RF-14.11).
@@ -327,8 +334,8 @@ CREATE TABLE IF NOT EXISTS "solicitud_limitada" (
 	"creado_en" timestamptz NOT NULL DEFAULT now(),
 	PRIMARY KEY("id")
 );
-COMMENT ON TABLE "solicitud_limitada" IS 'Registro de solicitudes limitadas por correo, exista o no la cuenta (RF-02.4, RF-08.8). Solo guarda el HMAC del correo.';
-COMMENT ON COLUMN "solicitud_limitada"."clave_hash" IS 'HMAC-SHA256 en hex del correo en minúsculas, con clave de servidor';
+COMMENT ON TABLE "solicitud_limitada" IS 'Solicitudes limitadas: por correo, exista o no la cuenta (RF-02.4, RF-08.8), y búsquedas por documento por vendedor (RF-03.7). Solo guarda HMAC, nunca el dato.';
+COMMENT ON COLUMN "solicitud_limitada"."clave_hash" IS 'HMAC-SHA256 en hex, con clave de servidor, del correo en minúsculas o del id del vendedor';
 CREATE INDEX "idx_solicitud_limitada" ON "solicitud_limitada" ("tipo", "clave_hash", "creado_en");
 
 CREATE TABLE IF NOT EXISTS "rol" (

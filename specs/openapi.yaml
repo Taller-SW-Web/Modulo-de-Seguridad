@@ -839,6 +839,9 @@ paths:
 
         Con `canalOrigen` el enlace del correo lleva a la pantalla del canal que
         originó el registro; la URL de cada canal la resolvemos nosotros.
+        `CHATBOT` tiene su propia pantalla; `WEB`, `MARKETPLACE` y `RETAIL` usan
+        la nuestra, y al terminar `MARKETPLACE` y `RETAIL` redirigen al inicio
+        de sesión de Marketplace (acuerdo A1, revisado el 2 de octubre).
 
         **El mensaje de error no permite deducir si el correo ya existe.** Un
         correo repetido responde `409` con un texto que no confirma ni niega la
@@ -1614,6 +1617,55 @@ paths:
                     status: 410
                     code: ENLACE_YA_USADO
 
+  /auth/activar-cuenta:
+    post:
+      tags: [Autenticación]
+      operationId: activarCuenta
+      summary: Activa una cuenta creada por otra persona
+      description: |
+        Definido por SPEC-03 (acuerdo A6). **Público.** Lo usa quien recibió el
+        enlace de activación: una cuenta de personal creada por un
+        `ADMIN_SISTEMA` o un cliente registrado en tienda. Define la contraseña,
+        acepta los términos y la cuenta pasa a `ACTIVO` con el correo
+        verificado; entonces se publica `usuario.creado`.
+
+        El enlace es de un solo uso y vale **72 horas**. Si venció, un
+        administrador o el vendedor puede reenviarlo con un alta nueva sobre la
+        misma cuenta, o el titular puede usar la recuperación de contraseña.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivarCuentaRequest'
+      responses:
+        '204':
+          description: Cuenta activa
+        '400':
+          $ref: '#/components/responses/Validacion'
+        '410':
+          description: El enlace venció o ya se usó
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                vencido:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/enlace-expirado"
+                    title: El enlace venció
+                    status: 410
+                    code: ENLACE_EXPIRADO
+                usado:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/enlace-ya-usado"
+                    title: El enlace ya se usó
+                    status: 410
+                    code: ENLACE_YA_USADO
+        '422':
+          $ref: '#/components/responses/PoliticaIncumplida'
+
   /auth/verificar-correo/reenviar:
     post:
       tags: [Autenticación]
@@ -1693,12 +1745,18 @@ paths:
     post:
       tags: [Administración]
       operationId: crearUsuario
-      summary: Da de alta a un vendedor o a un administrador
+      summary: Da de alta una cuenta de personal (vendedor, gestión o perfil de otro módulo)
       description: |
-        Definido por SPEC-03. **Solo `ADMIN_SISTEMA`.** Crea `VENDEDOR` o
-        cualquiera de los cuatro roles de gestión. Los clientes no se crean
-        aquí: se registran ellos mismos en `/auth/registro`. La cuenta nace
-        `ACTIVO`, sin verificación de correo, y se publica `usuario.creado`.
+        Definido por SPEC-03. **Solo `ADMIN_SISTEMA`** (permiso `usuario.crear`).
+        Crea una cuenta con rol `VENDEDOR`, con uno de los cuatro de gestión, o
+        **sin rol** para un perfil que vive en otro módulo, como el repartidor de
+        Despacho (acuerdos A5 y A6). Los clientes no se crean aquí.
+
+        **El administrador no define la contraseña** (acuerdo A6): la cuenta
+        nace `PENDIENTE_VERIFICACION` y se envía al correo un enlace de
+        activación de un solo uso, válido **72 horas**. La persona define su
+        contraseña y acepta los términos en `POST /auth/activar-cuenta`; solo
+        entonces pasa a `ACTIVO` y se publica `usuario.creado`.
       requestBody:
         required: true
         content:
@@ -1707,7 +1765,7 @@ paths:
               $ref: '#/components/schemas/CrearUsuarioRequest'
       responses:
         '201':
-          description: Usuario creado
+          description: Cuenta creada en `PENDIENTE_VERIFICACION`; enlace de activación enviado
           content:
             application/json:
               schema:
@@ -1729,8 +1787,119 @@ paths:
                     title: No se pudo usar ese correo
                     status: 409
                     code: CORREO_NO_DISPONIBLE
-        '422':
-          $ref: '#/components/responses/PoliticaIncumplida'
+
+  /usuarios/clientes:
+    post:
+      tags: [Administración]
+      operationId: registrarClienteAsistido
+      summary: El vendedor registra a un cliente en tienda (registro asistido)
+      description: |
+        Definido por SPEC-03 (acuerdo A6). Exige un **token de usuario** con el
+        permiso `cliente.registrar`, que tiene `VENDEDOR`; un token de servicio
+        recibe `403`. La cuenta nace `PENDIENTE_VERIFICACION` con rol `CLIENTE` y
+        `canalOrigen: RETAIL`, y se envía al correo un enlace de activación
+        válido **72 horas**: el cliente define ahí su contraseña y acepta los
+        términos. Se devuelve el `id` al momento, así que la venta no espera a la
+        activación.
+
+        Si la cuenta no se activa en **30 días**, se elimina con sus datos: se
+        tomaron sin consentimiento escrito (Ley N.º 29733).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroAsistidoRequest'
+      responses:
+        '201':
+          description: Cuenta creada; enlace de activación enviado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, estado]
+                properties:
+                  id: { type: string, format: uuid }
+                  estado: { type: string, enum: [PENDIENTE_VERIFICACION] }
+        '400':
+          $ref: '#/components/responses/Validacion'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '409':
+          description: El correo o el documento ya pertenecen a una cuenta
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                correoNoDisponible:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/correo-no-disponible"
+                    title: No se pudo usar ese correo
+                    status: 409
+                    code: CORREO_NO_DISPONIBLE
+                documentoNoDisponible:
+                  summary: El cliente ya existe; búsquelo por documento
+                  value:
+                    type: "https://g7.unmsm.pe/errores/documento-no-disponible"
+                    title: No se pudo usar ese documento
+                    status: 409
+                    code: DOCUMENTO_NO_DISPONIBLE
+
+  /usuarios/busqueda-documento:
+    post:
+      tags: [Administración]
+      operationId: buscarClientePorDocumento
+      summary: El vendedor encuentra a un cliente por su documento
+      description: |
+        Definido por SPEC-03 (acuerdo A7, ADR-007). Exige un **token de
+        usuario** con el permiso `cliente.buscar`, que tiene `VENDEDOR`; un
+        token de servicio recibe `403`. Va por `POST` para que el número no
+        quede en URLs ni en registros.
+
+        - Solo coincidencia **exacta** de tipo y número; nunca parcial.
+        - Solo cuentas con rol `CLIENTE` en `ACTIVO` o `PENDIENTE_VERIFICACION`;
+          cualquier otra responde `404`, igual que una inexistente.
+        - Como máximo **60 búsquedas por hora y vendedor**.
+        - Cada búsqueda queda auditada con quién buscó y el resultado.
+
+        No hay búsqueda por correo ni por celular (ADR-006).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusquedaDocumentoRequest'
+      responses:
+        '200':
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClienteEncontrado'
+        '400':
+          $ref: '#/components/responses/Validacion'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/ScopeInsuficiente'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '429':
+          description: Más de 60 búsquedas en una hora por el mismo vendedor
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                demasiadas:
+                  value:
+                    type: "https://g7.unmsm.pe/errores/demasiadas-solicitudes"
+                    title: Demasiadas solicitudes
+                    status: 429
+                    code: DEMASIADAS_SOLICITUDES
 
   # ---------------------------------------------------------------------------
   # ROLES - SPEC-11
@@ -2532,10 +2701,10 @@ components:
       required: [id, nombreCompleto, correo, estado, roles]
       properties:
         id: { type: string, format: uuid }
-        nombres: { type: string }
-        apellidos: { type: string }
+        nombres: { type: string, maxLength: 100 }
+        apellidos: { type: string, maxLength: 100 }
         nombreCompleto: { type: string }
-        correo: { type: string, format: email }
+        correo: { type: string, format: email, maxLength: 254 }
         celular: { type: string }
         estado: { $ref: '#/components/schemas/EstadoCuenta' }
         correoVerificado: { type: boolean }
@@ -2597,12 +2766,12 @@ components:
       required: [id, departamento, provincia, distrito, direccion]
       properties:
         id: { type: string, format: uuid }
-        etiqueta: { type: string, examples: [Casa] }
-        departamento: { type: string }
-        provincia: { type: string }
-        distrito: { type: string }
-        direccion: { type: string }
-        referencia: { type: string }
+        etiqueta: { type: string, maxLength: 50, examples: [Casa] }
+        departamento: { type: string, maxLength: 100 }
+        provincia: { type: string, maxLength: 100 }
+        distrito: { type: string, maxLength: 100 }
+        direccion: { type: string, maxLength: 255 }
+        referencia: { type: string, maxLength: 255 }
         esPredeterminada: { type: boolean }
 
     Rol:
@@ -2629,7 +2798,7 @@ components:
       type: object
       required: [correo, contrasena, nombres, apellidos, celular, aceptaTerminos]
       properties:
-        correo: { type: string, format: email }
+        correo: { type: string, format: email, maxLength: 254 }
         contrasena:
           type: string
           format: password
@@ -2640,8 +2809,8 @@ components:
             servicio, **longitud incluida**: si no se cumple responde
             `422 POLITICA_INCUMPLIDA` con las reglas falladas, nunca `400`. Por
             eso el esquema no declara `minLength`.
-        nombres: { type: string }
-        apellidos: { type: string }
+        nombres: { type: string, maxLength: 100 }
+        apellidos: { type: string, maxLength: 100 }
         celular:
           type: string
           pattern: '^\+51[0-9]{9}$'
@@ -2744,17 +2913,80 @@ components:
 
     CrearUsuarioRequest:
       type: object
-      description: Alta de un vendedor o administrador por `ADMIN_SISTEMA`.
-      required: [correo, contrasena, rol]
+      description: |
+        Alta de una cuenta de personal por `ADMIN_SISTEMA`. Sin contraseña: la
+        define la persona con el enlace de activación (acuerdo A6).
+      required: [correo, nombres, apellidos]
       properties:
-        correo: { type: string, format: email }
+        correo: { type: string, format: email, maxLength: 254 }
+        nombres: { type: string, minLength: 1, maxLength: 100 }
+        apellidos: { type: string, minLength: 1, maxLength: 100 }
+        rol:
+          $ref: '#/components/schemas/CodigoRol'
+          description: |
+            `VENDEDOR` o uno de gestión. Se omite para un perfil que vive en otro
+            módulo (repartidor de Despacho, A5): la cuenta tendrá `roles: []`.
+            `CLIENTE` no se acepta por esta vía.
+
+    RegistroAsistidoRequest:
+      type: object
+      description: |
+        Datos que el vendedor toma en tienda (acuerdo A6). Sin contraseña ni
+        términos: los define el cliente al activar su cuenta.
+      required: [correo, nombres, apellidos]
+      properties:
+        correo: { type: string, format: email, maxLength: 254 }
+        nombres: { type: string, minLength: 1, maxLength: 100 }
+        apellidos: { type: string, minLength: 1, maxLength: 100 }
+        celular:
+          type: string
+          pattern: '^\+51[0-9]{9}$'
+          examples: ["+51987654321"]
+        tipoDocumento: { type: string, enum: [DNI, CE, PASAPORTE] }
+        numeroDocumento:
+          type: string
+          maxLength: 20
+          writeOnly: true
+          description: Obligatorio si llega `tipoDocumento`. Permite encontrarlo después por documento (A7).
+
+    ActivarCuentaRequest:
+      type: object
+      required: [token, contrasena, aceptaTerminos]
+      properties:
+        token:
+          type: string
+          description: El token del enlace de activación recibido por correo.
         contrasena:
           type: string
           format: password
-          description: Debe cumplir la política de SPEC-07.
-        rol: { $ref: '#/components/schemas/CodigoRol' }
-        nombres: { type: string }
-        apellidos: { type: string }
+          description: Debe cumplir la política de SPEC-07; si no, `422 POLITICA_INCUMPLIDA`.
+        aceptaTerminos:
+          type: boolean
+          enum: [true]
+          description: Consentimiento expreso (Ley N.º 29733). Se guardan la fecha y la versión aceptada.
+
+    BusquedaDocumentoRequest:
+      type: object
+      required: [tipoDocumento, numeroDocumento]
+      properties:
+        tipoDocumento:
+          type: string
+          enum: [DNI, CE, PASAPORTE]
+          description: "Sin `RUC`: los datos de una empresa para facturar son de Ventas (A7)."
+        numeroDocumento: { type: string, minLength: 1, maxLength: 20, examples: ["45781234"] }
+
+    ClienteEncontrado:
+      type: object
+      description: Lo mínimo para atender al cliente en tienda. Nunca el documento en claro ni el correo.
+      required: [id, nombreCompleto, documentoEnmascarado, estado]
+      properties:
+        id: { type: string, format: uuid }
+        nombreCompleto: { type: string, examples: ["María Quispe Rojas"] }
+        documentoEnmascarado: { type: string, examples: ["*****234"] }
+        estado:
+          type: string
+          enum: [ACTIVO, PENDIENTE_VERIFICACION]
+          description: "`PENDIENTE_VERIFICACION` si se registró en tienda y todavía no activó su cuenta."
 
     AtributosUsuario:
       type: object
@@ -2764,8 +2996,8 @@ components:
         `422 ATRIBUTO_NO_APLICABLE`. El número de documento se cifra con AES y
         se devuelve enmascarado salvo con el scope `usuarios:leer:documento`.
       properties:
-        nombres: { type: string }
-        apellidos: { type: string }
+        nombres: { type: string, maxLength: 100 }
+        apellidos: { type: string, maxLength: 100 }
         tipoDocumento: { type: string, enum: [DNI, CE, PASAPORTE] }
         numeroDocumento:
           type: string
@@ -2782,10 +3014,14 @@ components:
           examples: ["+51987654321"]
         codigoVendedor:
           type: string
-          description: Solo para cuentas con rol `VENDEDOR`.
+          maxLength: 50
+          description: Solo para cuentas con rol `VENDEDOR`. Formato propuesto por Retail, por confirmar.
+          examples: ["VEND-1042"]
         tienda:
           type: string
-          description: Solo para cuentas con rol `VENDEDOR`.
+          maxLength: 100
+          description: Solo para cuentas con rol `VENDEDOR`. Código de la tienda en Retail, no una referencia a otra base.
+          examples: ["TIENDA-MIRAFLORES"]
         fechaIngreso:
           type: string
           format: date

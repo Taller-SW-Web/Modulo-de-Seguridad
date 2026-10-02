@@ -87,7 +87,8 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 | `SCOPE_INSUFICIENTE` ✅ | 403 | 03, 04, 11, 13, 15, 16, 17, 18 | El token es válido pero le falta el scope (a un módulo) o el permiso (a una persona) necesario. **No se revela cuál haría falta**. El nombre dice *scope* por razones históricas: ya está publicado y no se renombra |
 | `NO_ENCONTRADO` ✅ | 404 | 03, 04, 11, 15, 16, 18 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
 | `CORREO_NO_DISPONIBLE` ✅ | 409 | 01, 03 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
-| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, o más de 3 recuperaciones en una hora para el mismo correo |
+| `DOCUMENTO_NO_DISPONIBLE` | 409 | 03 | En el registro asistido, el documento ya pertenece a una cuenta: el vendedor debe buscarlo (A6, A7) |
+| `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 03, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, más de 3 recuperaciones en una hora para el mismo correo, o más de 60 búsquedas por documento en una hora por vendedor |
 | `NO_DISPONIBLE` ✅ | 503 | Todas | Dependencia caída: base de datos, cola de correo o auditoría crítica |
 
 ---
