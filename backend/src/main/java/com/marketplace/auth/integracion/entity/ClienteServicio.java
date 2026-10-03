@@ -1,13 +1,66 @@
 package com.marketplace.auth.integracion.entity;
 
-/**
- * Placeholder para la entidad ClienteServicio.
- * Responsable: Sergio Osorio Montenegro (SPEC-17, SPEC-18).
- * Migración: V4.
- *
- * <p>Esta clase es un marcador de posición para completar el esqueleto del proyecto.
- * La entidad final se implementará en la migración V4.</p>
- */
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "cliente_servicio")
 public class ClienteServicio {
-    // TODO: Implementar en V4 (Sergio, con Christian)
+
+    @Id
+    @Column(name = "client_id")
+    private String clientId;
+
+    @Column(name = "client_secret_hash")
+    private String clientSecretHash;
+
+    @Column(name = "nombre")
+    private String nombre;
+
+    @Column(name = "activo")
+    private Boolean activo;
+
+    public ClienteServicio() {
+    }
+
+    public ClienteServicio(String clientId, String clientSecretHash, String nombre, Boolean activo) {
+        this.clientId = clientId;
+        this.clientSecretHash = clientSecretHash;
+        this.nombre = nombre;
+        this.activo = activo;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecretHash() {
+        return clientSecretHash;
+    }
+
+    public void setClientSecretHash(String clientSecretHash) {
+        this.clientSecretHash = clientSecretHash;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
 }

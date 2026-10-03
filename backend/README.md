@@ -77,6 +77,16 @@ mvn test
 | `DB_NAME` | auth_service | Nombre de la base de datos |
 | `DB_USER` | auth_user | Usuario de PostgreSQL |
 | `DB_PASSWORD` | auth_password | Contraseña de PostgreSQL |
+| `RABBITMQ_HOST` | localhost | Host de RabbitMQ |
+| `RABBITMQ_PORT` | 5672 | Puerto AMQP de RabbitMQ |
+| `RABBITMQ_USER` | auth_rabbit | Usuario de RabbitMQ |
+| `RABBITMQ_PASSWORD` | auth_rabbit_password | Contraseña de RabbitMQ |
+| `RABBITMQ_MANAGEMENT_PORT` | 15672 | Puerto de la UI de administración de RabbitMQ |
+| `PGADMIN_EMAIL` | admin@example.com | Email de login de pgAdmin |
+| `PGADMIN_PASSWORD` | admin | Contraseña de pgAdmin |
+| `PGADMIN_PORT` | 5050 | Puerto de pgAdmin |
+| `BACKEND_PORT` | 8080 | Puerto del backend |
+| `SPRING_PROFILES_ACTIVE` | docker | Perfil de Spring Boot activo |
 
 ## Documentación
 
