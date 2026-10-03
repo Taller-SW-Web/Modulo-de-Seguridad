@@ -1244,8 +1244,8 @@ Los modales se reservan para acciones que requieren atención antes de continuar
 Los skeletons representan la estructura que aparecerá cuando termine la carga. Deben aproximarse al tamaño del contenido final para reducir movimientos inesperados y mantener visible el contexto de la pantalla.
 
 * Skeletons del listado: Bloques grises animados que imitan la forma de las filas y columnas de la tabla de usuarios mientras se cargan los datos.
-* Skeletons del listado: Bloques grises animados que imitan la forma de las filas y columnas de la tabla de usuarios mientras se cargan los datos.
-
+* Criterios de carga: Usar Skeleton para carga inicial de datos/pantallas completas; Spinner dentro del botón para acciones de guardado; y Mensaje de progreso si la carga supera los 8 segundos.
+  
 6. # **Reglas de trabajo y gobernanza**
 
    1. ## **Biblioteca central**
