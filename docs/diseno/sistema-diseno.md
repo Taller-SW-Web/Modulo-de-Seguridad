@@ -3,10 +3,10 @@
 | Campo | Valor |
 |---|---|
 | **Autor** | Luis David Morales Brenis |
-| **Responsable** | Valery Cristin Gutierrez Bendezu — sistema de diseño y biblioteca en Figma ([`responsabilidades.md`](../responsabilidades.md)) |
-| **Estado** | Biblioteca en Figma publicada, mockups exportados y propuestas de UX completadas. |
-| **Figma** | [Ver Biblioteca en Figma](https://www.figma.com/design/J95xYLdhSO9rzyO1i5awnn/Inka-Athletics-%E2%80%93-Design-System?node-id=3-5&t=5b3CaYqdA2Xzb9m7-1)) |
-| **Se implementa en** | [`specs/componentes-react/`](../../specs/componentes-react/) |
+| Responsable | Valery Cristin Gutierrez Bendezu — sistema de diseño y biblioteca en Figma (responsabilidades.md) |
+| Estado | Biblioteca en Figma publicada, mockups exportados y propuestas de UX completadas. |
+| Figma | https://www.figma.com/design/J95xYLdhSO9rzyO1i5awnn/Inka-Athletics-%E2%80%93-Design-System?node-id=45-3 |
+| Se implementa en | specs/componentes-react/ |
 
 ## *Referencia práctica para el proyecto del curso*
 
@@ -40,8 +40,7 @@ La guía cubre identidad, foundations, redacción de interfaz, componentes reuti
 * Los elementos responsive deben mostrar cómo cambian entre web y móvil.  
 * Las decisiones que afecten a varios módulos se documentan en la biblioteca central.  
 * Los componentes maestros no se separan ni modifican dentro de los archivos de cada módulo.
-
-* *\[Escribe aquí la convención definitiva de nombres. Ejemplo de estructura: categoría / componente / variante.\]*
+* Convención de nombres: Categoría / Componente / Variante / Estado en Figma (ej. Atoms / Button / Primary / Default) correspondiente a <Button variant="filled" color="orange"> en React.
 
   4. ## **Recursos del proyecto**
 
@@ -466,7 +465,7 @@ Reglas:
 
 Se aprueba el uso de una cuadrícula de puntos o líneas muy tenues en color/text/disabled como recurso decorativo de fondo en el login o el encabezado del panel. Este recurso es puramente decorativo y no debe usarse para comunicar estado, jerarquía o información: los estados siguen comunicándose con los colores semánticos definidos en 2.2.
 
-*\[Agrega aquí una captura o el enlace al componente de Figma que documente este patrón una vez esté migrado desde el archivo de prueba.\]*
+* Componente de motivo gráfico en Figma: https://www.figma.com/design/J95xYLdhSO9rzyO1i5awnn/Inka-Athletics-%E2%80%93-Design-System?node-id=45-3 (Cuadrícula de puntos tenues sobre fondo color/surface/cloud).
 
 3. # **Brand y UX Writing**
 
@@ -532,14 +531,13 @@ Debe evitar:
 
 5. ## **Alertas y confirmaciones**
 
-| Tipo | Ejemplo recomendado |
-| :---- | :---- |
-| Información | Te enviamos un código de verificación a tu correo. |
-| Alerta | Tu cuenta se bloqueará si hay más intentos fallidos. |
-| Éxito | Tu cuenta quedó verificada. |
-| Confirmación | ¿Quieres bloquear esta cuenta? |
-
-*\[Agrega ejemplos específicos de los flujos del proyecto cuando las pantallas y casos de uso estén definidos.\]*
+| Tipo | Ejemplo recomendado | Flujo del proyecto |
+| :--- | :--- | :--- |
+| **Información** | Te enviamos un código de verificación de 6 dígitos a tu correo electrónico. | Registro / Verificación de correo |
+| **Alerta** | Tu sesión expirará en 2 minutos por inactividad. Guarda tus cambios. | Sesión activa en el panel de administración |
+| **Éxito** | Tu contraseña se ha actualizado correctamente. Ya puedes iniciar sesión. | Recuperación / Cambio de contraseña |
+| **Error** | El código ingresado es incorrecto o ha expirado. Solicita uno nuevo. | Desafío de autenticación OTP |
+| **Confirmación** | ¿Estás seguro de que deseas bloquear la cuenta seleccionada? Esta acción suspenderá sus accesos inmediatamente. | Gestión de usuarios (Panel Admin) |
 
 4. # **Componentes reutilizables UI Kit**
 
@@ -585,7 +583,7 @@ Los colores semánticos de éxito, alerta, error e información continuarán uti
 
 Enlace a la configuración del tema del proyecto:
 
-\[PENDIENTE: Enlace directo al archivo **src/theme/theme.ts** en GitHub.\]
+Enlace directo al archivo theme.ts: https://github.com/Taller-SW-Web/Modulo-de-Seguridad/blob/main/src/theme/theme.ts
 
 2. ## **Reglas comunes de los componentes**
 
@@ -1224,29 +1222,29 @@ Agrupa las pantallas de inicio de sesión, registro, verificación de correo, OT
 
 En pantallas públicas (login, registro, OTP, recuperación) la navegación es mínima: icono del módulo y enlaces de apoyo («¿Ya tienes cuenta?», «¿Olvidaste tu contraseña?»). En el panel de administración y «Mi cuenta», la navegación es un menú lateral sobre cloud-subtle, con el elemento activo marcado y un indicador de foco signal.
 
-*\[Define el orden del menú del panel y su versión móvil (drawer).\]*
-
+* Orden del menú del panel (Desktop): 1. Usuarios, 2. Roles y Permisos, 3. Auditoría, 4. Mi Cuenta.
+* Versión móvil: Menú desplegable lateral (Drawer) activado mediante el icono IconMenu2.
+  
 3. ## **Panel de administración (listado, detalle y auditoría)**
 
 El panel organiza cuentas y auditoría con una tabla `DataTable` y filtros (estado, rol, correo, rango de fechas). Los filtros muestran qué está activo y permiten limpiarlos sin perder el contexto; el total de resultados se muestra junto a la tabla.
 
-*\[Define los filtros concretos del listado de usuarios y de auditoría, y el estado «sin resultados». La auditoría solo la consulta quien tiene el permiso correspondiente.\]*
+* Filtros de Usuarios: Estado (ACTIVO, PENDIENTE_VERIFICACION, BLOQUEADO, INACTIVO), Rol y Búsqueda por texto (Nombre/Correo).
+* Filtros de Auditoría: Rango de fechas, Tipo de evento e ID/Correo del usuario.
 
 4. ## **Modales**
 
 Los modales se reservan para acciones que requieren atención antes de continuar. Incluyen título, contenido, acción principal, alternativa o cancelación y un método claro para cerrarlos cuando la tarea lo permita.
 
-*\[Define tamaños, tipos de modal, reglas de cierre, comportamiento en móvil y casos del proyecto que realmente necesitan este patrón.\]*
-
-*\[Añade variantes para confirmación, información, error y contenido con formulario cuando correspondan.\]*
-
+* Reglas de modales: Tamaños sm (400 px), md (600 px), lg (800 px). Se cierran mediante botón X, tecla Esc o clic en el backdrop (deshabilitado si hay un proceso destructivo en curso). En móvil se adaptan a pantalla completa o estilo Bottom Sheet.
+* Variantes de modales: Confirmación (acciones destructivas/bloqueos con botón rojo), Información (avisos del sistema) y Error (fallos de red o validación grave).
+  
 5. ## **Pantallas de carga y skeletons**
 
 Los skeletons representan la estructura que aparecerá cuando termine la carga. Deben aproximarse al tamaño del contenido final para reducir movimientos inesperados y mantener visible el contexto de la pantalla.
 
-*\[Crea skeletons para el listado de usuarios, el detalle, la auditoría y las pantallas que cargan información de forma asíncrona.\]*
-
-*\[Define cuándo utilizar skeleton, spinner o mensaje de progreso y cómo se presentan los estados de carga prolongada y error.\]*
+* Skeletons del listado: Bloques grises animados que imitan la forma de las filas y columnas de la tabla de usuarios mientras se cargan los datos.
+* Skeletons del listado: Bloques grises animados que imitan la forma de las filas y columnas de la tabla de usuarios mientras se cargan los datos.
 
 6. # **Reglas de trabajo y gobernanza**
 
@@ -1259,13 +1257,13 @@ El archivo central se publica como Team Library de Figma. Los archivos de retail
 * Las instancias se actualizan desde la biblioteca cuando se publica una nueva versión.  
 * Los componentes específicos de un único módulo permanecen locales hasta demostrar que son reutilizables.
 
-*\[Agrega aquí el enlace definitivo a la Team Library y los nombres de los archivos correspondientes a cada módulo.\]*
+Team Library en Figma: https://www.figma.com/design/J95xYLdhSO9rzyO1i5awnn/Inka-Athletics-%E2%80%93-Design-System?node-id=45-3
 
 2. ## **Responsabilidad de edición**
 
 La biblioteca central tiene una sola persona responsable de editar, aprobar y publicar sus componentes. Los compañeros utilizan la biblioteca y envían propuestas; no modifican directamente los componentes maestros.
 
-*\[Escribe aquí el nombre del responsable de la biblioteca y el medio por el que recibirá propuestas o consultas.\]*
+Responsable de la biblioteca: Valery Cristin Gutierrez Bendezu (encargada de aprobaciones, edición y publicaciones en Figma).
 
 3. ## **Propuesta de un componente nuevo**
 
@@ -1293,7 +1291,7 @@ La biblioteca central tiene una sola persona responsable de editar, aprobar y pu
 * Registrar qué cambió y qué debe revisar cada módulo después de actualizar la biblioteca.  
 * Comunicar la publicación en el canal acordado.
 
-*\[Define aquí el formato de versión o registro de cambios que utilizará para las publicaciones de la biblioteca.\]*
+Formato de versionado: Registro de cambios bajo Semantic Versioning (vX.Y.Z) documentado en el archivo CHANGELOG.md de la raíz del repositorio.
 
 6. ## **Lista de revisión antes de publicar**
 
