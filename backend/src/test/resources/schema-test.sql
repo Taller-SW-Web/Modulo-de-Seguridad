@@ -134,3 +134,73 @@ SELECT
 	END AS "estado"
 FROM "usuario" u
 LEFT JOIN "bloqueo" b ON b."usuario_id" = u."id";
+
+CREATE TABLE IF NOT EXISTS "credencial" (
+	"id" uuid NOT NULL DEFAULT gen_random_uuid(),
+	"usuario_id" uuid NOT NULL,
+	"password_hash" varchar(255) NOT NULL,
+	"salt" varchar(255),
+	"algoritmo" varchar(50) NOT NULL,
+	"requiere_cambio" boolean NOT NULL DEFAULT FALSE,
+	"intentos_fallidos" integer NOT NULL DEFAULT 0,
+	"bloqueada_hasta" timestamptz,
+	"creado_en" timestamptz NOT NULL DEFAULT now(),
+	"actualizado_en" timestamptz NOT NULL DEFAULT now(),
+	CONSTRAINT "pk_credencial" PRIMARY KEY ("id"),
+	CONSTRAINT "uq_credencial_usuario" UNIQUE ("usuario_id"),
+	CONSTRAINT "ck_credencial_intentos_fallidos" CHECK ("intentos_fallidos" >= 0),
+	CONSTRAINT "fk_credencial_usuario" FOREIGN KEY ("usuario_id")
+		REFERENCES "usuario" ("id") ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "password_historial" (
+	"id" uuid NOT NULL DEFAULT gen_random_uuid(),
+	"credencial_id" uuid NOT NULL,
+	"password_hash" varchar(255) NOT NULL,
+	"creado_en" timestamptz NOT NULL DEFAULT now(),
+	CONSTRAINT "pk_password_historial" PRIMARY KEY ("id"),
+	CONSTRAINT "fk_password_historial_credencial" FOREIGN KEY ("credencial_id")
+		REFERENCES "credencial" ("id") ON DELETE CASCADE
+);
+
+CREATE INDEX "idx_password_historial_credencial_creado_en"
+	ON "password_historial" ("credencial_id", "creado_en" DESC);
+
+CREATE TABLE IF NOT EXISTS "otp" (
+	"id" uuid NOT NULL DEFAULT gen_random_uuid(),
+	"usuario_id" uuid NOT NULL,
+	"hash_codigo" varchar(255) NOT NULL,
+	"destino" varchar(255) NOT NULL,
+	"canal" varchar(50) NOT NULL,
+	"motivo" varchar(50) NOT NULL,
+	"expira_en" timestamptz NOT NULL,
+	"usado" boolean NOT NULL DEFAULT FALSE,
+	"intentos" integer NOT NULL DEFAULT 0,
+	"creado_en" timestamptz NOT NULL DEFAULT now(),
+	CONSTRAINT "pk_otp" PRIMARY KEY ("id"),
+	CONSTRAINT "ck_otp_intentos" CHECK ("intentos" >= 0),
+	CONSTRAINT "ck_otp_expira_en" CHECK ("expira_en" > "creado_en"),
+	CONSTRAINT "fk_otp_usuario" FOREIGN KEY ("usuario_id")
+		REFERENCES "usuario" ("id") ON DELETE CASCADE
+);
+
+CREATE INDEX "idx_otp_usuario_id" ON "otp" ("usuario_id");
+CREATE INDEX "idx_otp_expira_en" ON "otp" ("expira_en");
+
+CREATE TABLE IF NOT EXISTS "token_un_uso" (
+	"id" uuid NOT NULL DEFAULT gen_random_uuid(),
+	"usuario_id" uuid NOT NULL,
+	"hash_token" varchar(255) NOT NULL,
+	"motivo" varchar(50) NOT NULL,
+	"expira_en" timestamptz NOT NULL,
+	"usado" boolean NOT NULL DEFAULT FALSE,
+	"creado_en" timestamptz NOT NULL DEFAULT now(),
+	CONSTRAINT "pk_token_un_uso" PRIMARY KEY ("id"),
+	CONSTRAINT "uq_token_un_uso_hash" UNIQUE ("hash_token"),
+	CONSTRAINT "ck_token_un_uso_expira_en" CHECK ("expira_en" > "creado_en"),
+	CONSTRAINT "fk_token_un_uso_usuario" FOREIGN KEY ("usuario_id")
+		REFERENCES "usuario" ("id") ON DELETE CASCADE
+);
+
+CREATE INDEX "idx_token_un_uso_usuario_id" ON "token_un_uso" ("usuario_id");
+CREATE INDEX "idx_token_un_uso_expira_en" ON "token_un_uso" ("expira_en");
