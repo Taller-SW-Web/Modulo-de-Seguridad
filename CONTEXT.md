@@ -96,9 +96,16 @@ automático y el manual
 **Baja lógica**:
 La desactivación de una cuenta que la deja inutilizable sin borrarla de la base
 de datos. Ninguna cuenta se elimina físicamente, y por eso una baja puede
-deshacerse.
+deshacerse. Única excepción: una cuenta creada por otra persona que no se activa
+en 30 días (SPEC-03), que nunca llegó a operar.
 Verbo aceptado: **dar de baja** (así hablan las specs, el contrato y las pantallas).
 _Avoid_: eliminar, borrar, soft delete
+
+**Activación**:
+Cuando el titular de una cuenta creada por otra persona —un administrador o un
+vendedor en tienda— define su contraseña y acepta los términos con el enlace que
+recibió. Es lo que la deja `ACTIVO` (SPEC-03).
+_Avoid_: alta, verificación (la verificación es la del autorregistro, SPEC-02)
 
 **Reactivación**:
 La vuelta de una cuenta dada de baja al estado `ACTIVO`, conservando su

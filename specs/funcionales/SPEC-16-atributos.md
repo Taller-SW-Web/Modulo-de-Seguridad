@@ -4,8 +4,8 @@
 |---|---|
 | **Responsable** | Eva Lucía Moreno Zevallos |
 | **Hito objetivo** | Hito 5 (Sem. 14) |
-| **Estado** | Borrador |
-| **Aprobada por** | Product Owner — pendiente de aprobación |
+| **Estado** | ✅ Aprobada |
+| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen.** Es la antigua SPEC-08 «Gestión de atributos de usuarios», sin cambios de contenido salvo uno: ahora es dueña de `GET /api/v1/auth/me`, que exponía la antigua SPEC-01. Cambió de número al dividir el set de 9 a 18 specs (20 de septiembre). Ver [`trazabilidad.md`](trazabilidad.md) §1.
 

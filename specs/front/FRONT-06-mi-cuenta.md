@@ -162,7 +162,7 @@ campo reenviado sin cambios lo ensuciaría.
 
 - Cambiar la contraseña desde el perfil (FRONT-10; SPEC-16 lo excluye).
 - Cambiar roles o el estado de la cuenta.
-- Darse de baja a sí mismo: pendiente de decisión (Q10, en [`trazabilidad.md`](../trazabilidad.md) §7).
+- Darse de baja a sí mismo: fuera de este ciclo (Q10): el titular la pide a soporte y la hace un administrador.
 - Editar o eliminar direcciones, o cambiar la predeterminada sin añadir otra (H-04).
 - Verificar el celular (H-03).
 - Mostrar el documento completo.

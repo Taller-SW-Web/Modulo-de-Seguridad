@@ -69,6 +69,7 @@ enum proposito_token {
 	CAMBIO_CORREO
 	RECUPERACION
 	DESBLOQUEO
+	ACTIVACION
 }
 
 enum estado_cuenta_efectivo {
@@ -81,6 +82,7 @@ enum estado_cuenta_efectivo {
 enum tipo_limite {
 	REENVIO_VERIFICACION
 	RECUPERACION
+	BUSQUEDA_DOCUMENTO
 }
 
 Table usuario [headercolor: #175e7a] {
@@ -132,7 +134,8 @@ Table perfil_cliente [headercolor: #175e7a] {
 	tipo_documento tipo_documento
 	documento_cifrado text [ note: 'AES; se expone enmascarado *****234' ]
 	fecha_nacimiento date
-	documento_key_id varchar [ note: 'key_id de la clave AES, para rotación sin re-cifrar. Tipo, documento y clave van juntos o ninguno (CHECK).' ]
+	documento_key_id varchar [ note: 'key_id de la clave AES, para rotación sin re-cifrar. Tipo, documento, clave y HMAC van juntos o ninguno (CHECK).' ]
+	documento_hmac varchar [ unique, note: 'HMAC de tipo y número: permite buscar sin descifrar (ADR-007)' ]
 
 	Note: 'Atributos de CLIENTE (SPEC-16). Documento cifrado AES con clave fuera de BD.'
 }

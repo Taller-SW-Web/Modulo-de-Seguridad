@@ -4,8 +4,8 @@
 |---|---|
 | **Responsable** | Eva Lucía Moreno Zevallos |
 | **Hito objetivo** | Hito 3 (Sem. 8) |
-| **Estado** | Borrador |
-| **Aprobada por** | Product Owner — pendiente de aprobación |
+| **Estado** | ✅ Aprobada |
+| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen.** Sale de dividir la antigua SPEC-01 «Registro y gestión de usuarios» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
 
@@ -100,7 +100,7 @@ condiciones límite, de error o de seguridad.
 ## Fuera de alcance — ¿qué NO hará?
 
 - El borrado físico de la cuenta o de su historial.
-- La baja por decisión del propio titular: está pendiente de decisión (Q10, en [`trazabilidad.md`](trazabilidad.md) §7). Hoy solo da de baja un administrador.
+- La baja por decisión del propio titular: queda fuera de este ciclo (Q10, decidido el 2 de octubre): el titular la pide a soporte y la hace un `ADMIN_SISTEMA`. Hoy solo da de baja un administrador.
 - El bloqueo, que es un estado distinto y pertenece a SPEC-14 y SPEC-15.
 - La revocación de roles, que es de SPEC-11.
 

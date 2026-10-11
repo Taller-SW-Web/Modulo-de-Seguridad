@@ -4,7 +4,7 @@
 |---|---|
 | **Dueño** | Product Owner — es parte del contrato |
 | **Transporte** | RabbitMQ |
-| **Consumen** | Los seis módulos del marketplace |
+| **Consumen** | Despacho: `desactivado`, `bloqueado`, `reactivado` y `desbloqueado` (confirmado el 2-oct). Marketplace: ninguno. Chatbot, Retail, Ventas y Productos: por confirmar |
 | **Estado** | Borrador — pendiente de acuerdo con los seis equipos |
 
 `SPEC-17` y `SPEC-18` declaran los eventos fuera de su alcance y dice que «se especifican por
@@ -84,7 +84,7 @@ al consumidor con datos viejos creyendo que son nuevos.
 
 ### `usuario.creado`
 
-Publica **SPEC-02** al verificarse el correo de un cliente, y **SPEC-03** al dar de alta un administrador una cuenta, que nace ya verificada.
+Publica **SPEC-02** al verificarse el correo de un cliente, y **SPEC-03** al activarse una cuenta creada por un administrador o por un vendedor en tienda (A6).
 
 ```json
 "datos": { "roles": ["CLIENTE"] }

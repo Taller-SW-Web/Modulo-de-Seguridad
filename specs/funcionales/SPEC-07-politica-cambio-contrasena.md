@@ -4,8 +4,8 @@
 |---|---|
 | **Responsable** | Juan José Cano Vasquez |
 | **Hito objetivo** | Hito 3 (Sem. 8) — política · Hito 4 (Sem. 11) — cambio |
-| **Estado** | Borrador |
-| **Aprobada por** | Product Owner — pendiente de aprobación |
+| **Estado** | ✅ Aprobada |
+| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen.** Sale de dividir la antigua SPEC-03 «Gestión de credenciales y contraseñas» el 20 de septiembre, por indicación del profesor: una spec por función. La política de contraseñas sigue sin ser una spec suelta, como pidió el profesor el 13 de septiembre: va junto al cambio autenticado, que es el flujo que más la ejercita. La recuperación pasó a SPEC-08. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
 

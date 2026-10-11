@@ -103,7 +103,7 @@ hay código de producción: esta semana se implementan los repositorios de datos
 |---|---|
 | Arquitectura | [`docs/arquitectura/`](docs/arquitectura/) — 6 diagramas y 6 ADR |
 | Funcionalidades distribuidas | [`docs/responsabilidades.md`](docs/responsabilidades.md) |
-| Especificaciones SDD | 18 specs de backend en borrador — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md) —, 15 de interfaz en [`specs/front/`](specs/front/) y 15 de componentes React en [`specs/componentes-react/`](specs/componentes-react/) |
+| Especificaciones SDD | ✅ 18 specs de backend **aprobadas** el 2-oct — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md) —, 15 de interfaz en [`specs/front/`](specs/front/) y 15 de componentes React en [`specs/componentes-react/`](specs/componentes-react/) |
 | Contrato OpenAPI + mock | [`specs/openapi.yaml`](specs/openapi.yaml) — valida sin errores y el mock de Prism responde |
 | Acuerdos con los otros módulos | [`docs/integracion/acuerdos.md`](docs/integracion/acuerdos.md) — A1 a A5 |
 
