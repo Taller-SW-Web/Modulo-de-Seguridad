@@ -4,6 +4,13 @@
 código, despliegue ni integración terminados. La preparación documental se publicó mediante PR #45/#46;
 main comprobado: 5796622f7c039021e03dd25b2338c6a208320e05.
 
+## Repositorios de ejecución
+
+[Backend hexagonal H3](hito-3/BACKEND-HEXAGONAL.md) gobierna el backend nuevo
+independiente y las rutas de los siete tableros. Boot 3.5.16, Gradle 8.14.3;
+la base Maven histórica queda descartada. Frontend en un repo separado cuya
+URL aún debe comunicarse. Abrir los clones de código y documentación a la IA.
+
 ## Lectura
 
 1. [Épicas](../specs/epicas/README.md) y [responsabilidades](../docs/responsabilidades.md).

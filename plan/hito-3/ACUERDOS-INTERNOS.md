@@ -1,6 +1,6 @@
 # H3 — composición interna cerrada
 
-**Versión:** 1.0.0, 12-oct-2026. **Estado:** diseño cerrado para derivar tareas.
+**Versión:** 1.1.0, 12-oct-2026. **Estado:** diseño cerrado para derivar tareas.
 Luis comunica la aprobación formal de los siete dueños sobre alcance, requisitos,
 UI y composición, y delega los detalles técnicos restantes. La aprobación se
 registra como comunicación en esta conversación; no como siete comentarios
@@ -27,9 +27,13 @@ y consumen esas operaciones igual que consumen auditoría o sesiones.
 No se crean repositorios Usuario alternativos ni un PATCH interno genérico.
 
 La propiedad física completa está en [persistencia](DISENO-PERSISTENCIA.md).
-Los paquetes existentes permanecen; cada capacidad exporta un subpaquete `api`
-con sus interfaces y DTO. El resto es interno. El filtro de acceso crea el actor
-desde un token verificado; ningún cuerpo HTTP decide actor, permiso o familia.
+El backend se construye nuevo en Gradle; no conserva los paquetes JPA antiguos.
+[Arquitectura hexagonal](BACKEND-HEXAGONAL.md) ubica los puertos exportados en
+`application.port.in` y sus DTO en `application.dto`; sustituye el subpaquete
+`api` anterior sin cambiar firmas. Consumidores mediante puentes en adaptadores,
+con núcleo independiente de Spring/JPA/HTTP. El filtro crea el actor verificado;
+ningún cuerpo HTTP decide actor, permiso o familia. Decoradores transaccionales
+Spring implementan los puertos de entrada, conservando el orden/atomicidad aquí.
 
 Separar beans de consulta/persistencia de coordinadores HTTP: los adapters
 de Cuentas, Credenciales, Sesiones, Autorización y Auditoría dependen de sus

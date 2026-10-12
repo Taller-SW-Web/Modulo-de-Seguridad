@@ -1,7 +1,7 @@
 # H3 — tareas de Juan José Cano Vasquez
 
 **Dueño:** Juan José · **Épica:** EP-03 · **Incremento:** H3-JUAN.
-**Base:** [PLAN aprobado 1.0.0](../../../plan/hito-3/juan-cano/PLAN.md),
+**Base:** [PLAN aprobado 1.1.0](../../../plan/hito-3/juan-cano/PLAN.md),
 12-oct-2026; aprobación comunicada por Luis.
 
 **Resultado:** el usuario cambia su contraseña desde la pantalla, conserva su
@@ -18,6 +18,35 @@ verificación/caducidad a login y OTP, y tokens de uso único al desbloqueo de L
 **Límite:** recuperación/restablecimiento SPEC-08 posteriores. No programar
 login, OTP, bloqueo, repositorios de usuario ni revocación de sesiones ajenos.
 El token de desbloqueo es capacidad de persistencia; Luis conserva su regla.
+
+## Ubicación y piezas del backend nuevo
+
+Aplica [BACKEND-HEXAGONAL 1.1.0](../../../plan/hito-3/BACKEND-HEXAGONAL.md).
+Backend: `Modulo-de-Seguridad-Backend`, clon actual `Backend-auth-service/`;
+Java 21/Boot 3.5.16/Gradle 8.14.3, paquete `com.marketplace.auth_service`.
+Rutas Java relativas a la raíz de ese repo; rutas React `src/...` relativas al
+repo frontend independiente. Documentación y contrato permanecen en este repo.
+No ejecutar ni reutilizar como base el antiguo `backend/` Maven.
+
+| Pieza propia | Ubicación / resultado |
+|---|---|
+| Capacidades | `credencial y token` bajo el paquete raíz |
+| Dominio | `domain.model`: Credencial / PasswordHistorial / TokenUnUso, sin JPA/Spring/HTTP |
+| Casos de uso y DTO | `application.service` + `application.dto`: CambiarContrasena / ConsultarPolitica; commands/resultados inmutables |
+| Puertos de entrada | `application.port.in`: CredencialesPort, TokensUnUsoPort; firmas de composición conservadas |
+| Puertos de salida | `application.port.out`: persistencia propia y necesidades de proveedores |
+| Persistencia | `adapter.out.persistence`: entidades `...JpaEntity`, repositorios `...JpaRepository` y mappers manuales `...PersistenceMapper` |
+| HTTP | `adapter.in.web`: controller, Request/Response y mapper `...WebMapper`, según OpenAPI |
+| Transacciones/composición | `adapter.in.transaction`: decorador del caso de uso; `adapter.out.capacidad`: puente a puertos exportados del otro dueño |
+
+Estas piezas forman parte de **EP-03-T001/T002/T003** y de las tareas de endpoints ya
+existentes; no son otra funcionalidad ni duplican IDs. Cada tarea de endpoint
+entrega caso de uso, DTO/mapping HTTP y adaptadores necesarios, además de su UI.
+Los tests de mappers excluyen secretos y distinguen omitido/null; los tests del
+núcleo usan puertos dobles, sin Spring/DB. La aceptación usa PostgreSQL y
+proveedores reales. Reglas ArchUnit de TEC-INFRA-T001 verifican los límites.
+El esqueleto compartido se prepara en TEC-INFRA-T001; puede adelantarse el
+núcleo aislado, pero no cerrar persistencia/HTTP sin las dependencias reales.
 
 ## Orden de trabajo
 
@@ -45,8 +74,8 @@ capacidades según su plan; un doble solo acredita una prueba aislada.
 ### EP-03-T001 — Preparar credencial, hashing e historial
 
 - **Fuentes:** RF-07.4/07.6, ESC-07.5; persistencia §§2/4/8, V101 reservada.
-- **Implementar:** en `backend/src/main/java/com/marketplace/auth/`, adaptar
-  entidades/repositorios propios de credencial/historial; añadir `version`
+- **Implementar:** en `src/main/java/com/marketplace/auth_service/` del repo backend (credencial y token), implementar
+  modelos, entidades/repositorios y mappers nuevos de credencial/historial; añadir `version`
   mediante migración nueva y `@Version`. Nuevos hashes Argon2id con parámetros
   del diseño; verificar BCrypt existente solo con costo ≥12.
 - **Cierre:** secreto exacto sin recorte/normalización; ninguna contraseña/hash
@@ -131,8 +160,8 @@ capacidades según su plan; un doble solo acredita una prueba aislada.
 - **Fuentes:** [componentes FRONT-00 §3](../../../specs/componentes-react/FRONT-00-base-compartida.md);
   RF-07.11, FRONT-10. Consume base React/HTTP de Jose Luis y perfil de
   [Valery](../../../plan/hito-3/valery-gutierrez/PLAN.md).
-- **Implementar:** `frontend/src/hooks/usePoliticaPassword.ts` y
-  `frontend/src/componentes/PasswordStrengthMeter.tsx`, compartibles con futuros
+- **Implementar:** `src/hooks/usePoliticaPassword.ts` y
+  `src/componentes/PasswordStrengthMeter.tsx`, compartibles con futuros
   formularios sin implementar esos flujos.
 - **Cierre:** reglas desde API; estados cumple/no cumple/se comprueba al guardar,
   texto/icono, no solo color. Personales orientativos desde `/auth/me`; comunes/
@@ -145,7 +174,7 @@ capacidades según su plan; un doble solo acredita una prueba aislada.
 
 - **Fuentes:** [FRONT-10 UI-10.1–10.4](../../../specs/front/FRONT-10-cambio-contrasena.md)
   y [componentes FRONT-10](../../../specs/componentes-react/FRONT-10-cambio-contrasena.md).
-- **Implementar:** `frontend/src/pantallas/cambiar-contrasena/`:
+- **Implementar:** `src/pantallas/cambiar-contrasena/`:
   `CambiarContrasenaPage` y `useCambiarContrasena`; campos actual/nueva/repetir,
   medidor T006 y cliente/sesión compartidos. Enviar solo campos del contrato.
 - **Cierre:** repetir coincide pero no se envía; impedir doble submit; actual

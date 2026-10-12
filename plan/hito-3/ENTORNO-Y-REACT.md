@@ -1,25 +1,26 @@
 # H3 — entorno, firma y composición React
 
-**Versión:** 1.0.0, 12-oct-2026. Decisiones técnicas cerradas para los
+**Versión:** 1.1.0, 12-oct-2026. Decisiones técnicas cerradas para los
 [siete planes](README.md); configuración real y ejecución pendientes.
 Complementa [persistencia](DISENO-PERSISTENCIA.md) y
 [composición interna](ACUERDOS-INTERNOS.md), sin cambiar OpenAPI.
 
 ## 1. Backend y PostgreSQL en Supabase
 
-Se conserva Java 21 y Spring Boot 3.3.5 del pom actual. Maven y el BOM de Boot
-resuelven Spring Data, Hibernate, Security, pgJDBC y Flyway; no fijar versiones
-transitivas tomadas del kit en JDK 23/Security 6.5. La primera comprobación
-de ejecución guarda dependency:tree y verifica las APIs elegidas en ese runtime.
-No se promete compatibilidad con una versión de documentación más reciente.
+El backend nuevo usa Java 21, Spring Boot **3.5.16**, Gradle wrapper **8.14.3**
+y el paquete `com.marketplace.auth_service`. Se descarta el pom Maven anterior.
+La [arquitectura hexagonal](BACKEND-HEXAGONAL.md) gobierna estructura, DTO,
+mappers, transacciones y separación de clones. El BOM 3.5.16 resuelve versiones
+Spring Data, Hibernate, Security, pgJDBC, Flyway y Testcontainers 1.21.4;
+no heredar starters de Boot 4 ni imports de Testcontainers 2.
 
-Se agregarán en implementación los starters Boot OAuth2 Resource Server
-(incluye JOSE), Mail y AMQP; NimbusJwtEncoder/NimbusJwtDecoder para RS256,
-JavaMailSender SMTP y Spring AMQP RabbitTemplate con confirms. Argon2id usa
-Spring Security Crypto y el proveedor Bouncy Castle compatible resuelto/fijado
-en el build. No construir JWT o criptografía mediante concatenación manual.
-No se añade Spring Authorization Server ni se reemplaza la identidad G7
-con Supabase Auth.
+El Gradle nuevo ya declara Web, Validation, JPA, Security, OAuth2 Resource
+Server/JOSE, Mail, AMQP, Actuator, Flyway core/módulo PostgreSQL y su driver.
+NimbusJwtEncoder/NimbusJwtDecoder, JavaMailSender y RabbitTemplate se utilizan
+solo en adaptadores/configuración. Juan añade Bouncy Castle para Argon2id con
+versión exacta comprobada; no construir JWT/criptografía manualmente ni añadir
+Authorization Server o Supabase Auth. `gradlew dependencies` y las pruebas
+acreditan resolución/compatibilidad; las pruebas del kit no acreditan el backend.
 
 **Conexión elegida:** JDBC a PostgreSQL, session pooler Supabase puerto 5432
 para el backend persistente si el host es IPv4. Directa 5432 cuando exista
@@ -39,10 +40,12 @@ de backend y workers, sin autoscaling ni pools por estudiante.
 Runtime `g7_runtime` separado de identidad administradora/migraciones;
 Flyway de nube se ejecuta como paso controlado con esa identidad, no con la
 contraseña runtime. Validación de esquema al arrancar y open-in-view=false.
-El application.yml existente tiene baseline-on-migrate=true: **se debe
-desactivar en el perfil de nube** antes de conectar, y no heredar sus valores
-de contraseña/usuario locales. Identificar historial primero; no baseline,
-repair o semillas automáticos sobre una base desconocida.
+El backend nuevo no hereda el application.yml antiguo. Runtime tiene Flyway
+deshabilitado, validación JPA y credencial limitada; el paso de migración usa
+un perfil separado e identidad migradora. `baseline-on-migrate=false` en todos
+los perfiles. Identificar historial primero; no baseline, repair o semillas
+automáticos sobre una base desconocida. Variables y secuencia en
+[backend hexagonal](BACKEND-HEXAGONAL.md).
 
 Si las tablas siguen en public/esquema expuesto, revocar acceso a anon,
 authenticated y PUBLIC sobre tablas/vistas del módulo, habilitar RLS y dar
@@ -55,7 +58,7 @@ No usar auth.uid() de Supabase para un JWT de identidad propia G7.
 
 La revisión read-only previa al despliegue identifica versión Postgres,
 tablas, historial Flyway, grants/RLS/vista y diferencias con migrations.
-Testcontainers conserva PostgreSQL 16 local del repo; si la versión efectiva
+Testcontainers usa PostgreSQL 16.6 y RabbitMQ 3.13.7-management, sin latest; si la versión efectiva
 remota es otra se añade comprobación sobre esa versión antes de aplicar.
 Se revisó changelog de Supabase: no se usa su HTTP Auth/Data API en este diseño;
 cambios de extensiones/cifrado exigen contrastar el proyecto real, no asumir
@@ -97,7 +100,7 @@ conserva tratamiento de formulario. No revelar bloqueada/inexistente en login.
 
 ## 3. Base frontend y rutas de H3
 
-Jose Luis coordina el arranque en `frontend/`: SPA Vite 7 + React 19.2 +
+Jose Luis coordina el arranque en la raíz del **repositorio frontend independiente**: SPA Vite 7 + React 19.2 +
 TypeScript 5.9 strict, React Router 7 en modo declarativo, Node 22 LTS ≥22.12.
 Mantine **9.6.2**, ya escogido en el sistema de diseño, y sus core/hooks/form/
 notifications con la misma versión. No se cambian tokens, tema ni diseño visual.
@@ -111,7 +114,7 @@ La resolución del lockfile es trabajo mecánico de arranque, no una decisión
 de arquitectura pendiente. Scripts comunes: dev, build (typecheck+bundle),
 typecheck, test (Vitest/Testing Library), preview. Instalación reproducible npm ci.
 
-Mantener ubicaciones/nombres `frontend/src/pantallas/...` de las specs React,
+Mantener ubicaciones/nombres `src/pantallas/...` relativas al clon frontend de las specs React,
 con shared para api/errores/sesion/tema. Cada estudiante modifica sus bloques;
 Jose Luis/Eva componen rutas/contenedores sin implementar la funcionalidad ajena.
 

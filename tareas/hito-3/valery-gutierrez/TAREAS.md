@@ -1,7 +1,7 @@
 # H3 — tareas de Valery Cristin Gutierrez Bendezu
 
 **Dueña:** Valery · **Épica:** EP-08 · **Incremento:** H3-VALERY.
-**Base:** [PLAN aprobado 1.0.0](../../../plan/hito-3/valery-gutierrez/PLAN.md),
+**Base:** [PLAN aprobado 1.1.0](../../../plan/hito-3/valery-gutierrez/PLAN.md),
 12-oct-2026; aprobación comunicada por Luis.
 
 **Resultado:** titular autenticado consulta su perfil persistido, edita solo
@@ -21,6 +21,35 @@ su recorrido completo y entrega proyección segura al detalle de Eva.
 atributos de rol y configuración MFA posteriores. Correo/documento y atributos
 de rol aplicables se leen; no añadir formularios, botones o peticiones de esos
 flujos. Revisión UX adicional no sustituye su función ni la hace frontend ajeno.
+
+## Ubicación y piezas del backend nuevo
+
+Aplica [BACKEND-HEXAGONAL 1.1.0](../../../plan/hito-3/BACKEND-HEXAGONAL.md).
+Backend: `Modulo-de-Seguridad-Backend`, clon actual `Backend-auth-service/`;
+Java 21/Boot 3.5.16/Gradle 8.14.3, paquete `com.marketplace.auth_service`.
+Rutas Java relativas a la raíz de ese repo; rutas React `src/...` relativas al
+repo frontend independiente. Documentación y contrato permanecen en este repo.
+No ejecutar ni reutilizar como base el antiguo `backend/` Maven.
+
+| Pieza propia | Ubicación / resultado |
+|---|---|
+| Capacidades | `perfil` bajo el paquete raíz |
+| Dominio | `domain.model`: PerfilCliente / PerfilVendedor, sin JPA/Spring/HTTP |
+| Casos de uso y DTO | `application.service` + `application.dto`: ConsultarPerfil / EditarPerfilPropio; commands/resultados inmutables |
+| Puertos de entrada | `application.port.in`: PerfilPort; firmas de composición conservadas |
+| Puertos de salida | `application.port.out`: persistencia propia y necesidades de proveedores |
+| Persistencia | `adapter.out.persistence`: entidades `...JpaEntity`, repositorios `...JpaRepository` y mappers manuales `...PersistenceMapper` |
+| HTTP | `adapter.in.web`: controller, Request/Response y mapper `...WebMapper`, según OpenAPI |
+| Transacciones/composición | `adapter.in.transaction`: decorador del caso de uso; `adapter.out.capacidad`: puente a puertos exportados del otro dueño |
+
+Estas piezas forman parte de **EP-08-T001/T002** y de las tareas de endpoints ya
+existentes; no son otra funcionalidad ni duplican IDs. Cada tarea de endpoint
+entrega caso de uso, DTO/mapping HTTP y adaptadores necesarios, además de su UI.
+Los tests de mappers excluyen secretos y distinguen omitido/null; los tests del
+núcleo usan puertos dobles, sin Spring/DB. La aceptación usa PostgreSQL y
+proveedores reales. Reglas ArchUnit de TEC-INFRA-T001 verifican los límites.
+El esqueleto compartido se prepara en TEC-INFRA-T001; puede adelantarse el
+núcleo aislado, pero no cerrar persistencia/HTTP sin las dependencias reales.
 
 ## Orden de trabajo
 
@@ -49,7 +78,7 @@ Dobles identificados permiten pruebas aisladas; no cierran aceptación conjunta.
 
 - **Fuentes:** RF-16.3/16.4; persistencia §§1–2; PLAN §4.
 - **Implementar:** mappings/repositorios propios `perfil_cliente` y
-  `perfil_vendedor` en `backend/src/main/java/com/marketplace/auth/`, UUID de
+  `perfil_vendedor` en `src/main/java/com/marketplace/auth_service/` del repo backend (perfil), UUID de
   usuario como valor sin entidad/repo/cascadas ajenos. Leer identidad/dato cifrado
   necesario mediante capacidad segura de Eva; Valery no consulta su tabla.
 - **Cierre:** atributos aplicables se leen sin inventar valores. Documento
@@ -121,7 +150,7 @@ Dobles identificados permiten pruebas aisladas; no cierran aceptación conjunta.
 - **Fuentes:** FRONT-06 UI-06.1/06.2/06.3/06.7/06.8 y
   [componentes FRONT-06](../../../specs/componentes-react/FRONT-06-mi-cuenta.md),
   selección H3; sistema de diseño y base React de Jose Luis.
-- **Implementar:** `frontend/src/pantallas/mi-cuenta/`: `MiCuentaPage`,
+- **Implementar:** `src/pantallas/mi-cuenta/`: `MiCuentaPage`,
   `useMiCuenta`, `SeccionDatosPersonales`, `SeccionContacto`, `SeccionDocumento`;
   cliente HTTP/tema/sesión compartidos, sin otro store/librería de UI.
 - **Cierre:** carga/error/reintento, lectura y una sección editable a la vez.

@@ -2,9 +2,9 @@
 
 **Dueño:** Christian · **Épica académica:** EP-06 · **Incremento:** H3-CHRISTIAN.
 **Adicional:** TEC-INFRA; no sustituye su funcionalidad de auditoría.
-**Base:** [PLAN aprobado 1.0.0](../../../plan/hito-3/christian-arancivia/PLAN.md) y
+**Base:** [PLAN aprobado 1.1.0](../../../plan/hito-3/christian-arancivia/PLAN.md) y
 [TEC-INFRA 0.1.0](../../../plan/transversales/TEC-INFRA.md), alcance H3 aprobado
-según comunicación de Luis; diseño definitivo en documentos comunes 1.0.0.
+según comunicación de Luis; diseño definitivo en documentos comunes 1.1.0.
 
 **Resultado académico:** hecho real→registro seguro en DB→consulta solo del
 titular→pantalla de actividad. **Resultado adicional:** entorno compartido,
@@ -23,6 +23,35 @@ transporte durable y servicios desplegados para recorridos individuales/G5.
 automática, pruebas a escala, CI/CD completo, API Management ni observabilidad
 de hitos posteriores. En H3 ya se conserva mínimo 90 días y solo-anexado.
 Cada productor conserva su lógica; Christian no programa recorridos ajenos.
+
+## Ubicación y piezas del backend nuevo
+
+Aplica [BACKEND-HEXAGONAL 1.1.0](../../../plan/hito-3/BACKEND-HEXAGONAL.md).
+Backend: `Modulo-de-Seguridad-Backend`, clon actual `Backend-auth-service/`;
+Java 21/Boot 3.5.16/Gradle 8.14.3, paquete `com.marketplace.auth_service`.
+Rutas Java relativas a la raíz de ese repo; rutas React `src/...` relativas al
+repo frontend independiente. Documentación y contrato permanecen en este repo.
+No ejecutar ni reutilizar como base el antiguo `backend/` Maven.
+
+| Pieza propia | Ubicación / resultado |
+|---|---|
+| Capacidades | `auditoria y mensajeria` bajo el paquete raíz |
+| Dominio | `domain.model`: RegistroAuditoria / MensajePendiente, sin JPA/Spring/HTTP |
+| Casos de uso y DTO | `application.service` + `application.dto`: RegistrarAuditoria / ConsultarActividad / EncolarMensaje; commands/resultados inmutables |
+| Puertos de entrada | `application.port.in`: AuditoriaPort, MensajeriaPort; firmas de composición conservadas |
+| Puertos de salida | `application.port.out`: persistencia propia y necesidades de proveedores |
+| Persistencia | `adapter.out.persistence`: entidades `...JpaEntity`, repositorios `...JpaRepository` y mappers manuales `...PersistenceMapper` |
+| HTTP | `adapter.in.web`: controller, Request/Response y mapper `...WebMapper`, según OpenAPI |
+| Transacciones/composición | `adapter.in.transaction`: decorador del caso de uso; `adapter.out.capacidad`: puente a puertos exportados del otro dueño |
+
+Estas piezas forman parte de **EP-06-T001/T002; TEC-INFRA-T001/T003** y de las tareas de endpoints ya
+existentes; no son otra funcionalidad ni duplican IDs. Cada tarea de endpoint
+entrega caso de uso, DTO/mapping HTTP y adaptadores necesarios, además de su UI.
+Los tests de mappers excluyen secretos y distinguen omitido/null; los tests del
+núcleo usan puertos dobles, sin Spring/DB. La aceptación usa PostgreSQL y
+proveedores reales. Reglas ArchUnit de TEC-INFRA-T001 verifican los límites.
+El esqueleto compartido se prepara en TEC-INFRA-T001; puede adelantarse el
+núcleo aislado, pero no cerrar persistencia/HTTP sin las dependencias reales.
 
 ## Orden de trabajo
 
@@ -50,7 +79,7 @@ hechos, dependencias y servicios reales.
 
 Revisión inicial y aplicación de TEC-INFRA-T002 son pasos sucesivos, no una
 dependencia circular. EP-01/02/03/04/05/07 identifican tareas de sus dueños.
-Valery conserva su plan para perfil/navegación hasta generar su tablero.
+Valery tiene su propio tablero para perfil/navegación; consumir sus entregas.
 
 ## EP-06 — auditoría y actividad propia
 
@@ -118,7 +147,7 @@ Valery conserva su plan para perfil/navegación hasta generar su tablero.
 
 - **Fuentes:** [FRONT-13 UI-13.1–13.4](../../../specs/front/FRONT-13-actividad-propia.md)
   y [componentes FRONT-13](../../../specs/componentes-react/FRONT-13-actividad-propia.md).
-- **Implementar:** `frontend/src/pantallas/actividad/`: `ActividadPage`,
+- **Implementar:** `src/pantallas/actividad/`: `ActividadPage`,
   `TablaActividad`, `etiquetasAccion`, `useActividad`; HTTP/router/sesión de
   Jose Luis, enlace desde perfil de Valery y cambio de contraseña de Juan José.
 - **Cierre:** carga/vacío/error/reintento, paginación 20 por defecto, fechas Lima,
@@ -158,14 +187,19 @@ Valery conserva su plan para perfil/navegación hasta generar su tablero.
 
 - **Fuentes:** TEC-INFRA §§3–4; entorno/React §§1/3/5; TEC-01/TEC-04.
 - **Implementar:** configuración de desarrollo/prueba/nube y procedimiento de
-  build; Java 21/Boot 3.3.5, dependency:tree real, scripts/lockfile React del
+  build; Java 21/Boot 3.5.16/Gradle 8.14.3, dependencias Gradle reales, scripts/lockfile React del
   dueño Jose Luis. Integrar starters JOSE/Mail/AMQP con sus dueños, sin versiones
-  transitivas improvisadas ni reemplazo por Supabase Auth.
+  transitivas improvisadas ni reemplazo por Supabase Auth. Preparar wiring de
+  puertos/decoradores y reglas ArchUnit 1.5.1 del diseño hexagonal: núcleo sin
+  frameworks, persistencia encapsulada, puentes solo a exports y ausencia de
+  ciclos. No producir casos de uso/entidades de otros dueños ni cambiar sus IDs.
 - **Cierre:** identificar proyecto G7 real y conexiones privadas, host backend/
   SPA, SMTP/broker, CA y responsables. JDBC session pooler 5432 para host IPv4
   o directa según conectividad del diseño; sslmode=verify-full, Hikari fijado,
   una instancia H3. Nada de defaults locales como credenciales de nube.
-- **Comprobar/evidencia:** build/tests y Compose autorizados al implementar,
+- **Comprobar/evidencia:** `gradlew compileJava compileTestJava`, `test` y
+  `bootJar`; tests de arquitectura con clases reales. Registrar fallo por Docker
+  ausente sin omitir tests ni conectarlos a Supabase. Build/entorno local nuevos,
   versiones/variables documentadas sin valores secretos. Falta de acceso o
   plataforma se registra como bloqueo de ejecución; no crear recursos de pago
   ni adivinar host/región/proyecto para llenar configuración.

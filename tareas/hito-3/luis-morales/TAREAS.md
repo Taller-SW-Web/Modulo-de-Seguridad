@@ -2,7 +2,7 @@
 
 **Dueño:** Luis David · **Incremento:** H3-LUIS.
 **Épicas:** EP-04 (OTP/MFA) y EP-07 (bloqueo/desbloqueo).
-**Base:** [PLAN aprobado 1.0.0](../../../plan/hito-3/luis-morales/PLAN.md),
+**Base:** [PLAN aprobado 1.1.0](../../../plan/hito-3/luis-morales/PLAN.md),
 12-oct-2026; aprobación comunicada por Luis.
 
 Dos recorridos completos del mismo dueño, con IDs y evidencia separados:
@@ -21,6 +21,35 @@ desbloqueo→login**. Ninguno se da por terminado porque el otro funcione.
 SPEC-15 posteriores. Gestión sigue obligando MFA; un bloqueo manual existente
 se respeta y jamás se levanta mediante enlace. No sustituir correo por código
 visible en React ni respuesta fija.
+
+## Ubicación y piezas del backend nuevo
+
+Aplica [BACKEND-HEXAGONAL 1.1.0](../../../plan/hito-3/BACKEND-HEXAGONAL.md).
+Backend: `Modulo-de-Seguridad-Backend`, clon actual `Backend-auth-service/`;
+Java 21/Boot 3.5.16/Gradle 8.14.3, paquete `com.marketplace.auth_service`.
+Rutas Java relativas a la raíz de ese repo; rutas React `src/...` relativas al
+repo frontend independiente. Documentación y contrato permanecen en este repo.
+No ejecutar ni reutilizar como base el antiguo `backend/` Maven.
+
+| Pieza propia | Ubicación / resultado |
+|---|---|
+| Capacidades | `mfa y proteccion` bajo el paquete raíz |
+| Dominio | `domain.model`: DesafioMfa / Otp / Bloqueo / RachaFallo / HuellaFallo, sin JPA/Spring/HTTP |
+| Casos de uso y DTO | `application.service` + `application.dto`: SolicitarOtp / VerificarOtp / DesbloquearCuenta; commands/resultados inmutables |
+| Puertos de entrada | `application.port.in`: MfaPort, ProteccionPort; firmas de composición conservadas |
+| Puertos de salida | `application.port.out`: persistencia propia y necesidades de proveedores |
+| Persistencia | `adapter.out.persistence`: entidades `...JpaEntity`, repositorios `...JpaRepository` y mappers manuales `...PersistenceMapper` |
+| HTTP | `adapter.in.web`: controller, Request/Response y mapper `...WebMapper`, según OpenAPI |
+| Transacciones/composición | `adapter.in.transaction`: decorador del caso de uso; `adapter.out.capacidad`: puente a puertos exportados del otro dueño |
+
+Estas piezas forman parte de **EP-04-T001/T002; EP-07-T001/T002** y de las tareas de endpoints ya
+existentes; no son otra funcionalidad ni duplican IDs. Cada tarea de endpoint
+entrega caso de uso, DTO/mapping HTTP y adaptadores necesarios, además de su UI.
+Los tests de mappers excluyen secretos y distinguen omitido/null; los tests del
+núcleo usan puertos dobles, sin Spring/DB. La aceptación usa PostgreSQL y
+proveedores reales. Reglas ArchUnit de TEC-INFRA-T001 verifican los límites.
+El esqueleto compartido se prepara en TEC-INFRA-T001; puede adelantarse el
+núcleo aislado, pero no cerrar persistencia/HTTP sin las dependencias reales.
 
 ## Orden de trabajo
 
@@ -54,7 +83,7 @@ Valery entregan sus capacidades según sus planes; no se les asignan aquí tarea
 - **Fuentes:** [SPEC-09 RF-09.1–09.3/09.9](../../../specs/funcionales/SPEC-09-mfa-inicio-sesion.md);
   persistencia §§5/8, V103 reservada.
 - **Implementar:** entidades/repositorios propios en
-  `backend/src/main/java/com/marketplace/auth/`; migración para revisión de
+  `src/main/java/com/marketplace/auth_service/` del repo backend (mfa y proteccion); migración para revisión de
   credencial del desafío, OTP/desafío/usuario, invalidación, key id e índices.
   UUID ajenos son valores, sin entidades/repositorios de Juan José/Eva.
 - **Cierre:** nuevos LOGIN_MFA vinculados coherentemente; históricos sin revisión
@@ -120,7 +149,7 @@ Valery entregan sus capacidades según sus planes; no se les asignan aquí tarea
 
 - **Fuentes:** [FRONT-04 UI-04.1–04.8](../../../specs/front/FRONT-04-desafio-otp.md)
   y [componentes FRONT-04](../../../specs/componentes-react/FRONT-04-desafio-otp.md).
-- **Implementar:** `frontend/src/pantallas/otp/`: `OtpPage`, `useDesafioOtp`,
+- **Implementar:** `src/pantallas/otp/`: `OtpPage`, `useDesafioOtp`,
   `CuentaRegresiva`; consumir sesión/HTTP/router de Jose Luis. Al abrir solicitar
   una sola vez, también ante rerender de desarrollo; no reenviar por accidente.
 - **Cierre:** desafío en memoria, recarga/sin desafío vuelve a login; PinInput,
@@ -218,7 +247,7 @@ Valery entregan sus capacidades según sus planes; no se les asignan aquí tarea
 - **Fuentes:** [FRONT-12 UI-12.1–12.5](../../../specs/front/FRONT-12-desbloqueo-con-enlace.md),
   [componentes FRONT-12](../../../specs/componentes-react/FRONT-12-desbloqueo-con-enlace.md)
   y selección H3 de [FRONT-08](../../../specs/front/FRONT-08-admin-detalle-usuario.md).
-- **Implementar:** `frontend/src/pantallas/desbloqueo/DesbloqueoPage.tsx` y
+- **Implementar:** `src/pantallas/desbloqueo/DesbloqueoPage.tsx` y
   `useDesbloqueo`; lectura `SeccionBloqueo` para el contenedor Eva, sin acciones
   manuales. Usar base HTTP/router de Jose Luis y proyección contractual autorizada.
 - **Cierre:** token pasa a memoria y se elimina URL al cargar; política no-referrer

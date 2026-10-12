@@ -1,10 +1,15 @@
 # H3 — persistencia, propiedad y concurrencia
 
-**Versión:** 1.0.0, 12-oct-2026. Diseño técnico cerrado por delegación comunicada
+**Versión:** 1.1.0, 12-oct-2026. Diseño técnico cerrado por delegación comunicada
 por Luis; SQL, mappings, grants y base remota todavía no modificados.
 [Composición y locks](ACUERDOS-INTERNOS.md) gobierna las llamadas.
 El proveedor Supabase fue confirmado por Luis. La conexión MCP disponible
 no identifica el proyecto G7; no se consultaron tablas de otro proyecto.
+
+El diseño físico se implementa en el **backend nuevo** y sus adaptadores,
+según [arquitectura hexagonal](BACKEND-HEXAGONAL.md). Modelos de dominio no son
+entidades JPA; los mappings de §2 pertenecen a `adapter.out.persistence.entity`.
+No reutilizar el pom, entidades/repositorios ni tests del backend antiguo.
 
 ## 1. Un dueño físico por tabla
 
@@ -28,7 +33,7 @@ Las consultas de perfiles/composición reciben UUID/DTO y no crean relaciones
 JPA navegables con entidades de otro dueño.
 
 La regla se verifica en revisión y con una comprobación de dependencias por
-paquete: un dominio consume únicamente `api` de otro dominio. El único usuario
+paquete: un puente consume únicamente puertos de entrada y DTO exportados de otro dueño. El único usuario
 PostgreSQL runtime del monolito no representa siete permisos por estudiante;
 esa frontera se implementa en el código y su revisión, no se afirma que un
 GRANT común la haga cumplir por sí solo.
@@ -250,7 +255,8 @@ recibido tarde sigue inválido en el verificador.
 
 ## 8. Migraciones previstas, sin ejecutar
 
-V1–V4 y V100 existen en el repo. **V5 no existe** y V100 puede haber sido
+V1–V4 y V100 se conservan como antecedentes en `backend/`; no son
+un historial verificado del proyecto nuevo ni de Supabase. **V5 no existe** y V100 puede haber sido
 aplicada, por lo que no se introducirán cambios como V5 detrás de esa versión.
 Se reservan versiones posteriores en una secuencia única; Christian coordina
 orden, pero cada dueño escribe solo la migración de sus tablas.

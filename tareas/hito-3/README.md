@@ -1,7 +1,13 @@
 # Tareas del incremento H3
 
+**Complemento técnico 12-oct:** [backend hexagonal nuevo](../../plan/hito-3/BACKEND-HEXAGONAL.md)
+cierra paquetes, DTO/mappers, adaptadores JPA, JDBC, transacciones y repositorios
+independientes. Los siete planes/tableros son 1.1.0, con el mismo alcance aprobado.
+El backend Maven anterior queda descartado; ejecución/evidencia pendientes.
+
+
 Las tareas se derivan de los [planes aprobados](../../plan/hito-3/README.md)
-versión 1.0.0. Ya están los tableros de los siete estudiantes, preparados por
+versión 1.1.0. Ya están los tableros de los siete estudiantes, preparados por
 bloques. Esto no acredita implementación ni pruebas.
 
 | Estudiante | Tablero | Recorrido H3 |

@@ -146,11 +146,10 @@ persistente; recarga pide login. La aceptación de este consumo por G5 sigue
 pendiente en H-11/INT-05. Si renueva, se usa refresh serializado; nunca repetir
 a ciegas una rotación cuyo resultado se desconoce.
 
-**Runtime.** La base declara Java 21/Spring Boot 3.3.5 en su pom. Los fragmentos
-del kit se comprobaron con Spring Security 6.5.0/JDK 23 y otros runtimes indicados
-en la evidencia; eso no certifica las dependencias del backend. TEC-04 exige
-resolver/verificar el árbol efectivo y probar el código en su runtime real,
-sin cambiar versiones del proyecto durante esta planificación.
+**Runtime.** Backend nuevo Java 21/Spring Boot 3.5.16/Gradle 8.14.3,
+según [arquitectura hexagonal](hito-3/BACKEND-HEXAGONAL.md). El Maven anterior
+queda descartado; las pruebas del kit en JDK 23 no acreditan el nuevo build.
+TEC-04 verifica dependencias, compilación y pruebas en el runtime seleccionado.
 
 ## 5. Configuración y datos que se deben cerrar
 

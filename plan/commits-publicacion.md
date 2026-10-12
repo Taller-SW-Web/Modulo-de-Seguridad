@@ -285,3 +285,35 @@ Ambos commits se publican juntos y se proponen hacia main sin fusionar el PR
 automáticamente. Sus hashes y el enlace del PR se informan al terminar; no se
 inventa un SHA futuro dentro de este documento. Tras fusionarlo, cada integrante
 actualiza su rama y ejecuta una tarea lista por vez con sus fuentes y criterios.
+
+## Complemento: backend nuevo y hexagonal — 12-oct-2026
+
+Este bloque es posterior a los commits 80f3f58a/6996e8fa; no sustituye su historia.
+Los repositorios Git son independientes. Publicar el ajuste documental y luego
+el build/guías del backend, conservando las comprobaciones registradas.
+
+En el repo de documentación:
+
+```bash
+git add -- .gitignore AGENTS.md README.md backend/README.md docs/arquitectura/README.md docs/fuentes-oficiales.md plan tareas
+git diff --cached --check
+git diff --cached --stat
+git commit -m "docs(sdd): alinear H3 con backend hexagonal independiente"
+git push origin brenis
+```
+
+En la raíz del repo backend (clon actual Backend-auth-service):
+
+```bash
+git add -- .gitignore build.gradle gradle/wrapper/gradle-wrapper.properties src/test/java/com/marketplace/auth_service/TestcontainersConfiguration.java README.md AGENTS.md
+git diff --cached --check
+git diff --cached --stat
+git commit -m "build: usar Spring Boot 3.5 y preparar guias hexagonales"
+```
+
+El push del backend se hace a la rama de trabajo elegida, mediante PR hacia
+main según coordinación del equipo. No agregar Backend-auth-service al padre.
+La compilación de Java/tests pasó al ajustar el build; la prueba contextLoads
+no pudo completar por Docker no disponible. Repetir `gradlew test` con Docker
+antes de acreditar arranque. No hay migraciones ni funcionalidades H3 implementadas
+por este complemento; las tareas de cada dueño siguen pendientes.

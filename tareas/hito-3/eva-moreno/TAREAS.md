@@ -1,7 +1,7 @@
 # H3 — tareas de Eva Lucía Moreno Zevallos
 
 **Dueña:** Eva · **Épica:** EP-01 · **Incremento:** H3-EVA.
-**Base:** [PLAN aprobado 1.0.0](../../../plan/hito-3/eva-moreno/PLAN.md),
+**Base:** [PLAN aprobado 1.1.0](../../../plan/hito-3/eva-moreno/PLAN.md),
 12-oct-2026. Aprobación comunicada por Luis; este tablero descompone ese alcance.
 
 **Resultado:** ADMIN_SISTEMA con MFA real consulta cuentas persistidas, filtra,
@@ -17,6 +17,35 @@ de prueba; los bloques ajenos se consumen de sus dueños.
 **Límite:** no registro, verificación, alta administrativa, baja/reactivación,
 búsqueda por documento ni bloqueo manual. Preparar fixtures no implementa esos
 flujos. No agregar endpoints ni botones de éxito ficticio.
+
+## Ubicación y piezas del backend nuevo
+
+Aplica [BACKEND-HEXAGONAL 1.1.0](../../../plan/hito-3/BACKEND-HEXAGONAL.md).
+Backend: `Modulo-de-Seguridad-Backend`, clon actual `Backend-auth-service/`;
+Java 21/Boot 3.5.16/Gradle 8.14.3, paquete `com.marketplace.auth_service`.
+Rutas Java relativas a la raíz de ese repo; rutas React `src/...` relativas al
+repo frontend independiente. Documentación y contrato permanecen en este repo.
+No ejecutar ni reutilizar como base el antiguo `backend/` Maven.
+
+| Pieza propia | Ubicación / resultado |
+|---|---|
+| Capacidades | `usuario` bajo el paquete raíz |
+| Dominio | `domain.model`: Usuario, sin JPA/Spring/HTTP |
+| Casos de uso y DTO | `application.service` + `application.dto`: ConsultaCuentas; commands/resultados inmutables |
+| Puertos de entrada | `application.port.in`: CuentasPort, CuentaEscrituraInterna; firmas de composición conservadas |
+| Puertos de salida | `application.port.out`: persistencia propia y necesidades de proveedores |
+| Persistencia | `adapter.out.persistence`: entidades `...JpaEntity`, repositorios `...JpaRepository` y mappers manuales `...PersistenceMapper` |
+| HTTP | `adapter.in.web`: controller, Request/Response y mapper `...WebMapper`, según OpenAPI |
+| Transacciones/composición | `adapter.in.transaction`: decorador del caso de uso; `adapter.out.capacidad`: puente a puertos exportados del otro dueño |
+
+Estas piezas forman parte de **EP-01-T001/T002** y de las tareas de endpoints ya
+existentes; no son otra funcionalidad ni duplican IDs. Cada tarea de endpoint
+entrega caso de uso, DTO/mapping HTTP y adaptadores necesarios, además de su UI.
+Los tests de mappers excluyen secretos y distinguen omitido/null; los tests del
+núcleo usan puertos dobles, sin Spring/DB. La aceptación usa PostgreSQL y
+proveedores reales. Reglas ArchUnit de TEC-INFRA-T001 verifican los límites.
+El esqueleto compartido se prepara en TEC-INFRA-T001; puede adelantarse el
+núcleo aislado, pero no cerrar persistencia/HTTP sin las dependencias reales.
 
 ## Orden de trabajo
 
@@ -44,7 +73,7 @@ Las dependencias habilitan aceptación real, no impiden escribir pruebas aislada
 
 - **Fuentes:** [SPEC-03 RF-03.2](../../../specs/funcionales/SPEC-03-alta-consulta-cuentas.md);
   persistencia §§1–2 y [estados](../../../docs/arquitectura/estados-usuario.md).
-- **Implementar:** en `backend/src/main/java/com/marketplace/auth/`, el mapping
+- **Implementar:** en `src/main/java/com/marketplace/auth_service/` del repo backend (usuario), el mapping
   `Usuario`, su repositorio y lectura inmutable de `UsuarioEstadoEfectivo`.
   Respetar columnas/tipos existentes; UUID ajenos son valores, sin asociaciones
   JPA/cascadas a tablas de otros dueños.
@@ -60,7 +89,7 @@ Las dependencias habilitan aceptación real, no impiden escribir pruebas aislada
 
 - **Fuentes:** composición §§2–3, `CuentasPort` y `CuentaEscrituraInterna`;
   persistencia §1. Consume T001.
-- **Implementar:** interfaces/DTO inmutables en subpaquete `api` y adaptadores
+- **Implementar:** interfaces/DTO inmutables en `application.port.in` y `application.dto` y adaptadores
   propios para búsqueda por correo normalizado, lectura, lock, conteo de activos,
   consulta y actualización acotada de básicos/contadores. Mantener las firmas
   aprobadas; `guardarMfaVoluntario` queda reservado para SPEC-10 posterior.
@@ -112,7 +141,7 @@ Las dependencias habilitan aceptación real, no impiden escribir pruebas aislada
 - **Fuentes:** [FRONT-07 UI-07.1/07.7](../../../specs/front/FRONT-07-admin-listado-usuarios.md)
   y [componentes FRONT-07](../../../specs/componentes-react/FRONT-07-admin-listado-usuarios.md),
   selección H3. Consume T003 y base React/sesión de Jose Luis.
-- **Implementar:** `frontend/src/pantallas/admin-listado/`: `AdminListadoPage`,
+- **Implementar:** `src/pantallas/admin-listado/`: `AdminListadoPage`,
   `FiltrosUsuarios`, `TablaUsuarios`, `useListadoUsuarios`; usar cliente HTTP,
   tema, sesión y router compartidos, sin otro store ni librería de UI.
 - **Cierre:** filtros en URL, correo con debounce 300 ms, cambio de filtro vuelve
@@ -129,7 +158,7 @@ Las dependencias habilitan aceptación real, no impiden escribir pruebas aislada
 - **Fuentes:** [FRONT-08](../../../specs/front/FRONT-08-admin-detalle-usuario.md)
   y [componentes FRONT-08](../../../specs/componentes-react/FRONT-08-admin-detalle-usuario.md),
   selección H3; entorno/React §4. Consume T004–T005.
-- **Implementar:** `frontend/src/pantallas/admin-detalle/`: `AdminDetallePage`,
+- **Implementar:** `src/pantallas/admin-detalle/`: `AdminDetallePage`,
   `CabeceraCuenta`, `SeccionDatosCuenta`, `useDetalleUsuario`. Integrar
   `SeccionRoles` de Sergio y lectura del bloqueo de Luis mediante sus contratos.
 - **Cierre:** carga/error/403/404 y regreso al listado correctos; tras callback

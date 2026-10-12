@@ -1,5 +1,10 @@
 # Arquitectura del módulo — Hito 1 (preliminar)
 
+**Implementación H3 vigente:** [backend hexagonal nuevo](../../plan/hito-3/BACKEND-HEXAGONAL.md).
+Paquetes, puertos, DTO/mappers y repositorios separados gobiernan el código;
+los diagramas/base anteriores no autorizan reutilizar el backend Maven descartado.
+
+
 **Responsable de la arquitectura de solución:** Sergio Alejandro Osorio Montenegro (Product Owner)
 **Responsable de la arquitectura de implementación:** Jose Luis Limachi Sarmiento (Tech Lead)
 

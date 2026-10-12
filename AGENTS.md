@@ -9,6 +9,15 @@ Módulo de seguridad y autenticación del Marketplace Multicanal de Productos
 Deportivos: es el **proveedor de identidad** del que dependen los otros seis
 módulos del curso. Fase de especificación — todavía no hay código de producción.
 
+## Código separado de las fuentes SDD
+
+El backend nuevo está en `Modulo-de-Seguridad-Backend` (clon local independiente
+`Backend-auth-service/`); frontend en otro repo cuya URL sigue pendiente.
+Antes de implementar lee [BACKEND-HEXAGONAL](plan/hito-3/BACKEND-HEXAGONAL.md),
+el plan y el tablero del dueño. Rutas Java/React son relativas a su repo de código.
+El `backend/` Maven antiguo no se usa ni se copia como base. Mantener SHA de las
+fuentes consumidas en la evidencia y abrir los clones necesarios a la IA.
+
 ## Reglas que no se saltan
 
 - **El contrato tiene dueño único.** [`specs/contrato-api/openapi.yaml`](specs/contrato-api/openapi.yaml)

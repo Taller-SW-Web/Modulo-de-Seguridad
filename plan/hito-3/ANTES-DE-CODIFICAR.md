@@ -1,5 +1,11 @@
 # H3 — del plan cerrado a tareas y código
 
+**Complemento técnico 12-oct:** [backend hexagonal nuevo](BACKEND-HEXAGONAL.md)
+cierra paquetes, DTO/mappers, adaptadores JPA, JDBC, transacciones y repositorios
+independientes. Los siete planes/tableros son 1.1.0, con el mismo alcance aprobado.
+El backend Maven anterior queda descartado; ejecución/evidencia pendientes.
+
+
 **Corte:** 12-oct-2026. Los siete dueños aprobaron su incremento, según
 comunicación de Luis. Él delega detalles técnicos; se concretaron
 [interfaces/locks](ACUERDOS-INTERNOS.md), [persistencia](DISENO-PERSISTENCIA.md)
@@ -37,7 +43,7 @@ rutinaria; sí impiden ejecutar una parte contra un entorno desconocido.
 | Insumo/comprobación | Responsable / referencia | Antes de |
 |---|---|---|
 | Proyecto/esquema G7 Supabase y acceso privado, pg_version, Flyway/DDL y grants | Christian con dueños; TEC-01/DAT-01 | Aplicar migraciones o fixtures; no consultar otro proyecto como sustituto |
-| JDK 21, árbol Maven y paquetes frontend resueltos en lockfile | Jose Luis/Sergio; Christian verifica; TEC-04 | Acreditar arranque y pruebas; no atribuir resultados del kit al runtime propio |
+| JDK 21, dependencias Gradle y paquetes frontend resueltos en lockfile | Jose Luis/Sergio; Christian verifica; TEC-04 | Acreditar arranque y pruebas; no atribuir resultados del kit al runtime propio |
 | Proveedores internos implementados y comprobados | Dueño de cada capacidad | Ejecutar escenario integrado; dobles solo prueban aislamiento |
 | RSA privada/kid/issuer persistentes, claves HMAC/AEAD y CA | Sergio/Luis/Valery; custodia Christian; TEC-03 | Emitir, verificar y entregar secretos de forma real |
 | SMTP EMAIL y RabbitMQ reales/configurados | Christian; productores | Entrega OTP/enlace/aviso y publicación de hechos del incremento |

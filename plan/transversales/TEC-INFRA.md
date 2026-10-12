@@ -18,9 +18,11 @@
 | API | [OpenAPI v1](../../specs/contrato-api/openapi.yaml), descubrimiento/JWKS y [catálogo de eventos](../../specs/catalogo-eventos.md); no añade API Management pública en H3 |
 | React | Sin componentes nuevos; arranque/publicación de la SPA de los dueños, [base](../../specs/componentes-react/FRONT-00-base-compartida.md) |
 
-Punto de partida: [Compose](../../docker-compose.yml),
-[pom](../../backend/pom.xml), [Dockerfile](../../backend/Dockerfile)
-y [datos](../../docs/integracion/revision-datos.md). Existencia no acredita ejecución.
+Punto de partida: [backend independiente nuevo](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend)
+y [arquitectura hexagonal](../hito-3/BACKEND-HEXAGONAL.md). El pom, Dockerfile y
+Compose antiguos son antecedentes, no base de build/despliegue del nuevo repo.
+[Revisión de datos](../../docs/integracion/revision-datos.md) conserva evidencia
+histórica; no acredita esquema/historial Supabase actual.
 
 **Diseño H3 definitivo:** [composición](../hito-3/ACUERDOS-INTERNOS.md),
 [persistencia](../hito-3/DISENO-PERSISTENCIA.md) y [entorno/React](../hito-3/ENTORNO-Y-REACT.md).
@@ -47,7 +49,7 @@ que CI ya existe: .github/workflows/ci.yml está ausente en el corte consultado.
 | Fuente / referencia | Resultado H3 verificable |
 |---|---|
 | TEC-01; rúbrica H3 | Backend/frontend accesibles por HTTPS y DB propia, sin acceso DB entre módulos |
-| TEC-04 | Build/pruebas con Java 21/Boot 3.3.5 efectivos; frontend React/TypeScript con scripts/versiones registrados |
+| TEC-04 | Build/pruebas con Java 21/Boot 3.5.16/Gradle 8.14.3 efectivos; frontend React/TypeScript con scripts/versiones registrados |
 | TEC-03; RF-17.1/17.2 | Custodia de RSA/kid, issuer/JWKS correctos y estables tras reinicio |
 | RF-09.4; RF-14.8; RF-07.9 | Correo SMTP real asíncrono, sin OTP/enlace/contraseña en logs |
 | Catálogo eventos; RF-11.6/14.9/16.9 | Mutaciones H3 con outbox/publicación después de commit, eventoId y reintentos |
@@ -62,9 +64,9 @@ Conservar versiones declaradas del backend y comprobar dependencias reales
 antes de implementar firma/verificación. Jose Luis/Sergio revisan selección
 JOSE y frontend; no certificar Java 21 por validación del kit con JDK 23.
 
-Compose existente ofrece PostgreSQL 16, RabbitMQ 3.13, backend y administración
-local. Primero validar configuración sin volcar secretos; construir/probar
-cuando se autorice código. No aplicar el puerto/credencial de administración
+El nuevo entorno local se prepara en el repo backend con PostgreSQL 16.6 y
+RabbitMQ 3.13.7-management para tests, sin latest. Verificar build Gradle y
+configuración antes de desplegar; no copiar el Compose antiguo como base. No aplicar el puerto/credencial de administración
 local como configuración pública de nube.
 
 PostgreSQL ya está en Supabase, confirmado por Luis; conexión JDBC/TLS y
@@ -87,7 +89,8 @@ custodia para rollback sin exponer contenido en evidencia.
 
 ### Outbox y transporte
 
-V4 outbox existente es base, no worker implementado. Productor persiste
+V4 outbox del backend antiguo es una referencia de esquema; el nuevo adaptador
+y su migración se implementan después de revisar el historial real. Productor persiste
 mensaje en la misma transacción del hecho; worker procesa solo confirmados,
 evita dos entregas simultáneas por locks/reclamo y confirma envío antes de
 marcar ENVIADO. Rabbit publisher confirm; at-least-once y deduplicación por

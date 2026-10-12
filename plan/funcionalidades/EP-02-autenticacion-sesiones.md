@@ -100,7 +100,7 @@ memoria incluso si falla la red, sin afirmar que el servidor recibió el cierre.
 ### Backend y capacidades internas
 
 Controladores/adaptadores de login, renovación y cierre serán nuevos en
-com.marketplace.auth; aún no existen en la base revisada. Los tres endpoints
+com.marketplace.auth_service; aún no existen en la base revisada. Los tres endpoints
 son públicos. Logout se autoriza con el refresco del cuerpo y es idempotente.
 
 | Capacidad interna propuesta | Dueño | Consumo de EP-02 |
@@ -120,10 +120,10 @@ través de EP-03; la equivalencia de latencia se mide, no se supone.
 
 ### Persistencia y transacciones
 
-Se reutilizan [TokenRefresco](../../backend/src/main/java/com/marketplace/auth/sesion/entity/TokenRefresco.java)
-y su [repositorio](../../backend/src/main/java/com/marketplace/auth/sesion/repository/TokenRefrescoRepository.java):
-jti, usuario_id, familia_id, hash_token, usado, revocado y expiracion.
-Sus búsquedas actuales no acreditan rotación atómica.
+Se implementan modelos, puertos y adaptadores nuevos de sesión, sin reutilizar
+TokenRefresco/JpaRepository del backend Maven. [Arquitectura H3](../hito-3/BACKEND-HEXAGONAL.md)
+gobierna ubicaciones, DTO y mappers. Esquema e historial reales se revisan antes
+de preparar migraciones; las clases antiguas no acreditan rotación atómica.
 
 **Diseño definitivo H3:** refresco opaco de 32 bytes/hash SHA-256;
 raíz independiente sesion_familia y asociación acceso_sesion por jti.
@@ -151,7 +151,7 @@ pertenece a EP-07; no se añade un evento de negocio de login/refresh.
 Fallo/reintento respetan criticidad de SPEC-12, sin almacén de logs paralelo.
 
 API, issuer/JWKS, orígenes y reloj son configuración de entorno. Backend
-declara Java 21/Boot 3.3.5; biblioteca JOSE, dependencias efectivas y frontend
+nuevo declara Java 21/Boot 3.5.16/Gradle 8.14.3; biblioteca JOSE, dependencias efectivas y frontend
 React/Mantine se fijan al preparar el proyecto. El kit ejecutado en otro
 runtime no sustituye TEC-04 ni acredita este build.
 
