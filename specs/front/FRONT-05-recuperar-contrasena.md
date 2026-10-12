@@ -2,11 +2,14 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Juan José Cano Vasquez |
+| **Épica principal** | [EP-03](../epicas/EP-03-credenciales.md) |
 | **Specs de backend que consume** | SPEC-08, SPEC-07 (política), SPEC-14 (el restablecimiento levanta un bloqueo automático) |
 | **Wireframe** | Stitch, proyecto `889177073946089595`, pantalla 5 (numeración antigua; ver [`trazabilidad.md`](../trazabilidad.md) §1.1). Figma: pendiente |
 | **Estado** | Borrador |
 | **Aprobada por** | Pendiente |
+
+> **Corte de versión, 11-oct-2026:** H-15 decidido: vigencia/uso del enlace se comprueba al enviar el formulario. No se añade preconsulta de enlace; mantener los errores de recuperación existentes, sin equipararlos a errores de verificación de correo.
 
 ---
 

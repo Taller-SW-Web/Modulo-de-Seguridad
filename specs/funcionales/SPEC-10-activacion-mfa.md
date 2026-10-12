@@ -3,126 +3,121 @@
 | Campo | Valor |
 |---|---|
 | **Responsable** | Luis David Morales Brenis |
+| **Épica** | [EP-04 — Segundo factor: OTP y MFA](../epicas/EP-04-segundo-factor.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; no integra la demo mínima de Ventas |
 | **Hito objetivo** | Hito 4 (Sem. 11) |
-| **Estado** | ✅ Aprobada |
-| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
+| **Estado** | Definida localmente con edición delegada; implementación y publicación pendientes |
+| **Base histórica aprobada por** | Sergio Alejandro Osorio Montenegro (PO), 2-oct-2026; no constituye aprobación de esta revisión |
+| **Revisión contractual** | 11-oct: autorización de Sergio comunicada por Luis; [decisión y alcance](../../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md) |
 
-> **Origen.** Sale de dividir la antigua SPEC-04 «Autenticación por OTP y MFA» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
-
----
+Origen: antigua SPEC-04 dividida en SPEC-09/10. Ocho épicas y dieciocho specs
+se conservan; el segundo factor completo pertenece a Luis David.
+Contrato local seguro: [OpenAPI v2](../contrato-api/openapi-v2.yaml).
+La base histórica v1 incompleta no es el flujo a implementar.
 
 ## Contexto — ¿por qué?
 
-Las cuentas administrativas requieren una protección adicional que no puede depender de la voluntad de su titular; para clientes y vendedores, en cambio, el segundo factor es una decisión propia.
-
-Esta spec decide quién puede activar o desactivar el segundo factor y cómo se confirma cada cambio. Reutiliza el mecanismo de códigos de SPEC-09, que también sirve para que un canal autorizado —el Chatbot, por ejemplo— verifique el correo o el celular de un cliente.
-
----
+Las cuentas de gestión necesitan segundo factor obligatorio. Clientes y
+vendedores pueden elegirlo, pero cambiarlo exige demostrar acceso al correo.
+El contrato v1 enviaba un código para habilitar sin completar su confirmación
+y permitía deshabilitar sin código. Esa contradicción se resuelve en v2.
+A2 conserva SMS simulado y excluye verificación externa de contactos.
 
 ## Propósito — ¿para qué?
 
-Permitir que un cliente o un vendedor active o desactive su segundo factor confirmándolo con un código, e impedir que lo desactive quien tenga un rol de gestión.
-
-El resultado observable es la bandera `mfa_habilitado` cambiada y auditada tras un código correcto, o un `422 MFA_OBLIGATORIO` para el personal de gestión.
-
----
+Permitir que el titular active o desactive MFA después de confirmar un código
+de correo, manteniendo su obligatoriedad si existe cualquier rol de gestión.
+El resultado es un estado efectivo consultable, actualizado y auditado.
 
 ## Alcance — ¿hasta dónde?
 
-- Obligatoriedad del segundo factor para los cuatro roles de gestión.
-- Activación con `POST /api/v1/auth/otp/habilitar`, confirmada con un código.
-- Desactivación con `POST /api/v1/auth/otp/deshabilitar`, confirmada con un código.
-- Validación del correo o el celular de un cliente por un canal autorizado.
-- Auditoría de activaciones y desactivaciones mediante SPEC-12.
-
----
+- Lectura efectiva `mfaHabilitado` en `GET /api/v1/auth/me` (revisión local 1.1.0).
+- Solicitud, reenvío y confirmación por EMAIL en `/api/v2/auth/mfa/cambios`.
+- Generación/envío/verificación de código mediante la capacidad de SPEC-09,
+  con operación independiente del desafío de login.
+- Estado, sesión y roles comprobados en servidor; auditoría mediante SPEC-12.
+- Ningún cambio del login, issuer o audiencia pública para la demo de Ventas.
 
 ## Requisitos — ¿qué debe hacer?
 
 | Código | Requisito |
 |---|---|
-| RF-10.1 | El segundo factor debe ser obligatorio para quien tenga algún rol de gestión (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA`) y opcional para `CLIENTE` y `VENDEDOR`. Basta **un** rol de gestión para que sea obligatorio. |
-| RF-10.2 | Un usuario autenticado debe poder solicitar la habilitación de MFA y confirmar su activación mediante un código de prueba. |
-| RF-10.3 | Un usuario permitido debe poder deshabilitar MFA después de autenticarse y verificar un código de confirmación. Quien tenga algún rol de gestión no puede deshabilitarlo (`422 MFA_OBLIGATORIO`). |
-| RF-10.4 | El sistema debe permitir validar un correo o celular mediante este mecanismo cuando exista una solicitud autorizada del canal consumidor. |
-| RF-10.5 | La activación y la desactivación deben registrarse mediante SPEC-12 (`MFA_ACTIVADO`, `MFA_DESACTIVADO`), también los intentos rechazados. Ambas son acciones **críticas**. |
+| RF-10.1 | MFA obligatorio cuando exista ADMIN_VENTAS, GESTOR_DESPACHO, GESTOR_COMERCIAL o ADMIN_SISTEMA. Basta uno entre múltiples roles. El estado efectivo leído es true incluso si una bandera histórica quedó false. |
+| RF-10.2 | El titular con MFA desactivado solicita HABILITAR; 202 envía EMAIL y devuelve mfaChangeToken, canal, destinoEnmascarado, expiraEn y cambioExpiraEn. Solo confirmar correctamente actualiza estado; no crea sesión. |
+| RF-10.3 | El titular permitido solicita DESHABILITAR y confirma código. Cualquier rol de gestión impide solicitar o confirmar con 422 MFA_OBLIGATORIO. Se revalidan roles y cuenta al confirmar. |
+| RF-10.4 | No se ofrece endpoint ni scope de verificación externa de correo/celular en este ciclo (A2). Un OTP de login o de cambio MFA no verifica contactos. |
+| RF-10.5 | Solicitud/verificación producen OTP_SOLICITADO, OTP_VERIFICADO u OTP_FALLIDO con propósito; cambio/rechazo producen MFA_ACTIVADO o MFA_DESACTIVADO y resultado según SPEC-12. Estado, consumo y auditoría crítica se persisten atómicamente; fallo de auditoría: 503 NO_DISPONIBLE sin cambio. |
+| RF-10.6 | Cambio vence a los 600 s; cada código a los 300 s. Confirmar exige ambos vigentes; reenviar no extiende cambio y sustituye código atómicamente. UI muestra el menor tiempo restante. Solo un cambio pendiente por usuario; otro invalida el anterior. |
+| RF-10.7 | mfaChangeToken opaco, aleatorio y almacenado por hash, asociado a usuario, familia de sesión y acción en servidor. Nunca acepta usuarioId/destino/propósito en confirmación, ni challengeToken en lugar del token de cambio. JWT renovado en la misma familia conserva vínculo; otra sesión no. |
+| RF-10.8 | Máximo tres intentos por código. Código incorrecto: 401 CODIGO_INVALIDO con intentosRestantes; tercer fallo: 401 OTP_INTENTOS_AGOTADOS. Cambio/sesión inválido, vencido o consumido: 401 TOKEN_INVALIDO antes de comparar OTP. Solo código vencido, con cambio vigente: 410 OTP_EXPIRADO. Servicio: 403 TOKEN_NO_APLICABLE. |
+| RF-10.9 | Tres envíos por usuario en ventana móvil de 15 minutos compartidos entre login y cambios. Cuarto: 429 DEMASIADAS_SOLICITUDES con Retry-After positivo. Pedir el estado ya vigente: 400 VALIDACION sin envío ni cuota. |
+| RF-10.10 | Consumo de cambio/OTP y transición son de uso único y atómicos. Dos confirmaciones simultáneas no cambian dos veces ni emiten sesión. No devolver códigos, tokens o contactos sin máscara en errores/auditoría. |
 
----
+Confirmación exige token de acceso vigente y familia no revocada. Jose Luis
+provee resolución interna `jti → usuario/familia/vigencia`, sin claim nuevo
+ni credencial de servicio en navegador; Luis consume esa capacidad.
+La persistencia pendiente está trazada en [DAT-01](../../docs/integracion/revision-datos.md).
 
 ## Escenarios — ¿cómo verificamos?
 
-Formato Dado / Cuando / Entonces. Los marcados como **caso borde** cubren
-condiciones límite, de error o de seguridad.
+Todos usan Dado / Cuando / Entonces. Cada requisito clave tiene éxito y borde.
+Son casos para implementar; la validación de schemas no demuestra su ejecución.
 
-### ESC-10.1 Habilitación voluntaria de MFA
-
-- **Dado** un cliente autenticado con MFA deshabilitado,
-- **Cuando** solicita `POST /api/v1/auth/otp/habilitar`,
-- **Entonces** el sistema envía un código de confirmación y, después de su verificación correcta, marca `mfa_habilitado` como verdadero y registra `MFA_ACTIVADO`.
-
-### ESC-10.2 Deshabilitación permitida de MFA
-
-- **Dado** un vendedor autenticado con MFA habilitado,
-- **Cuando** solicita `POST /api/v1/auth/otp/deshabilitar` y verifica correctamente el código de confirmación,
-- **Entonces** el sistema deshabilita MFA, registra `MFA_DESACTIVADO` y exige contraseña solamente en el siguiente inicio de sesión.
-
-### ESC-10.3 Deshabilitación del segundo factor con un rol de gestión *(caso borde)*
-
-- **Dado** un usuario con un rol de gestión —por ejemplo `ADMIN_VENTAS`— y MFA habilitado,
-- **Cuando** intenta deshabilitar MFA,
-- **Entonces** el sistema responde `422 MFA_OBLIGATORIO`, mantiene MFA activo y registra el intento rechazado.
-
-### ESC-10.4 Validación de contacto solicitada por un canal autorizado
-
-- **Dado** una solicitud autorizada para verificar el correo o celular de un cliente,
-- **Cuando** el usuario recibe y verifica correctamente el código,
-- **Entonces** el sistema marca el canal correspondiente como verificado, registra `OTP_VERIFICADO` y devuelve el resultado al consumidor autorizado.
-
-### ESC-10.5 Basta un rol de gestión *(caso borde)*
-
-- **Dado** un usuario con los roles `VENDEDOR` y `GESTOR_COMERCIAL`,
-- **Cuando** intenta deshabilitar su segundo factor,
-- **Entonces** el sistema responde `422 MFA_OBLIGATORIO`: aunque `VENDEDOR` lo permitiría, `GESTOR_COMERCIAL` lo exige, y manda el más estricto.
-
----
+| Caso | RF | Dado | Cuando | Entonces |
+|---|---|---|---|---|
+| ESC-10.1 | 10.2 | CLIENTE autenticado sin MFA | Solicita HABILITAR y confirma código correcto | 202 seguido de 204, estado true y auditoría; sin nuevos tokens |
+| ESC-10.2 | 10.3 | VENDEDOR autenticado con MFA | Solicita DESHABILITAR y confirma | 202 seguido de 204, estado false y auditoría |
+| ESC-10.3 | 10.1, 10.3 | ADMIN_VENTAS | Intenta desactivar | 422 MFA_OBLIGATORIO, estado true, rechazo auditado |
+| ESC-10.4 | 10.4, 10.7 | challengeToken de login | Lo presenta como mfaChangeToken | 401 TOKEN_INVALIDO; no cambia MFA ni verifica contactos |
+| ESC-10.5 | 10.1 | Roles VENDEDOR y GESTOR_COMERCIAL, bandera histórica false | Consulta /auth/me o intenta desactivar | Lectura true; desactivación 422 |
+| ESC-10.6 | 10.2 | Cambio HABILITAR vigente | Presenta código incorrecto | 401 CODIGO_INVALIDO, contador actualizado; estado false |
+| ESC-10.7 | 10.4 | Celular recién editado no verificado | Confirma OTP de login/cambio MFA | Celular continúa no verificado; ningún flujo externo disponible |
+| ESC-10.8 | 10.5 | Cambio válido y persistencia disponible | Confirma correctamente | Consumo, estado y auditoría crítica persistidos conjuntamente |
+| ESC-10.9 | 10.5 | Cambio válido | Falla persistencia de auditoría | 503 NO_DISPONIBLE, transición no aplicada; reintento controlado |
+| ESC-10.10 | 10.6 | Cambio con 240 s restantes y OTP anterior | Reenvía | 202, nuevo OTP, cambio sigue 240 s; código anterior no verifica |
+| ESC-10.11 | 10.6 | Cambio vencido o reemplazado | Confirma aunque OTP no haya vencido | 401 TOKEN_INVALIDO |
+| ESC-10.12 | 10.7 | Cambio de sesión A y acceso renovado en familia A | Confirma | Vínculo válido; se aplican las demás validaciones |
+| ESC-10.13 | 10.7 | Cambio de otro usuario o familia B | Confirma con acceso de A | 401 TOKEN_INVALIDO, sin consumir operación ajena |
+| ESC-10.14 | 10.8 | Dos fallos de OTP | Envía tercer código incorrecto | 401 OTP_INTENTOS_AGOTADOS; OTP invalidado |
+| ESC-10.15 | 10.8 | Cambio vigente, OTP vencido | Confirma | 410 OTP_EXPIRADO; puede reenviar dentro de límites |
+| ESC-10.16 | 10.9 | Ya hubo tres envíos, incluyendo login | Solicita cuarto envío MFA | 429 y Retry-After, sin nuevo código |
+| ESC-10.17 | 10.9 | MFA ya habilitado | Solicita HABILITAR | 400 VALIDACION, ningún envío ni cuota |
+| ESC-10.18 | 10.10 | Dos confirmaciones correctas simultáneas | Compiten por el mismo cambio | Solo una 204; segunda 401 TOKEN_INVALIDO, una transición exitosa |
+| ESC-10.19 | 10.10 | Cambio ya confirmado | Repite confirmación | 401 TOKEN_INVALIDO, sin segunda transición |
+| ESC-10.20 | 10.3, 10.8 | Solicitud de desactivación; luego sesión revocada al añadir rol de gestión | Confirma con acceso anterior | 401 TOKEN_INVALIDO; si sesión válida con rol de gestión, 422 MFA_OBLIGATORIO; MFA permanece obligatorio |
 
 ## Requisitos no funcionales — ¿con qué condiciones?
 
-- La confirmación de la activación o desactivación debe responder en menos de 300 ms en el percentil 95, sin incluir la latencia del proveedor de correo o SMS.
-- La regla de obligatoriedad se evalúa sobre **todos** los roles de la cuenta: manda el más estricto.
-- Los datos de contacto deben mostrarse enmascarados en las respuestas.
-- El tratamiento de datos personales debe alinearse con la Ley N.º 29733 de Protección de Datos Personales.
-
----
+- Confirmación menor a 300 ms p95, excluyendo latencia de correo.
+- Generador criptográfico, almacenamiento de hashes y comparaciones resistentes
+  a diferencias de tiempo; no registrar OTP, tokens ni documento en claro.
+- Correo se envía asíncronamente; publicar 202 exige persistir operación y
+  entrega pendiente, sin cambiar MFA antes de confirmar.
+- Contactos enmascarados y control transaccional frente a concurrencia.
 
 ## Fuera de alcance — ¿qué NO hará?
 
-- La generación, el envío y la verificación de los códigos, que son de SPEC-09: aquí se reutilizan.
-- El cambio de celular, que es de SPEC-16: esta spec solo aporta la verificación posterior.
-- Códigos de respaldo para recuperar el segundo factor.
-- **El endpoint y el scope de la validación de contacto por un canal autorizado (RF-10.4): no se definen en este ciclo.** Decisión del 23 de septiembre, acuerdo A2: el SMS usa un adaptador simulado hasta el final del curso, y el correo ya queda verificado por el registro de SPEC-01 y SPEC-02. Se reevalúa en el Hito 4 si aparece un caso que el registro no cubra.
-- Que un administrador desactive el segundo factor de otra cuenta.
-
----
+SMS real, verificación externa de contactos (A2), TOTP, códigos de respaldo,
+desactivación por administrador de otra cuenta, sesión persistente en navegador
+o excepción al aviso contractual de ADR-003.
 
 ## Impacto en el contrato
 
-| Endpoint / evento | Añade, modifica o elimina | Acordado con el PO |
+| Endpoint / evento | Tratamiento | Estado |
 |---|---|---|
-| `POST /api/v1/auth/otp/habilitar` | Utiliza contrato existente | ⬜ |
-| `POST /api/v1/auth/otp/deshabilitar` | Utiliza contrato existente | ⬜ |
-| Validación de correo/celular por consumidor autorizado | **No se define en este ciclo** (acuerdo A2, 23-sep). RF-10.4 queda especificado, sin endpoint ni scope | ✅ decidido |
-| `MFA_ACTIVADO` · `MFA_DESACTIVADO` | Catálogo de auditoría de SPEC-12 | ⬜ |
-
----
+| GET /api/v1/auth/me | Perfil con mfaHabilitado; campos privados adicionales | Local 1.1.0, no publicado |
+| POST /api/v2/auth/mfa/cambios | Solicitar estado objetivo | Local 2.0.0 |
+| POST /api/v2/auth/mfa/cambios/reenviar | Reenvío dentro de vigencia | Local 2.0.0 |
+| POST /api/v2/auth/mfa/cambios/confirmar | Confirmación con código | Local 2.0.0 |
+| POST /api/v1/auth/otp/habilitar y /deshabilitar | Históricos deprecados; implementación bloqueada por seguridad | No desplegar |
+| MFA_ACTIVADO / MFA_DESACTIVADO | Catálogo de auditoría existente, no eventos RabbitMQ nuevos | SPEC-12 |
 
 ## Lista de completitud
 
-La spec se cierra cuando:
-
-- [ ] Todos los requisitos están implementados
-- [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
-- [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
-- [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
-- [ ] El código está en `main` con revisión aprobada y desplegado en nube
+- [ ] Requisitos y escenarios implementados por Luis David
+- [ ] Persistencia, asociación con familia y concurrencia verificadas
+- [ ] Auditoría crítica y errores comprobados
+- [ ] FRONT-09 y su componente implementados
+- [ ] Contrato publicado con versionado y aviso de ADR-003
+- [ ] Revisado, desplegado y demostrado; mock no acredita integración real

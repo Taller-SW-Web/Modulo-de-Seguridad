@@ -3,11 +3,19 @@
 | Campo | Valor |
 |---|---|
 | **Responsable** | Christian Gabriel Arancivia Salas |
+| **Épica** | [EP-06 — Auditoría de seguridad](../epicas/EP-06-auditoria.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 3 (Sem. 8) |
-| **Estado** | ✅ Aprobada |
-| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
+| **Estado** | Base aprobada; revisión local por edición delegada, sin publicar |
+| **Base aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Sale de dividir la antigua SPEC-06 «Auditoría y trazabilidad» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva el registro —catálogo, formato, inmutabilidad y retención—; la consulta y la exportación pasaron a SPEC-13, que ya tenía un hito distinto (Hito 5). La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-06 «Auditoría y trazabilidad» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva el registro —catálogo, formato, inmutabilidad y retención—; la consulta y la exportación pasaron a SPEC-13, que ya tenía un hito distinto (Hito 5). La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
+
+> **Revisión de trabajo, 11-oct-2026:** edición delegada según autorización
+> de Sergio comunicada por Luis. [ADR-008](../../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md)
+> distingue definición local de publicación/implementación. La aprobación del
+> 2-oct corresponde a la base histórica.
 
 ---
 
@@ -230,3 +238,20 @@ La spec se cierra cuando:
 - [ ] El usuario de base de datos de la aplicación no tiene `UPDATE` ni `DELETE` sobre `auditoria_seguridad`
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube
+
+
+## Revisión de detalle de bloqueo — H-07
+
+Detalle JSON de bloqueo: `tipoBloqueo` = AUTOMATICO/MANUAL, `motivo` solo para
+manual, `hasta` fecha de fin si el bloqueo vence y null si no vence: manual indefinido o automático desde el cuarto consecutivo según SPEC-14.
+Actor, cuenta afectada, acción, resultado y fecha permanecen campos del registro.
+Nunca incluir códigos, contraseñas, tokens, documento en claro ni datos de pedido.
+Desbloqueo referencia el registro/bloqueo terminado; intento rechazado conserva
+resultado y causa segura. La auditoría crítica debe persistir con la transición.
+
+Ejemplos: automático `{"tipoBloqueo":"AUTOMATICO","motivo":null,"hasta":"2026-10-11T18:15:00Z"}`;
+manual `{"tipoBloqueo":"MANUAL","motivo":"Revisión administrativa","hasta":null}`.
+Estos motivos no se exponen en login público ni como nuevos campos de servicio.
+
+Consulta: una `accion` por petición. Para otra acción se hace otra consulta;
+no prometer lista de acciones donde el contrato solo admite una.

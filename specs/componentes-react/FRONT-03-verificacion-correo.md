@@ -4,7 +4,8 @@
 |---|---|
 | Spec de interfaz | `specs/front/FRONT-03-verificacion-correo.md` |
 | Specs de backend | SPEC-02 (verificación y reenvío) · SPEC-16 (cambio de correo) |
-| Responsable | Por asignar |
+| **Responsable** | Eva Lucía Moreno Zevallos |
+| **Épica principal** | [EP-01](../epicas/EP-01-registro-gestion-usuarios.md) |
 
 ---
 

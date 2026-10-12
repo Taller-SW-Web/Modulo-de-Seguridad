@@ -3,11 +3,14 @@
 | Campo | Valor |
 |---|---|
 | **Responsable** | Jose Luis Limachi Sarmiento |
+| **Épica** | [EP-02 — Autenticación y gestión de sesiones](../epicas/EP-02-autenticacion-sesiones.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 3 (Sem. 8) |
 | **Estado** | ✅ Aprobada |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Sale de dividir la antigua SPEC-02 «Autenticación usuario/contraseña» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva el inicio de sesión; la renovación y el cierre de sesión pasaron a SPEC-06. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-02 «Autenticación usuario/contraseña» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva el inicio de sesión; la renovación y el cierre de sesión pasaron a SPEC-06. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
 
 ---
 
@@ -44,7 +47,7 @@ El resultado observable es un par de tokens —`accessToken` de 15 minutos y `re
 | Código | Requisito |
 |---|---|
 | RF-05.1 | El sistema debe permitir autenticar a un usuario utilizando su correo electrónico y contraseña. |
-| RF-05.2 | Si el usuario tiene MFA habilitado y las credenciales proporcionadas son correctas, el sistema no debe entregar directamente los tokens de acceso. |
+| RF-05.2 | Si el usuario tiene MFA efectivo habilitado según RF-10.1 (voluntario o exigido por cualquier rol de gestión) y las credenciales proporcionadas son correctas, el sistema no debe entregar directamente los tokens de acceso. |
 | RF-05.3 | Cuando se produzca un intento de inicio de sesión con credenciales incorrectas, el sistema debe registrarlo como intento fallido según SPEC-14, que es la dueña del contador y del bloqueo. |
 | RF-05.4 | El sistema debe rechazar el inicio de sesión cuando la cuenta se encuentre bloqueada, inactiva o pendiente de verificación, no debe emitir tokens y debe responder `401 CREDENCIALES_INVALIDAS`, igual que ante una contraseña incorrecta. |
 | RF-05.5 | Al completar la autenticación, el sistema debe aplicar la comprobación de caducidad de contraseña de SPEC-07: si caducó, responde `403 PASSWORD_CADUCADA` en vez de emitir tokens. SPEC-05 no reimplementa la regla: la invoca. |
@@ -155,6 +158,6 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube

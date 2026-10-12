@@ -13,34 +13,40 @@ ninguna tabla donde el hueco se hiciera visible. Esta es esa tabla.
 
 ---
 
+## Reparto vigente por épica (11-oct-2026)
+
+[Ocho épicas y dueños completos](epicas/README.md). SPEC-01 a SPEC-16 las descomponen; SPEC-17/SPEC-18 son integración técnica de Sergio. Las asignaciones históricas de septiembre son antecedentes. Los hitos de esta matriz corresponden al alcance completo; primera versión y dependencias están en cada ficha de épica.
+
+FRONT-07/08 combina bloques completos: Eva (cuentas), Sergio (roles), Luis David (bloqueos), Valery (atributos) y Christian (historial). El contenedor no asume capas ajenas.
+
 ## 1. Índice de las dieciocho specs
 
 Son specs **de backend**: cada una define una función del servicio, verificable
 por su API. Las specs de interfaz —pantallas, estados, validaciones del lado del
-cliente— van aparte, en [`front/`](front/), y las lleva el responsable de UX.
+cliente— van aparte, en [`front/`](front/), y las mantiene el dueño de la épica completa, con revisión UX.
 
 | SPEC | Funcionalidad | Responsable | Hito | Archivo | Estado |
 |---|---|---|---|---|---|
-| 01 | Registro de clientes | Eva Lucía | 3 | [`SPEC-01-registro-clientes.md`](SPEC-01-registro-clientes.md) | ✅ Aprobada |
-| 02 | Verificación de correo | Juan José | 3 | [`SPEC-02-verificacion-correo.md`](SPEC-02-verificacion-correo.md) | ✅ Aprobada |
-| 03 | Alta y consulta administrativa de cuentas | Christian | 3 | [`SPEC-03-alta-consulta-cuentas.md`](SPEC-03-alta-consulta-cuentas.md) | ✅ Aprobada |
-| 04 | Baja y reactivación de cuentas | Eva Lucía | 3 | [`SPEC-04-baja-reactivacion.md`](SPEC-04-baja-reactivacion.md) | ✅ Aprobada |
-| 05 | Inicio de sesión con correo y contraseña | Jose Luis | 3 | [`SPEC-05-inicio-sesion.md`](SPEC-05-inicio-sesion.md) | ✅ Aprobada |
-| 06 | Renovación y cierre de sesión | Jose Luis | 3 | [`SPEC-06-renovacion-cierre-sesion.md`](SPEC-06-renovacion-cierre-sesion.md) | ✅ Aprobada |
-| 07 | Política y cambio de contraseña | Juan José | 3 · 4 | [`SPEC-07-politica-cambio-contrasena.md`](SPEC-07-politica-cambio-contrasena.md) | ✅ Aprobada |
-| 08 | Recuperación de contraseña | Juan José | 4 | [`SPEC-08-recuperacion-contrasena.md`](SPEC-08-recuperacion-contrasena.md) | ✅ Aprobada |
-| 09 | Segundo factor en el inicio de sesión (OTP) | Luis David | 4 | [`SPEC-09-mfa-inicio-sesion.md`](SPEC-09-mfa-inicio-sesion.md) | ✅ Aprobada |
-| 10 | Activación y desactivación del segundo factor | Luis David | 4 | [`SPEC-10-activacion-mfa.md`](SPEC-10-activacion-mfa.md) | ✅ Aprobada |
-| 11 | Gestión de roles y permisos | Eva Lucía | 4 | [`SPEC-11-roles-permisos.md`](SPEC-11-roles-permisos.md) | ✅ Aprobada |
-| 12 | Registro de auditoría | Christian | 3 | [`SPEC-12-registro-auditoria.md`](SPEC-12-registro-auditoria.md) | ✅ Aprobada |
-| 13 | Consulta y exportación de la auditoría | Christian | 5 | [`SPEC-13-consulta-auditoria.md`](SPEC-13-consulta-auditoria.md) | ✅ Aprobada |
-| 14 | Bloqueo automático por intentos fallidos | Luis David | 5 | [`SPEC-14-bloqueo-automatico.md`](SPEC-14-bloqueo-automatico.md) | ✅ Aprobada |
-| 15 | Bloqueo y desbloqueo por un administrador | Luis David | 5 | [`SPEC-15-bloqueo-manual.md`](SPEC-15-bloqueo-manual.md) | ✅ Aprobada |
-| 16 | Gestión de atributos de usuarios | Eva Lucía | 5 | [`SPEC-16-atributos.md`](SPEC-16-atributos.md) | ✅ Aprobada |
-| 17 | Claves públicas, tokens de servicio e introspección | Sergio | 1 · 4 | [`SPEC-17-tokens-servicio.md`](SPEC-17-tokens-servicio.md) | ✅ Aprobada · contrato publicado |
-| 18 | Consulta de identidad para los demás módulos | Sergio | 1 · 4 | [`SPEC-18-consulta-identidad.md`](SPEC-18-consulta-identidad.md) | ✅ Aprobada · contrato publicado |
+| 01 | Registro de clientes | Eva Lucía | 3 | [`funcionales/SPEC-01-registro-clientes.md`](funcionales/SPEC-01-registro-clientes.md) | ✅ Aprobada |
+| 02 | Verificación de correo | Eva Lucía | 3 | [`funcionales/SPEC-02-verificacion-correo.md`](funcionales/SPEC-02-verificacion-correo.md) | ✅ Aprobada |
+| 03 | Alta y consulta administrativa de cuentas | Eva Lucía | 3 | [`funcionales/SPEC-03-alta-consulta-cuentas.md`](funcionales/SPEC-03-alta-consulta-cuentas.md) | ✅ Aprobada |
+| 04 | Baja y reactivación de cuentas | Eva Lucía | 3 | [`funcionales/SPEC-04-baja-reactivacion.md`](funcionales/SPEC-04-baja-reactivacion.md) | ✅ Aprobada |
+| 05 | Inicio de sesión con correo y contraseña | Jose Luis | 3 | [`funcionales/SPEC-05-inicio-sesion.md`](funcionales/SPEC-05-inicio-sesion.md) | ✅ Aprobada |
+| 06 | Renovación y cierre de sesión | Jose Luis | 3 | [`funcionales/SPEC-06-renovacion-cierre-sesion.md`](funcionales/SPEC-06-renovacion-cierre-sesion.md) | ✅ Aprobada |
+| 07 | Política y cambio de contraseña | Juan José | 3 · 4 | [`funcionales/SPEC-07-politica-cambio-contrasena.md`](funcionales/SPEC-07-politica-cambio-contrasena.md) | ✅ Aprobada |
+| 08 | Recuperación de contraseña | Juan José | 4 | [`funcionales/SPEC-08-recuperacion-contrasena.md`](funcionales/SPEC-08-recuperacion-contrasena.md) | ✅ Aprobada |
+| 09 | Segundo factor en el inicio de sesión (OTP) | Luis David | 4 | [`funcionales/SPEC-09-mfa-inicio-sesion.md`](funcionales/SPEC-09-mfa-inicio-sesion.md) | ✅ Aprobada |
+| 10 | Activación y desactivación del segundo factor | Luis David | 4 | [`funcionales/SPEC-10-activacion-mfa.md`](funcionales/SPEC-10-activacion-mfa.md) | ✅ Aprobada |
+| 11 | Gestión de roles y permisos | Sergio | 4 | [`funcionales/SPEC-11-roles-permisos.md`](funcionales/SPEC-11-roles-permisos.md) | ✅ Aprobada |
+| 12 | Registro de auditoría | Christian | 3 | [`funcionales/SPEC-12-registro-auditoria.md`](funcionales/SPEC-12-registro-auditoria.md) | ✅ Aprobada |
+| 13 | Consulta y exportación de la auditoría | Christian | 5 | [`funcionales/SPEC-13-consulta-auditoria.md`](funcionales/SPEC-13-consulta-auditoria.md) | ✅ Aprobada |
+| 14 | Bloqueo automático por intentos fallidos | Luis David | 5 | [`funcionales/SPEC-14-bloqueo-automatico.md`](funcionales/SPEC-14-bloqueo-automatico.md) | ✅ Aprobada |
+| 15 | Bloqueo y desbloqueo por un administrador | Luis David | 5 | [`funcionales/SPEC-15-bloqueo-manual.md`](funcionales/SPEC-15-bloqueo-manual.md) | ✅ Aprobada |
+| 16 | Gestión de atributos de usuarios | Valery | 5 | [`funcionales/SPEC-16-atributos.md`](funcionales/SPEC-16-atributos.md) | ✅ Aprobada |
+| 17 | Claves públicas, tokens de servicio e introspección | Sergio | 1 · 4 | [`funcionales/SPEC-17-tokens-servicio.md`](funcionales/SPEC-17-tokens-servicio.md) | ✅ Aprobada · contrato publicado |
+| 18 | Consulta de identidad para los demás módulos | Sergio | 1 · 4 | [`funcionales/SPEC-18-consulta-identidad.md`](funcionales/SPEC-18-consulta-identidad.md) | ✅ Aprobada · contrato publicado |
 
-Además, [`SPEC-17-18-api-identidad.plan.md`](SPEC-17-18-api-identidad.plan.md) es el **plan de
+Además, [`funcionales/SPEC-17-18-api-identidad.plan.md`](funcionales/SPEC-17-18-api-identidad.plan.md) es el **plan de
 implementación** de SPEC-17 y SPEC-18, no una spec: por eso no lleva número propio.
 
 ### 1.1 De nueve a dieciocho (20 de septiembre)
@@ -89,7 +95,7 @@ pertenece al menos a una historia.
 
 ## 2. Specs ↔ endpoints del contrato
 
-✅ publicado en `openapi.yaml`
+✅ base pública 1.0.0; filas específicas indican revisiones locales no publicadas. Prefijo omitido: /api/v1.
 
 | Endpoint | SPEC | Estado |
 |---|---|---|
@@ -121,8 +127,12 @@ pertenece al menos a una historia.
 | `POST /password/restablecer` | 08 | ✅ |
 | `POST /auth/otp/solicitar` | 09 | ✅ |
 | `POST /auth/otp/verificar` | 09 | ✅ |
-| `POST /auth/otp/habilitar` | 10 | ✅ |
-| `POST /auth/otp/deshabilitar` | 10 | ✅ |
+| `POST /auth/otp/habilitar` | 10 | Histórico v1 deprecado; no implementar |
+| `POST /auth/otp/deshabilitar` | 10 | Histórico v1 deprecado; no implementar |
+| `POST /api/v2/auth/mfa/cambios` | 10 | Local 2.0.0; no publicado |
+| `POST /api/v2/auth/mfa/cambios/reenviar` | 10 | Local 2.0.0; no publicado |
+| `POST /api/v2/auth/mfa/cambios/confirmar` | 10 | Local 2.0.0; no publicado |
+| `POST /api/v2/usuarios` | 03 | Local 2.0.0; alta estricta |
 | `POST /usuarios/{id}/roles` | 11 | ✅ |
 | `DELETE /usuarios/{id}/roles/{rol}` | 11 | ✅ |
 | `GET /auditoria` | 13 | ✅ |
@@ -151,19 +161,19 @@ fuera con los tres endpoints de SPEC-13.
 Las ocho del Hito 1, según `docs/plan-hito-1.md` §5. La primera versión en
 Stitch las desglosa en 47 artboards, uno por estado, rotulados todavía con la
 **numeración antigua** (`SPEC-0X · Pantalla · (letra) estado`); la equivalencia
-está arriba, en la §1.1. Cada pantalla tendrá su spec de interfaz en
+está arriba, en la §1.1. Cada pantalla tiene su spec de interfaz en
 [`front/`](front/).
 
 | # | Pantalla | SPEC de backend | Interfaz |
 |---|---|---|---|
-| 1 | Inicio de sesión — sin estado propio de «cuenta bloqueada» | 05, 07, 14 | Valery |
-| 2 | Registro de cliente, con medidor de fuerza | 01, 07 | Valery |
-| 3 | Verificación de correo | 02 | Valery |
+| 1 | Inicio de sesión — sin estado propio de «cuenta bloqueada» | 05, 07, 14 | Jose Luis |
+| 2 | Registro de cliente, con medidor de fuerza | 01, 07 | Eva Lucía |
+| 3 | Verificación de correo | 02 | Eva Lucía |
 | 4 | Desafío de código OTP | 09 | Luis David |
-| 5 | Recuperar contraseña | 08 | Juan José / Valery |
-| 6 | Mi cuenta — perfil y direcciones | 16 | Christian |
-| 7 | Panel admin — listado de usuarios | 03, 04, 11, 15 | Christian |
-| 8 | Panel admin — detalle: roles, bloqueos, historial | 11, 13, 15 | Christian |
+| 5 | Recuperar contraseña | 08 | Juan José |
+| 6 | Mi cuenta — perfil y direcciones | 16 | Valery |
+| 7 | Panel admin — listado de usuarios | 03, 04, 11, 15 | Eva Lucía (contenedor; bloques por épica) |
+| 8 | Panel admin — detalle: roles, bloqueos, historial | 11, 13, 15 | Eva Lucía (contenedor; bloques por épica) |
 
 SPEC-17 y SPEC-18 no tienen pantalla y es correcto: las consumen máquinas. Su
 equivalente a una demo es el `curl` al JWKS. SPEC-06 y SPEC-12 tampoco: ocurren
@@ -176,7 +186,9 @@ segundo factor desde *Mi cuenta*— y hoy no tiene wireframe (ver §7).
 
 Detalle en [`catalogo-eventos.md`](catalogo-eventos.md).
 
-| Evento | Publica | Consumen |
+**Consumidores previstos, no suscripciones confirmadas.** Reconciliar con acuerdos/issues según EVT-01.
+
+| Evento | Publica | Consumidores previstos |
 |---|---|---|
 | `usuario.creado` | 02 (registro verificado) · 03 (alta administrativa) | Los seis módulos |
 | `usuario.desactivado` | 04 | Los seis módulos |
@@ -193,7 +205,7 @@ cambio de contraseña no cambia nada que otro módulo necesite saber.
 
 ## 5. Specs ↔ tablas de datos
 
-Para que Eva pueda cerrar `docs/arquitectura/modelo-datos.md` sin perseguir a
+Para que los dueños de las épicas puedan mantener `docs/arquitectura/modelo-datos.md` sin perseguir a
 nadie.
 
 | Tabla | Dueña | Comparten |
@@ -257,7 +269,7 @@ Lo que hoy sabemos que falta. Se cierra o se convierte en decisión escrita.
 | El catálogo de eventos no está acordado con los seis equipos | Sergio | Hito 2 |
 | ~~Cada responsable revisa su spec dividida, confirma los *valores propuestos* y la aprueba~~ ✅ Las 18 aprobadas el 2-oct | Los siete | — |
 | SPEC-05 a SPEC-08 no rotulan sus casos borde | Jose Luis, Juan José | Hito 2 |
-| SPEC-10 no tiene pantalla en los wireframes | Valery, Luis David | Hito 2 |
+| SPEC-10 tiene FRONT-09 definida localmente; wireframe pendiente | Luis David | Hito 2 |
 | Los artboards de Stitch siguen con la numeración antigua | Valery | Al pasarlos a Figma |
 | Specs de interfaz en [`front/`](front/) | Valery | Por definir |
 

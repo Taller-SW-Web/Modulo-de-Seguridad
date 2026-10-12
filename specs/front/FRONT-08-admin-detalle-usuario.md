@@ -2,11 +2,16 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Eva Lucía Moreno Zevallos — contenedor; bloques completos según épica |
+| **Épica principal** | [EP-01](../epicas/EP-01-registro-gestion-usuarios.md) |
 | **Specs de backend que consume** | SPEC-11, SPEC-13, SPEC-15 (y SPEC-03, SPEC-04, SPEC-16) |
 | **Wireframe** | Stitch, proyecto `889177073946089595`, pantalla 8 (numeración antigua; ver [`trazabilidad.md`](../trazabilidad.md) §1.1). Figma: pendiente |
 | **Estado** | Borrador |
 | **Aprobada por** | Pendiente |
+
+> **Bloques compartidos:** cada dueño implementa su capacidad completa; el contenedor integra sin asumir capas ajenas. [Reparto por bloque](../../docs/responsabilidades.md).
+
+> **Corte de versión, 11-oct-2026:** H-09: usar códigos/etiquetas del catálogo canónico en CONTEXT y SPEC-11. No consumir GET /roles con secretos de servicio desde el navegador; tener el código de un rol no sustituye autorización.
 
 ---
 

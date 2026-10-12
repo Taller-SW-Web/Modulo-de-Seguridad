@@ -2,144 +2,112 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
-| **Specs de backend que consume** | SPEC-10 (reutiliza los códigos de SPEC-09) |
-| **Wireframe** | Sin wireframe: es el hueco que ya anota [`trazabilidad.md`](../trazabilidad.md) §7 |
-| **Estado** | Borrador — **bloqueada por H-01 y H-02** |
-| **Aprobada por** | Pendiente |
-
-> **Esta spec describe la pantalla que piden SPEC-10 y la HU-10.1, no la que
-> permite hoy el contrato.** Dos piezas del contrato faltan (H-01 y H-02). Donde
-> falta una, la spec lo marca con ⛔ en vez de inventar un endpoint.
-
----
+| **Responsable** | Luis David Morales Brenis |
+| **Épica principal** | [EP-04](../epicas/EP-04-segundo-factor.md) |
+| **Specs de backend que consume** | SPEC-10, capacidad de códigos SPEC-09, perfil SPEC-16 |
+| **Wireframe** | Pendiente; layout y estados definidos aquí |
+| **Estado** | Definida localmente; H-01/H-02 resueltos en contrato local; sin implementar |
+| **Revisión** | Edición contractual delegada; publicación y revisión visual pendientes |
 
 ## Objetivo — ¿para qué sirve esta pantalla?
 
-Un cliente o un vendedor decide si quiere el segundo factor (RF-10.2, RF-10.3).
-Quien tiene un rol de gestión lo ve activo y sin opción de apagarlo (RF-10.1).
-Se llega desde la sección Seguridad de *Mi cuenta* (FRONT-06).
-
----
+Desde Seguridad de Mi cuenta, el titular habilita o deshabilita MFA confirmando
+un código de correo. Quien tenga cualquier rol de gestión ve MFA obligatorio.
+Se implementa contra [v2](../contrato-api/openapi-v2.yaml); no usa las rutas
+históricas v1 incompletas.
 
 ## Endpoints que usa
 
-| Momento | Endpoint | Spec de backend |
+| Momento | Endpoint | Spec |
 |---|---|---|
-| Al abrir, para saber si está activo | ⛔ `GET /api/v1/auth/me` no devuelve `mfaHabilitado` (H-01) | SPEC-16, SPEC-10 |
-| Al pulsar «Activar» | `POST /api/v1/auth/otp/habilitar` → `202`, envía un código | SPEC-10 |
-| Al escribir el código de activación | ⛔ No hay endpoint para confirmarlo (H-02) | SPEC-10 (RF-10.2) |
-| Al pulsar «Desactivar» | `POST /api/v1/auth/otp/deshabilitar` → `204` | SPEC-10 |
-| Código de confirmación de la desactivación | ⛔ El contrato no lo pide, aunque RF-10.3 lo exige (H-02) | SPEC-10 (RF-10.3) |
+| Al abrir o tras confirmar | GET /api/v1/auth/me, revisión local 1.1.0 | 16, 10 |
+| Solicitar activar/desactivar | POST /api/v2/auth/mfa/cambios: accion HABILITAR/DESHABILITAR | 10 |
+| Reenviar | POST /api/v2/auth/mfa/cambios/reenviar: mfaChangeToken | 10 |
+| Confirmar | POST /api/v2/auth/mfa/cambios/confirmar: mfaChangeToken, codigo | 10 |
 
----
+Access token del titular en las tres llamadas de cambio. Token/código solo
+en memoria y cuerpo definido, nunca URL/almacenamiento persistente.
+No envía usuarioId, correo destino, propósito ni challengeToken de login.
 
 ## Estados de la pantalla
 
 | Estado | Cuándo ocurre | Qué ve el usuario |
 |---|---|---|
-| Cargando | Al abrir | Indicador |
-| Obligatorio | La cuenta tiene algún rol de gestión | «El segundo factor está activo y es obligatorio para tu rol.» Sin interruptor. Basta un rol de gestión (RF-10.1, ESC-10.5) |
-| Desactivado | ⛔ `mfaHabilitado = false` (H-01) | Explicación breve y botón «Activar segundo factor» |
-| Enviando código | Tras «Activar» | Indicador «Enviando un código a tu correo…» |
-| Confirmar activación | `202` de `/otp/habilitar` | Seis casillas iguales a las de FRONT-04 y botón «Confirmar». ⛔ H-02 |
-| Activado | Tras confirmar el código | «El segundo factor está activo. La próxima vez que inicies sesión te pediremos un código.» y botón «Desactivar» |
-| Confirmar desactivación | Pulsa «Desactivar» | Diálogo de confirmación; RF-10.3 añade un código. ⛔ H-02 |
-| Desactivado tras confirmar | `204` | «Desactivaste el segundo factor. La próxima vez solo te pediremos la contraseña.» |
-| Rechazado por el rol | `422 MFA_OBLIGATORIO` | Mensaje y la pantalla pasa al estado «Obligatorio» |
+| Cargando | Abre o refresca perfil | Indicador, acciones deshabilitadas |
+| Desactivado | mfaHabilitado false | Explicación y Activar |
+| Activo | mfaHabilitado true sin rol de gestión | Aviso y Desactivar |
+| Obligatorio | Cualquier rol de gestión | Activo, obligatorio para tu rol; sin botón de desactivar |
+| Enviando | Solicita o reenvía | Enviando un código a tu correo, sin doble envío |
+| Confirmando | 202 | Correo enmascarado, campo seis dígitos, Confirmar/Reenviar/Cancelar |
+| Código rechazado | CODIGO_INVALIDO | Error y reintentos disponibles; estado anterior intacto |
+| Código vencido/agotado | OTP_EXPIRADO/OTP_INTENTOS_AGOTADOS | Reenviar si cambio vigente y cuota disponible |
+| Límite | 429 | Espera de Retry-After; reenvío deshabilitado, sin envío automático |
+| Cambio vencido | cambioExpiraEn llega a cero | Reiniciar solicitud; eliminar token de cambio |
+| Éxito | 204 | Cambio confirmado; volver a consultar perfil |
+| Sesión inválida | TOKEN_INVALIDO | Borrar cambio/sesión y volver al login; no inferir cuenta bloqueada |
+| Fallo de servicio | NO_DISPONIBLE o red | Estado no confirmado; permitir recuperación controlada |
 
-**Los roles de gestión son `ADMIN_VENTAS`, `GESTOR_DESPACHO`,
-`GESTOR_COMERCIAL` y `ADMIN_SISTEMA`.** La pantalla los lee de los roles de la
-sesión para mostrar el estado «Obligatorio» sin esperar al `422`. La regla es
-de RF-10.1; el backend la aplica igualmente.
-
----
+La cuenta regresiva muestra min(expiraEn, cambioExpiraEn), calculado desde
+instante de recepción. Reenvío no prolonga el cambio. Recarga exige login
+(H-11). Cancelar cierra diálogo y borra token local; no llama a una ruta
+de cancelación inexistente. La operación expira en servidor o queda
+invalidada al iniciar otra solicitud.
 
 ## Validaciones del lado del cliente
 
-| Campo | Regla | Mensaje | Origen |
-|---|---|---|---|
-| Código | 6 dígitos, mismo control que FRONT-04 | «Escribe los 6 dígitos del código.» | RF-09.1 |
-
----
+Código `^[0-9]{6}$`, como string (conserva ceros iniciales). Validar no
+autoriza: el servidor reevalúa titular, familia, cuenta, roles y propósito.
+No cambiar estado optimistamente; solo tras 204 y nueva lectura del perfil.
 
 ## Textos y mensajes
 
-| Código del backend | Mensaje en pantalla |
+| Código | Mensaje |
 |---|---|
-| `202` de `/otp/habilitar` | «Te enviamos un código a tu correo. Escríbelo para terminar de activar el segundo factor.» |
-| `MFA_OBLIGATORIO` | «Tu rol exige el segundo factor; no puedes desactivarlo.» |
-| `CODIGO_INVALIDO`, `OTP_EXPIRADO`, `OTP_INTENTOS_AGOTADOS`, `DEMASIADAS_SOLICITUDES` | Los de FRONT-04, si el endpoint de confirmación (H-02) los devuelve |
-| `NO_DISPONIBLE` | Según FRONT-00 §2 |
+| VALIDACION | Revisa los datos o actualiza el estado del segundo factor. |
+| CODIGO_INVALIDO | El código no es correcto. Revisa los seis dígitos. |
+| OTP_INTENTOS_AGOTADOS | Agotaste los intentos; solicita otro código. |
+| OTP_EXPIRADO | El código venció; solicita otro. |
+| MFA_OBLIGATORIO | Tu rol exige el segundo factor; no puedes desactivarlo. |
+| DEMASIADAS_SOLICITUDES | Espera el tiempo indicado antes de pedir otro código. |
+| TOKEN_INVALIDO | Vuelve a iniciar sesión para continuar. |
+| TOKEN_NO_APLICABLE | No se pudo autorizar esta operación. |
+| NO_DISPONIBLE | FRONT-00: reintentar de forma controlada. |
 
-Diálogo de desactivación: «¿Desactivar el segundo factor? A partir de ahora,
-quien conozca tu contraseña podrá entrar en tu cuenta.» Botones «Desactivar» y
-«Cancelar».
-
----
+Antes de solicitar desactivación: diálogo con efecto sobre el próximo login
+y Cancelar/Continuar. El código confirma la decisión; el primer clic no la aplica.
+Si la red falla después de confirmar, consultar perfil cuando sea posible;
+no reenviar confirmación ciegamente con token que pudo consumirse.
 
 ## Escenarios de interfaz — ¿cómo verificamos?
 
-### UI-09.1 Activar como cliente
-- **Dado** un cliente con el segundo factor desactivado
-- **Cuando** pulsa «Activar», recibe el código y lo escribe
-- **Entonces** ve «El segundo factor está activo…». ⛔ Depende de H-01 y H-02.
-
-### UI-09.2 Desactivar como vendedor
-- **Dado** un vendedor con el segundo factor activo
-- **Cuando** pulsa «Desactivar» y confirma
-- **Entonces** ve «Desactivaste el segundo factor…».
-
-### UI-09.3 Rol de gestión *(caso borde)*
-- **Dado** un usuario con `ADMIN_VENTAS`
-- **Cuando** abre la pantalla
-- **Entonces** ve «…es obligatorio para tu rol.» y ningún botón para desactivarlo.
-
-### UI-09.4 Varios roles, uno de gestión *(caso borde)*
-- **Dado** un usuario con `VENDEDOR` y `GESTOR_COMERCIAL`
-- **Cuando** abre la pantalla
-- **Entonces** ve el estado «Obligatorio», como en UI-09.3 (ESC-10.5).
-
-### UI-09.5 Los roles cambiaron durante la sesión *(caso borde)*
-- **Dado** un vendedor al que un administrador acaba de asignar un rol de gestión, con la pantalla abierta
-- **Cuando** pulsa «Desactivar»
-- **Entonces** recibe `422 MFA_OBLIGATORIO`, ve su mensaje y la pantalla pasa
-  a «Obligatorio». (En la práctica, el cambio de rol revoca la sesión y lo
-  normal es que antes vea UI-00.3.)
-
----
+| Caso | Dado | Cuando | Entonces |
+|---|---|---|---|
+| UI-09.1 | Perfil sin MFA | Activa y confirma código | 202, código, 204 y lectura true |
+| UI-09.2 | Perfil con MFA voluntario | Desactiva y confirma | Diálogo, 202, código, 204 y lectura false |
+| UI-09.3 | CLIENTE y ADMIN_SISTEMA | Abre pantalla | Obligatorio, sin Desactivar |
+| UI-09.4 | Código incorrecto | Envía | Error, conserva estado anterior |
+| UI-09.5 | OTP vencido, cambio vigente | Reenvía | Sustituye código; no amplía tiempo de cambio |
+| UI-09.6 | Límite de envíos | Recibe 429 | Cuenta espera; no reenvía automáticamente |
+| UI-09.7 | Confirmación en vuelo | Hace doble clic | Una llamada; control deshabilitado |
+| UI-09.8 | Sesión revocada/cambio inválido | Recibe 401 | Borrar estado y volver al login |
+| UI-09.9 | Red falla tras confirmar | Recupera conexión | Consulta perfil antes de nueva acción |
+| UI-09.10 | Cambio termina | Expira contador o cancela | Borra token; nueva solicitud explícita |
 
 ## Accesibilidad y diseño adaptable
 
-- Se aplica FRONT-00; el código, igual que FRONT-04.
-- El estado actual («Activo», «Desactivado», «Obligatorio») es un texto
-  visible, no solo la posición de un interruptor.
-
----
+Campo con etiqueta; admite pegar seis dígitos y operar con teclado.
+Foco al abrir diálogo; restaurarlo al cerrar. Error asociado al campo y
+avisos accesibles sin anunciar cada segundo. Layout móvil sin desplazamiento
+horizontal; botón ocupado anuncia progreso.
 
 ## Fuera de alcance — ¿qué NO hará?
 
-- Aplicaciones TOTP, llaves de seguridad o códigos de respaldo (fuera de alcance de SPEC-09 y SPEC-10).
-- Elegir el canal (correo o SMS): el contrato de `/otp/habilitar` no lo recibe.
-- Verificar el celular (acuerdo A2, H-03).
-- Que un administrador desactive el segundo factor de otra cuenta.
-
----
-
-## Huecos detectados en el backend
-
-- **H-01** — `Usuario` no incluye `mfaHabilitado`: la pantalla no puede saber
-  si mostrar «Activar» o «Desactivar».
-- **H-02** — `POST /auth/otp/habilitar` envía un código, pero no hay endpoint
-  que lo reciba para completar la activación. `POST /auth/otp/deshabilitar` no
-  recibe código, aunque RF-10.3 exige verificarlo.
-
----
+No verifica contactos, no SMS real, no cambia MFA de terceros ni emite sesión.
+Wireframe pendiente no acredita diseño visual aprobado ni implementación.
 
 ## Lista de completitud
 
-- [ ] H-01 y H-02 resueltos en el contrato antes de implementar
-- [ ] Cada estado de la pantalla está implementado
-- [ ] Un rol de gestión muestra «Obligatorio» sin opción de desactivar
-- [ ] Los escenarios de interfaz están automatizados o verificados a mano con evidencia
-- [ ] Existe un wireframe y coincide con la implementación
+- [ ] Estados y UI-09.1–10 verificados
+- [ ] Contrato publicado y servicios implementados antes del consumo externo
+- [ ] Wireframe revisado, teclado y mensajes comprobados
+- [ ] Dependencia DAT-01 y auditoría implementadas con sus dueños

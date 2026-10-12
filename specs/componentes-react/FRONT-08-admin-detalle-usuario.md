@@ -4,7 +4,12 @@
 |---|---|
 | Spec de interfaz | `specs/front/FRONT-08-admin-detalle-usuario.md` |
 | Specs de backend | SPEC-11 (roles), SPEC-13 (auditoría), SPEC-15 (bloqueo) · y SPEC-03, SPEC-04, SPEC-16 |
-| Responsable | Por asignar |
+| **Responsable** | Eva Lucía Moreno Zevallos — contenedor; bloques completos según épica |
+| **Épica principal** | [EP-01](../epicas/EP-01-registro-gestion-usuarios.md) |
+
+> **Bloques compartidos:** cada dueño implementa su capacidad completa; el contenedor integra sin asumir capas ajenas. [Reparto por bloque](../../docs/responsabilidades.md).
+
+> **Corte de versión, 11-oct-2026:** H-09: usar códigos/etiquetas del catálogo canónico en CONTEXT y SPEC-11. No consumir GET /roles con secretos de servicio desde el navegador; tener el código de un rol no sustituye autorización.
 
 ---
 

@@ -3,11 +3,13 @@
 | Campo | Valor |
 |---|---|
 | **Responsable** | Sergio Alejandro Osorio Montenegro (Product Owner) |
+| **Clasificación** | Integración técnica transversal de Sergio; no es novena épica académica |
+| **Primera versión** | Capacidad necesaria para el recorrido acordado; no equivale a todo el alcance |
 | **Hito objetivo** | Hito 1 (Sem. 4) — contrato · Hito 4 (Sem. 11) — implementación |
 | **Estado** | ✅ Aprobada |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Sale de dividir la antigua SPEC-09 «API de identidad para los demás módulos» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva la verificación de tokens —JWKS, token de servicio, introspección— y las reglas comunes de acceso y error; la consulta de datos de usuario pasó a SPEC-18. El contrato publicado no cambió: solo se repartieron sus requisitos. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-09 «API de identidad para los demás módulos» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva la verificación de tokens —JWKS, token de servicio, introspección— y las reglas comunes de acceso y error; la consulta de datos de usuario pasó a SPEC-18. El contrato publicado no cambió: solo se repartieron sus requisitos. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
 
 ---
 
@@ -15,7 +17,7 @@
 
 El marketplace lo construyen siete equipos. Seis de ellos —marketplace cliente, chatbot, retail, ventas y postventa, despacho y entrega, productos y ofertas— tienen que saber **quién** está detrás de cada petición y **qué se le permite hacer**. La matriz cruzada del curso les prohíbe expresamente consultar nuestra base de datos: toda relación pasa por API.
 
-Esta especificación define la mitad de esa frontera que **bloquea a equipos que no son el nuestro**: sin la clave pública y sin token de servicio, los otros seis no pueden ni empezar a programar sus llamadas. Por eso se publica en la semana 4, antes que la implementación (ver [ADR-003](../docs/arquitectura/adr/003-contrato-antes-que-codigo.md)).
+Esta especificación define la mitad de esa frontera que **bloquea a equipos que no son el nuestro**: sin la clave pública y sin token de servicio, los otros seis no pueden ni empezar a programar sus llamadas. Por eso se publica en la semana 4, antes que la implementación (ver [ADR-003](../../docs/arquitectura/adr/003-contrato-antes-que-codigo.md)).
 
 Las funcionalidades internas del módulo están en SPEC-01 a SPEC-16. Esta no las repite: describe lo que ocurre **desde fuera**, cuando quien llama no es nuestra propia SPA sino otro microservicio.
 
@@ -96,7 +98,7 @@ introspección en cada petición nos convierte en su punto único de fallo.
 Estos seis códigos **viajan dentro del claim `roles` del token** que leen los
 otros seis equipos. Son parte del contrato y no pueden cambiarse
 unilateralmente. La decisión de fijarlos en español está registrada en
-[ADR-004](../docs/arquitectura/adr/004-idioma-del-contrato.md).
+[ADR-004](../../docs/arquitectura/adr/004-idioma-del-contrato.md).
 
 | Código | Perfil |
 |---|---|
@@ -109,7 +111,7 @@ unilateralmente. La decisión de fijarlos en español está registrada en
 
 ### Scopes del token de servicio
 
-Se piden por issue con la etiqueta `integracion` y se conceden por escrito en [`acuerdos.md`](../docs/integracion/acuerdos.md), como indica el kit §5.
+Se piden por issue con la etiqueta `integracion` y se conceden por escrito en [`acuerdos.md`](../../docs/integracion/acuerdos.md), como indica el kit §5.
 
 | Scope | Qué autoriza | Spec |
 |---|---|---|
@@ -123,7 +125,7 @@ Todos estos llevan `aud: "api-seguridad"`.
 
 ### Scopes de APIs de otros módulos
 
-Acuerdo A4 ([`acuerdos.md`](../docs/integracion/acuerdos.md)). El módulo dueño
+Acuerdo A4 ([`acuerdos.md`](../../docs/integracion/acuerdos.md)). El módulo dueño
 de la API define el scope y qué autoriza, y es quien responde `401`/`403` en sus
 endpoints. Nosotros solo lo registramos, lo concedemos y lo emitimos: no
 programamos nada que dependa de lo que significa. Cada scope se guarda en la
@@ -215,7 +217,7 @@ condiciones límite, de error o de seguridad.
 ### ESC-17.9 Un equipo consumidor programa antes de que exista la implementación
 
 - **Dado** que el equipo de Retail quiere integrarse en la semana 5 y la implementación real llega en la semana 11,
-- **Cuando** levanta el entorno simulado a partir de `specs/openapi.yaml` y apunta su cliente a él,
+- **Cuando** levanta el entorno simulado a partir de `specs/contrato-api/openapi.yaml` y apunta su cliente a él,
 - **Entonces** recibe respuestas con los ejemplos del contrato, incluidos los caminos de error, y al llegar la implementación solo cambia la URL base.
 
 ---
@@ -234,7 +236,7 @@ condiciones límite, de error o de seguridad.
 ## Fuera de alcance — ¿qué NO hará?
 
 - **La consulta de datos de usuario, direcciones y catálogos**, que es de SPEC-18.
-- **Los eventos asíncronos** (vía 3), que se especifican en [`catalogo-eventos.md`](catalogo-eventos.md) y los publica cada spec dueña del cambio.
+- **Los eventos asíncronos** (vía 3), que se especifican en [`../catalogo-eventos.md`](../catalogo-eventos.md) y los publica cada spec dueña del cambio.
 - **La validación de los tokens en las APIs de otros módulos** y sus respuestas `401`/`403`: las aplica cada módulo dueño del scope.
 - **La autorización de las operaciones de negocio.** Entregamos identidad, roles y permisos; qué permite hacer cada módulo con ellos lo decide ese módulo.
 - **La pasarela de API centralizada** del marketplace y la infraestructura de red compartida.
@@ -250,8 +252,8 @@ condiciones límite, de error o de seguridad.
 token de acceso sigue siendo válido hasta su `exp` aunque el usuario haya sido
 desactivado. Es el precio de que los seis módulos validen sin llamarnos. Quien
 no pueda pagarlo usa la introspección. Ver
-[ADR-001](../docs/arquitectura/adr/001-rs256-frente-a-hs256.md) y
-[ADR-002](../docs/arquitectura/adr/002-validacion-local-frente-a-introspeccion.md).
+[ADR-001](../../docs/arquitectura/adr/001-rs256-frente-a-hs256.md) y
+[ADR-002](../../docs/arquitectura/adr/002-validacion-local-frente-a-introspeccion.md).
 
 **Credenciales por módulo y no una clave compartida.** Si un `client_secret` se
 filtra, se revoca ese cliente sin afectar a los otros cinco, y la auditoría
@@ -286,6 +288,6 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube

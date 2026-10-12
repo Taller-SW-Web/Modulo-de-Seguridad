@@ -2,142 +2,121 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
-| **Specs de backend que consume** | SPEC-03, SPEC-07 (política) |
+| **Responsable** | Eva Lucía Moreno Zevallos |
+| **Épica principal** | [EP-01](../epicas/EP-01-registro-gestion-usuarios.md) |
+| **Specs de backend que consume** | SPEC-03 (alta y activación) |
 | **Wireframe** | Sin wireframe — el listado (pantalla 7) tiene el botón que lleva aquí |
 | **Estado** | Borrador |
 | **Aprobada por** | Pendiente |
 
+
+> **Revisión de trabajo 11-oct:** alineación con A6/SPEC-03; pendiente de
+> revisión humana. La aprobación histórica de backend no aprueba esta pantalla.
+
 ---
+
+> **Corte 11-oct:** alta administrativa estricta en [v2 local](../contrato-api/openapi-v2.yaml).
+> Las consultas, alta asistida de clientes y activación de cuenta siguen en v1.
+> Publicación pendiente; términos/pantalla de activación A6 todavía requieren H-12.
 
 ## Objetivo — ¿para qué sirve esta pantalla?
 
-Un `ADMIN_SISTEMA` crea la cuenta de un vendedor o de alguien del personal de
-gestión (RF-03.1, HU-03.1). Llega desde el botón «Crear cuenta de vendedor o
-gestión» del listado (FRONT-07). La cuenta nace activa, sin verificación de
-correo, y al terminar se abre su detalle (FRONT-08).
-
-Los clientes no se crean aquí: se registran solos (FRONT-02).
-
----
+Un ADMIN_SISTEMA con `usuario.crear` crea una cuenta administrativa con rol
+opcional. La cuenta nace `PENDIENTE_VERIFICACION`, recibe un enlace de activación
+de 72 horas y su titular define contraseña y acepta términos al activarla.
+El administrador nunca pide, define ni comunica una contraseña inicial.
+Sin rol (por ejemplo un repartidor de Despacho), la respuesta lleva `roles: []`;
+el perfil de negocio se mantiene en el módulo dueño. Clientes usan su alta propia.
 
 ## Endpoints que usa
 
-| Momento | Endpoint | Spec de backend |
+| Momento | Endpoint | Spec |
 |---|---|---|
-| Al abrir, para el medidor | `GET /api/v1/password/politica` | SPEC-07 |
-| Al enviar | `POST /api/v1/usuarios` | SPEC-03 |
+| Al enviar | `POST /api/v2/usuarios` | SPEC-03 |
+| Al abrir detalle tras crear | `GET /api/v1/usuarios/{id}` si tiene `usuario.ver` | SPEC-03 |
 
-Permiso necesario: `usuario.crear`. Sin él, la pantalla muestra «No tienes
-permiso para ver esta página.» sin llamar a nada.
-
----
+Sin `usuario.crear` no envía petición. `usuario.ver` no se infiere del permiso
+de creación: sin él se muestra el resultado de alta y no se abre el detalle.
+No se consulta la política de contraseña desde esta pantalla.
 
 ## Estados de la pantalla
 
-| Estado | Cuándo ocurre | Qué ve el usuario |
+| Estado | Disparador | Resultado |
 |---|---|---|
-| Inicial | Al abrir | Campos: correo, nombres, apellidos, rol (lista), contraseña inicial con medidor, repetir contraseña; botones «Crear cuenta» y «Cancelar» |
-| Rol de gestión elegido | El rol es uno de los cuatro de gestión | Nota bajo el rol: «Con este rol, la cuenta tendrá el segundo factor obligatorio y su contraseña caducará cada {caducidadDiasAdmin} días.» |
-| Errores de validación | Cliente, `400` o `422 POLITICA_INCUMPLIDA` | Errores bajo sus campos |
-| Cargando | Tras enviar | Botón deshabilitado con «Creando…» |
-| Correo no disponible | `409 CORREO_NO_DISPONIBLE` | Mensaje bajo el correo |
-| Éxito | `201` con `Usuario` | Abre FRONT-08 de la cuenta nueva con el aviso «Cuenta creada. Ya puede iniciar sesión.» |
-
----
+| Inicial | Abrir | Correo, nombres, apellidos; rol con opción «Sin rol»; Crear/Cancelar |
+| Gestión elegida | Cualquiera de los cuatro roles de gestión | «Al activar la cuenta, este rol exige segundo factor y caducidad de contraseña según la política vigente.» |
+| Validación | Local o `400 VALIDACION` | Errores de campo |
+| Cargando | Enviar | Botón deshabilitado, «Creando…» |
+| Correo no disponible | `409 CORREO_NO_DISPONIBLE` | Mensaje genérico de correo no utilizable |
+| Creada pendiente | `201` | «Cuenta creada, pendiente de activación. Su titular recibirá un enlace válido por 72 horas.»; UUID visible |
+| Sin rol | Rol omitido | Se muestra «Sin rol»; nunca se inventa REPARTIDOR |
 
 ## Validaciones del lado del cliente
 
-| Campo | Regla | Mensaje | Origen |
-|---|---|---|---|
-| Correo | Obligatorio y con formato | «Escribe un correo válido.» | `CrearUsuarioRequest` |
-| Rol | Obligatorio; solo `VENDEDOR`, `ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL` o `ADMIN_SISTEMA` | «Elige un rol.» | RF-03.1 (ver H-10) |
-| Nombres, apellidos | Recomendados: el contrato no los exige, pero sin ellos la cuenta no tiene `nombreCompleto` legible | «Escribe el nombre de la persona.» (aviso, no bloquea) | `CrearUsuarioRequest` |
-| Contraseña inicial | Obligatoria; medidor informativo, con datos personales comprobados contra los nombres, apellidos y correo escritos | Los de FRONT-00 §3 | RF-03.3, RF-07 |
-| Repetir | Igual; no se envía | «Las contraseñas no coinciden.» | Interfaz |
+| Campo | Regla | Petición |
+|---|---|---|
+| Correo | Obligatorio y formato válido | `correo` |
+| Nombres/apellidos | Obligatorios; no enviar vacíos | Según CrearUsuarioRequest |
+| Rol | Opcional; VENDEDOR, ADMIN_VENTAS, GESTOR_DESPACHO, GESTOR_COMERCIAL o ADMIN_SISTEMA | Si «Sin rol», **omitir** `rol`; no mandar null ni roles[] |
 
----
+No se envían contraseña, confirmación, CLIENTE ni perfil de repartidor.
+H-10 definido en contrato local v2 con schema específico; CodigoRol global conserva seis roles.
 
 ## Textos y mensajes
 
-| Código del backend | Mensaje en pantalla |
-|---|---|
-| `201` | «Cuenta creada. Ya puede iniciar sesión.» |
-| `CORREO_NO_DISPONIBLE` | «Ese correo no se puede usar para una cuenta nueva. Revisa si la persona ya tiene cuenta en el listado.» |
-| `POLITICA_INCUMPLIDA` | Los de FRONT-00 §3 |
-| `VALIDACION` | Según FRONT-00 §2 |
-| `SCOPE_INSUFICIENTE`, `NO_DISPONIBLE` | Según FRONT-00 §2 |
-
-> Quien usa esta pantalla tiene `usuario.ver` y ya puede buscar cualquier
-> correo en el listado, así que sugerirle que lo busque no revela nada nuevo.
-
-Nota fija bajo la contraseña: «Comunica la contraseña inicial a la persona por
-un canal seguro. No la envíes por el mismo correo de la cuenta.»
-
----
+`201` no indica «Ya puede iniciar sesión». `CORREO_NO_DISPONIBLE`:
+«Ese correo no se puede usar para una cuenta nueva.»
+`VALIDACION`, `SCOPE_INSUFICIENTE` y `NO_DISPONIBLE`: FRONT-00.
+Si no tiene `usuario.ver` no se invita a buscar el correo en el listado.
 
 ## Escenarios de interfaz — ¿cómo verificamos?
 
-### UI-11.1 Alta de un vendedor
-- **Dado** un `ADMIN_SISTEMA`
-- **Cuando** completa el formulario con rol «Vendedor» y una contraseña válida
-- **Entonces** llega al detalle de la cuenta nueva, que figura «Activa».
+### UI-11.1 Alta de vendedor
+Dado un administrador autorizado, cuando crea con VENDEDOR sin contraseña,
+entonces `201` y cuenta pendiente; no hay sesión hasta activar.
 
-### UI-11.2 Alta de un gestor
-- **Dado** el formulario
-- **Cuando** elige «Gestor de despacho»
-- **Entonces** aparece la nota sobre el segundo factor obligatorio y la caducidad.
+### UI-11.2 Alta de gestión
+Dado el formulario, cuando elige GESTOR_DESPACHO, entonces ve la nota de MFA
+obligatorio y política vigente; el administrador no elige contraseña.
 
-### UI-11.3 Correo repetido *(caso borde)*
-- **Dado** un correo que ya tiene cuenta
-- **Cuando** el administrador envía el formulario
-- **Entonces** ve el mensaje de `CORREO_NO_DISPONIBLE` bajo el correo y no se
-  crea nada.
+### UI-11.3 Correo no utilizable *(caso borde)*
+Dado `409 CORREO_NO_DISPONIBLE`, cuando responde el alta, entonces se muestra
+el mensaje genérico y no se afirma públicamente que existe cuenta.
 
-### UI-11.4 Contraseña débil *(caso borde)*
-- **Dado** la contraseña `vendedor1`
-- **Cuando** el administrador envía el formulario
-- **Entonces** el medidor y los mensajes marcan longitud y carácter especial (ESC-03.4).
+### UI-11.4 Alta sin rol *(caso borde)*
+Dado «Sin rol», cuando envía, entonces omite `rol`; la respuesta pending
+puede traer `roles: []` y muestra UUID para vincular el perfil en Despacho.
 
-### UI-11.5 El rol cliente no está *(caso borde)*
-- **Dado** el formulario
-- **Cuando** el administrador abre la lista de roles
-- **Entonces** «Cliente» no aparece.
+### UI-11.5 CLIENTE excluido *(caso borde)*
+Dado el formulario, cuando abre opciones, entonces CLIENTE no aparece.
+Petición manipulada: `400 VALIDACION` según contrato local v2; publicación pendiente.
 
----
+### UI-11.6 Sin permiso de consulta *(caso borde)*
+Dado `usuario.crear` sin `usuario.ver`, cuando crea, entonces muestra UUID
+y aviso de activación sin consultar el detalle ni abrir el listado.
 
 ## Accesibilidad y diseño adaptable
 
-- Se aplica FRONT-00. Además:
-- La lista de roles es un `<select>` nativo o un grupo de opciones con etiqueta.
-- `autocomplete="off"` en el correo y `new-password` en las contraseñas: el
-  navegador no debe proponer los datos del administrador.
-
----
+Se aplica FRONT-00. Lista de rol con etiqueta y opción explícita «Sin rol».
+Errores asociados a campos; avisos anunciados; no autocompletar datos del admin.
 
 ## Fuera de alcance — ¿qué NO hará?
 
-- Crear clientes (FRONT-02).
-- Asignar varios roles en el alta: el contrato recibe uno; los demás se
-  añaden en el detalle (FRONT-08).
-- Generar la contraseña inicial o enviarla por correo.
-- Celular, documento o atributos de vendedor en el alta: se completan después.
+Crear clientes; perfiles de negocio; asignar varios roles; pedir contraseña.
+La **pantalla de activación A6** exige spec propia antes de implementarse:
+recibe enlace, contraseña/política de SPEC-07 y aceptación H-12, con
+`POST /auth/activar-cuenta` de SPEC-03. FRONT-03 de verificación simple no
+la sustituye. Es pendiente de EP-01 y queda fuera de la demo mínima con Ventas.
 
----
+## Huecos y cierre
 
-## Huecos detectados en el backend
+H-10: schema de rol de alta definido localmente en v2, sin publicar.
+H-12: texto, versión y fuente de términos todavía pendientes.
+La pantalla de activación no se considera especificada por este formulario.
 
-- **H-10** — `CrearUsuarioRequest.rol` admite `CLIENTE`, aunque RF-03.1 lo
-  excluye, y no hay código de error definido para ese caso. La pantalla no
-  ofrece la opción.
-
----
-
-## Lista de completitud
-
-- [ ] Cada estado de la pantalla está implementado
-- [ ] La lista de roles no incluye `CLIENTE`
-- [ ] El medidor usa `GET /password/politica`
-- [ ] Al crear, abre el detalle de la cuenta nueva
-- [ ] Los escenarios de interfaz están automatizados o verificados a mano con evidencia
-- [ ] Existe un wireframe y coincide con la implementación
+- [ ] UI-01 alineada con A6 y revisión humana aprobada
+- [ ] Rol opcional, sin CLIENTE ni contraseña en petición
+- [ ] Estado pendiente y enlace de 72 horas explicados
+- [ ] Detalle solo con usuario.ver
+- [ ] Pantalla de activación especificada antes de implementarla
+- [ ] Escenarios y accesibilidad verificados con evidencia

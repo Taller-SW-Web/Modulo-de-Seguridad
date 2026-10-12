@@ -3,11 +3,19 @@
 | Campo | Valor |
 |---|---|
 | **Responsable** | Jose Luis Limachi Sarmiento |
+| **Épica** | [EP-02 — Autenticación y gestión de sesiones](../epicas/EP-02-autenticacion-sesiones.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 3 (Sem. 8) |
-| **Estado** | ✅ Aprobada |
-| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
+| **Estado** | Base aprobada; revisión local por edición delegada, sin publicar |
+| **Base aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Sale de dividir la antigua SPEC-02 «Autenticación usuario/contraseña» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-02 «Autenticación usuario/contraseña» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
+
+> **Revisión de trabajo, 11-oct-2026:** edición delegada según autorización
+> de Sergio comunicada por Luis. [ADR-008](../../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md)
+> distingue definición local de publicación/implementación. La aprobación del
+> 2-oct corresponde a la base histórica.
 
 ---
 
@@ -144,6 +152,15 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube
+
+
+## Decisión de sesión de esta versión — H-11
+
+Tokens e identidad en memoria; no localStorage/sessionStorage/cookies de
+persistencia en esta versión. Recarga y cierre de página exigen login.
+Cliente serializa refresh, reemplaza ambos tokens y no reintenta un refresco
+si desconoce si fue consumido. Reúso revoca familia/sesión, no otras sesiones.
+Validar aceptación de Ventas antes de conectar su frontend.

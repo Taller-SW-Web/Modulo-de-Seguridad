@@ -3,11 +3,21 @@
 | Campo | Valor |
 |---|---|
 | **Responsable** | Christian Gabriel Arancivia Salas |
+| **Épica** | [EP-06 — Auditoría de seguridad](../epicas/EP-06-auditoria.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 5 (Sem. 14) |
-| **Estado** | ✅ Aprobada |
-| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
+| **Estado** | Base aprobada; revisión local por edición delegada, sin publicar |
+| **Base aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Sale de dividir la antigua SPEC-06 «Auditoría y trazabilidad» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-06 «Auditoría y trazabilidad» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
+
+> **Revisión de trabajo, 11-oct-2026:** edición delegada según autorización
+> de Sergio comunicada por Luis. [ADR-008](../../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md)
+> distingue definición local de publicación/implementación. La aprobación del
+> 2-oct corresponde a la base histórica.
+
+> **Corte de versión, 11-oct-2026:** Exportación (H-08) aplazada de la primera versión Hito 3. No se muestran sus botones ni se llama /auditoria/exportar en esa demo. El contenido de exportación describe alcance posterior: antes de implementarlo, alinear actorId/resultado/ip con el PO. Consulta mantiene un filtro accion por petición.
 
 ---
 
@@ -140,6 +150,6 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube

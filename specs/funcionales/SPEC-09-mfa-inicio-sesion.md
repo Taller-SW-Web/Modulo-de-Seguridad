@@ -3,11 +3,19 @@
 | Campo | Valor |
 |---|---|
 | **Responsable** | Luis David Morales Brenis |
+| **Épica** | [EP-04 — Segundo factor: OTP y MFA](../epicas/EP-04-segundo-factor.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 4 (Sem. 11) |
-| **Estado** | ✅ Aprobada |
-| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
+| **Estado** | Base aprobada; revisión local por edición delegada, sin publicar |
+| **Base aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Sale de dividir la antigua SPEC-04 «Autenticación por OTP y MFA» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva la generación y verificación de códigos y el desafío del inicio de sesión; la activación y desactivación del segundo factor pasaron a SPEC-10. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-04 «Autenticación por OTP y MFA» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva la generación y verificación de códigos y el desafío del inicio de sesión; la activación y desactivación del segundo factor pasaron a SPEC-10. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
+
+> **Revisión de trabajo, 11-oct-2026:** edición delegada según autorización
+> de Sergio comunicada por Luis. [ADR-008](../../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md)
+> distingue definición local de publicación/implementación. La aprobación del
+> 2-oct corresponde a la base histórica.
 
 ---
 
@@ -50,7 +58,7 @@ El resultado observable es un `challengeToken` de corta duración que no concede
 | RF-09.5 | Un código debe admitir como máximo 3 intentos de verificación. Al agotarse los intentos, debe quedar invalidado. |
 | RF-09.6 | El sistema debe permitir como máximo 3 solicitudes de código por usuario dentro de cualquier ventana de 15 minutos. |
 | RF-09.7 | Un código debe quedar invalidado después de su primera verificación correcta. |
-| RF-09.8 | Si un usuario con MFA habilitado inicia sesión correctamente con su contraseña, el sistema debe devolver un `challengeToken` en lugar de tokens de acceso. |
+| RF-09.8 | Si un usuario con MFA efectivo habilitado (bandera voluntaria o cualquier rol de gestión, RF-10.1) inicia sesión correctamente con su contraseña, el sistema debe devolver un `challengeToken` en lugar de tokens de acceso. |
 | RF-09.9 | El `challengeToken` debe tener corta duración, estar vinculado al usuario y no poder utilizarse para otra cuenta o desafío. |
 | RF-09.10 | La verificación correcta del desafío debe emitir el token de acceso de 15 minutos y el token de refresco de 7 días definidos por SPEC-05. |
 | RF-09.11 | Al verificar el desafío (`POST /api/v1/auth/otp/verificar`) y antes de emitir tokens, el sistema debe aplicar la comprobación de caducidad de contraseña de SPEC-07: si caducó, responde `403 PASSWORD_CADUCADA` y no emite tokens. SPEC-09 invoca la regla; no la reimplementa. |
@@ -175,6 +183,31 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube
+
+
+## Definición local de H-05/H-06
+
+Aplicada en la revisión local 1.1.0; [cambios y límites](../contrato-api/propuestas/preparacion-hito-3.md). Sin publicar ni implementar.
+
+| RF | Regla de esta revisión local |
+|---|---|
+| RF-09.14 | Un reenvío aceptado invalida atómicamente el código anterior del mismo desafío; no extiende el vencimiento del desafío. OTP nuevo: 300 s; UI usa el menor de expiraEn y desafioExpiraEn. |
+| RF-09.15 | SMS sin celular registrado: `400 VALIDACION` tras validar el desafío, sin enviar ni consumir cuota de envío. |
+| RF-09.16 | `429 DEMASIADAS_SOLICITUDES` incluye `Retry-After` en segundos positivos, calculado hasta liberar cuota; se conserva respuesta que no enumera cuentas. |
+| RF-09.17 | Un desafío de login nunca autoriza activar/desactivar MFA ni verificar contactos. |
+
+### ESC-09.12 Reenvío y código previo
+Dado un código vigente, cuando se acepta el reenvío, entonces solo el nuevo
+código verifica; el anterior recibe `401 CODIGO_INVALIDO`.
+
+### ESC-09.13 SMS sin celular
+Dado un desafío válido de cuenta sin celular, cuando se pide SMS, entonces
+`400 VALIDACION`, sin envío ni consumo de cuota. Un desafío inválido sigue
+`401 TOKEN_INVALIDO` y no revela si existe cuenta/celular.
+
+### ESC-09.14 Límite y espera
+Dado el límite alcanzado, cuando se pide otro OTP, entonces `429` y
+`Retry-After` positivo. La interfaz no reenvía automáticamente en bucle.

@@ -1,5 +1,13 @@
 # Plan de implementación — SPEC-17 y SPEC-18 · API de identidad
 
+> **Antecedente de Hito 1.** Este documento conserva el plan de semanas 4/11;
+> no fija el calendario vigente ni ordena la implementación de Hito 3.
+> Consultar el [plan actual](../../plan/README.md), el
+> [contrato versionado](../contrato-api/README.md) y la
+> [ficha de Ventas](../../docs/integracion/hito-3-ventas.md).
+> El contrato escrito y versionado sigue gobernando la interfaz: cualquier
+> generación desde código se contrasta con él antes de publicar cambios.
+
 | Campo | Valor |
 |---|---|
 | **Specs** | [`SPEC-17-tokens-servicio.md`](SPEC-17-tokens-servicio.md) y [`SPEC-18-consulta-identidad.md`](SPEC-18-consulta-identidad.md) |
@@ -36,9 +44,9 @@ demás, que sí es camino crítico de seis personas.
 
 | Pieza | Herramienta | Por qué |
 |---|---|---|
-| Contrato | OpenAPI 3.1 escrito a mano en `specs/openapi.yaml` | No hay código del que generarlo todavía. Desde el Hito 4 se genera con `springdoc-openapi` para que no se desincronice |
+| Contrato | OpenAPI 3.1 escrito a mano en `specs/contrato-api/openapi.yaml` | No hay código del que generarlo todavía. Desde el Hito 4 se genera con `springdoc-openapi` para que no se desincronice |
 | Entorno simulado | `@stoplight/prism-cli` vía `npx` | Cero instalación, cero infraestructura, cero costo. Sirve los ejemplos del propio contrato, así que nunca se desincroniza de él |
-| Validación del contrato | `npx @redocly/cli lint specs/openapi.yaml` | Detecta ejemplos que no cuadran con su esquema antes de que lo haga un equipo consumidor |
+| Validación del contrato | `npx @redocly/cli lint specs/contrato-api/openapi.yaml` | Detecta ejemplos que no cuadran con su esquema antes de que lo haga un equipo consumidor |
 | Colección de pruebas | Bruno o Postman, compartida en el repo | Los seis equipos la importan y prueban sin escribir `curl` a mano |
 
 Nada de esto se instala: todo corre con `npx`. Un equipo consumidor solo
@@ -62,7 +70,7 @@ cerrar tres cosas con el equipo:
 Sin esos tres visto bueno, el contrato se publica con supuestos y se rompe en la
 semana 11.
 
-### Paso 2 — Escribir `specs/openapi.yaml`
+### Paso 2 — Escribir `specs/contrato-api/openapi.yaml`
 
 Ocho endpoints, en este orden, porque cada uno depende del anterior:
 
@@ -86,7 +94,7 @@ Ocho endpoints, en este orden, porque cada uno depende del anterior:
    con su `application/problem+json` completo. Un consumidor que solo pueda
    probar el camino feliz descubrirá sus errores en producción.
 3. **Claves y códigos en ASCII** (`introspeccion`, `contrasena`), contenido con
-   acentos. Ver [ADR-004](../docs/arquitectura/adr/004-idioma-del-contrato.md).
+   acentos. Ver [ADR-004](../../docs/arquitectura/adr/004-idioma-del-contrato.md).
 4. **Cada `operationId` cita su escenario** en la descripción (`ESC-17.5`), para
    que en la semana 11 la prueba de integración y el endpoint se encuentren
    solos.
@@ -94,8 +102,8 @@ Ocho endpoints, en este orden, porque cada uno depende del anterior:
 ### Paso 3 — Levantar el entorno simulado
 
 ```bash
-npx @redocly/cli lint specs/openapi.yaml          # que valide antes de servirlo
-npx @stoplight/prism-cli mock specs/openapi.yaml -p 4010
+npx @redocly/cli lint specs/contrato-api/openapi.yaml          # que valide antes de servirlo
+npx @stoplight/prism-cli mock specs/contrato-api/openapi.yaml -p 4010
 curl http://localhost:4010/auth/.well-known/jwks.json
 ```
 
@@ -222,7 +230,7 @@ concurrentes, medido con JMeter en el Hito 5.
 ## 6. Definición de hecho para esta semana
 
 - [ ] `SPEC-17-tokens-servicio.md` y `SPEC-18-consulta-identidad.md` aprobadas, con el visto bueno de Jose Luis, Eva Lucía y Christian
-- [ ] `specs/openapi.yaml` pasa `redocly lint` sin errores
+- [ ] `specs/contrato-api/openapi.yaml` pasa `redocly lint` sin errores
 - [ ] Los ocho endpoints tienen ejemplo de éxito **y** de error
 - [ ] `npx prism mock` levanta y responde los ocho
 - [ ] `specs/kit-integracion.md` publicado

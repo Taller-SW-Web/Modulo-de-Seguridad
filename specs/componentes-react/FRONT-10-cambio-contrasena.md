@@ -5,7 +5,8 @@
 | Spec de interfaz | `specs/front/FRONT-10-cambio-contrasena.md` |
 | Specs de backend | SPEC-07 |
 | Wireframe | Sin wireframe — pendiente |
-| Responsable | Por asignar |
+| **Responsable** | Juan José Cano Vasquez |
+| **Épica principal** | [EP-03](../epicas/EP-03-credenciales.md) |
 
 ---
 

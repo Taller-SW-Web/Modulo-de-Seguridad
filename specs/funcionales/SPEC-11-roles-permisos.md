@@ -2,12 +2,15 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Eva Lucía Moreno Zevallos |
+| **Responsable** | Sergio Alejandro Osorio Montenegro |
+| **Épica** | [EP-05 — Roles y permisos](../epicas/EP-05-roles-permisos.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 4 (Sem. 11) |
 | **Estado** | ✅ Aprobada |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Es la antigua SPEC-05 «Gestión de roles y permisos», sin cambios de contenido: solo cambió de número al dividir el set de 9 a 18 specs (20 de septiembre). Ver [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Es la antigua SPEC-05 «Gestión de roles y permisos», sin cambios de contenido: solo cambió de número al dividir el set de 9 a 18 specs (20 de septiembre). Ver [`../trazabilidad.md`](../trazabilidad.md) §1.
 
 ---
 
@@ -60,7 +63,7 @@ Esta especificación comprende:
 | RF-11.7 | Un `ADMIN_SISTEMA` no puede quitarse a sí mismo el rol `ADMIN_SISTEMA`, y nadie puede quitárselo al último `ADMIN_SISTEMA` activo: responde `422 ADMINISTRADOR_PROTEGIDO`, la misma regla que aplican SPEC-04 a la baja y SPEC-15 al bloqueo. |
 | RF-11.8 | Toda asignación o modificación de roles debe quedar registrada mediante el módulo de auditoría de SPEC-12. |
 | RF-11.9 | El sistema debe definir el catálogo de permisos de este módulo (tabla siguiente) y concederlo a `ADMIN_SISTEMA`, salvo `cliente.registrar` y `cliente.buscar`, que son de `VENDEDOR`. `permisos` lleva solo los de este módulo: no se cargan permisos de los módulos consumidores, que autorizan por `roles` y con sus propios datos (acuerdo A5). |
-| RF-11.10 | Las acciones de un usuario sobre su propia cuenta —ver su perfil, editar sus atributos, cambiar su contraseña— no requieren permiso: se autorizan por titularidad, comparando el `sub` del token con la cuenta afectada. |
+| RF-11.10 | Las acciones propias —ver perfil, cambiar contraseña y editar únicamente nombres/apellidos/celular según RF-16.2— se autorizan por titularidad, comparando `sub`. Documento y atributos específicos de rol exigen `atributos.editar` incluso sobre la cuenta propia; titularidad no amplía esa autorización. |
 
 ### Catálogo de permisos de este módulo
 
@@ -186,6 +189,6 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube

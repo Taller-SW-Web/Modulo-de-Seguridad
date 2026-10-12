@@ -2,7 +2,8 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Eva Lucía Moreno Zevallos |
+| **Épica principal** | [EP-01](../epicas/EP-01-registro-gestion-usuarios.md) |
 | **Specs de backend que consume** | SPEC-02 (y SPEC-16 para confirmar un cambio de correo) |
 | **Wireframe** | Stitch, proyecto `889177073946089595`, pantalla 3 (numeración antigua; ver [`trazabilidad.md`](../trazabilidad.md) §1.1). Figma: pendiente |
 | **Estado** | Borrador |

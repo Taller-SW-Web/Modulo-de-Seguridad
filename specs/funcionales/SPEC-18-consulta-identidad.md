@@ -3,11 +3,13 @@
 | Campo | Valor |
 |---|---|
 | **Responsable** | Sergio Alejandro Osorio Montenegro (Product Owner) |
+| **Clasificación** | Integración técnica transversal de Sergio; no es novena épica académica |
+| **Primera versión** | Capacidad necesaria para el recorrido acordado; no equivale a todo el alcance |
 | **Hito objetivo** | Hito 1 (Sem. 4) — contrato · Hito 4 (Sem. 11) — implementación |
 | **Estado** | ✅ Aprobada |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Sale de dividir la antigua SPEC-09 «API de identidad para los demás módulos» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-09 «API de identidad para los demás módulos» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
 
 ---
 
@@ -133,7 +135,7 @@ condiciones límite, de error o de seguridad.
 - El token de servicio, el JWKS, la introspección y las reglas comunes de error, que son de SPEC-17.
 - **El contenido del catálogo de roles y permisos**, que es de SPEC-11. Esta spec fija **cómo se consulta**, no qué contiene.
 - **Los atributos de perfil y las direcciones**, cuyo modelo define SPEC-16. Aquí solo se especifica cómo se consultan desde otro módulo.
-- **Los eventos asíncronos**, que se especifican en [`catalogo-eventos.md`](catalogo-eventos.md).
+- **Los eventos asíncronos**, que se especifican en [`../catalogo-eventos.md`](../catalogo-eventos.md).
 - La modificación de datos de usuario por un módulo consumidor: solo leen.
 
 ---
@@ -167,6 +169,6 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube

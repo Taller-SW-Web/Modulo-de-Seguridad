@@ -2,12 +2,20 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Eva Lucía Moreno Zevallos |
+| **Responsable** | Valery Cristin Gutierrez Bendezu |
+| **Épica** | [EP-08 — Atributos y perfil de usuario](../epicas/EP-08-atributos-perfil.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 5 (Sem. 14) |
-| **Estado** | ✅ Aprobada |
-| **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
+| **Estado** | Base aprobada; revisión local por edición delegada, sin publicar |
+| **Base aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Es la antigua SPEC-08 «Gestión de atributos de usuarios», sin cambios de contenido salvo uno: ahora es dueña de `GET /api/v1/auth/me`, que exponía la antigua SPEC-01. Cambió de número al dividir el set de 9 a 18 specs (20 de septiembre). Ver [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Es la antigua SPEC-08 «Gestión de atributos de usuarios», sin cambios de contenido salvo uno: ahora es dueña de `GET /api/v1/auth/me`, que exponía la antigua SPEC-01. Cambió de número al dividir el set de 9 a 18 specs (20 de septiembre). Ver [`../trazabilidad.md`](../trazabilidad.md) §1.
+
+> **Revisión de trabajo, 11-oct-2026:** edición delegada según autorización
+> de Sergio comunicada por Luis. [ADR-008](../../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md)
+> distingue definición local de publicación/implementación. La aprobación del
+> 2-oct corresponde a la base histórica.
 
 ---
 
@@ -38,7 +46,7 @@ Esta especificación comprende:
 - Cifrado y enmascarado del número de documento.
 - Direcciones de entrega del cliente.
 - Cambio de correo electrónico, confirmado en la dirección nueva.
-- Cambio de número celular, verificado por OTP (SPEC-10).
+- Cambio de celular que queda no verificado; verificación SMS externa fuera de este ciclo por A2.
 - Edición de los atributos de cualquier cuenta por un administrador.
 - Publicación de `usuario.atributos_actualizados` y registro en auditoría (SPEC-12).
 
@@ -54,7 +62,7 @@ Esta especificación comprende:
 | RF-16.4 | El número de documento debe almacenarse cifrado con AES, con la clave fuera de la base de datos, y devolverse enmascarado mostrando los últimos tres dígitos (`*****234`), salvo a un módulo con el scope `usuarios:leer:documento` (SPEC-18). |
 | RF-16.5 | Un cliente debe poder registrar direcciones de entrega (`POST /api/v1/usuarios/{id}/direcciones`) y marcar una como predeterminada. Las consultan el titular, un administrador y los módulos con el scope `direcciones:leer` (SPEC-18). |
 | RF-16.6 | Para cambiar su correo, el titular debe enviar la dirección nueva y su contraseña actual (`POST /api/v1/usuarios/{id}/correo`). Se envía un enlace a la dirección nueva y un aviso a la anterior, que sigue operativa hasta la confirmación. La confirmación usa el mismo `POST /api/v1/auth/verificar-correo` y el mismo mecanismo de token de SPEC-02. |
-| RF-16.7 | Si un usuario modifica su número celular, el canal SMS debe marcarse como no verificado hasta completar una prueba OTP según SPEC-10. |
+| RF-16.7 | Si un usuario modifica su número celular, el canal SMS debe marcarse como no verificado sin ofrecer prueba OTP posterior disponible en este ciclo (A2); el desafío de login nunca verifica contactos. |
 | RF-16.8 | Quien tenga el permiso `atributos.editar` (`ADMIN_SISTEMA`) debe poder consultar y editar los atributos de cualquier cuenta. |
 | RF-16.9 | Tras cualquier modificación confirmada de atributos, incluido un cambio de correo, el sistema debe publicar `usuario.atributos_actualizados` con la lista de campos que cambiaron, **nunca sus valores**. |
 | RF-16.10 | Toda modificación de atributos debe registrarse en SPEC-12 como `ATRIBUTOS_ACTUALIZADOS`, y un cambio de correo, como `CORREO_CAMBIADO`. |
@@ -193,6 +201,31 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube
+
+
+## Límites de primera versión — H-01/H-03/H-04/H-13
+
+Campos aplicados en [contrato local v1 1.1.0](../contrato-api/openapi.yaml),
+sin publicación; [decisión](../contrato-api/propuestas/preparacion-hito-3.md). Servicio mantiene la respuesta mínima; titular/admin ven
+atributos aplicables a roles, con documento enmascarado conforme a RF-16.4.
+
+Edición propia: solo nombres, apellidos y celular. Documento, fechaNacimiento y atributos de
+vendedor se editan con `atributos.editar`, no por ser titular. Una petición sin
+autorización recibe `403 SCOPE_INSUFICIENTE` y no modifica nada; un atributo
+inaplicable al rol conserva `422 ATRIBUTO_NO_APLICABLE`. No permitir que un
+schema compartido amplíe permisos. Al modificar celular, queda no verificado;
+no se usa OTP de login ni se ofrece una verificación externa simulada como real.
+
+Direcciones: listado/creación y predeterminada al crear. Edición, borrado y
+cambiar predeterminada sin crear dirección se aplazan; no hay endpoints nuevos.
+
+### ESC-16.11 Documento propio sin permiso *(caso borde)*
+Dado un CLIENTE sin atributos.editar, cuando intenta cambiar su documento,
+entonces `403 SCOPE_INSUFICIENTE`, sin cambio ni evento de actualización.
+
+### ESC-16.12 Celular modificado
+Dado un titular autorizado, cuando cambia celular, entonces queda no verificado
+y no se inicia un desafío de login para verificar el número.

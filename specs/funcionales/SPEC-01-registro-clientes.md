@@ -3,11 +3,14 @@
 | Campo | Valor |
 |---|---|
 | **Responsable** | Eva Lucía Moreno Zevallos |
+| **Épica** | [EP-01 — Registro y gestión de usuarios](../epicas/EP-01-registro-gestion-usuarios.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 3 (Sem. 8) |
 | **Estado** | ✅ Aprobada |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Sale de dividir la antigua SPEC-01 «Registro y gestión de usuarios» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva el registro público; la verificación de correo pasó a SPEC-02, el alta administrativa a SPEC-03 y la baja y reactivación a SPEC-04. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-01 «Registro y gestión de usuarios» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva el registro público; la verificación de correo pasó a SPEC-02, el alta administrativa a SPEC-03 y la baja y reactivación a SPEC-04. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
 
 ---
 
@@ -130,6 +133,6 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube

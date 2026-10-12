@@ -2,7 +2,8 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Christian Gabriel Arancivia Salas |
+| **Épica principal** | [EP-06](../epicas/EP-06-auditoria.md) |
 | **Specs de backend que consume** | SPEC-13 (RF-13.5), catálogo de acciones de SPEC-12 |
 | **Wireframe** | Sin wireframe — pendiente |
 | **Estado** | Borrador |

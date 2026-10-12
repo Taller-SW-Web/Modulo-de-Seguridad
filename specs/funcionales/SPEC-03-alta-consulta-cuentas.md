@@ -2,14 +2,21 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Christian Gabriel Arancivia Salas |
+| **Responsable** | Eva Lucía Moreno Zevallos |
+| **Épica** | [EP-01 — Registro y gestión de usuarios](../epicas/EP-01-registro-gestion-usuarios.md) |
+| **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
+| **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 3 (Sem. 8) |
 | **Estado** | ✅ Aprobada |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
-> **Origen.** Sale de dividir la antigua SPEC-01 «Registro y gestión de usuarios» el 20 de septiembre, por indicación del profesor: una spec por función. Pasa a Christian porque es el backend del panel de administración que ya tenía asignado. La equivalencia de números está en [`trazabilidad.md`](trazabilidad.md) §1.
+> **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-01 «Registro y gestión de usuarios» el 20 de septiembre, por indicación del profesor: una spec por función. Pasa a Christian porque es el backend del panel de administración que ya tenía asignado. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
 
 ---
+
+> **Corte 11-oct:** alta administrativa estricta en [v2 local](../contrato-api/openapi-v2.yaml).
+> Las consultas, alta asistida de clientes y activación de cuenta siguen en v1.
+> Publicación pendiente; términos/pantalla de activación A6 todavía requieren H-12.
 
 ## Contexto — ¿por qué?
 
@@ -33,7 +40,7 @@ El resultado observable es una cuenta en `PENDIENTE_VERIFICACION` con un enlace 
 
 ## Alcance — ¿hasta dónde?
 
-- Alta de cuentas `VENDEDOR`, de los cuatro roles de gestión o sin rol, con `POST /api/v1/usuarios`.
+- Alta de cuentas `VENDEDOR`, de los cuatro roles de gestión o sin rol, con `POST /api/v2/usuarios`.
 - Registro asistido de clientes en tienda con `POST /api/v1/usuarios/clientes`.
 - Activación de esas cuentas con `POST /api/v1/auth/activar-cuenta`.
 - Búsqueda de un cliente por documento con `POST /api/v1/usuarios/busqueda-documento`.
@@ -48,7 +55,7 @@ El resultado observable es una cuenta en `PENDIENTE_VERIFICACION` con un enlace 
 
 | Código | Requisito |
 |---|---|
-| RF-03.1 | Un `ADMIN_SISTEMA` debe poder dar de alta cuentas con rol `VENDEDOR`, con cualquiera de los cuatro roles de gestión o **sin rol**, para un perfil que vive en otro módulo (`POST /api/v1/usuarios`, acuerdos A5 y A6). El administrador no define la contraseña: la cuenta nace `PENDIENTE_VERIFICACION` y se envía un enlace de activación (RF-03.5). Los clientes no se crean por esta vía. |
+| RF-03.1 | Un `ADMIN_SISTEMA` debe poder dar de alta cuentas con rol `VENDEDOR`, con cualquiera de los cuatro roles de gestión o **sin rol**, para un perfil que vive en otro módulo (`POST /api/v2/usuarios`, acuerdos A5 y A6). El administrador no define la contraseña: la cuenta nace `PENDIENTE_VERIFICACION` y se envía un enlace de activación (RF-03.5). Los clientes no se crean por esta vía. |
 | RF-03.2 | Quien tenga el permiso `usuario.ver` (`ADMIN_SISTEMA`, SPEC-11) debe poder listar las cuentas con filtros por estado, rol y correo, paginadas (`GET /api/v1/usuarios`), y consultar una cuenta (`GET /api/v1/usuarios/{id}`, el mismo endpoint que usan los módulos consumidores). |
 | RF-03.3 | La contraseña que se define al activar la cuenta debe cumplir la política de SPEC-07; si no la cumple, el sistema responde `422 POLITICA_INCUMPLIDA` y la cuenta sigue sin activar. |
 | RF-03.4 | El alta, la activación, cada búsqueda por documento y cualquier intento sin permiso deben registrarse mediante SPEC-12 (`USUARIO_CREADO`, `CUENTA_ACTIVADA`, `BUSQUEDA_POR_DOCUMENTO`, `ACCESO_DENEGADO`). |
@@ -69,7 +76,7 @@ condiciones límite, de error o de seguridad.
 
 **Dado** un `ADMIN_SISTEMA` autenticado.
 
-**Cuando** envía `POST /api/v1/usuarios` con `{ correo, nombres, apellidos, rol: VENDEDOR }`.
+**Cuando** envía `POST /api/v2/usuarios` con `{ correo, nombres, apellidos, rol: VENDEDOR }`.
 
 **Entonces** el sistema crea la cuenta en `PENDIENTE_VERIFICACION`, envía al correo un enlace de activación válido 72 horas, responde `201` y **todavía no** publica `usuario.creado`.
 
@@ -85,7 +92,7 @@ condiciones límite, de error o de seguridad.
 
 **Dado** un `ADMIN_SISTEMA` autenticado y una cuenta existente con el correo `vendedor@correo.com`.
 
-**Cuando** envía `POST /api/v1/usuarios` con ese mismo correo.
+**Cuando** envía `POST /api/v2/usuarios` con ese mismo correo.
 
 **Entonces** el sistema responde `409 CORREO_NO_DISPONIBLE`, no crea la cuenta y no publica ningún evento.
 
@@ -109,7 +116,7 @@ condiciones límite, de error o de seguridad.
 
 **Dado** un `ADMIN_SISTEMA` autenticado.
 
-**Cuando** envía `POST /api/v1/usuarios` con `{ correo, nombres, apellidos }` y sin `rol`.
+**Cuando** envía `POST /api/v2/usuarios` con `{ correo, nombres, apellidos }` y sin `rol`.
 
 **Entonces** la cuenta se crea con `roles: []` y, una vez activada, su token lleva `roles: []`: Despacho lo autoriza por su propio registro enlazado al `sub` (A5).
 
@@ -195,7 +202,7 @@ condiciones límite, de error o de seguridad.
 
 | Endpoint / evento | Añade, modifica o elimina | Acordado con el PO |
 |---|---|---|
-| `POST /api/v1/usuarios` | Modifica: sin contraseña, rol opcional, nace `PENDIENTE_VERIFICACION` (A6). Solo lo usa nuestro panel | ✅ |
+| `POST /api/v2/usuarios` | Revisión local v2: schema estricto sin CLIENTE/contraseña; A6 conserva activación v1 | Local; sin publicación |
 | `POST /api/v1/usuarios/clientes` | Añade (A6) | ✅ |
 | `POST /api/v1/usuarios/busqueda-documento` | Añade (A7) | ✅ |
 | `POST /api/v1/auth/activar-cuenta` | Añade (A6) | ✅ |
@@ -212,6 +219,6 @@ La spec se cierra cuando:
 - [ ] Todos los requisitos están implementados
 - [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
 - [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/contrato-api/openapi.yaml`)
 - [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube

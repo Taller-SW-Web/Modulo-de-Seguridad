@@ -3,110 +3,57 @@
 | Campo | Valor |
 |---|---|
 | Spec de interfaz | `specs/front/FRONT-11-admin-alta-usuario.md` |
-| Specs de backend | SPEC-03 (alta), SPEC-07 (política) |
+| Specs de backend | SPEC-03 (alta y activación) |
 | Wireframe | Sin wireframe — el listado (pantalla 7) tiene el botón que lleva aquí |
-| Responsable | Por asignar |
+| **Responsable** | Eva Lucía Moreno Zevallos |
+| **Épica principal** | [EP-01](../epicas/EP-01-registro-gestion-usuarios.md) |
+
+
+> Revisión de trabajo 11-oct: alineada con A6; pendiente de revisión humana.
 
 ---
+
+> **Corte 11-oct:** alta administrativa estricta en [v2 local](../contrato-api/openapi-v2.yaml).
+> Las consultas, alta asistida de clientes y activación de cuenta siguen en v1.
+> Publicación pendiente; términos/pantalla de activación A6 todavía requieren H-12.
 
 ## Objetivo
 
-Un `ADMIN_SISTEMA` crea la cuenta de un vendedor o de personal de gestión
-(RF-03.1, HU-03.1). Llega desde «Crear cuenta de vendedor o gestión» del listado
-(FRONT-07). La cuenta nace activa, sin verificación de correo, y al terminar se
-abre su detalle (FRONT-08). Los clientes no se crean aquí.
-
----
+Implementar [FRONT-11](../front/FRONT-11-admin-alta-usuario.md): creación sin
+contraseña inicial, cuenta pendiente y activación por enlace. Eva conserva
+la funcionalidad completa y sus dependencias se consumen de sus dueños.
 
 ## Endpoints
 
-| Momento | Endpoint | Spec |
-|---|---|---|
-| Al abrir (medidor) | `GET /api/v1/password/politica` | SPEC-07 |
-| Al enviar | `POST /api/v1/usuarios` | SPEC-03 |
-
-Permiso: `usuario.crear`. Sin él, «No tienes permiso para ver esta página.» sin
-llamar a nada.
-
----
+`POST /api/v2/usuarios` con usuario.crear. Tras éxito, consultar/abrir detalle
+solo con usuario.ver. No consulta password/politica ni solicita OTP en el alta.
 
 ## Archivos propuestos
 
-```
-frontend/src/pantallas/admin-alta/
-├── AdminAltaPage.tsx      # formulario + nota de rol de gestión
-└── useAltaUsuario.ts      # estado, validación, envío
-```
+`AdminAltaPage.tsx`: campos, opción «Sin rol», aviso de activación y UUID.
+`useAltaUsuario.ts`: valida, construye request y maneja 400/409/503.
+Ningún código de aplicación se crea en esta etapa documental.
 
-Reutiliza de FRONT-00: `PasswordStrengthMeter`, `usePoliticaPassword`, `api`,
-`errores`, `sesion` (permiso `usuario.crear`).
+## Estado, petición y resultado
 
----
+Correo, nombres, apellidos y rol opcional. «Sin rol» **omite** rol.
+Sin contraseña, repetir ni medidor. No enviar null ni roles[] en petición.
+Roles y estados canónicos de CONTEXT; seis roles globales, cinco elegibles
+en esta alta. REPARTIDOR permanece perfil de Despacho, no rol de Seguridad.
+`201` muestra estado pendiente/enlace 72 h; nunca permite login inmediato.
 
-## Componentes y responsabilidad
+## Validaciones y errores
 
-| Componente | Responsabilidad |
-|---|---|
-| `AdminAltaPage` | Campos correo, nombres, apellidos, rol, contraseña inicial + medidor, repetir; «Crear cuenta»/«Cancelar» |
-| `useAltaUsuario` | Valida, llama `api.crearUsuario`, ramifica 409/422 |
+Correo, nombres y apellidos obligatorios; las demás de FRONT-11. Roles de gestión avisan MFA y política vigente. CrearUsuarioRequest estricto en contrato local v2. Errores por code, sin revelar cuentas en flujo
+público. Sin usuario.ver no buscar correo/listado ni consultar detalle.
 
-Nota bajo la contraseña: «Comunica la contraseña inicial a la persona por un
-canal seguro. No la envíes por el mismo correo de la cuenta.»
+## Escenarios y accesibilidad
 
----
+UI-11.1–UI-11.6 de FRONT-11; select etiquetado, foco de errores, avisos accesibles.
+Verificar alta sin rol, petición sin contraseña y ausencia de consulta sin permiso.
 
-## Estados
+## Fuera de alcance y pendientes
 
-| Estado | Disparador | Qué se muestra |
-|---|---|---|
-| Inicial | al abrir | formulario |
-| Rol de gestión elegido | rol ∈ {4 de gestión} | nota: «Con este rol, la cuenta tendrá el segundo factor obligatorio y su contraseña caducará cada {caducidadDiasAdmin} días.» |
-| Errores validación | cliente, `400` o `422` | errores bajo campos |
-| Cargando | submit | «Creando…» |
-| Correo no disponible | `409` | mensaje bajo el correo |
-| Éxito | `201` con `Usuario` | abre FRONT-08 de la cuenta nueva con «Cuenta creada. Ya puede iniciar sesión.» |
-
----
-
-## Validaciones del cliente
-
-| Campo | Regla | Mensaje | Origen |
-|---|---|---|---|
-| Correo | obligatorio, email | «Escribe un correo válido.» | `CrearUsuarioRequest` |
-| Rol | obligatorio; solo `VENDEDOR`, `ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`, `ADMIN_SISTEMA` | «Elige un rol.» | RF-03.1 (H-10) |
-| Nombres/apellidos | recomendados (aviso, no bloquea) | «Escribe el nombre de la persona.» | `CrearUsuarioRequest` |
-| Contraseña inicial | obligatoria; medidor con datos personales contra nombres/apellidos/correo | FRONT-00 §3 | RF-03.3, RF-07 |
-| Repetir | igual; no se envía | «Las contraseñas no coinciden.» | interfaz |
-
----
-
-## Textos y mensajes
-
-| Código | Mensaje |
-|---|---|
-| `201` | «Cuenta creada. Ya puede iniciar sesión.» |
-| `CORREO_NO_DISPONIBLE` | «Ese correo no se puede usar para una cuenta nueva. Revisa si la persona ya tiene cuenta en el listado.» |
-| `POLITICA_INCUMPLIDA` | FRONT-00 §3 |
-| `VALIDACION` | FRONT-00 §2 |
-| `SCOPE_INSUFICIENTE` / `NO_DISPONIBLE` | FRONT-00 §2 |
-
-Quien usa esta pantalla tiene `usuario.ver`, así que sugerir buscar en el listado
-no revela nada nuevo.
-
----
-
-## Accesibilidad
-
-- Lista de roles: `<select>` nativo o grupo de opciones con etiqueta.
-- `autocomplete="off"` en el correo y `new-password` en las contraseñas.
-
-## Fuera de alcance
-
-Crear clientes (FRONT-02); varios roles en el alta (el contrato recibe uno; el
-resto en FRONT-08); generar/enviar la contraseña inicial; celular/documento/
-atributos de vendedor (se completan después).
-
-## Hueco detectado
-
-- **H-10**: `CrearUsuarioRequest.rol` admite `CLIENTE` aunque RF-03.1 lo excluye;
-  la pantalla no ofrece la opción.
+Sin alta CLIENTE, perfiles de negocio ni contraseña inicial.
+La activación A6 necesita pantalla especificada y H-12; FRONT-03 simple no
+la cubre. Su implementación no se da por preparada mediante este componente.
