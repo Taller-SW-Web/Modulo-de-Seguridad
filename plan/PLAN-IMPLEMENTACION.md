@@ -2,15 +2,15 @@
 
 | Campo | Valor |
 |---|---|
-| ID / versión / corte | H3-VENTAS / 0.1.0 / 12-oct-2026 |
-| Estado | Preparado documentalmente; revisión y condiciones de inicio pendientes |
+| ID / versión / corte | H3-VENTAS / 1.0.0 / 12-oct-2026 |
+| Estado | Plan G7 aprobado y diseño cerrado; configuración/prueba bilateral pendientes |
 | Coordinación | Sergio; cada dueño implementa su capacidad completa |
 | Acuerdo | A11, confirmado en G5 Backend #2; A10 sigue siendo integración de servicio |
 | Objetivo | Ambos servicios y prueba conjunta el jueves 15/10; presentación sábado 17/10 |
 
-Este es el plan del recorrido entre módulos. **No sustituye los ocho planes
-individuales ni acredita implementación o despliegue.**
-[Flujo SDD](flujo-sdd.md), [índice individual](funcionalidades/README.md),
+Este es el plan del recorrido entre módulos. **No sustituye los siete planes individuales de ocho épicas ni acredita
+implementación o despliegue.**
+[Flujo SDD](flujo-sdd.md), [siete planes H3](hito-3/README.md),
 [condiciones pendientes](DECISIONES-Y-BLOQUEOS.md).
 
 ## 1. Entradas y revisión contractual
@@ -33,9 +33,15 @@ individuales ni acredita implementación o despliegue.**
   [auditoría SPEC-12](../specs/funcionales/SPEC-12-registro-auditoria.md),
   [bloqueo SPEC-14](../specs/funcionales/SPEC-14-bloqueo-automatico.md)
   y [MFA SPEC-09](../specs/funcionales/SPEC-09-mfa-inicio-sesion.md).
-- [Fuentes fijadas](../docs/fuentes-oficiales.md): base pública v1 1.0.0;
-  revisión local v1 1.1.0 y v2 parcial 2.0.0. El SHA consumido se fija después
-  de publicar; no se presenta un hash local como commit público.
+- [Fuentes fijadas](../docs/fuentes-oficiales.md): main publicado
+  5796622f7c039021e03dd25b2338c6a208320e05, v1 1.1.0 y v2 parcial 2.0.0.
+  La revisión que efectivamente consume G5 aún se registra en la ficha;
+  publicación no demuestra adopción. La base 1.0.0 se conserva histórica.
+
+Planes detallados alineados con el cierre H3: [EP-02](funcionalidades/EP-02-autenticacion-sesiones.md)
+y [TEC-IDENTIDAD](transversales/TEC-IDENTIDAD.md); aprobación del incremento
+comunicada por Luis y diseño cerrado en [H3](hito-3/CIERRE-PLAN.md).
+Tareas e implementación todavía pendientes.
 
 El recorrido usa operaciones existentes de v1. No depende de la configuración
 MFA/alta v2 ni añade endpoints de Seguridad. Las
@@ -90,7 +96,7 @@ El desarrollo de las ocho épicas continúa y no se reduce al recorrido anterior
 | Pedidos/pantalla/JWT | Michael — Ventas F1 | Validación, propiedad por sub y consulta | Rama publicada y casos A/B/V en su servicio real |
 
 Son capacidades a consumir, no nuevas asignaciones por capas. El plan de cada
-dueño definirá su interfaz interna antes de crear tareas consumidoras. No se
+dueño tiene su interfaz interna cerrada en [composición H3](hito-3/ACUERDOS-INTERNOS.md), antes de crear tareas consumidoras. No se
 crean endpoints privados entre las épicas del mismo backend solo por repartir
 trabajo: son colaboraciones internas de dominio.
 
@@ -168,14 +174,16 @@ flujo de registro. La ficha contiene valores pendientes, no secretos.
 
 | Fase | Entregable | Depende de | Comprobación |
 |---|---|---|---|
-| 1 | Planes de capacidades y revisión consumida | Specs y decisiones del incremento | RF/ESC, dueños e interfaces internas explícitos |
+| 1 | Siete planes H3 aprobados; interfaces/diseño interno cerrados. Revisión que consume G5 por registrar | Specs y decisiones del incremento | RF/ESC, dueños e interfaces internas explícitos |
 | 2 | Login/familia y firma/descubrimiento/JWKS reales locales | Capacidades de sus dueños, TEC-02/03/04 y persistencia necesaria | Pruebas API/DB/RS256 con errores y sin MFA omitido |
 | 3 | Datos A/B/V y endpoint/pantalla de G5 locales | UUID confirmados y trabajo de Michael | CLIENTE, sub, pedidos persistidos y aislamiento |
 | 4 | Servicios en nube y configuración bilateral | TEC-01, revisión publicada e INT-05 | HTTPS, issuer/JWKS y orígenes comprobados |
 | 5 | Prueba conjunta, correcciones y ensayo | Fases reales conectadas; hora acordada | Casos siguientes y evidencia sanitizada de ambos servicios |
 
 Estas fases no son un tablero de tareas ni una estimación de disponibilidad.
-Los estados y tareas se escribirán después de revisar los planes individuales.
+Los estados de ejecución se registran en los [siete tableros H3](../tareas/hito-3/README.md),
+ya derivados de los planes individuales aprobados. No presentar su redacción
+como implementación o integración comprobada.
 Jueves 15 es objetivo/compromiso registrado, no resultado ya obtenido.
 
 ## 7. Casos de aceptación y evidencia

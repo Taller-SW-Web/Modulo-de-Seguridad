@@ -1,105 +1,102 @@
 # Flujo SDD — specs, plan, tareas y código
 
-**Corte:** 12-oct-2026. Estructura documental preparada; no inicia implementación.
-El [plan de nueve puntos](README.md) sigue siendo la preparación previa.
-Este documento organiza la etapa siguiente y mantiene el
-[reparto de ocho épicas](../specs/epicas/README.md).
-
-## Los dos puntos de este bloque
-
-| Punto SDD | Entregable | Alcance de esta entrega |
-|---|---|---|
-| SDD-1 | Estructura, plantillas y reglas de planes/tareas | Preparado documentalmente |
-| SDD-2 | Plan técnico del recorrido H3 con Ventas | Preparado con dependencias y decisiones pendientes |
-
-No son los puntos 1/2 del plan anterior. A continuación se elaborarán los
-planes individuales de EP-02 y de identidad técnica, y después sus tareas.
-Las otras épicas se planificarán en bloques posteriores; no se han escrito
-sus ocho planes ni generado todas las tareas de una vez.
+**Corte:** 12-oct-2026. Base publicada por PR #46; complemento local con
+[siete planes H3 aprobados](hito-3/README.md) y [siete tableros de tareas](../tareas/hito-3/README.md), sin implementación acreditada. Se conserva el
+[plan de nueve puntos](README.md) y el [reparto de ocho épicas](../specs/epicas/README.md).
 
 ## Secuencia de trabajo
 
-1. **Leer las entradas.** Ficha de épica, specs funcionales con sus siete
-   secciones, UI, componentes React, contrato, errores/eventos y ADR aplicables.
-2. **Escribir el plan.** Elegir el incremento, trazar RF/ESC, identificar datos,
-   dependencias, decisiones técnicas, fases y pruebas. Una decisión funcional
-   nueva vuelve primero a su spec; una contractual pasa por Sergio.
-3. **Derivar tareas del plan revisado.** Cada tarea tiene un resultado pequeño,
-   dueño, dependencia, criterios observables y evidencia prevista. No basta
-   con títulos como «hacer backend» o «hacer frontend».
-4. **Implementar una tarea y verificarla.** Leer sus fuentes vigentes, comprobar
-   que está lista, hacer el cambio y ejecutar los casos aplicables. Un bloqueo
-   detiene esa tarea, sin convertir un mock en una conexión real.
-5. **Revisar y registrar evidencia.** Código, comando/entorno, resultado y
-   revisión permiten cerrar la tarea. Se actualiza el mismo seguimiento.
+1. **Leer entradas:** épica, specs funcionales, UI/UX, OpenAPI, React,
+   catálogos/ADR aplicables y su revisión.
+2. **Planificar el incremento:** alcance H3 y posterior, RF/ESC/UI, diseño de
+   datos/interfaz, decisiones internas, dependencias, fases y comprobaciones.
+   Una nueva regla vuelve primero a la spec; contrato con Sergio.
+3. **Revisar y aclarar:** el dueño revisa su plan y acuerda interfaces con
+   proveedores/consumidores. No inventar aprobación ni resolver contradicción
+   funcional programando una interpretación.
+4. **Derivar tareas:** resultados pequeños con fuente, dueño, dependencia,
+   aceptación y evidencia. Sin títulos genéricos «hacer todo el backend».
+5. **Implementar y verificar:** una tarea lista por vez; pruebas proporcionales,
+   revisión y evidencia. Los criterios de integración requieren capacidad real.
+6. **Planificar siguiente incremento:** conservar dueño/alcance restante;
+   terminar H3 no cierra la épica completa.
 
-## Estructura
+[Fuentes primarias SDD](../docs/sdd-fuentes-y-aplicacion.md) registra GitHub
+Spec Kit/Kiro. Se adapta el método al curso; no se instalaron esas herramientas.
+La referencia previa de Marketplace se conserva sin reabrir su auditoría.
+[Cierre del plan H3](hito-3/CIERRE-PLAN.md): aprobación formal comunicada y
+las decisiones técnicas delegadas concretadas; ejecutar ahora una tarea lista
+del tablero propio, con sus fuentes y criterios.
+
+## Estructura actual
 
 ```text
-specs/                              Reglas, escenarios, UI, API y React
+specs/                         Funcional, UI, OpenAPI, React y catálogos
 plan/
-  README.md                         Preparación de nueve puntos y navegación
-  flujo-sdd.md                      Estas reglas
-  PLAN-IMPLEMENTACION.md            Recorrido H3, dependencias y aceptación
-  DECISIONES-Y-BLOQUEOS.md           Vista de los pendientes del recorrido
-  PLANTILLA.md                      Plantilla de plan individual
-  funcionalidades/README.md         Índice de los ocho planes por preparar
-  seguimiento/README.md             Reglas de tareas y evidencia
-  seguimiento/PLANTILLA.md          Plantilla de seguimiento individual
-  seguimiento-epicas.md             48 filas previas de cobertura general
-  commits-publicacion.md            Publicación documental ya preparada
+  README.md                    Preparación y navegación
+  PLAN-IMPLEMENTACION.md       Demo conjunta G7/G5
+  DECISIONES-Y-BLOQUEOS.md      Referencias del registro único
+  hito-3/
+    README.md                  Los siete estudiantes y sus incrementos
+    ACUERDOS-INTERNOS.md        Capacidades y composición cerradas
+    DISENO-PERSISTENCIA.md      Tablas, mappings, concurrencia y migraciones
+    ENTORNO-Y-REACT.md          Supabase, runtime, firma y composición SPA
+    CIERRE-PLAN.md              Aprobación y traspaso a tareas
+    ANTES-DE-CODIFICAR.md       Condiciones de inicio y entrega
+    eva-moreno/PLAN.md
+    jose-limachi/PLAN.md
+    juan-cano/PLAN.md
+    luis-morales/PLAN.md        EP-04 y EP-07, evidencias separadas
+    sergio-osorio/PLAN.md
+    christian-arancivia/PLAN.md
+    valery-gutierrez/PLAN.md
+  funcionalidades/             Índice por épica y diseño detallado EP-02
+  transversales/               TEC-IDENTIDAD y TEC-INFRA
+  seguimiento/                 Plantilla y reglas de seguimiento
+  seguimiento-epicas.md        48 filas previas de cobertura
+tareas/hito-3/                 Índice y siete TAREAS.md por estudiante
 ```
 
-Los futuros planes se llamarán `funcionalidades/EP-XX-nombre.md` y tendrán
-un seguimiento `seguimiento/EP-XX-nombre.md`. Las capacidades adicionales
-de identidad e infraestructura tendrán planes técnicos identificados como
-`TEC-IDENTIDAD` y `TEC-INFRA`; no se convierten en épicas académicas.
-Sus carpetas/archivos se crean cuando se redacte cada plan.
+La carpeta por estudiante es entrada al incremento, no una épica nueva.
+Planes técnicos/detallados se enlazan como diseño adicional; no se duplican
+tableros. Al siguiente hito se crea su incremento y se conserva evidencia H3.
 
-## Dueño y alcance
+## Tareas H3 disponibles
 
-El mismo estudiante realiza todas las capas de su épica. Los bloques de una
-pantalla compuesta conservan sus dueños; consumir una capacidad no transfiere
-su implementación. Sergio mantiene SPEC-17/18 y Christian infraestructura.
-Un revisor comprueba el trabajo y no se convierte en dueño del frontend o
-backend ajeno. [Detalle](../docs/responsabilidades.md).
+La restricción inicial de no generar tareas durante el cierre del plan fue
+superada por la instrucción posterior de Luis: se derivaron por bloques los
+siete tableros H3 a partir de planes aprobados y diseño cerrado por delegación.
+El [índice de tareas](../tareas/hito-3/README.md) enlaza un único
+`tareas/hito-3/<integrante>/TAREAS.md` por dueño/incremento, también desde su
+PLAN.md. Todos comienzan pendientes; redactarlos no acredita código ni pruebas.
 
-Cada plan separa: alcance completo, incremento H3 y partes aplazadas. Terminar
-una demo no cierra una épica completa. La demo conjunta con Ventas tampoco
-sustituye la primera versión individual de los siete estudiantes.
+Las 48 filas anteriores son cobertura general. Las tareas H3 nuevas
+mantienen referencias de épica, por ejemplo EP-02-T001; técnicas,
+TEC-IDENTIDAD-T001. Luis puede tener tareas de EP-04 y EP-07 en un mismo
+seguimiento, con criterios y evidencia separados. No se reutilizan IDs viejos
+EP-02-01 ni se contabiliza la cobertura como tareas adicionales.
 
-## Listo para implementar y terminado
+## Dueño y condiciones de inicio
 
-Una tarea está **lista** cuando su plan fue revisado, tiene RF/ESC y operación
-contractual identificados, sus datos e interfaces están definidos y sus
-dependencias necesarias están disponibles. Los resultados previstos y su
-comprobación están escritos antes de generar código. Un pendiente no aplicable
-al incremento se deja justificado; no se exige cerrar todo el curso para avanzar.
+El dueño implementa cada capa de su incremento. Un bloque del panel compartido
+no transfiere frontend/backend. Sergio conserva contrato/identidad técnica;
+Christian infraestructura. [Interfaces H3](hito-3/ACUERDOS-INTERNOS.md).
 
-Una tarea está **terminada** cuando sus criterios pasan en el entorno indicado,
-hay evidencia y revisión, y no queda un bloqueo aplicable. «Spec escrita»,
-«mock responde», «prueba con JWT sintético» e «integración en nube» son evidencias
-distintas. No se sustituyen entre sí.
+Tarea lista: fuentes coherentes, plan revisado, decisión técnica necesaria
+concreta, comprobación escrita. Su ejecución integrada requiere dependencia
+disponible. No hace falta terminar las ocho épicas ni cerrar pendientes
+fuera de su recorrido.
 
-El [registro único](../docs/registro-inconsistencias.md) conserva los problemas.
-[Decisiones del recorrido](DECISIONES-Y-BLOQUEOS.md) enlaza ese registro: no
-crea un segundo tablero de problemas con estados independientes.
+Terminado: criterios pasan en entorno indicado, evidencia/revisión y ningún
+bloqueo aplicable. Separar documental, mock/fixture, servicio real local y
+conjunto en nube. [Condiciones](hito-3/ANTES-DE-CODIFICAR.md).
 
-## Las 48 filas existentes
+[Registro único](../docs/registro-inconsistencias.md) conserva problemas;
+[decisiones H3](DECISIONES-Y-BLOQUEOS.md) los referencia, sin otro tablero.
 
-[seguimiento-epicas.md](seguimiento-epicas.md) es una matriz inicial de cobertura,
-no el desglose ejecutable. Se preservan sus IDs y estados como antecedente.
-Al preparar tareas concretas, se enlaza cada fila con los IDs derivados del
-plan, sin contabilizarla como otra tarea de implementación.
+## Referencia previa consultada
 
-IDs nuevos: `EP-02-T001`, por ejemplo; técnicos: `TEC-IDENTIDAD-T001`.
-No se reutilizan los IDs anteriores `EP-02-01`. Una tarea cubre uno o varios
-RF/ESC explícitos; ni cada spec ni cada capa se convierte en una épica nueva.
-
-## Referencia consultada
-
-Marketplace, revisión `64cc824ec47ad2758bd657f01e5881165189e1f1`:
+Marketplace, revisión 64cc824ec47ad2758bd657f01e5881165189e1f1:
 [plan](https://github.com/Taller-SW-Web/G1-Marketplace-SPECS/blob/64cc824ec47ad2758bd657f01e5881165189e1f1/plan/funcionalidades/F-002-iniciar-sesion.md)
 y [tareas](https://github.com/Taller-SW-Web/G1-Marketplace-SPECS/blob/64cc824ec47ad2758bd657f01e5881165189e1f1/plan/seguimiento/F-002-iniciar-sesion.md).
-Se toma su separación de entradas, decisiones, fases y evidencia. G7 conserva
-los dueños ya acordados y sus propias reglas de identidad/sesión.
+Se conserva su separación de entradas/diseño/tareas/evidencia, adaptada a G7.
