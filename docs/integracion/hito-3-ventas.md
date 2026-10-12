@@ -17,8 +17,9 @@ pendientes. El plan de nueve
 puntos sigue vigente en [plan](../../plan/README.md).
 
 El [plan técnico del recorrido](../../plan/PLAN-IMPLEMENTACION.md) organiza
-capacidades, fases y casos de aceptación. Sus planes individuales/tareas aún
-deben redactarse y revisarse; esta ficha conserva la coordinación bilateral.
+capacidades, fases y casos de aceptación. EP-02 y TEC-IDENTIDAD tienen
+planes preparados para revisión; tareas todavía no generadas. Esta ficha
+conserva la coordinación bilateral.
 
 ## Recorrido confirmado
 
@@ -51,7 +52,7 @@ se registra por separado como A11, sin alterar A10.
 | URL de descubrimiento y JWKS | Derivadas del entorno real, no del mock |
 | URL HTTPS de Ventas y origen del frontend | Pendientes de Ventas |
 | Orígenes CORS autorizados | Los orígenes concretos acordados, sin inventar URLs |
-| Revisión de contrato/kit consumida | Base pública fijada en fuentes; revisión nueva pendiente de publicación del PO |
+| Revisión de contrato/kit consumida | Publicado main 5796622f7c039021e03dd25b2338c6a208320e05, v1 1.1.0/v2 parcial; G5 confirma revisión efectivamente consumida |
 | UUID de clientes A/B y vendedor de prueba | Identificadores de fixture, por confirmar con Eva; no crear cuentas reales aquí |
 | Pedidos de A, ningún pedido de B | Preparación de Ventas; misma identidad UUID |
 | Sesión | Memoria en esta versión; recargar exige login. G7 lo define, Ventas confirma consumo |
@@ -71,7 +72,8 @@ acredita endpoints implementados ni disponibilidad comprobada de G7.
 La coordinación continúa en ese issue: URLs, issuer/JWKS, revisión consumida,
 hora de prueba, UUID de fixtures y aceptación de H-11. Las credenciales se
 entregan por canal privado. A10 conserva el recorrido de servicio; su catálogo
-se ajusta por #44 retirando CSAT, sin afectar esta demo.
+se ajusta por #44 retirando CSAT y por #42 retirando documento para Ventas,
+sin afectar esta demo. El segundo ajuste está localmente preparado, por publicar.
 
 ## Trabajo que puede comenzar — sin cambiar dueños
 

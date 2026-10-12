@@ -21,11 +21,17 @@ Agrupa las specs siguientes. Sus RF y escenarios conservan las reglas vigentes y
 
 FRONT-07/08 integra bloques completos. Eva mantiene navegación/contenedor; cada dueño conserva interfaz, servicio, datos y pruebas de su bloque. FRONT-00 coordina sesión con Jose Luis, política con Juan José y autorización con Sergio; véase [responsabilidades](../../docs/responsabilidades.md).
 
-## Primera versión demostrable
+## Primera versión demostrable — incremento H3
 
-1. Login con desafío, solicitud de código y confirmación antes de emitir sesión.
-2. Activación/desactivación desde pantalla propia y obligatoriedad por roles de gestión. H-01/H-02 definidos localmente en v2; DAT-01, implementación y publicación pendientes.
-3. Propósito, vencimiento, intentos y reenvío según decisiones del punto 3. SMS mantiene simulación y límite A2, sin prometer verificación externa.
+**Selección H3 aprobada 12-oct:** revisión y aprobación formal del dueño
+comunicadas por Luis; diseño interno cerrado bajo su delegación. Conserva
+RF/ESC del alcance completo y no acredita implementación.
+
+1. Login con desafío, solicitud y verificación OTP por correo real antes de abrir sesión; uso único, reenvío, vencimiento y cuota.
+2. MFA efectivo obligatorio con cualquier rol de gestión. Canal de demo EMAIL; SMS simulado conserva contrato para desarrollo/pruebas.
+3. Activación/desactivación confirmada v2/FRONT-09 y su persistencia quedan para siguiente incremento; no implementar rutas históricas v1 bloqueadas ni verificación externa de contactos.
+
+[Plan H3 del dueño](../../plan/hito-3/luis-morales/PLAN.md).
 
 ## Dependencias
 

@@ -24,7 +24,18 @@ lotes.
 | **3** | [13 · Actividad reciente](FRONT-13-actividad-propia.md) | 13 | Documentado |
 | **3** | [14 · Panel admin: auditoría](FRONT-14-admin-auditoria.md) | 13 | Documentado |
 
+
+**Aprobación incremental H3:** Luis comunica revisión y aprobación de alcance
+y diseño UI por los siete dueños. Se registra para los recorridos elegidos
+FRONT-00/01/04/06/07/08/10/12/13, no para todos los flujos posteriores.
+[Planes aprobados y diseño técnico cerrado](../../plan/hito-3/CIERRE-PLAN.md).
+
 ## Responsables por pantalla y bloque
+
+[Planes H3 por estudiante](../../plan/hito-3/README.md) selecciona los bloques
+de este incremento; los lotes de la tabla son cobertura anterior, no el orden
+de implementación H3. Las notas FRONT-00/06/07/08/13 evitan montar llamadas
+o acciones todavía posteriores. Revisión pendiente de cada dueño.
 
 Reparto vigente del 11-oct-2026; no implica aprobación de pantallas. [Dueños completos](../../docs/responsabilidades.md) y [épicas](../epicas/README.md).
 

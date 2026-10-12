@@ -22,11 +22,17 @@ Agrupa las specs siguientes. Sus RF y escenarios conservan las reglas vigentes y
 
 FRONT-07/08 integra bloques completos. Eva mantiene navegación/contenedor; cada dueño conserva interfaz, servicio, datos y pruebas de su bloque. FRONT-00 coordina sesión con Jose Luis, política con Juan José y autorización con Sergio; véase [responsabilidades](../../docs/responsabilidades.md).
 
-## Primera versión demostrable
+## Primera versión demostrable — incremento H3
 
-1. Bloqueo automático por la secuencia de fallos de SPEC-14, expiración y desbloqueo por enlace.
-2. Bloqueo/desbloqueo manual administrativo con motivo, auditoría y sin vencimiento automático.
-3. Bloques administrativos y pantalla de enlace; login consume el resultado sin revelar el estado de cuenta.
+**Selección H3 aprobada 12-oct:** revisión y aprobación formal del dueño
+comunicadas por Luis; diseño interno cerrado bajo su delegación. Conserva
+RF/ESC del alcance completo y no acredita implementación.
+
+1. Bloqueo automático con contador/huella de fallos distintos, quinta entrada, escalera/vencimiento, respuesta genérica y sesiones previas conservadas.
+2. Correo/enlace de uso único y pantalla de desbloqueo, con transición/auditoría/evento reales; el enlace no levanta manual.
+3. Bloqueo/desbloqueo manual y su indicación de soporte H-14 quedan para siguiente incremento; el login siempre respeta estado efectivo.
+
+[Plan H3 del dueño](../../plan/hito-3/luis-morales/PLAN.md).
 
 ## Dependencias
 

@@ -4,8 +4,9 @@
 
 **Uso desde el bloque SDD del 12-oct:** estas 48 filas son cobertura general.
 Se conservan como antecedente, sin duplicarlas como tareas adicionales.
-Los planes individuales y sus tareas concretas se redactarán según el
-[flujo SDD](flujo-sdd.md) y el [seguimiento incremental](seguimiento/README.md).
+Los planes individuales aprobados y sus [tableros H3](../tareas/hito-3/README.md)
+ya están disponibles según el [flujo SDD](flujo-sdd.md). La ejecución/evidencia
+se registra en esos tableros, no en una segunda lista de 48 tareas duplicadas.
 El [plan técnico H3](PLAN-IMPLEMENTACION.md) fija las dependencias del recorrido;
 no marca ninguna fila como implementada.
 
@@ -145,7 +146,7 @@ Una jornada es presupuesto de preparación, no permiso para saltar decisiones de
 
 
 **Actualización documental 11-oct:** los tratamientos H-01–H-15 y KIT/JWT se
-consultan en el registro vigente. Estas 48 tareas siguen pendientes de
+consultan en el registro vigente. Estas 48 filas históricas no acreditan
 implementación/evidencia; una propuesta escrita no las completa. Para la demo
 mínima, Jose Luis entrega login/sesión, Sergio identidad/JWKS, Eva las cuentas
 de prueba y Christian infraestructura; cada uno conserva su épica completa.

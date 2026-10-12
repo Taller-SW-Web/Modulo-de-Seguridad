@@ -1,7 +1,8 @@
 # Tareas derivadas de planes
 
-**Estado:** estructura preparada; aún no hay tareas incrementales emitidas.
-[Flujo SDD](../flujo-sdd.md), [planes individuales](../funcionalidades/README.md)
+**Estado:** siete [tableros H3 disponibles](../../tareas/hito-3/README.md),
+derivados de planes aprobados; implementación y evidencia pendientes.
+[Flujo SDD](../flujo-sdd.md), [siete planes H3](../hito-3/README.md)
 y [plantilla de seguimiento](PLANTILLA.md).
 
 ## Una tarea por resultado verificable
@@ -47,5 +48,5 @@ No copiarlas como 48 tareas adicionales ni marcar «Backend» terminado porque
 pasó una sola operación. La tabla nueva es el estado de ejecución del incremento;
 la anterior conserva contexto y cobertura.
 
-Por ahora se mantiene pendiente: no se ha creado un tablero operativo completo,
-asignado trabajo a una capa ajena ni acreditado implementación.
+El estado operativo H3 vive en los siete tableros nuevos. La tabla histórica
+conserva cobertura; no asigna capas ajenas ni acredita implementación por sí sola.

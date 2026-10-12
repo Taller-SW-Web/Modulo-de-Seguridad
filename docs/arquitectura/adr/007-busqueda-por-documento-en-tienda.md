@@ -36,8 +36,12 @@ El documento se guarda cifrado (SPEC-16) y, además, como **HMAC** de tipo y
 número (`perfil_cliente.documento_hmac`, único). Es lo que permite buscarlo sin
 descifrar nada y lo que impide dos cuentas con el mismo documento.
 
-**`RUC` queda fuera.** Identifica a una empresa y sirve para facturar, que es
-dominio de Ventas. Nuestros usuarios son personas.
+**`RUC` queda fuera.** Identifica a una empresa; nuestros usuarios son personas.
+**Aclaración 12-oct-2026:** la emisión de comprobantes fiscales corresponde a
+Retail, según su respuesta comunicada por Joseph en
+[#42](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6118843852).
+Se corrige la atribución histórica a Ventas, sin cambiar la decisión de excluir
+RUC ni las condiciones de búsqueda por documento de personas.
 
 ## Lo que no cambia
 

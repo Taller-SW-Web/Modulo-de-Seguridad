@@ -5,11 +5,13 @@ El agente no ha ejecutado `git add`, commits, push ni creación de PR.
 Publica documentación y herramientas de comprobación; no una integración
 implementada. [Estado y revisiones](../docs/fuentes-oficiales.md).
 
-**Actualización durante SDD-1/2:** los cuatro commits iniciales ya aparecen
-en la rama hasta `1f743bf76445bbc70e1dc3ec94a21818dec9492b`. No repetirlos.
-Parte de la estructura SDD entró en el cuarto; para completar este bloque usar
-el [commit de complemento](#complemento-sdd-12-después-de-los-cuatro-commits).
-No se reescribe ese historial ni se acredita push/merge por observar commits locales.
+**Actualización 12-oct:** los cuatro commits y el complemento SDD
+`b9f76733e8b6c30410f36a755400daf92b988f76` ya fueron realizados por Luis.
+PR #45/#46 están fusionados; main público comprobado:
+`5796622f7c039021e03dd25b2338c6a208320e05`. No repetir esos comandos.
+Las secciones anteriores de preparación son antecedentes. El nuevo bloque
+EP-02/TEC-IDENTIDAD, auditoría de issues y ajustes de catálogo/índices sigue
+local, sin staging ni commits del agente. [Fuentes actuales](../docs/fuentes-oficiales.md).
 
 ## Comprobación previa
 
@@ -203,3 +205,83 @@ tareas pequeñas derivadas de él. La continuación preparó el
 En los siguientes bloques se redactarán planes por épica/capacidad y se
 derivarán tareas verificables, manteniendo el dueño completo. No se ha generado
 código de producción ni los ocho planes y tableros individuales de una vez.
+
+## Histórico del 12-oct — EP-02 y TEC-IDENTIDAD
+
+Complemento documental posterior a main 5796622f7c039021e03dd25b2338c6a208320e05:
+
+- Dos planes preparados para revisión, con entradas funcional/UI/API/React,
+  decisiones, fases, dependencias y pruebas; sin tareas nuevas.
+- Fuentes primarias SDD, condiciones por integrante y auditoría de 14 issues.
+- [Hitos y responsabilidad individual](../docs/hitos-y-alcance-individual.md):
+  diferencia PDF/rúbrica reciente y propuesta de avance por estudiante.
+- Retiro de documento para Ventas según el último comentario #42, sin reemplazo.
+- Reconciliación SPEC-17/18 y actualización de índices tras publicación.
+
+Los OpenAPI no cambian. El kit solo cambia texto y concesiones; sus bloques
+de validación conservan contenido. Los comandos anteriores ya ejecutados
+por Luis no se repiten. Al publicar este complemento, revisar el diff completo
+y usar un commit documental identificable, por ejemplo
+docs(sdd): preparar planes de sesiones e identidad y estado de issues.
+El agente conserva cambios locales sin staging/commit/push; no cerró issues.
+
+## Continuación — siete incrementos H3 por estudiante
+
+Luis confirma avance por incremento y requiere que los siete estudiantes
+puedan mostrar trabajo propio. El bloque añade [los siete planes](hito-3/README.md),
+[interfaces cerradas](hito-3/ACUERDOS-INTERNOS.md),
+[condiciones de inicio](hito-3/ANTES-DE-CODIFICAR.md) y
+[TEC-INFRA](transversales/TEC-INFRA.md). Luis conserva sus dos épicas.
+
+Fichas, navegación, notas UI/React, calendario de eventos y DAT-01 se alinean
+con el incremento seleccionado y lo posterior. No cambian OpenAPI, Java,
+SQL, Docker ni ejemplos de código del kit. Planes aprobados H3 según Luis y diseño cerrado;
+no se generan tareas, código, commits o mensajes externos.
+
+Antes de publicar, revisar el diff documental completo: incluye el bloque
+anterior EP-02/identidad/issues y esta continuación, aún locales. Los comandos
+históricos ya ejecutados por Luis no se repiten para este complemento.
+
+## Cierre del plan H3 por aprobación y delegación
+
+El complemento ahora incluye [cierre](hito-3/CIERRE-PLAN.md),
+[propiedad/mappings](hito-3/DISENO-PERSISTENCIA.md),
+[entorno/React](hito-3/ENTORNO-Y-REACT.md) y siete PLAN.md 1.0.0.
+No genera carpeta de tareas ni cambia Java/SQL/YAML/base remota. Aprobación
+formal comunicada por Luis; insumos y pruebas operativas no acreditados.
+Antes de publicación humana revisar el diff completo, incluidos cambios previos.
+El agente no ejecuta add, commit, push ni comentarios de issues.
+
+## Publicación del complemento completo — autorización posterior del 12-oct
+
+Luis solicita ejecutar la publicación en dos commits y crear o actualizar el PR
+`brenis → main`. Esta instrucción posterior autoriza la publicación por el agente;
+las notas anteriores conservan el estado de sus bloques históricos.
+
+Los siete planes H3 están aprobados según comunicación de Luis y sus
+[tableros de tareas](../tareas/hito-3/README.md) ya se derivaron por bloques.
+README, índices y guías se actualizan para conducir a esos tableros; las 48
+filas antiguas permanecen como cobertura general. Código, OpenAPI y base remota
+no se modifican. No se presenta documentación como integración desplegada.
+
+La secuencia acordada, después de comprobar enlaces/IDs y diff, es:
+
+```bash
+git add -- docs specs
+git diff --cached --stat
+git diff --cached --check
+git commit -m "docs: alinear specs y acuerdos con el incremento H3"
+
+git add -- README.md plan tareas
+git diff --cached --stat
+git diff --cached --check
+git commit -m "docs(sdd): cerrar planes y tareas H3 de los siete integrantes"
+
+git status
+git push origin brenis
+```
+
+Ambos commits se publican juntos y se proponen hacia main sin fusionar el PR
+automáticamente. Sus hashes y el enlace del PR se informan al terminar; no se
+inventa un SHA futuro dentro de este documento. Tras fusionarlo, cada integrante
+actualiza su rama y ejecuta una tarea lista por vez con sus fuentes y criterios.

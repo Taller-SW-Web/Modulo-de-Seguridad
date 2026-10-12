@@ -92,7 +92,18 @@ y consolidación de fuentes/inconsistencias. Existe una base de persistencia;
 este seguimiento no acredita integración funcional desplegada. La aprobación
 original de specs no cierra huecos de contrato/interfaz.
 
-- [Plan actual](plan/README.md) y [tareas por épica](plan/seguimiento-epicas.md).
+Preparación documental publicada por PR #45/#46; referencia de main
+`5796622f7c039021e03dd25b2338c6a208320e05`.
+[Fuentes primarias de SDD](docs/sdd-fuentes-y-aplicacion.md),
+[preparación por integrante](plan/preparacion-por-integrante.md) y
+[estado de los 14 issues consultados](docs/integracion/estado-issues-20261012.md).
+Los [siete planes H3 por estudiante](plan/hito-3/README.md) están aprobados,
+cubriendo las ocho épicas, y sus [tableros de tareas](tareas/hito-3/README.md)
+ya están disponibles. [Antes de codificar](plan/hito-3/ANTES-DE-CODIFICAR.md)
+distingue diseño cerrado de dependencias/configuración aún por comprobar.
+
+- [Plan actual](plan/README.md) y [tareas H3 por estudiante](tareas/hito-3/README.md).
+- [Cobertura histórica por épica](plan/seguimiento-epicas.md): 48 filas generales, no el tablero de ejecución.
 - [Revisión pública y fuentes](docs/fuentes-oficiales.md).
 - [Registro único de inconsistencias](docs/registro-inconsistencias.md).
 - [Preparación de commits y publicación](plan/commits-publicacion.md).
@@ -119,7 +130,7 @@ y [preparación interna](docs/integracion/preparacion-interna.md).
 
 | Si eres… | Lee esto |
 |---|---|
-| Integrante del G7 | [`plan/`](plan/) — tareas y criterios actuales |
+| Integrante del G7 | [Tu plan H3](plan/hito-3/README.md) y [qué falta antes de codificar](plan/hito-3/ANTES-DE-CODIFICAR.md) |
 | Integrante nuevo | [`docs/responsabilidades.md`](docs/responsabilidades.md) — quién hace qué y cómo trabajamos |
 | **De otro equipo del curso** | [`specs/contrato-api/openapi.yaml`](specs/contrato-api/openapi.yaml) — el contrato; consultar [kit](specs/kit-integracion.md) y [revisión de referencia](docs/fuentes-oficiales.md) |
 | Quieres la vista del usuario | [`specs/historias-usuario.md`](specs/historias-usuario.md) — 41 historias, cada una enlazada a sus RF y escenarios |
@@ -206,3 +217,13 @@ La guía completa está en [`specs/kit-integracion.md`](specs/kit-integracion.md
 El comando se comprobó con Node 24.19.0. Los ejemplos de JWT/JWKS del mock
 son ilustrativos; para verificar firmas se necesitan tokens RS256 firmados
 y las claves públicas correspondientes.
+
+## Cierre de planificación H3
+
+Los siete planes del incremento H3 están aprobados según comunicación de Luis,
+con [diseño técnico cerrado y paso a tareas](plan/hito-3/CIERRE-PLAN.md).
+Cada dueño conserva su recorrido completo; tablas de escritor único y consumo
+por interfaces internas. PostgreSQL está en Supabase; acceso/configuración y
+servicios reales se comprueban al implementar. Los siete tableros están en
+[tareas/hito-3](tareas/hito-3/README.md); ejecutar una tarea lista por vez,
+con sus fuentes, dependencias y comprobaciones. No hay demo acreditada.

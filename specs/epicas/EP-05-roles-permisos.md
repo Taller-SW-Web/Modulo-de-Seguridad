@@ -20,11 +20,17 @@ Agrupa las specs siguientes. Sus RF y escenarios conservan las reglas vigentes y
 
 FRONT-07/08 integra bloques completos. Eva mantiene navegación/contenedor; cada dueño conserva interfaz, servicio, datos y pruebas de su bloque. FRONT-00 coordina sesión con Jose Luis, política con Juan José y autorización con Sergio; véase [responsabilidades](../../docs/responsabilidades.md).
 
-## Primera versión demostrable
+## Primera versión demostrable — incremento H3
 
-1. Asignación/retirada de los seis roles y cálculo de permisos efectivos según SPEC-11.
-2. Bloque completo de roles del panel administrativo y autorización de acciones.
-3. Denegación por falta de permiso y obligatoriedad de MFA al asignar rol de gestión, consumiendo EP-04.
+**Selección H3 aprobada 12-oct:** revisión y aprobación formal del dueño
+comunicadas por Luis; diseño interno cerrado bajo su delegación. Conserva
+RF/ESC del alcance completo y no acredita implementación.
+
+1. Asignación/retirada de los seis roles de uno en uno, cálculo de permisos efectivos y denegación/protección del administrador.
+2. Bloque de roles completo en detalle administrativo, revocación de refrescos, auditoría crítica y evento de cambio.
+3. Firma/JWKS/descubrimiento son capacidad técnica adicional, separada de la evidencia académica. Servicio/introspección/consultas y rotación completa siguen posteriormente.
+
+[Plan H3 del dueño](../../plan/hito-3/sergio-osorio/PLAN.md).
 
 ## Dependencias
 

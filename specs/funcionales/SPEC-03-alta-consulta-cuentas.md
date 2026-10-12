@@ -14,9 +14,9 @@
 
 ---
 
-> **Corte 11-oct:** alta administrativa estricta en [v2 local](../contrato-api/openapi-v2.yaml).
+> **Definición publicada por PR #45/#46:** alta administrativa estricta en [v2 parcial](../contrato-api/openapi-v2.yaml).
 > Las consultas, alta asistida de clientes y activación de cuenta siguen en v1.
-> Publicación pendiente; términos/pantalla de activación A6 todavía requieren H-12.
+> Servidor pendiente; términos/pantalla de activación A6 todavía requieren H-12/#36.
 
 ## Contexto — ¿por qué?
 
@@ -190,7 +190,7 @@ condiciones límite, de error o de seguridad.
 ## Fuera de alcance — ¿qué NO hará?
 
 - El registro público de clientes, que es de SPEC-01.
-- La búsqueda por correo o por celular, que no existe (ADR-006), y la búsqueda por `RUC`: los datos de facturación de una empresa son de Ventas (A7).
+- La búsqueda por correo o por celular, que no existe (ADR-006), y la búsqueda por `RUC`, que queda fuera de la identidad de personas de Seguridad (A7). La emisión de comprobantes fiscales corresponde a Retail según su respuesta comunicada por Joseph en [#42](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6118843852); no requiere conceder documento en claro a Ventas.
 - La baja y la reactivación, que son de SPEC-04.
 - Asignar o revocar roles después del alta, que es de SPEC-11.
 - La edición de atributos de la cuenta, que es de SPEC-16.

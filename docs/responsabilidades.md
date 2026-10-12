@@ -87,6 +87,8 @@ specs describen el alcance completo del ciclo y no sustituyen la primera
 versión individual. Ningún documento nuevo declara software terminado.
 
 - [Catálogo de épicas](../specs/epicas/README.md).
+- [Plan H3 de cada estudiante](../plan/hito-3/README.md) y
+  [condiciones antes de codificar](../plan/hito-3/ANTES-DE-CODIFICAR.md).
 - [Plan vigente](../plan/README.md) y [tareas](../plan/seguimiento-epicas.md).
 - [Fuentes y revisiones](fuentes-oficiales.md).
 - [Registro vigente de inconsistencias](registro-inconsistencias.md).

@@ -118,3 +118,10 @@ No se muestra `detalle` en bruto ni `actorId`. Si el actor es un administrador
 
 Filtros por fecha/acción; exportar; cerrar sesiones concretas; registros de otras
 cuentas (RF-13.5).
+
+## Selección de alcance H3 — 12-oct
+
+H3 incluye consulta/pantalla de actividad propia; el enlace a cambio de contraseña consume el recorrido de Juan José. Configuración de segundo factor FRONT-09 aún posterior: no anunciarla disponible. No requiere el permiso administrativo auditoria.ver ni llama a exportación.
+
+[Planes por estudiante](../../plan/hito-3/README.md). Selección H3 aprobada por los dueños según comunicación de Luis el
+12-oct; no cambia reglas aplicables ni acredita implementación de la UI.

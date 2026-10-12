@@ -22,11 +22,17 @@ Agrupa las specs siguientes. Sus RF y escenarios conservan las reglas vigentes y
 
 FRONT-07/08 integra bloques completos. Eva mantiene navegación/contenedor; cada dueño conserva interfaz, servicio, datos y pruebas de su bloque. FRONT-00 coordina sesión con Jose Luis, política con Juan José y autorización con Sergio; véase [responsabilidades](../../docs/responsabilidades.md).
 
-## Primera versión demostrable
+## Primera versión demostrable — incremento H3
 
-1. Registro de eventos de seguridad de las épicas integradas sin secretos y con garantías de SPEC-12.
-2. Consulta de actividad propia y consulta administrativa paginada con filtros/permisos de SPEC-13.
-3. Exportación aplazada de Hito 3; conserva dueño y RF del alcance completo. Antes de implementarla en Hito 4, cerrar H-08 y alinear sus filtros.
+**Selección H3 aprobada 12-oct:** revisión y aprobación formal del dueño
+comunicadas por Luis; diseño interno cerrado bajo su delegación. Conserva
+RF/ESC del alcance completo y no acredita implementación.
+
+1. Registro real seguro de hechos incluidos en H3, con criticidad, transacción/reintento y solo-anexado.
+2. Consulta/pantalla de actividad propia paginada: solo eventos del titular, sin escoger identidad ajena.
+3. Consulta administrativa/historial del panel, exportación y automatización completa de purga siguen después. Retención mínima y privacidad ya rigen. Infraestructura es responsabilidad adicional.
+
+[Plan H3 del dueño](../../plan/hito-3/christian-arancivia/PLAN.md).
 
 ## Dependencias
 

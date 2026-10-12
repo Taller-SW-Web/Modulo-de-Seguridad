@@ -57,7 +57,7 @@ A2: sin verificación externa de contactos; SMS sigue simulado.
 ## Scopes y coordinación
 
 [Matriz](matriz-scopes.md): aprobaciones separadas de provisión; A10 confirmado
-por #42, permiso de documento provisional, A9 condicionado. Seis roles,
+por #42; concesión de documento a Ventas retirada por su confirmación final, A9 condicionado. Seis roles,
 perfiles de negocio locales, búsquedas restringidas, sin invitados. Scopes de
 API ajena no añaden endpoints especiales de Seguridad.
 

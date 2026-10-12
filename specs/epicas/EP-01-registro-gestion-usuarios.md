@@ -26,11 +26,17 @@ Agrupa las specs siguientes. Sus RF y escenarios conservan las reglas vigentes y
 
 FRONT-07/08 integra bloques completos. Eva mantiene navegación/contenedor; cada dueño conserva interfaz, servicio, datos y pruebas de su bloque. FRONT-00 coordina sesión con Jose Luis, política con Juan José y autorización con Sergio; véase [responsabilidades](../../docs/responsabilidades.md).
 
-## Primera versión demostrable
+## Primera versión demostrable — incremento H3
 
-1. Registro público en Seguridad y cuenta pendiente hasta verificar correo. En la demo mínima con Ventas se preparan cuentas CLIENTE activas con UUID conocido; registro/activación conjunto queda fuera de ese recorrido, sin eliminarlo de la épica.
-2. Verificación en Seguridad y retorno al login configurado del canal sin token de sesión en URL; reenvío y enlace vencido/usado.
-3. Alta y consulta administrativa y baja/reactivación en Seguridad con permisos y estados existentes. A6 exige resolver UI-01 para la pantalla de alta por enlace.
+**Selección H3 aprobada 12-oct:** revisión y aprobación formal del dueño
+comunicadas por Luis; diseño interno cerrado bajo su delegación. Conserva
+RF/ESC del alcance completo y no acredita implementación.
+
+1. Consulta administrativa real de listado/filtros/paginación y detalle, con ADMIN_SISTEMA que completó MFA; CLIENTE sin permiso no accede.
+2. Preparación técnica reproducible de cuentas/UUID para el equipo y Ventas, consumiendo credenciales y roles de sus dueños.
+3. Registro/verificación, alta/activación, búsqueda por documento y baja/reactivación quedan para siguientes incrementos. Términos H-12 y UI de activación deben resolverse antes de esos flujos.
+
+[Plan H3 del dueño](../../plan/hito-3/eva-moreno/PLAN.md).
 
 ## Dependencias
 

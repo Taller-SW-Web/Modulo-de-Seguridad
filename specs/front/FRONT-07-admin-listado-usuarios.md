@@ -230,3 +230,10 @@ Diálogos de confirmación:
 - [ ] Los filtros sobreviven a una recarga
 - [ ] Los escenarios de interfaz están automatizados o verificados a mano con evidencia
 - [ ] El wireframe y la implementación coinciden
+
+## Selección de alcance H3 — 12-oct
+
+H3 contiene filtros/listado/paginación y acceso al detalle. No muestra acciones de alta, baja/reactivación ni bloqueo/desbloqueo manual de flujos posteriores. Se mantienen estados y datos reales, sin botones de éxito ficticio. El panel requiere ADMIN_SISTEMA con segundo factor real.
+
+[Planes por estudiante](../../plan/hito-3/README.md). Selección H3 aprobada por los dueños según comunicación de Luis el
+12-oct; no cambia reglas aplicables ni acredita implementación de la UI.

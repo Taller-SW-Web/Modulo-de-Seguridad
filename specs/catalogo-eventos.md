@@ -208,7 +208,7 @@ Mismas reglas que el contrato REST:
 
 ---
 
-## Estado de implementación
+## Calendario original y selección H3 — 12-oct
 
 | Qué | Cuándo |
 |---|---|
@@ -216,9 +216,20 @@ Mismas reglas que el contrato REST:
 | Topología en `docker-compose.yml` | Hito 2 |
 | Publicación real de los siete eventos | Hito 4 (Sem. 11), junto con la implementación de SPEC-17 y SPEC-18 |
 
-Hasta el Hito 4 no se publica nada. Los consumidores que necesiten enterarse de
-un cambio antes de esa fecha usan la introspección, y la ventana de incoherencia
-es de 15 minutos.
+La tabla anterior es el calendario original. La selección de incremento H3
+ahora adelanta los recorridos de roles, bloqueo automático y perfil propio.
+Su [plan por estudiante](../plan/hito-3/README.md) incluye publicación real de
+usuario.roles_cambiados, usuario.bloqueado, usuario.desbloqueado y
+usuario.atributos_actualizados para esas mutaciones, con outbox/confirmación y
+garantías existentes. Es una selección documental preparada para revisión del
+PO y los productores; no acredita broker ni publicación implementados.
+
+Los eventos de creación, baja y reactivación se implementarán con sus flujos
+posteriores. No cambia el sobre, payload, versión ni concesión de suscripción.
+Las suscripciones externas aún no confirmadas siguen pendientes. La demo G5
+de pedidos no requiere consumir eventos ni introspección, todavía posteriores.
+Validación local de acceso puede conservar su vigencia de hasta 15 minutos;
+no anunciar invalidación inmediata solo por revocar refrescos.
 
 ---
 

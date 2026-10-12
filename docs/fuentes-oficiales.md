@@ -1,16 +1,18 @@
 # Fuentes oficiales y revisión de referencia
 
-**Corte:** 11 de octubre de 2026. **Coordinación:** Sergio Osorio.
-**Alcance:** revisión de épicas y decisiones contractuales locales; sin publicación ni integración real.
+**Corte inicial:** 11-oct; actualización de publicación/SDD/issues: 12-oct-2026.
+**Coordinación:** Sergio Osorio. Preparación anterior publicada; nuevos planes
+y ajustes documentales de este bloque locales. Sin integración real acreditada.
 
 ## Referencia pública e interna
 
 | Referencia | Revisión comprobada | Uso |
 |---|---|---|
-| `main` público de Seguridad | `fb4f6c7f8aee6ad72411e6096b7cadfbf3860dca` | Base pública hasta que el PO publique una revisión nueva |
-| `origin/main` local | Misma revisión que el público | Comparación reproducible |
+| `main` público de Seguridad | `5796622f7c039021e03dd25b2338c6a208320e05` | Referencia publicada de contrato/kit/reparto/estructura SDD, comprobada tras PR #46 |
+| Base pública inicial | `fb4f6c7f8aee6ad72411e6096b7cadfbf3860dca` | Antecedente del corte 11-oct, no referencia vigente |
+| `origin/main` local | Referencia de la consulta anterior; no se ejecutó fetch en este bloque | No suponer que sigue al día con main público |
 | Rama local `main` | `d19f408ed2dd5c6262112cae846440285deae02a` | Desactualizada; no usar como último contrato |
-| Rama de trabajo `brenis`, antes de este bloque | `5fff5cd4a24690354dadc7e1f7e63f9e5d4bbfed` | Preparación interna, aún no publicada |
+| HEAD local `brenis`, antes de este bloque | `b9f76733e8b6c30410f36a755400daf92b988f76` | Complemento SDD fusionado por PR #46; nuevos cambios aún en árbol de trabajo |
 
 La base pública `specs/openapi.yaml` y el contrato local anterior a esta
 edición tenían el mismo blob `fbd55c9664d1afe5c82c59852a289adca5a56038`.
@@ -22,7 +24,8 @@ La autorización de Sergio comunicada por Luis permitió editar las revisiones
 locales [v1 1.1.0](../specs/contrato-api/openapi.yaml) y
 [v2 parcial 2.0.0](../specs/contrato-api/openapi-v2.yaml).
 [ADR-008](arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md) fija su
-alcance. No sustituyen la revisión pública hasta publicación y aviso.
+alcance. Sus definiciones se publicaron por PR #45/#46; el aviso/adopción
+externos continúan pendientes en GOV-01. Publicar no acredita servicios.
 
 La rama ya incluía el traslado de las specs, una guía UX/UI complementaria y
 un ajuste de DBML: son cambios anteriores a esta preparación. Formarán parte
@@ -204,12 +207,64 @@ Durante la planificación se observaron cuatro commits locales nuevos:
 `7c2b7845c793d3b33f80e8cd9fcb2c898a88514c` y
 `1f743bf76445bbc70e1dc3ec94a21818dec9492b` (HEAD comprobado).
 El agente no ejecutó staging/commit/push; se conserva ese historial. Parte de
-la estructura SDD quedó incluida en el último. El complemento sigue pendiente
-en el árbol de trabajo según [guía de commits](../plan/commits-publicacion.md).
-Observar estos commits locales no acredita una revisión nueva en main público.
+la estructura SDD quedó incluida en el último. El complemento se confirmó
+después en b9f76733e8b6c30410f36a755400daf92b988f76 y PR #46 fusionado.
+Observar commits locales por sí solo no acredita main; en esta revisión
+se consultaron el PR y la referencia pública.
 
 El [flujo SDD](../plan/flujo-sdd.md) y el
-[plan técnico H3](../plan/PLAN-IMPLEMENTACION.md) preparan dos puntos del nuevo
-bloque. Los planes individuales y tareas incrementales aún se redactarán;
-se conservan las ocho épicas y se registran condiciones técnicas TEC-01–04.
-Los dos OpenAPI mantienen sus hashes: este bloque no los modifica.
+[plan técnico H3](../plan/PLAN-IMPLEMENTACION.md) prepararon los dos primeros
+puntos del bloque SDD. El bloque posterior se registra a continuación.
+
+## Publicación comprobada y continuación SDD — 12-oct
+
+[PR #45](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/pull/45)
+fusionado en 10aeb883c776003ff8057fead86d6119b1bc4693;
+[PR #46](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/pull/46)
+fusionado en 5796622f7c039021e03dd25b2338c6a208320e05. Consulta de main
+público coincide con el segundo SHA. HEAD local brenis sigue en b9f7673:
+esta sesión no ejecutó fetch, merge, staging, commit ni push. Los estados
+de publicación de las secciones anteriores describen sus cortes históricos.
+
+Se consultaron las [fuentes primarias de SDD](sdd-fuentes-y-aplicacion.md),
+sin volver a revisar Marketplace. La referencia ya registrada se conserva.
+Se preparan [EP-02](../plan/funcionalidades/EP-02-autenticacion-sesiones.md)
+y [TEC-IDENTIDAD](../plan/transversales/TEC-IDENTIDAD.md), trazando las cuatro
+entradas y pruebas, para revisión de sus dueños. La continuación prepara
+[siete planes H3 por estudiante](../plan/hito-3/README.md) y
+[TEC-INFRA](../plan/transversales/TEC-INFRA.md), con alcance posterior separado.
+Luis confirma avance por incrementos; no se generan tareas individuales.
+[Condiciones por integrante](../plan/preparacion-por-integrante.md).
+
+Los 14 issues de la captura siguen abiertos al consultar cuerpo/comentarios:
+[auditoría con evidencia](integracion/estado-issues-20261012.md).
+#44 está cubierto documentalmente en main; otros criterios requieren código,
+pruebas, configuración o confirmación. No se cambió su estado ni responsable.
+
+Después del corte publicado, Joseph confirmó que Ventas no necesita documento
+en claro: [#42, comentario final](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6118843852).
+Se retira localmente su concesión provisional sin reemplazo en acuerdos,
+matriz y kit. El scope genérico permanece para concesiones aprobadas.
+DOC-02/03 alinea SPEC-18 con permisos propios de Seguridad y ESC-17.5 con
+RF-17.7/A10. Estos ajustes no añaden endpoints ni claims.
+
+Los dos OpenAPI mantienen hashes del corte validado:
+v1 08BBAEADA53DAC3011DF5572234C0E93C7F49AD145C4B2A3D9EB07DF45010C1E;
+v2 C2B3D4712FE481072E96F097A357408E8D0FDB35229BE4926EFE0F53407F9511.
+Kit después de retirar documento a Ventas:
+E6A0AF0B3CA4D6791F7B083DC7AAA227B4CB0980793E7841F51ED4E76D35CE2D.
+Cambian texto/concesiones, no sus bloques de código de validación.
+No se reejecutaron backend, mocks ni validadores criptográficos en este bloque;
+sus resultados anteriores conservan entorno/revisión en el informe de validación.
+
+## Planes H3 aprobados y diseño delegado — 12-oct-2026
+
+Luis comunica aprobación formal de los siete dueños de alcance, RF, UI y
+composición. Se registra con esa procedencia en [cierre H3](../plan/hito-3/CIERRE-PLAN.md)
+y metadatos de los siete PLAN.md 1.0.0. Detalles técnicos internos delegados:
+[interfaces/locks](../plan/hito-3/ACUERDOS-INTERNOS.md),
+[persistencia/propiedad](../plan/hito-3/DISENO-PERSISTENCIA.md) y
+[entorno/React](../plan/hito-3/ENTORNO-Y-REACT.md). Gobiernan implementación H3
+sin sustituir reglas/OpenAPI. Supabase como proveedor confirmado por Luis;
+proyecto/esquema real y configuración siguen por comprobar. Complemento local,
+sin nuevo SHA publicado ni código de producción acreditado.

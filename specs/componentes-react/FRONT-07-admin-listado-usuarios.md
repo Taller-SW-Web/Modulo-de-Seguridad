@@ -172,3 +172,10 @@ acciones masivas; asignar/revocar roles (FRONT-08); bloqueos con fecha elegida.
 
 - **H-09**: las etiquetas de rol salen de FRONT-00 §4 porque `GET /roles` no
   admite token de usuario.
+
+## Selección de alcance H3 — 12-oct
+
+H3 contiene filtros/listado/paginación y acceso al detalle. No muestra acciones de alta, baja/reactivación ni bloqueo/desbloqueo manual de flujos posteriores. Se mantienen estados y datos reales, sin botones de éxito ficticio. El panel requiere ADMIN_SISTEMA con segundo factor real.
+
+[Planes por estudiante](../../plan/hito-3/README.md). Selección H3 aprobada por los dueños según comunicación de Luis el
+12-oct; no cambia reglas aplicables ni acredita implementación de la UI.

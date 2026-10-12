@@ -17,10 +17,10 @@ Luis David conserva dos; cada otro estudiante tiene una. SPEC-17/SPEC-18 son res
 
 Cada dueño realiza interfaz, backend, datos, validaciones, eventos, pruebas y demostración. Revisiones y dependencias no transfieren capas. El panel administrativo integra bloques completos de distintos dueños; véase [responsabilidades](../../docs/responsabilidades.md).
 
-La primera versión de cada ficha es un **objetivo para Hito 3**, condicionado a bloqueos. No adelanta automáticamente todo el alcance del curso ni acredita aprobación contractual. Ventas confirmó el recorrido en G5 Backend #2; INT-05 conserva configuración y prueba pendientes. Marketplace conserva alcance general.
+La primera versión de cada ficha concreta el **incremento H3** elegido para planificación el 12-oct, aprobado por el dueño según comunicación de Luis y con diseño interno cerrado; ejecución condicionada a dependencias reales. Luis confirma avance por incrementos; [los siete planes H3](../../plan/hito-3/README.md) separan lo posterior. No adelanta automáticamente todo el alcance del curso ni acredita aprobación contractual. Ventas confirmó el recorrido en G5 Backend #2; INT-05 conserva configuración y prueba pendientes. Marketplace conserva alcance general.
 
 - [Tareas por épica](../../plan/seguimiento-epicas.md).
-- [Planes individuales por preparar](../../plan/funcionalidades/README.md) y [flujo SDD](../../plan/flujo-sdd.md).
+- [Planes H3 por estudiante](../../plan/hito-3/README.md) y [diseños por épica](../../plan/funcionalidades/README.md), [flujo SDD](../../plan/flujo-sdd.md) y [preparación por integrante](../../plan/preparacion-por-integrante.md).
 - [Fuentes y revisión pública](../../docs/fuentes-oficiales.md).
 - [Registro único de inconsistencias](../../docs/registro-inconsistencias.md).
 - [Matriz de trazabilidad](../trazabilidad.md).

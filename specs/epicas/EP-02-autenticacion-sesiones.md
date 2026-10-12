@@ -21,11 +21,17 @@ Agrupa las specs siguientes. Sus RF y escenarios conservan las reglas vigentes y
 
 FRONT-07/08 integra bloques completos. Eva mantiene navegación/contenedor; cada dueño conserva interfaz, servicio, datos y pruebas de su bloque. FRONT-00 coordina sesión con Jose Luis, política con Juan José y autorización con Sergio; véase [responsabilidades](../../docs/responsabilidades.md).
 
-## Primera versión demostrable
+## Primera versión demostrable — incremento H3
 
-1. Login correcto y fallido sin enumerar cuentas; sesión o desafío según las reglas existentes.
-2. Renovación con rotación, cierre y detección de reúso revocando familia y sesión según SPEC-06.
-3. Entrega a Ventas de identidad sub UUID y tokens conformes al contrato; el consumidor prueba su operación protegida. Las partes afectadas requieren resolver KIT-01/KIT-02/JWT-01/H-11.
+**Selección H3 aprobada 12-oct:** revisión y aprobación formal del dueño
+comunicadas por Luis; diseño interno cerrado bajo su delegación. Conserva
+RF/ESC del alcance completo y no acredita implementación.
+
+1. Login real, con sesión o desafío según reglas; composición con credenciales, estado, roles, segundo factor y auditoría de sus dueños.
+2. Renovación con rotación, cierre y reúso revocando solo la familia; vínculo de acceso a familia requerido también por cambio de contraseña H3.
+3. Acceso RS256/sub UUID consumido por Ventas en su operación protegida; evidencia propia y conjunta. Las mejoras y ampliación de pruebas continúan después.
+
+[Plan H3 del dueño](../../plan/hito-3/jose-limachi/PLAN.md).
 
 ## Dependencias
 
@@ -44,6 +50,10 @@ Sergio mantiene el contrato y SPEC-17/SPEC-18. Registro/login públicos no requi
 Consultar **KIT-01, KIT-02, KIT-03, JWT-01, H-11, INT-05** en el [registro](../../docs/registro-inconsistencias.md). Una decisión abierta bloquea la parte afectada. Esta ficha no resuelve ni amplía esos requisitos. El recorrido fue confirmado en [G5 Backend #2](https://github.com/Taller-SW-Web/G5-Ventas-Postventas-Backend/issues/2), con Michael y fecha G5 jueves 15. Aún requiere revisión contractual identificada, URLs, rama, hora y aceptación de H-11; no acredita implementación.
 
 ## Trabajo del dueño
+
+[Plan individual EP-02](../../plan/funcionalidades/EP-02-autenticacion-sesiones.md)
+aprobado para H3 según comunicación de Luis; diseño interno cerrado; consume funcionales, UI/UX, API y React. Tareas
+detalladas aún no generadas.
 
 Las tareas EP-02-01 a EP-02-06 están en el [seguimiento](../../plan/seguimiento-epicas.md#ep-02). Todas mantienen el mismo dueño: definir, construir interfaz, backend, persistencia, integrar y demostrar. El revisor no implementa una capa.
 

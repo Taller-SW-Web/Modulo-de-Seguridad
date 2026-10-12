@@ -7,13 +7,13 @@
 | **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
 | **Primera versión** | Alcance/dependencias en ficha de épica; no integra la demo mínima de Ventas |
 | **Hito objetivo** | Hito 4 (Sem. 11) |
-| **Estado** | Definida localmente con edición delegada; implementación y publicación pendientes |
+| **Estado** | Definida localmente con edición delegada; definición publicada por PR #45/#46; implementación y adopción pendientes |
 | **Base histórica aprobada por** | Sergio Alejandro Osorio Montenegro (PO), 2-oct-2026; no constituye aprobación de esta revisión |
 | **Revisión contractual** | 11-oct: autorización de Sergio comunicada por Luis; [decisión y alcance](../../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md) |
 
 Origen: antigua SPEC-04 dividida en SPEC-09/10. Ocho épicas y dieciocho specs
 se conservan; el segundo factor completo pertenece a Luis David.
-Contrato local seguro: [OpenAPI v2](../contrato-api/openapi-v2.yaml).
+Contrato seguro publicado: [OpenAPI v2](../contrato-api/openapi-v2.yaml).
 La base histórica v1 incompleta no es el flujo a implementar.
 
 ## Contexto — ¿por qué?
@@ -106,7 +106,7 @@ o excepción al aviso contractual de ADR-003.
 
 | Endpoint / evento | Tratamiento | Estado |
 |---|---|---|
-| GET /api/v1/auth/me | Perfil con mfaHabilitado; campos privados adicionales | Local 1.1.0, no publicado |
+| GET /api/v1/auth/me | Perfil con mfaHabilitado; campos privados adicionales | Publicado 1.1.0; servidor pendiente |
 | POST /api/v2/auth/mfa/cambios | Solicitar estado objetivo | Local 2.0.0 |
 | POST /api/v2/auth/mfa/cambios/reenviar | Reenvío dentro de vigencia | Local 2.0.0 |
 | POST /api/v2/auth/mfa/cambios/confirmar | Confirmación con código | Local 2.0.0 |

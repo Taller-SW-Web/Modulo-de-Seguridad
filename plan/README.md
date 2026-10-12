@@ -1,19 +1,23 @@
 # Plan de preparación e implementación — G7
 
-**Corte inicial:** 11 de octubre; actualización 12-oct-2026. Este plan no acredita código, despliegue,
-publicación ni integración terminados.
+**Corte inicial:** 11 de octubre; actualización 12-oct-2026. Este plan no acredita
+código, despliegue ni integración terminados. La preparación documental se publicó mediante PR #45/#46;
+main comprobado: 5796622f7c039021e03dd25b2338c6a208320e05.
 
 ## Lectura
 
 1. [Épicas](../specs/epicas/README.md) y [responsabilidades](../docs/responsabilidades.md).
 2. [Fuentes y revisiones](../docs/fuentes-oficiales.md).
 3. [Registro vigente](../docs/registro-inconsistencias.md).
-4. [Seguimiento de tareas](seguimiento-epicas.md).
+4. [Tareas H3 por estudiante](../tareas/hito-3/README.md) y [cobertura histórica](seguimiento-epicas.md).
 5. [Commits y publicación de esta preparación](commits-publicacion.md).
 6. [Flujo SDD](flujo-sdd.md), [plan técnico H3](PLAN-IMPLEMENTACION.md)
    y [condiciones de inicio](DECISIONES-Y-BLOQUEOS.md).
+7. [Hito 3 por estudiante](hito-3/README.md) y [antes de codificar](hito-3/ANTES-DE-CODIFICAR.md).
+8. [Hitos y responsabilidad individual](../docs/hitos-y-alcance-individual.md):
+   fuentes de evaluación y confirmación de avance por incrementos.
 
-Specs en `specs/`; tareas, orden y evidencia en `plan/`. Una tarea de frontend
+Specs en `specs/`; planes en `plan/` y tableros de ejecución en `tareas/hito-3/`. Una tarea de frontend
 o backend no es una funcionalidad nueva ni cambia el dueño de la épica.
 
 ## Etapa SDD siguiente — dos puntos por bloque
@@ -22,10 +26,12 @@ El bloque del 12-oct prepara **SDD-1**, estructura y plantillas de planes/tareas
 y **SDD-2**, plan técnico de login/mis pedidos con Ventas. No reemplaza los
 nueve puntos de preparación ni acredita su cierre completo.
 
-Los [planes individuales](funcionalidades/README.md) y las
-[tareas derivadas](seguimiento/README.md) aún deben redactarse. El siguiente
-bloque preparará los planes de EP-02 y de identidad técnica; después se
-derivarán sus tareas. Las ocho épicas conservan dueño y alcance, sin programar
+La continuación del 12-oct prepara [siete planes H3 por estudiante](hito-3/README.md),
+cubriendo ocho épicas y enlazando TEC-IDENTIDAD/TEC-INFRA. Luis confirma que H3
+es avance por incrementos; todos deben tener evidencia propia. Los siete
+planes H3 tienen aprobación formal comunicada por Luis y diseño interno cerrado
+por delegación. [Cierre y paso a tareas](hito-3/CIERRE-PLAN.md); no acredita disponibilidad. Las
+[tareas derivadas](../tareas/hito-3/README.md) ya están disponibles para los siete estudiantes. Las ocho épicas conservan dueño y alcance, sin programar
 todas de una vez. Las 48 filas previas son cobertura general, no tareas pequeñas
 listas para ejecutar. [Reglas y plantilla](flujo-sdd.md).
 
@@ -33,15 +39,15 @@ listas para ejecutar. [Reglas y plantilla](flujo-sdd.md).
 
 | Punto | Resultado | Estado de este bloque |
 |---|---|---|
-| 1 | Ocho épicas, dueños y trazabilidad completa | Documentado localmente; sin publicar |
+| 1 | Ocho épicas, dueños y trazabilidad completa | Publicado por PR #45/#46; aprobación de los siete incrementos H3 comunicada por Luis |
 | 2 | Referencia comprobada, enlaces reparados e inventario | Documentado; revisión por épica y revisiones locales v1/v2 enlazadas |
-| 3 | Resolver MFA: H-01/H-02/H-05/H-06 | Definido local por edición delegada; FRONT-09 especificada; DAT-01, publicación y servidor pendientes |
-| 4 | Corregir kit, issuer, refresco y sesiones | Kit local corregido; ejemplos ejecutados/compilados y 88 comprobaciones JWT pasaron; servidor/publicación pendientes |
+| 3 | Resolver MFA: H-01/H-02/H-05/H-06 | Definición publicada, FRONT-09 especificada; DAT-01 y servidor pendientes |
+| 4 | Corregir kit, issuer, refresco y sesiones | Kit publicado; validación previa de ejemplos y 88 comprobaciones JWT; servidor pendiente |
 | 5 | Resolver o aplazar otros huecos | Tratamientos documentados; pendientes explícitos de contrato, activación, términos y soporte |
 | 6 | Ordenar scopes, A9/A10 y límites | Matriz y fuentes G2/G6 contrastadas; A10 confirmado; A9/suscripciones/provisión pendientes |
 | 7 | Acuerdo técnico con Ventas para Hito 3 | Recorrido, Michael y entrega G5 jueves 15 confirmados en #2; G7 adopta objetivo 15; rama, URLs, hora y H-11 pendientes, INT-05 |
 | 8 | Comunicaciones a los seis equipos | Fuentes contrastadas y seis mensajes preparados; envío/respuestas pendientes |
-| 9 | Validación contractual/criptográfica y publicación | Validación local pasó: 178 ejemplos, 68 peticiones mock y 88 comprobaciones JWT; publicación y prueba en nube pendientes |
+| 9 | Validación contractual/criptográfica y publicación | Validación previa pasó: 178 ejemplos, 68 peticiones mock y 88 comprobaciones JWT; base publicada por PR #45/#46; complemento local y prueba en nube pendientes |
 
 Presupuesto inicial: una jornada. Agotarlo no autoriza a inventar confirmaciones
 ni a implementar un subflujo cuyo contrato sigue bloqueado. La preparación
@@ -77,7 +83,7 @@ ya definido: la espera de la aceptación del recorrido por Joseph terminó; la c
 
 ## Salida de preparación
 
-- Dueños de punta a punta y primera versión individual definida.
+- Dueños de punta a punta y [incremento H3 individual definido](hito-3/README.md).
 - Bloqueos aplicables resueltos o subflujos expresamente bloqueados.
 - Sergio publica cambios con versionado y aviso; no se supone aprobación.
 - Acuerdo bilateral, revisión y configuración de Ventas identificadas.
@@ -97,4 +103,4 @@ dependientes de cambios sin aprobación.
 
 Ventas sí confirmó su responsable y fecha. La fecha de G7 es el objetivo
 indicado por Luis, no disponibilidad acreditada. Luis publicó el acuse de G7 en el issue. A10 se ajusta por #44 retirando CSAT;
-A11 registra solo esta demo. Configuración, publicación y ejecución pendientes.
+A11 registra solo esta demo. Definición publicada; configuración, aviso/adopción y ejecución pendientes.

@@ -24,7 +24,6 @@ externos. Los pedidos nuevos siguen por issues de integración.
 | Seguridad | direcciones:leer | api-seguridad | modulo-despacho | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Seguridad | tokens:introspeccion | api-seguridad | modulo-productos | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Seguridad | roles:leer | api-seguridad | modulo-productos | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | usuarios:leer:documento | api-seguridad | modulo-ventas | Provisional: NO conceder hasta confirmación Retail/Ventas | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Despacho | cotizaciones:calcular | api-despacho | modulo-marketplace | Aprobada; aud/401/403 confirmados en #18 | [A4 / #18](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/18) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Despacho | seguimientos:leer | api-despacho | modulo-marketplace | Aprobada; aud/401/403 confirmados en #18 | [A4 / #18](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/18) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Despacho | cotizaciones:calcular | api-despacho | modulo-chatbot | Aprobada; contrato A8 documentado | [A8](acuerdos.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
@@ -84,7 +83,10 @@ no necesitarlo; no se añade esa concesión.
 - postventa:devoluciones:leer y postventa:reclamos:leer: sustituidos por /me.
 - tokens:introspeccion para Ventas/Postventa: retirado en A10; consultar estado
   de cuenta con usuarios:leer no equivale a validar una sesión particular.
-- usuarios:leer:documento para Ventas: provisional, pendiente de Retail.
+- usuarios:leer:documento para Ventas: retirado sin reemplazo por
+  [confirmación final de Joseph en #42](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6118843852),
+  12-oct. Retail emite comprobantes; Ventas no necesita documento en claro.
+  El scope genérico permanece disponible solo para concesiones aprobadas.
 - Otros consumidores previstos por Productos: solicitud/confirmación pendiente;
   publicar una matriz propia no concede automáticamente sus 16 scopes.
 

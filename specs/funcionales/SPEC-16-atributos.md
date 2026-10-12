@@ -7,7 +7,7 @@
 | **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
 | **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 5 (Sem. 14) |
-| **Estado** | Base aprobada; revisión local por edición delegada, sin publicar |
+| **Estado** | Base aprobada; revisión documental publicada por PR #45/#46, implementación pendiente |
 | **Base aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen histórico (20-sep; no gobierna el reparto vigente).** Es la antigua SPEC-08 «Gestión de atributos de usuarios», sin cambios de contenido salvo uno: ahora es dueña de `GET /api/v1/auth/me`, que exponía la antigua SPEC-01. Cambió de número al dividir el set de 9 a 18 specs (20 de septiembre). Ver [`../trazabilidad.md`](../trazabilidad.md) §1.
