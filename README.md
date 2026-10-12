@@ -3,6 +3,16 @@
 **Gestor de accesos del Marketplace Multicanal de Productos Deportivos**
 Grupo 7 — Taller de Construcción de Software Web — UNMSM — Ciclo 2026-II
 
+## Repositorios y arranque H3
+
+Este repo conserva specs, contrato, planes y tareas. El código se implementa en
+[Modulo-de-Seguridad-Backend](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend)
+y un repositorio frontend independiente pendiente de comunicar. El clon local
+`Backend-auth-service/` es un Git independiente ignorado por el padre.
+[Backend hexagonal H3](plan/hito-3/BACKEND-HEXAGONAL.md) fija Java 21,
+Spring Boot 3.5.16, Gradle 8.14.3, puertos/adaptadores, DTO y mappers. La carpeta
+antigua `backend/` y su pom quedan descartados como base de implementación.
+
 ## Integrantes y roles
 
 | Integrante | Código | Rol |

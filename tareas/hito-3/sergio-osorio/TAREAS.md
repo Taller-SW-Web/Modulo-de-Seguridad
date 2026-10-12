@@ -2,8 +2,8 @@
 
 **Dueño:** Sergio · **Épica académica:** EP-05 · **Incremento:** H3-SERGIO.
 **Adicional:** TEC-IDENTIDAD; no es una novena épica ni sustituye roles/permisos.
-**Base:** [PLAN aprobado 1.0.0](../../../plan/hito-3/sergio-osorio/PLAN.md) y
-[TEC-IDENTIDAD 1.0.0](../../../plan/transversales/TEC-IDENTIDAD.md), 12-oct-2026;
+**Base:** [PLAN aprobado 1.1.0](../../../plan/hito-3/sergio-osorio/PLAN.md) y
+[TEC-IDENTIDAD 1.1.0](../../../plan/transversales/TEC-IDENTIDAD.md), 12-oct-2026;
 aprobación comunicada por Luis. Un único tablero, con evidencias separadas.
 
 **Resultado académico:** administrador con MFA asigna/revoca un rol desde el
@@ -21,6 +21,35 @@ detalle; asociaciones, revocación de refrescos, auditoría y evento reales.
 **Límite:** no tokens/clientes/scopes de servicio, introspección, consultas de
 servicio SPEC-18 ni rotación completa de claves. A9/A10 mantienen sus condiciones;
 `/pedidos/me` no requiere aprovisionarlos. No cambiar el contrato por implementar.
+
+## Ubicación y piezas del backend nuevo
+
+Aplica [BACKEND-HEXAGONAL 1.1.0](../../../plan/hito-3/BACKEND-HEXAGONAL.md).
+Backend: `Modulo-de-Seguridad-Backend`, clon actual `Backend-auth-service/`;
+Java 21/Boot 3.5.16/Gradle 8.14.3, paquete `com.marketplace.auth_service`.
+Rutas Java relativas a la raíz de ese repo; rutas React `src/...` relativas al
+repo frontend independiente. Documentación y contrato permanecen en este repo.
+No ejecutar ni reutilizar como base el antiguo `backend/` Maven.
+
+| Pieza propia | Ubicación / resultado |
+|---|---|
+| Capacidades | `autorizacion e identidad` bajo el paquete raíz |
+| Dominio | `domain.model`: Rol / Permiso / UsuarioRol, sin JPA/Spring/HTTP |
+| Casos de uso y DTO | `application.service` + `application.dto`: AsignarRol / RevocarRol / FirmarAcceso; commands/resultados inmutables |
+| Puertos de entrada | `application.port.in`: AutorizacionPort, FirmaPort; firmas de composición conservadas |
+| Puertos de salida | `application.port.out`: persistencia propia y necesidades de proveedores |
+| Persistencia | `adapter.out.persistence`: entidades `...JpaEntity`, repositorios `...JpaRepository` y mappers manuales `...PersistenceMapper` |
+| HTTP | `adapter.in.web`: controller, Request/Response y mapper `...WebMapper`, según OpenAPI |
+| Transacciones/composición | `adapter.in.transaction`: decorador del caso de uso; `adapter.out.capacidad`: puente a puertos exportados del otro dueño |
+
+Estas piezas forman parte de **EP-05-T001/T002; TEC-IDENTIDAD-T001** y de las tareas de endpoints ya
+existentes; no son otra funcionalidad ni duplican IDs. Cada tarea de endpoint
+entrega caso de uso, DTO/mapping HTTP y adaptadores necesarios, además de su UI.
+Los tests de mappers excluyen secretos y distinguen omitido/null; los tests del
+núcleo usan puertos dobles, sin Spring/DB. La aceptación usa PostgreSQL y
+proveedores reales. Reglas ArchUnit de TEC-INFRA-T001 verifican los límites.
+El esqueleto compartido se prepara en TEC-INFRA-T001; puede adelantarse el
+núcleo aislado, pero no cerrar persistencia/HTTP sin las dependencias reales.
 
 ## Orden de trabajo
 
@@ -52,7 +81,7 @@ ports según su plan; no se les asigna aquí implementar las reglas de Sergio.
 
 - **Fuentes:** RF-11.1/11.2/11.4/11.9; persistencia §§1–2; catálogo de CONTEXT.
 - **Implementar:** entidades/repositorios propios `rol`, `permiso`, `rol_permiso`
-  y `usuario_rol` en `backend/src/main/java/com/marketplace/auth/`; UUID de
+  y `usuario_rol` en `src/main/java/com/marketplace/auth_service/` del repo backend (autorizacion e identidad); UUID de
   usuario como valor, sin entidad/repo Eva ni cascadas entre dominios.
 - **Cierre:** seis roles exactos y permisos G7; asociaciones únicas, roles
   múltiples y unión sin duplicados, incluidos arrays vacíos. ADMIN_SISTEMA+
@@ -117,7 +146,7 @@ ports según su plan; no se les asigna aquí implementar las reglas de Sergio.
   y [componentes FRONT-08](../../../specs/componentes-react/FRONT-08-admin-detalle-usuario.md);
   entorno/React §4.
 - **Implementar:** `SeccionRoles` y hook/diálogos propios en
-  `frontend/src/pantallas/admin-detalle/`; usar HTTP/sesión compartidos y props
+  `src/pantallas/admin-detalle/`; usar HTTP/sesión compartidos y props
   acordadas con Eva. Sergio implementa su bloque completo; Eva el contenedor.
   Entregar/probar el bloque sin esperar el cierre EP-01-T006; la aceptación
   del panel compuesto se comprueba juntos en EP-05-T007 y EP-01-T008.
@@ -160,7 +189,7 @@ ports según su plan; no se les asigna aquí implementar las reglas de Sergio.
 - **Fuentes:** [SPEC-17 RF-17.1/17.2/17.14](../../../specs/funcionales/SPEC-17-tokens-servicio.md),
   RF-05.6; entorno/React §2, TEC-IDENTIDAD §4 y ADR-001.
 - **Implementar:** proveedor de claves/FirmaPort con NimbusJwtEncoder, starter
-  JOSE compatible con Java 21/Boot 3.3.5. RSA 3072 PKCS8 externo y persistente;
+  JOSE compatible con Java 21/Boot 3.5.16. RSA 3072 PKCS8 externo y persistente;
   kid thumbprint SHA-256 de JWK pública. Christian custodia configuración privada.
 - **Cierre:** firmar claims recibidos, sin verificar contraseña/calcular roles/
   abrir familia. RS256, sub UUID, email, tipo acceso, roles/permisos arrays,

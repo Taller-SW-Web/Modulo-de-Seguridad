@@ -3,6 +3,35 @@
 **Ejecución:** [tablero de tareas H3](../../../tareas/hito-3/sergio-osorio/TAREAS.md).
 Una tarea lista por vez; distinguir EP-05 de TEC-IDENTIDAD sin duplicar tableros.
 
+## Ubicación y piezas del backend nuevo
+
+Aplica [BACKEND-HEXAGONAL 1.1.0](../../../plan/hito-3/BACKEND-HEXAGONAL.md).
+Backend: `Modulo-de-Seguridad-Backend`, clon actual `Backend-auth-service/`;
+Java 21/Boot 3.5.16/Gradle 8.14.3, paquete `com.marketplace.auth_service`.
+Rutas Java relativas a la raíz de ese repo; rutas React `src/...` relativas al
+repo frontend independiente. Documentación y contrato permanecen en este repo.
+No ejecutar ni reutilizar como base el antiguo `backend/` Maven.
+
+| Pieza propia | Ubicación / resultado |
+|---|---|
+| Capacidades | `autorizacion e identidad` bajo el paquete raíz |
+| Dominio | `domain.model`: Rol / Permiso / UsuarioRol, sin JPA/Spring/HTTP |
+| Casos de uso y DTO | `application.service` + `application.dto`: AsignarRol / RevocarRol / FirmarAcceso; commands/resultados inmutables |
+| Puertos de entrada | `application.port.in`: AutorizacionPort, FirmaPort; firmas de composición conservadas |
+| Puertos de salida | `application.port.out`: persistencia propia y necesidades de proveedores |
+| Persistencia | `adapter.out.persistence`: entidades `...JpaEntity`, repositorios `...JpaRepository` y mappers manuales `...PersistenceMapper` |
+| HTTP | `adapter.in.web`: controller, Request/Response y mapper `...WebMapper`, según OpenAPI |
+| Transacciones/composición | `adapter.in.transaction`: decorador del caso de uso; `adapter.out.capacidad`: puente a puertos exportados del otro dueño |
+
+Estas piezas forman parte de **EP-05-T001/T002; TEC-IDENTIDAD-T001** y de las tareas de endpoints ya
+existentes; no son otra funcionalidad ni duplican IDs. Cada tarea de endpoint
+entrega caso de uso, DTO/mapping HTTP y adaptadores necesarios, además de su UI.
+Los tests de mappers excluyen secretos y distinguen omitido/null; los tests del
+núcleo usan puertos dobles, sin Spring/DB. La aceptación usa PostgreSQL y
+proveedores reales. Reglas ArchUnit de TEC-INFRA-T001 verifican los límites.
+El esqueleto compartido se prepara en TEC-INFRA-T001; puede adelantarse el
+núcleo aislado, pero no cerrar persistencia/HTTP sin las dependencias reales.
+
 ## 1. Metadatos y entradas
 
 | Campo | Valor |
@@ -10,7 +39,7 @@ Una tarea lista por vez; distinguir EP-05 de TEC-IDENTIDAD sin duplicar tableros
 | Dueño completo | Sergio Alejandro Osorio Montenegro |
 | Épica académica | EP-05 — Roles y permisos; SPEC-11 |
 | Capacidad adicional | Identidad técnica SPEC-17/18; no es otra épica |
-| Incremento / versión | H3-SERGIO / 1.0.0 / 12-oct-2026 |
+| Incremento / versión | H3-SERGIO / 1.1.0 / 12-oct-2026 |
 | Estado | Aprobado H3; diseño cerrado para tareas; implementación/evidencia pendientes |
 | Revisión | Aprobación formal del dueño comunicada por Luis el 12-oct-2026; detalles técnicos delegados |
 | Referencia | main 5796622f7c039021e03dd25b2338c6a208320e05 + complemento local; v1 1.1.0 |
@@ -110,7 +139,7 @@ RS256, kid público, issuer idéntico a descubrimiento; no valor auth-service.
 UUID en sub, roles como array incluso vacío, permisos G7, tipo acceso e
 iat/exp/jti conformes al contrato; no imponer aud de servicio a persona.
 Distinguir token servicio/refresco del acceso. Revisar dependencia JOSE real
-del pom bajo TEC-04; el kit en otro runtime no prueba el backend.
+del Gradle nuevo bajo TEC-04; el kit en otro runtime no prueba el backend.
 
 ## 5. Dependencias y condiciones de inicio
 

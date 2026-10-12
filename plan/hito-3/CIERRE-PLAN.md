@@ -1,6 +1,12 @@
 # H3 — cierre del plan y traspaso a tareas
 
-**Versión:** 1.0.0, 12-oct-2026. **Resultado:** los planes H3 están cerrados
+**Complemento técnico 12-oct:** [backend hexagonal nuevo](BACKEND-HEXAGONAL.md)
+cierra paquetes, DTO/mappers, adaptadores JPA, JDBC, transacciones y repositorios
+independientes. Los siete planes/tableros son 1.1.0, con el mismo alcance aprobado.
+El backend Maven anterior queda descartado; ejecución/evidencia pendientes.
+
+
+**Versión:** 1.1.0, 12-oct-2026. **Resultado:** los planes H3 están cerrados
 para generar tareas. No se crearon tareas, código, SQL ni commits en ese cierre
 inicial. **Actualización posterior del 12-oct:** las instrucciones de Luis
 permitieron derivar por bloques los [siete tableros H3](../../tareas/hito-3/README.md).
@@ -15,7 +21,7 @@ Spring Boot/PostgreSQL, React/TypeScript y tablas de dueño único; confirma
 que la DB está en Supabase. Es la fuente de esta aprobación. No se atribuyen
 comentarios/firmas de GitHub que no existen en la evidencia consultada.
 
-| Dueño | Plan versión 1.0.0 | Alcance aprobado |
+| Dueño | Plan versión 1.1.0 | Alcance aprobado |
 |---|---|---|
 | Eva | [PLAN](eva-moreno/PLAN.md) | Consulta administrativa de cuentas y fixtures técnicas por capacidades |
 | Jose Luis | [PLAN](jose-limachi/PLAN.md) | Login, renovación, cierre y composición de autenticación |
@@ -41,7 +47,8 @@ Las cuatro entradas permanecen enlazadas desde cada PLAN.md.
 | Contraseña/fallos | Argon2id, historial cinco incluyendo actual, versión; huellas HMAC persistidas por racha y contadores mediante Eva |
 | Auditoría y entregas | Crítica atómica, no crítica con deduplicación/reintento; outbox con lease, correo cifrado/purgado y eventos confirmados |
 | Persistencia/cambios físicos | Mappings explícitos; versiones reservadas V101–V106 después de V100, sin reescribir historia aplicada |
-| Entorno | JDBC Supabase con TLS y rol runtime separado; Java/Boot existentes, React/Vite/Mantine y composición concretos. [Entorno](ENTORNO-Y-REACT.md) |
+| Hexagonal/repositorios | [Backend nuevo](BACKEND-HEXAGONAL.md): núcleo puro, ports in/out, DTO/mappers, decoradores y adaptadores; bases independientes, Maven descartado |
+| Entorno | JDBC Supabase con TLS y rol runtime separado; Java 21/Boot 3.5.16/Gradle 8.14.3 nuevos, React/Vite/Mantine y composición concretos. [Entorno](ENTORNO-Y-REACT.md) |
 | Identidad | RS256, RSA persistente, kid, issuer del entorno, perfil de usuario vigente sin aud de servicio añadida |
 | UI compartida | Router/sesión/HTTP Jose Luis; panel Eva; cada bloque y recorrido mantiene dueño completo |
 | Integración H3 | Login G7→mis pedidos G5; CLIENTE/sub/JWKS, sin scopes de servicio A10; configuración/prueba real pendientes |

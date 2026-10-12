@@ -20,3 +20,4 @@ __pycache__/
 .env.local
 *.pem
 *.key
+/Backend-auth-service/

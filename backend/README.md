@@ -1,4 +1,9 @@
-# auth-service
+# auth-service — antecedente descartado
+
+**Actualización 12-oct-2026:** Luis descarta esta base Maven. El código nuevo
+vive en [Modulo-de-Seguridad-Backend](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend),
+según [arquitectura H3](../plan/hito-3/BACKEND-HEXAGONAL.md). Las instrucciones
+siguientes se conservan solo como historia; no ejecutar/copiar como arranque.
 
 El reparto actual es [por épicas completas](../specs/epicas/README.md). Los
 responsables de migraciones de esta guía son autores históricos; no asignan

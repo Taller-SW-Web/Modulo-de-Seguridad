@@ -1,5 +1,11 @@
 # Hito 3 — planes por integrante
 
+**Complemento técnico 12-oct:** [backend hexagonal nuevo](BACKEND-HEXAGONAL.md)
+cierra paquetes, DTO/mappers, adaptadores JPA, JDBC, transacciones y repositorios
+independientes. Los siete planes/tableros son 1.1.0, con el mismo alcance aprobado.
+El backend Maven anterior queda descartado; ejecución/evidencia pendientes.
+
+
 **Corte:** 12-oct-2026. Luis confirma que H3 evalúa avance funcional y que
 la épica continúa en incrementos posteriores. Cada uno de los siete
 estudiantes debe presentar avance propio de punta a punta. No se usa un
@@ -8,7 +14,7 @@ porcentaje arbitrario de completitud.
 **Aprobación formal:** Luis comunica el 12-oct que los siete dueños revisaron
 y aprobaron su alcance H3, requisitos, UI y composición. Delega los detalles
 técnicos restantes; quedan cerrados en los documentos comunes de este índice.
-Los siete planes versión 1.0.0 están **listos para derivar tareas**.
+Los siete planes versión 1.1.0 están **listos para derivar tareas**.
 No acreditan código funcionando ni despliegue. La descomposición para los siete
 dueños ya está en [tareas H3](../../tareas/hito-3/README.md): cada tablero indica
 orden, dependencias y criterios de cierre, sin reemplazar su plan.
@@ -45,7 +51,7 @@ specs funcionales + UI/UX + OpenAPI + componentes React
                          ↓
            aprobación y diseño cerrados
                          ↓
-          tareas verificables por derivar
+          tableros de tareas verificables disponibles
                          ↓
        código incremental + prueba + evidencia
 ```

@@ -1,7 +1,7 @@
 # H3 — tareas de Jose Luis Limachi Sarmiento
 
 **Dueño:** Jose Luis · **Épica:** EP-02 · **Incremento:** H3-JOSE.
-**Base:** [PLAN aprobado 1.0.0](../../../plan/hito-3/jose-limachi/PLAN.md),
+**Base:** [PLAN aprobado 1.1.0](../../../plan/hito-3/jose-limachi/PLAN.md),
 12-oct-2026, y [diseño EP-02](../../../plan/funcionalidades/EP-02-autenticacion-sesiones.md).
 Aprobación comunicada por Luis; este es el único tablero H3 de Jose Luis.
 
@@ -18,6 +18,35 @@ pantallas y el aporte de autenticación a la demo con Ventas.
 **Límite:** Jose Luis consume MFA, bloqueo, credenciales, roles/firma y auditoría;
 no implementa sus reglas ni accede a sus tablas. No desarrolla `/pedidos/me`
 de G5 ni agrega endpoints, scopes o claims de familia al contrato.
+
+## Ubicación y piezas del backend nuevo
+
+Aplica [BACKEND-HEXAGONAL 1.1.0](../../../plan/hito-3/BACKEND-HEXAGONAL.md).
+Backend: `Modulo-de-Seguridad-Backend`, clon actual `Backend-auth-service/`;
+Java 21/Boot 3.5.16/Gradle 8.14.3, paquete `com.marketplace.auth_service`.
+Rutas Java relativas a la raíz de ese repo; rutas React `src/...` relativas al
+repo frontend independiente. Documentación y contrato permanecen en este repo.
+No ejecutar ni reutilizar como base el antiguo `backend/` Maven.
+
+| Pieza propia | Ubicación / resultado |
+|---|---|
+| Capacidades | `sesion` bajo el paquete raíz |
+| Dominio | `domain.model`: SesionFamilia / AccesoSesion / TokenRefresco, sin JPA/Spring/HTTP |
+| Casos de uso y DTO | `application.service` + `application.dto`: Login / RenovarSesion / CerrarSesion; commands/resultados inmutables |
+| Puertos de entrada | `application.port.in`: SesionesPort; firmas de composición conservadas |
+| Puertos de salida | `application.port.out`: persistencia propia y necesidades de proveedores |
+| Persistencia | `adapter.out.persistence`: entidades `...JpaEntity`, repositorios `...JpaRepository` y mappers manuales `...PersistenceMapper` |
+| HTTP | `adapter.in.web`: controller, Request/Response y mapper `...WebMapper`, según OpenAPI |
+| Transacciones/composición | `adapter.in.transaction`: decorador del caso de uso; `adapter.out.capacidad`: puente a puertos exportados del otro dueño |
+
+Estas piezas forman parte de **EP-02-T002/T003** y de las tareas de endpoints ya
+existentes; no son otra funcionalidad ni duplican IDs. Cada tarea de endpoint
+entrega caso de uso, DTO/mapping HTTP y adaptadores necesarios, además de su UI.
+Los tests de mappers excluyen secretos y distinguen omitido/null; los tests del
+núcleo usan puertos dobles, sin Spring/DB. La aceptación usa PostgreSQL y
+proveedores reales. Reglas ArchUnit de TEC-INFRA-T001 verifican los límites.
+El esqueleto compartido se prepara en TEC-INFRA-T001; puede adelantarse el
+núcleo aislado, pero no cerrar persistencia/HTTP sin las dependencias reales.
 
 ## Orden de trabajo
 
@@ -50,7 +79,7 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
 
 - **Fuentes:** entorno/React §3; [componentes FRONT-00](../../../specs/componentes-react/FRONT-00-base-compartida.md),
   estructura y selección H3; [sistema de diseño](../../../docs/diseno/sistema-diseno.md).
-- **Implementar:** `frontend/`: Vite 7, React 19.2, TypeScript 5.9 estricto,
+- **Implementar:** raíz del repo frontend independiente: Vite 7, React 19.2, TypeScript 5.9 estricto,
   Router 7 declarativo y Mantine 9.6.2; Node 22 compatible según plan. Fijar
   versiones compatibles/lockfile; scripts dev/build/typecheck/test/preview y
   tema. Respetar `src/pantallas/`, `lib/` y contratos compartidos.
@@ -65,7 +94,7 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
 ### EP-02-T002 — Persistir familias estables y accesos asociados
 
 - **Fuentes:** persistencia §§2–3/8, DAT-01; SPEC-06 RF-06.1/06.3.
-- **Implementar:** en `backend/src/main/java/com/marketplace/auth/sesion/`,
+- **Implementar:** en `src/main/java/com/marketplace/auth_service/sesion/` del repo backend,
   entidades/repositorios `sesion_familia`, `acceso_sesion` y adaptación de
   `TokenRefresco`. Preparar migración V102 reservada, después de V100; coordinar
   versión/historia con Christian antes de aplicarla.
@@ -162,7 +191,7 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
   no entrega sesión; dos completamientos OTP no producen dos familias. Cambio
   de contraseña desde una sesión conserva esa familia y revoca otra; cambio
   de rol revoca ambas. Automático conserva familias previas pero impide nuevo login.
-- **Comprobar:** tests backend apropiados vía Maven y evidencia DB/HTTP. Medir
+- **Comprobar:** tests backend apropiados vía Gradle wrapper y evidencia DB/HTTP. Medir
   login p95 <800 ms y refresh p95 <300 ms con 50 concurrentes; este último objetivo
   propuesto y cualquier desviación se registran para revisión según el plan.
   No sustituir esa medición por una petición rápida ni pedir cerrar toda la carga H4/H5.
@@ -193,7 +222,7 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
 - **Fuentes:** [FRONT-01](../../../specs/front/FRONT-01-inicio-sesion.md) y
   [componentes FRONT-01](../../../specs/componentes-react/FRONT-01-inicio-sesion.md);
   selección H3 de FRONT-00. Consume T006/T008 y OTP de Luis para prueba real.
-- **Implementar:** `frontend/src/pantallas/login/LoginPage.tsx` y `useLogin.ts`;
+- **Implementar:** `src/pantallas/login/LoginPage.tsx` y `useLogin.ts`;
   campos, submit, avisos, éxito o desafío en memoria. Navegar a la pantalla OTP
   de Luis sin implementar su hook/verificación ni pasar challenge por URL.
 - **Cierre:** validar correo/obligatorios, no política de contraseña al entrar;

@@ -54,7 +54,7 @@ publicada ni aceptación de los consumidores.
 | Acuerdos externos | [Acuerdos](integracion/acuerdos.md), issue y confirmación | Sergio |
 | Interfaz y componentes | [Interfaz](../specs/front/) y [React](../specs/componentes-react/) | Dueño completo de la funcionalidad |
 | Vocabulario | [CONTEXT](../CONTEXT.md) | Sergio; conserva identificadores contractuales |
-| Persistencia | [Modelo](arquitectura/modelo-datos.md), [DDL](arquitectura/schema.sql) y [migraciones](../backend/src/main/resources/db/migration/) | Dueños de dominio; Jose Luis coordina |
+| Persistencia | [Diseño H3](../plan/hito-3/DISENO-PERSISTENCIA.md), [backend hexagonal](../plan/hito-3/BACKEND-HEXAGONAL.md) y migraciones revisadas en el repo backend nuevo | Dueños de tablas; Christian coordina historial/aplicación. Modelo/DDL/migraciones antiguas son antecedentes, no historial remoto certificado |
 | Tareas y evidencia | [Plan](../plan/README.md) y [seguimiento](../plan/seguimiento-epicas.md) | Cada dueño |
 | Problemas vigentes | [Registro de inconsistencias](registro-inconsistencias.md) | Cada dueño; Sergio consolida |
 
