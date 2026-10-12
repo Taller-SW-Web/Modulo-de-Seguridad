@@ -6,8 +6,9 @@ por delegación del PO, según autorización comunicada por Luis David.
 Sergio conserva propiedad; [ADR-008](../arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md)
 distingue edición local, publicación y despliegue.
 
-No se hicieron commits ni comunicaciones. No se espera a Joseph para definir
-capacidades internas; sí para declarar acordada la demo conjunta.
+Este corte inicial no hizo commits ni comunicaciones. Posteriormente Ventas
+confirmó el recorrido y Luis publicó el acuse de G7; consultar la
+[ficha actual](hito-3-ventas.md). La configuración y la prueba siguen pendientes.
 
 ## Segundo factor
 

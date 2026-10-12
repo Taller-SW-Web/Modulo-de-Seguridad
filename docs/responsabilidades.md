@@ -96,10 +96,14 @@ versión individual. Ningún documento nuevo declara software terminado.
 1. El dueño completa sus specs con siete secciones y resuelve bloqueos. Si
    afecta al contrato, prepara la propuesta para Sergio.
 2. El PO revisa coherencia y aprueba cambios funcionales o contractuales.
-3. El mismo dueño implementa y comprueba todas las capas.
-4. Otro integrante revisa el PR; Jose Luis revisa autenticación, tokens y
+3. El dueño escribe su plan a partir de las specs funcionales/UI/API/React,
+   define dependencias y criterios, y lo revisa antes de derivar tareas.
+   [Flujo y plantillas SDD](../plan/flujo-sdd.md).
+4. El mismo dueño implementa una tarea y comprueba sus criterios antes de
+   avanzar a la siguiente dependiente; mantiene todas las capas de su épica.
+5. Otro integrante revisa el PR; Jose Luis revisa autenticación, tokens y
    permisos. Revisar no reasigna implementación.
-5. Se registra evidencia de escenarios, persistencia e integración real.
+6. Se registra evidencia de escenarios, persistencia e integración real.
 
 Se mantienen revisión cruzada y evidencia individual del curso. Un mock o un
 diseño no acredita una funcionalidad implementada. Esta preparación no crea

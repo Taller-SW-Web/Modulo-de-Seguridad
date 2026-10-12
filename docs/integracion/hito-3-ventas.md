@@ -16,6 +16,10 @@ evidencia externa; configuración, implementación y prueba conjunta siguen
 pendientes. El plan de nueve
 puntos sigue vigente en [plan](../../plan/README.md).
 
+El [plan técnico del recorrido](../../plan/PLAN-IMPLEMENTACION.md) organiza
+capacidades, fases y casos de aceptación. Sus planes individuales/tareas aún
+deben redactarse y revisarse; esta ficha conserva la coordinación bilateral.
+
 ## Recorrido confirmado
 
 Frontend de demostración de Ventas → `POST /api/v1/auth/login` de Seguridad →

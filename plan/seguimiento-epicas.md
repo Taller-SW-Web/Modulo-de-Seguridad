@@ -2,6 +2,13 @@
 
 **Preparado:** 11-oct-2026. Revisión documental por épica realizada; filas de implementación no acreditan ejecución. Mismo dueño en todas las capas. RF/ESC se toman de las specs de cada épica; las pruebas/demos se registrarán al ejecutarse.
 
+**Uso desde el bloque SDD del 12-oct:** estas 48 filas son cobertura general.
+Se conservan como antecedente, sin duplicarlas como tareas adicionales.
+Los planes individuales y sus tareas concretas se redactarán según el
+[flujo SDD](flujo-sdd.md) y el [seguimiento incremental](seguimiento/README.md).
+El [plan técnico H3](PLAN-IMPLEMENTACION.md) fija las dependencias del recorrido;
+no marca ninguna fila como implementada.
+
 **Estados:** Pendiente → En curso → En revisión → Demostrada. Bloqueada exige indicar decisión/dependencia; un mock no la cierra.
 
 ## EP-01

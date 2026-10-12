@@ -10,9 +10,24 @@ publicación ni integración terminados.
 3. [Registro vigente](../docs/registro-inconsistencias.md).
 4. [Seguimiento de tareas](seguimiento-epicas.md).
 5. [Commits y publicación de esta preparación](commits-publicacion.md).
+6. [Flujo SDD](flujo-sdd.md), [plan técnico H3](PLAN-IMPLEMENTACION.md)
+   y [condiciones de inicio](DECISIONES-Y-BLOQUEOS.md).
 
 Specs en `specs/`; tareas, orden y evidencia en `plan/`. Una tarea de frontend
 o backend no es una funcionalidad nueva ni cambia el dueño de la épica.
+
+## Etapa SDD siguiente — dos puntos por bloque
+
+El bloque del 12-oct prepara **SDD-1**, estructura y plantillas de planes/tareas,
+y **SDD-2**, plan técnico de login/mis pedidos con Ventas. No reemplaza los
+nueve puntos de preparación ni acredita su cierre completo.
+
+Los [planes individuales](funcionalidades/README.md) y las
+[tareas derivadas](seguimiento/README.md) aún deben redactarse. El siguiente
+bloque preparará los planes de EP-02 y de identidad técnica; después se
+derivarán sus tareas. Las ocho épicas conservan dueño y alcance, sin programar
+todas de una vez. Las 48 filas previas son cobertura general, no tareas pequeñas
+listas para ejecutar. [Reglas y plantilla](flujo-sdd.md).
 
 ## Preparación por bloques
 
@@ -34,7 +49,9 @@ interna de los puntos 3 a 6 está documentada; el recorrido de Ventas del punto 
 ya tiene confirmación externa. Continuación documental del 12-oct: puntos 8/9,
 [mensajes preparados](../docs/integracion/correcciones-modulos.md)
 y [validación local](../docs/integracion/validacion-hito-3.md). [Revisión por épica](../docs/integracion/revision-por-epica.md) y [ADR-008](../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md) registran los dos bloques de esta continuación. Sin commits, PRs, mensajes
-externos ni trabajo con Obsidian.
+externos ni trabajo con Obsidian por el agente. Los cuatro commits iniciales
+ya aparecen localmente durante SDD-1/2; el agente conserva ese historial y
+deja el complemento pendiente según la [guía](commits-publicacion.md).
 
 ## Recorrido confirmado para Hito 3
 

@@ -154,7 +154,7 @@ El kit preparado tras #44 tiene SHA-256
 Sus bloques de validación coinciden con los ejecutados. Los hashes de ambos
 OpenAPI permanecen iguales al corte anterior.
 
- 
+
 ## Confirmación de la demo de Ventas — 12-oct
 
 Se localizó y consultó [G5 Backend #2](https://github.com/Taller-SW-Web/G5-Ventas-Postventas-Backend/issues/2),
@@ -195,3 +195,21 @@ y [seguimiento](https://github.com/Taller-SW-Web/G1-Marketplace-SPECS/blob/64cc8
 entrada funcional/UI/API/React, plan por funcionalidad y tareas con dependencia,
 criterio de terminado y evidencia. Se toma como referencia para el siguiente
 bloque; no cambia el dueño completo de las ocho épicas de G7.
+
+## Continuación SDD-1/2 y commits locales observados
+
+Durante la planificación se observaron cuatro commits locales nuevos:
+`d2c49139c5ebd98bc1353eb2d6c1133ff4438936`,
+`4178f9ef089510ad46ae7702966452585982f88c`,
+`7c2b7845c793d3b33f80e8cd9fcb2c898a88514c` y
+`1f743bf76445bbc70e1dc3ec94a21818dec9492b` (HEAD comprobado).
+El agente no ejecutó staging/commit/push; se conserva ese historial. Parte de
+la estructura SDD quedó incluida en el último. El complemento sigue pendiente
+en el árbol de trabajo según [guía de commits](../plan/commits-publicacion.md).
+Observar estos commits locales no acredita una revisión nueva en main público.
+
+El [flujo SDD](../plan/flujo-sdd.md) y el
+[plan técnico H3](../plan/PLAN-IMPLEMENTACION.md) preparan dos puntos del nuevo
+bloque. Los planes individuales y tareas incrementales aún se redactarán;
+se conservan las ocho épicas y se registran condiciones técnicas TEC-01–04.
+Los dos OpenAPI mantienen sus hashes: este bloque no los modifica.

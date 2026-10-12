@@ -140,6 +140,12 @@ secciones; solo entonces se implementa. Si el código se desvía de la spec, se
 corrige el código o se actualiza la spec de forma explícita — nunca a posteriori
 y en silencio.
 
+El orden es **specs funcionales/UI/API/React → plan → tareas → código
+incremental y verificación**. La estructura y el plan técnico de la demo con
+Ventas están preparados; los planes individuales y su desglose de tareas
+se escribirán por bloques. [Flujo SDD](plan/flujo-sdd.md),
+[plan H3](plan/PLAN-IMPLEMENTACION.md) y [planes por épica](plan/funcionalidades/README.md).
+
 Los escenarios *Dado / Cuando / Entonces* de cada spec son, literalmente, el
 plan de pruebas: se traducen a pruebas automatizadas antes de implementar.
 
