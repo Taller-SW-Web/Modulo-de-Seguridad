@@ -66,7 +66,7 @@ EP-05-T006/T007 y TEC-IDENTIDAD-T005 exigen composición real.
 | EP-05-T005 | SeccionRoles y composición con detalle | P1 | EP-05-T003/T004; EP-02-T001/T008; EP-01-T004 y contrato de contenedor Eva | Pendiente |
 | EP-05-T006 | Verificar concurrencia, permisos y efectos | P0 | EP-05-T003/T004; login/MFA y providers reales | Pendiente |
 | EP-05-T007 | Defender roles/permisos desplegados | P1 | EP-05-T005/T006; despliegue Christian | Pendiente |
-| TEC-IDENTIDAD-T001 | Claves persistentes y FirmaPort | P0 | Configuración privada del entorno con Christian | Pendiente |
+| TEC-IDENTIDAD-T001 | Claves persistentes y FirmaPort | P0 | Configuración privada del entorno con Christian | En revisión |
 | TEC-IDENTIDAD-T002 | Validación JWT y filtro de acceso G7 | P0 | TEC-IDENTIDAD-T001; EP-05-T002 | Pendiente |
 | TEC-IDENTIDAD-T003 | Descubrimiento y JWKS públicos | P0 | TEC-IDENTIDAD-T001; base URL/issuer del entorno | Pendiente |
 | TEC-IDENTIDAD-T004 | Pruebas criptográficas en runtime del backend | P0 | TEC-IDENTIDAD-T001/T002/T003 | Pendiente |
@@ -263,3 +263,4 @@ Evidencia EP-05 y TEC-IDENTIDAD se registra por separado.
 |---|---|---|---|---|
 | 12-oct-2026 | EP-05-* | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
 | 12-oct-2026 | TEC-IDENTIDAD-* | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
+| 12-oct-2026 | TEC-IDENTIDAD-T001 | Backend rama `osorio/tec-identidad-t001` sobre `936f9b8`; docs `b98b901`. FirmaPort.firmar + FirmarAccesoService (900 s, Clock), ClaveFirmaRsa (PKCS8 ≥3072, kid SHA-256 RFC 7638) y NimbusFirmadorJws (RS256, typ/kid, sin aud). Sin issuer/clave válida arranca con FirmaDenegada. JDK 21.0.9, nimbus-jose-jwt 9.37.4, spring-security-oauth2-jose 6.5.11: 32/32 tests (FirmarAccesoService 7, ClaveFirmaRsa 9, NimbusFirmadorJws 8, IdentidadConfig 8); clave de openssl genpkey cargada; 0 PEM en logs. Pendiente: clave/issuer reales del entorno (Christian) y contextLoads con Docker [Backend #1](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/1) | Por asignar | En revisión |
