@@ -27,6 +27,15 @@ spring:
 server:
   port: 8080
 
+# Tokens RS256 (SPEC-05, SPEC-11, SPEC-17). Sin claves se genera un par efímero.
+seguridad:
+  jwt:
+    emisor: ${JWT_EMISOR:http://localhost:8080/api/v1/auth}
+    clave-privada: ${JWT_CLAVE_PRIVADA:}
+    clave-publica: ${JWT_CLAVE_PUBLICA:}
+    duracion-acceso: 15m
+    duracion-servicio: 1h
+
 logging:
   level:
     com.marketplace.auth: INFO

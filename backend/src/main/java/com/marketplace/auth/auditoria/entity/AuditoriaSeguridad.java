@@ -50,6 +50,7 @@ public class AuditoriaSeguridad {
     @Column(name = "agente")
     private String agente;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "detalle", columnDefinition = "jsonb")
     private String detalle;
 

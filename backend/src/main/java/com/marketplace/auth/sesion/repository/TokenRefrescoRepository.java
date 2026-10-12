@@ -2,6 +2,9 @@ package com.marketplace.auth.sesion.repository;
 
 import com.marketplace.auth.sesion.entity.TokenRefresco;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
@@ -36,4 +39,14 @@ public interface TokenRefrescoRepository extends JpaRepository<TokenRefresco, UU
      * @return tokens del usuario
      */
     List<TokenRefresco> findByUsuarioId(UUID usuarioId);
+
+    /**
+     * Revoca de una vez todas las sesiones vigentes de una cuenta.
+     * Usado al cambiar sus roles (RF-11.5), y por baja y bloqueo (SPEC-04, SPEC-15).
+     * @param usuarioId ID del usuario
+     * @return cuántos tokens se revocaron
+     */
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("UPDATE TokenRefresco t SET t.revocado = true WHERE t.usuarioId = :usuarioId AND t.revocado = false")
+    int revocarTodosPorUsuarioId(@Param("usuarioId") UUID usuarioId);
 }
