@@ -406,7 +406,7 @@ las decisiones se registran en
 | Chatbot Cliente | `cotizaciones:calcular`, `seguimientos:leer` *(API de Despacho, acuerdo A8)* | Cotizar el envío y mostrar el seguimiento |
 | Chatbot Cliente | `catalogo:leer`, `precios:leer`, `promociones:leer`, `promociones:evaluar`, `cupones:validar`, `recomendaciones:leer`, `inventario:disponibilidad:leer` *(API de Productos, acuerdo A9: **pendiente de que Productos confirme su lista**)* | Catálogo, precios, ofertas y stock en la conversación |
 | Retail Vendedor | `usuarios:leer`, `roles:leer` | Consultar clientes por `id` y comprobar el rol del vendedor. **Buscar por documento y registrar clientes no va con este token**, sino con el del vendedor (§8) |
-| Ventas y Postventa (clientes separados) | `usuarios:leer` | Estado de cuenta según A10; documento en claro **provisional**; introspección fuera de A10 |
+| Ventas y Postventa (clientes separados) | `usuarios:leer` | Estado de cuenta según A10; documento en claro retirado para Ventas; introspección fuera de A10 |
 | Despacho y Entrega | `usuarios:leer`, `direcciones:leer` | Entregar el paquete |
 | Productos y Ofertas | `tokens:introspeccion`, `roles:leer` | Autorizar cambios de precio |
 
@@ -414,6 +414,9 @@ las decisiones se registran en
 concesiones por consumidor y dos clientes nuevos previstos (`modulo-postventa`,
 `simulador-pasarela`). Detalle en la [matriz](../docs/integracion/matriz-scopes.md).
 Aprobación no acredita provisión. A9 sigue condicionado a Productos.
+La fila provisional `usuarios:leer:documento` de Ventas también se retira,
+sin reemplazo, por [confirmación final #42](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6118843852).
+El catálogo genérico no cambia; esta retirada afecta solo la concesión a Ventas.
 `postventa:csat:escribir` se retira de Marketplace, Chatbot y Retail, sin
 reemplazo, según [#44](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/44#issuecomment-6118403027).
 `POST /api/v2/csat` es de Postventa: usa token del cliente, rol `CLIENTE` y
@@ -620,8 +623,10 @@ persona registró o buscó a quién.
 - `POST /usuarios/busqueda-documento` — encuentra a un cliente por tipo y número
   de documento **exactos** (`DNI`, `CE` o `PASAPORTE`). Devuelve solo `id`,
   nombre, documento enmascarado y estado. Máximo 60 por hora y vendedor, y cada
-  búsqueda queda auditada. **No hay búsqueda por `RUC`**: los datos de una
-  empresa para facturar son de Ventas.
+  búsqueda queda auditada. **No hay búsqueda por `RUC`** en Seguridad.
+  La emisión de comprobantes fiscales corresponde a Retail según su respuesta
+  comunicada por Joseph en [#42](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6118843852).
+  Ventas no recibe `usuarios:leer:documento` por esa finalidad.
 
 ### Validar un celular desde su canal: no en este ciclo
 

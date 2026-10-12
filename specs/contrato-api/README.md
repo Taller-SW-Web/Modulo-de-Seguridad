@@ -2,11 +2,14 @@
 
 | Documento | Versión | Uso |
 |---|---|---|
-| [openapi.yaml](openapi.yaml) | 1.1.0 local | Evolución aditiva de v1; login/JWKS mantienen la interfaz publicada |
-| [openapi-v2.yaml](openapi-v2.yaml) | 2.0.0 local, parcial | Configuración MFA segura y alta administrativa estricta |
+| [openapi.yaml](openapi.yaml) | 1.1.0 publicada | Evolución aditiva de v1; login/JWKS mantienen la interfaz publicada |
+| [openapi-v2.yaml](openapi-v2.yaml) | 2.0.0 publicada, parcial | Configuración MFA segura y alta administrativa estricta |
 | [Base histórica](historico/openapi-1.0.0.yaml) | 1.0.0 congelada | Referencia exacta del contrato público fijado, no MFA a desplegar |
 
-No hay revisión nueva publicada ni servicios acreditados. Sergio conserva
+Definiciones publicadas por [PR #45/#46](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/pull/46),
+main 5796622f7c039021e03dd25b2338c6a208320e05, comprobado 12-oct.
+No acredita servicios implementados. Aviso/adopción externa siguen en GOV-01.
+Sergio conserva
 propiedad contractual; edición de esta revisión delegada según autorización
 comunicada por Luis. [ADR-008](../../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md)
 registra compatibilidad, límites de publicación y transición.
@@ -23,7 +26,7 @@ externas de v2 al documento v1 y ejemplos con formatos.
 Estas herramientas no prueban firmas JWT, estados de servidor ni despliegues.
 La [validación adicional del punto 9](../../docs/integracion/validacion-hito-3.md)
 ejecutó mocks y los ejemplos del kit con firmas RS256; también registra sus
-límites y evidencia por caso. Servidores/publicación siguen pendientes.
+límites y evidencia por caso. Servidores y prueba conjunta siguen pendientes.
 
 ## Pendientes de implementación y publicación
 

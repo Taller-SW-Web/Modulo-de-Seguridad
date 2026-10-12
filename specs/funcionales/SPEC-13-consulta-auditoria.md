@@ -7,7 +7,7 @@
 | **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
 | **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 5 (Sem. 14) |
-| **Estado** | Base aprobada; revisión local por edición delegada, sin publicar |
+| **Estado** | Base aprobada; revisión documental publicada por PR #45/#46, implementación pendiente |
 | **Base aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-06 «Auditoría y trazabilidad» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.

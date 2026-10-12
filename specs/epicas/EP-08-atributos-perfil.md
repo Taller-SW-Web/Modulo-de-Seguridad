@@ -20,11 +20,17 @@ Agrupa las specs siguientes. Sus RF y escenarios conservan las reglas vigentes y
 
 FRONT-07/08 integra bloques completos. Eva mantiene navegación/contenedor; cada dueño conserva interfaz, servicio, datos y pruebas de su bloque. FRONT-00 coordina sesión con Jose Luis, política con Juan José y autorización con Sergio; véase [responsabilidades](../../docs/responsabilidades.md).
 
-## Primera versión demostrable
+## Primera versión demostrable — incremento H3
 
-1. Consulta/edición propia de atributos y bloque administrativo de perfil con restricciones de SPEC-16.
-2. Cambio de correo con verificación y listado/creación de direcciones según contrato vigente.
-3. H-01/H-13 definidos en contrato local; su publicación y pruebas reales de privacidad/denegación están pendientes. Edición/borrado de direcciones no se incorporan en esta preparación.
+**Selección H3 aprobada 12-oct:** revisión y aprobación formal del dueño
+comunicadas por Luis; diseño interno cerrado bajo su delegación. Conserva
+RF/ESC del alcance completo y no acredita implementación.
+
+1. Consulta del perfil propio y edición solo de nombres/apellidos/celular desde pantalla, persistida por PATCH.
+2. Proyección segura, MFA efectivo, documento de solo lectura protegido, denegación de edición ajena/privilegiada y evento sin valores.
+3. Cambio de correo, direcciones y edición administrativa de atributos se planifican después; edición/borrado de direcciones conservan su aplazamiento contractual.
+
+[Plan H3 del dueño](../../plan/hito-3/valery-gutierrez/PLAN.md).
 
 ## Dependencias
 

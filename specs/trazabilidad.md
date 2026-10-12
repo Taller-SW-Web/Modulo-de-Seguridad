@@ -95,7 +95,7 @@ pertenece al menos a una historia.
 
 ## 2. Specs ↔ endpoints del contrato
 
-✅ base pública 1.0.0; filas específicas indican revisiones locales no publicadas. Prefijo omitido: /api/v1.
+Definición publicada v1 1.1.0 / v2 2.0.0 parcial en main 5796622f7c039021e03dd25b2338c6a208320e05 (PR #45/#46). No acredita implementación. Prefijo omitido: /api/v1.
 
 | Endpoint | SPEC | Estado |
 |---|---|---|
@@ -129,10 +129,10 @@ pertenece al menos a una historia.
 | `POST /auth/otp/verificar` | 09 | ✅ |
 | `POST /auth/otp/habilitar` | 10 | Histórico v1 deprecado; no implementar |
 | `POST /auth/otp/deshabilitar` | 10 | Histórico v1 deprecado; no implementar |
-| `POST /api/v2/auth/mfa/cambios` | 10 | Local 2.0.0; no publicado |
-| `POST /api/v2/auth/mfa/cambios/reenviar` | 10 | Local 2.0.0; no publicado |
-| `POST /api/v2/auth/mfa/cambios/confirmar` | 10 | Local 2.0.0; no publicado |
-| `POST /api/v2/usuarios` | 03 | Local 2.0.0; alta estricta |
+| `POST /api/v2/auth/mfa/cambios` | 10 | Publicado 2.0.0 parcial; implementación pendiente |
+| `POST /api/v2/auth/mfa/cambios/reenviar` | 10 | Publicado 2.0.0 parcial; implementación pendiente |
+| `POST /api/v2/auth/mfa/cambios/confirmar` | 10 | Publicado 2.0.0 parcial; implementación pendiente |
+| `POST /api/v2/usuarios` | 03 | Publicado 2.0.0 parcial; alta estricta |
 | `POST /usuarios/{id}/roles` | 11 | ✅ |
 | `DELETE /usuarios/{id}/roles/{rol}` | 11 | ✅ |
 | `GET /auditoria` | 13 | ✅ |

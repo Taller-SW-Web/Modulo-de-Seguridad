@@ -28,3 +28,30 @@ Debe diseñarse persistencia o mecanismo interno que permita resolver cada
 accessToken vigente; no inferir familia solo por sub. No se añade un claim
 público ni endpoint externo. La versión local define la dependencia, no
 acredita que la relación exista en entidades/migraciones actuales.
+
+## Partes necesarias para los incrementos H3 — actualización 12-oct
+
+La selección de [planes por estudiante](../../plan/hito-3/README.md) requiere
+resolver estas partes antes de sus tareas dependientes; no se modificó SQL/Java.
+
+| Parte | Contraste / propuesta técnica | Dueño / comprobación antes de implementar |
+|---|---|---|
+| Sesión actual en cambio de contraseña | OpenAPI /password/cambiar conserva una familia y revoca otras; V3 no acredita vínculo del jti de acceso a familia | Jose Luis con Juan José: asociación persistida, locks y dos sesiones; no inferir por sub ni añadir familia al cuerpo HTTP |
+| OTP/desafío | V2/entidad OTP frente a DesafioMfa/V3; falta relación inequívoca coherente con el DDL | Luis/Jose Luis: propósito, expiración, reenvío y consumo único con familia real; migración nueva si se requiere |
+| Fallos distintos | V1 tiene contadores y V3/IntentoLogin no guardan huella de contraseña incorrecta | Luis/Eva: propuesta HMAC por usuario/racha con clave externa y persistencia acotada; misma entrada no suma, concurrencia y reinicio no pierden deduplicación |
+| Entrega sensible | V4 outbox.payload genérico no prueba protección del código/enlace que debe entregarse | Christian/productores: payload cifrado con clave externa y purga tras entrega; tabla OTP/token conserva solo hash, sin logs de secretos |
+| Último administrador | Rol/asociación existen, no se acredita lock que serialice revocaciones de dos cuentas diferentes | Sergio/Eva/Luis: estado efectivo y lock compartido del catálogo; proteger último activo/prohibición propia en transacción |
+
+[Diseño de composición](../../plan/hito-3/ACUERDOS-INTERNOS.md) detalla
+decisiones cerradas y responsables. Cambio MFA v2 permanece posterior; esa parte
+pendiente no se exige para el OTP de login seleccionado.
+
+## Diseño de persistencia H3 cerrado por delegación
+
+El contraste anterior queda como evidencia de divergencias. Su tratamiento H3
+está concreto en [propiedad/mappings/migraciones](../../plan/hito-3/DISENO-PERSISTENCIA.md)
+y [locks/transacciones](../../plan/hito-3/ACUERDOS-INTERNOS.md). Sesión raíz
+separada, acceso asociado, OTP/revisión, huellas por racha, enlace contextual y
+outbox cifrado ya no esperan decisión rutinaria de dueños. La revisión del
+esquema real en Supabase y ejecución/pruebas de las migraciones quedan en
+implementación; no se afirma que esos objetos existan hoy en la base.

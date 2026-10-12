@@ -198,3 +198,10 @@ campo reenviado sin cambios lo ensuciaría.
 - [ ] La sección de direcciones solo existe para `CLIENTE`
 - [ ] Los escenarios de interfaz están automatizados o verificados a mano con evidencia
 - [ ] El wireframe y la implementación coinciden, con navegación a FRONT-09 para segundo factor
+
+## Selección de alcance H3 — 12-oct
+
+H3 muestra perfil propio y edición nombres/apellidos/celular, más documento protegido de solo lectura. No carga direcciones automáticamente ni presenta cambio de correo/alta dirección/configuración MFA pendientes. Los enlaces de contraseña, actividad y logout consumen las capacidades reales de sus dueños. El comportamiento completo de estas secciones sigue para incrementos posteriores.
+
+[Planes por estudiante](../../plan/hito-3/README.md). Selección H3 aprobada por los dueños según comunicación de Luis el
+12-oct; no cambia reglas aplicables ni acredita implementación de la UI.

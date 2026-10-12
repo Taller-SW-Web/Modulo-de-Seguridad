@@ -123,3 +123,10 @@ frontend/src/
 │   └── PasswordStrengthMeter.tsx
 └── pantallas/ …             # una carpeta por pantalla
 ```
+
+## Selección de alcance H3 — 12-oct
+
+Navegación H3: login/OTP, Mi cuenta, cambio de contraseña, actividad propia, listado/detalle administrativo y enlace de desbloqueo. Se muestran solo capacidades entregadas y comprobadas; registro, recuperación, activación, configuración MFA, alta, baja/reactivación, bloqueo manual, direcciones, edición admin de atributos y auditoría admin/exportación quedan posteriores. No dejar enlaces que prometen operación no implementada.
+
+[Planes por estudiante](../../plan/hito-3/README.md). Selección H3 aprobada por los dueños según comunicación de Luis el
+12-oct; no cambia reglas aplicables ni acredita implementación de la UI.

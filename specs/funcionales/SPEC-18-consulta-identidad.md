@@ -6,7 +6,7 @@
 | **Clasificación** | Integración técnica transversal de Sergio; no es novena épica académica |
 | **Primera versión** | Capacidad necesaria para el recorrido acordado; no equivale a todo el alcance |
 | **Hito objetivo** | Hito 1 (Sem. 4) — contrato · Hito 4 (Sem. 11) — implementación |
-| **Estado** | ✅ Aprobada |
+| **Estado** | Base aprobada; reconciliación documental DOC-02/A10 del 12-oct local por publicar |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-09 «API de identidad para los demás módulos» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
@@ -15,7 +15,7 @@
 
 ## Contexto — ¿por qué?
 
-El token que reciben los seis módulos consumidores dice quién es el usuario y qué roles tiene, pero no lleva todo lo que necesitan: Ventas necesita el nombre y el documento del cliente para emitir una boleta, Despacho la dirección de entrega, y cualquiera de ellos, qué significa un rol que le llegó en un token.
+El token que reciben los seis módulos consumidores dice quién es el usuario y qué roles tiene, pero no lleva todo lo que necesitan: Ventas consulta el estado de cuenta, Despacho la dirección de entrega y otros consumidores el significado de los roles. Ventas no emite comprobantes fiscales ni necesita el documento en claro según A10 y la confirmación final en #42.
 
 Si el módulo de despacho leyera nuestra tabla `usuario`, cualquier cambio de esquema nuestro rompería su despliegue, y una consulta suya mal escrita expondría hashes de contraseña. Esta spec define las consultas que evitan ese acoplamiento, y entrega a cada módulo **solo** los datos que su scope autoriza.
 
@@ -144,9 +144,14 @@ condiciones límite, de error o de seguridad.
 
 | Dependencia | Estado | Cómo se resuelve mientras tanto |
 |---|---|---|
-| El claim `permisos` presupone un catálogo de permisos por módulo (`pedido.crear`, `producto.editar`…) que define **SPEC-11** | Definido para este módulo; pendiente para los consumidores | Esta spec fija el **formato** —lista de códigos con punto, sin duplicados, unión de los roles del usuario—. Hoy `permisos` lleva los de este módulo; los de cada consumidor se añaden cuando se acuerden |
-| La forma de los datos de usuario expuestos depende de **SPEC-01**, **SPEC-03** y **SPEC-16** | En redacción | El contrato fija los campos mínimos; añadir campos es compatible, renombrarlos no |
-| Los `client_id` y `client_secret` de los seis módulos | Sin crear | El entorno simulado usa credenciales de prueba conocidas y publicadas |
+| El claim `permisos` y el contenido de los catálogos los define **SPEC-11**, RF-11.9 | Definido: permisos de Seguridad, unión sin duplicados de roles del usuario | No se añaden pedido.crear/producto.editar de módulos consumidores. Cada API decide su autorización de negocio por identidad/roles y su dominio; A5 no concede permisos ajenos |
+| Los datos expuestos dependen de **SPEC-01**, **SPEC-03** y **SPEC-16** | Definiciones publicadas; persistencia/servicios por implementar | El contrato gobierna proyecciones; cualquier evolución se revisa con el PO y los dueños, sin renombrar campos consumidos |
+| Los clientes/secrets de los seis módulos y los dos adicionales A10 | Ocho previstos; provisión real pendiente en #10/#42 | El mock usa credenciales ilustrativas, sin acreditar secretos emitidos ni permitir usarlas como credenciales reales |
+
+Reconciliación documental DOC-02, 12-oct-2026; no modifica endpoints ni claims.
+La concesión provisional de documento a Ventas se retiró por
+[#42, confirmación final](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6118843852).
+RF-18.4 conserva la capacidad genérica para otros consumidores autorizados.
 
 ---
 

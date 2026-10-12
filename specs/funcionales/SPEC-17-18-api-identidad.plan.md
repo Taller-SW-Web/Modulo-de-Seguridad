@@ -2,6 +2,8 @@
 
 > **Antecedente de Hito 1.** Este documento conserva el plan de semanas 4/11;
 > no fija el calendario vigente ni ordena la implementación de Hito 3.
+> El plan técnico vigente preparado está en
+> [TEC-IDENTIDAD](../../plan/transversales/TEC-IDENTIDAD.md).
 > Consultar el [plan actual](../../plan/README.md), el
 > [contrato versionado](../contrato-api/README.md) y la
 > [ficha de Ventas](../../docs/integracion/hito-3-ventas.md).

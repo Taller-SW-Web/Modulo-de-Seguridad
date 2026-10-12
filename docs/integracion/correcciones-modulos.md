@@ -220,6 +220,8 @@ puntual de esos archivos, no una auditoría completa de la aplicación.
 **Mensaje listo:**
 
 > Hola Joseph. A10 está confirmado y conserva provisión pendiente. Para
+> el catálogo retiramos CSAT según #44 y la concesión de documento para
+> Ventas según su confirmación final en #42, sin reemplazo. Para la
 > documentación, quitemos `customerId` como alternativa al `sub` en §1.4b y
 > corrijamos el `403` de `/pedidos/me`: falta del rol `CLIENTE`, no falta del
 > scope retirado `ventas:pedidos:leer`.

@@ -21,11 +21,17 @@ Agrupa las specs siguientes. Sus RF y escenarios conservan las reglas vigentes y
 
 FRONT-07/08 integra bloques completos. Eva mantiene navegación/contenedor; cada dueño conserva interfaz, servicio, datos y pruebas de su bloque. FRONT-00 coordina sesión con Jose Luis, política con Juan José y autorización con Sergio; véase [responsabilidades](../../docs/responsabilidades.md).
 
-## Primera versión demostrable
+## Primera versión demostrable — incremento H3
 
-1. Política de contraseña consumible por registro y alta sin duplicar reglas.
-2. Cambio propio con contraseña actual e historial/política de SPEC-07.
-3. Recuperación por enlace y respuesta genérica, incluido vencimiento y uso único según SPEC-08.
+**Selección H3 aprobada 12-oct:** revisión y aprobación formal del dueño
+comunicadas por Luis; diseño interno cerrado bajo su delegación. Conserva
+RF/ESC del alcance completo y no acredita implementación.
+
+1. Política/hash/verificador/caducidad consumidos por autenticación, sin reglas duplicadas.
+2. Cambio propio desde formulario con contraseña actual, historial, aviso y revocación de las otras familias, conservando la actual.
+3. Recuperación/restablecimiento por enlace se planifican para el siguiente incremento; caducidad de gestión sigue obligatoria al autenticar.
+
+[Plan H3 del dueño](../../plan/hito-3/juan-cano/PLAN.md).
 
 ## Dependencias
 

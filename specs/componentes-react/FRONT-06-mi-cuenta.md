@@ -139,3 +139,10 @@ editar/eliminar direcciones (H-04); verificar celular (H-03); documento completo
   En esta pantalla se leen, no se editan. Documento enmascarado.
 - Segundo factor se modifica mediante FRONT-09 y contrato v2; no interruptor
   conectado a las rutas históricas v1 incompletas.
+
+## Selección de alcance H3 — 12-oct
+
+H3 muestra perfil propio y edición nombres/apellidos/celular, más documento protegido de solo lectura. No carga direcciones automáticamente ni presenta cambio de correo/alta dirección/configuración MFA pendientes. Los enlaces de contraseña, actividad y logout consumen las capacidades reales de sus dueños. El comportamiento completo de estas secciones sigue para incrementos posteriores.
+
+[Planes por estudiante](../../plan/hito-3/README.md). Selección H3 aprobada por los dueños según comunicación de Luis el
+12-oct; no cambia reglas aplicables ni acredita implementación de la UI.

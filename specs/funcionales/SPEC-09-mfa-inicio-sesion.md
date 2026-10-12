@@ -7,7 +7,7 @@
 | **Reparto vigente** | 11-oct-2026; dueño completo de interfaz, backend, datos y pruebas |
 | **Primera versión** | Alcance/dependencias en ficha de épica; hitos del alcance completo conservados |
 | **Hito objetivo** | Hito 4 (Sem. 11) |
-| **Estado** | Base aprobada; revisión local por edición delegada, sin publicar |
+| **Estado** | Base aprobada; revisión documental publicada por PR #45/#46, implementación pendiente |
 | **Base aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-04 «Autenticación por OTP y MFA» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva la generación y verificación de códigos y el desafío del inicio de sesión; la activación y desactivación del segundo factor pasaron a SPEC-10. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
@@ -190,7 +190,7 @@ La spec se cierra cuando:
 
 ## Definición local de H-05/H-06
 
-Aplicada en la revisión local 1.1.0; [cambios y límites](../contrato-api/propuestas/preparacion-hito-3.md). Sin publicar ni implementar.
+Definición 1.1.0 publicada por PR #45/#46; [cambios y límites](../contrato-api/propuestas/preparacion-hito-3.md). Implementación y pruebas del servidor pendientes.
 
 | RF | Regla de esta revisión local |
 |---|---|

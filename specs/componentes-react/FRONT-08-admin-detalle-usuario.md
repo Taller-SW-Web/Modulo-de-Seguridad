@@ -161,3 +161,10 @@ nombres/apellidos/celular de otra cuenta (el wireframe no lo incluye).
   motivo solo si aparece en `detalle`.
 - **H-09**: la lista de roles para asignar es el enum `CodigoRol` con etiquetas
   de FRONT-00 §4.
+
+## Selección de alcance H3 — 12-oct
+
+H3 integra cabecera/datos seguros de Eva, SeccionRoles completa de Sergio y lectura de bloqueo automático de Luis. Edición de atributos de vendedor, acciones manuales y HistorialTabs administrativo quedan posteriores. Actividad propia está en FRONT-13; no sustituye una consulta administrativa de otra cuenta.
+
+[Planes por estudiante](../../plan/hito-3/README.md). Selección H3 aprobada por los dueños según comunicación de Luis el
+12-oct; no cambia reglas aplicables ni acredita implementación de la UI.

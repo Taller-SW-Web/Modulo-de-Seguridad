@@ -13,7 +13,19 @@ verifican contra su API. Esta carpeta guarda las **specs de interfaz**: cómo se
 ve y cómo se comporta cada pantalla de la SPA. Van aparte por indicación del
 profesor, y las mantiene el dueño de la funcionalidad completa; UX revisa.
 
+
+**Aprobación incremental H3:** Luis comunica revisión y aprobación de alcance
+y diseño UI por los siete dueños. Se registra para los recorridos elegidos
+FRONT-00/01/04/06/07/08/10/12/13, no para todos los flujos posteriores.
+[Planes aprobados y diseño técnico cerrado](../../plan/hito-3/CIERRE-PLAN.md).
+
 ## Responsables por pantalla y bloque
+
+La selección de [H3 por estudiante](../../plan/hito-3/README.md) se lee junto
+con estas specs completas. FRONT-00/06/07/08/13 concretan su alcance visual
+H3; la aprobación del incremento de los siete dueños fue comunicada por Luis
+el 12-oct. El alcance futuro de las specs conserva su revisión propia. No anunciar flujos posteriores
+como disponibles ni sustituir respuestas del servidor por éxito ficticio.
 
 Reparto vigente del 11-oct-2026; no implica aprobación de pantallas. [Dueños completos](../../docs/responsabilidades.md) y [épicas](../epicas/README.md).
 

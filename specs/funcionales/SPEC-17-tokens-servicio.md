@@ -6,7 +6,7 @@
 | **Clasificación** | Integración técnica transversal de Sergio; no es novena épica académica |
 | **Primera versión** | Capacidad necesaria para el recorrido acordado; no equivale a todo el alcance |
 | **Hito objetivo** | Hito 1 (Sem. 4) — contrato · Hito 4 (Sem. 11) — implementación |
-| **Estado** | ✅ Aprobada |
+| **Estado** | Base aprobada; reconciliación documental DOC-03 del 12-oct local por publicar |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-09 «API de identidad para los demás módulos» el 20 de septiembre, por indicación del profesor: una spec por función. Conserva la verificación de tokens —JWKS, token de servicio, introspección— y las reglas comunes de acceso y error; la consulta de datos de usuario pasó a SPEC-18. El contrato publicado no cambió: solo se repartieron sus requisitos. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
@@ -189,9 +189,9 @@ condiciones límite, de error o de seguridad.
 
 ### ESC-17.5 Introspección de un token de usuario vigente
 
-- **Dado** que el módulo de Ventas y Postventa va a anular un pedido y necesita el estado **actual** de quien lo pide,
+- **Dado** que un módulo con concesión aprobada de introspección, como Productos, necesita el estado **actual** de una sesión vigente, sin cambios de roles ni estado desde su emisión,
 - **Cuando** envía `POST /api/v1/auth/introspeccion` con el token del usuario y su propio token de servicio con scope `tokens:introspeccion`,
-- **Entonces** el sistema responde `200` con `activo: true`, el `sub`, los `roles` y los `permisos` vigentes en este instante, reflejando cualquier cambio de rol posterior a la emisión del token.
+- **Entonces** el sistema responde `200` con `activo: true`, el `sub`, los `roles` y los `permisos` vigentes. Si los roles cambiaron, se aplica RF-17.7 con `activo: false`, no esta rama de éxito. Ventas/Postventa consulta cuenta con usuarios:leer según A10, sin concesión de introspección.
 
 ### ESC-17.6 Introspección del token de un usuario desactivado *(caso borde)*
 
@@ -228,7 +228,7 @@ condiciones límite, de error o de seguridad.
 - El JWKS debe ser cacheable y tolerar la rotación manteniendo la clave anterior al menos **24 horas**.
 - Los módulos consumidores **deben cachear el JWKS**, no descargarlo por petición. Si el JWKS no responde y el consumidor tiene copia en caché, debe seguir validando con ella.
 - Ninguna respuesta a un módulo consumidor puede permitir enumerar qué cuentas existen.
-- La documentación OpenAPI se escribe a mano mientras no exista implementación y **se genera desde el código** a partir del Hito 4.
+- La documentación OpenAPI se escribe a mano mientras no exista implementación. Desde Hito 4, cualquier versión generada desde código se contrasta con el contrato aprobado y se revisa por el PO antes de publicarla; no sustituye silenciosamente la fuente contractual.
 - El tratamiento de datos personales debe alinearse con la Ley N.º 29733 de Protección de Datos Personales.
 
 ---
