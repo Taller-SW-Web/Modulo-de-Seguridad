@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Guía para agentes de IA que trabajen en este repositorio. Los humanos empiezan
-por el [README](README.md) y por [`docs/plan-hito-1.md`](docs/plan-hito-1.md).
+por el [README](README.md) y por [`plan/README.md`](plan/README.md).
 
 ## El repositorio en una línea
 
@@ -11,7 +11,7 @@ módulos del curso. Fase de especificación — todavía no hay código de produ
 
 ## Reglas que no se saltan
 
-- **El contrato tiene dueño único.** [`specs/openapi.yaml`](specs/openapi.yaml)
+- **El contrato tiene dueño único.** [`specs/contrato-api/openapi.yaml`](specs/contrato-api/openapi.yaml)
   lo edita solo el Product Owner. Seis equipos externos programan contra él, y
   basta con que dos personas lo toquen en paralelo para romperlo.
 - **Las specs se escriben antes que el código** (SDD). Una funcionalidad está
@@ -23,6 +23,8 @@ módulos del curso. Fase de especificación — todavía no hay código de produ
 - **Un cambio incompatible del contrato no se aplica, se añade.** Renombrar un
   campo que otros módulos ya consumen obliga a `/api/v2`.
 
+Reparto vigente en [épicas](specs/epicas/README.md); revisión pública en [fuentes oficiales](docs/fuentes-oficiales.md).
+
 ## Antes de tocar nada, orientación rápida
 
 | Si vas a… | Lee |
@@ -33,7 +35,7 @@ módulos del curso. Fase de especificación — todavía no hay código de produ
 | Devolver un error | [`specs/catalogo-errores.md`](specs/catalogo-errores.md) |
 | Publicar un evento | [`specs/catalogo-eventos.md`](specs/catalogo-eventos.md) |
 | Cambiar el estado de una cuenta | [`docs/arquitectura/estados-usuario.md`](docs/arquitectura/estados-usuario.md) |
-| Entender la integración con los otros módulos | [`specs/SPEC-17-tokens-servicio.md`](specs/SPEC-17-tokens-servicio.md) y [`specs/SPEC-18-consulta-identidad.md`](specs/SPEC-18-consulta-identidad.md) |
+| Entender la integración con los otros módulos | [`specs/funcionales/SPEC-17-tokens-servicio.md`](specs/funcionales/SPEC-17-tokens-servicio.md) y [`specs/funcionales/SPEC-18-consulta-identidad.md`](specs/funcionales/SPEC-18-consulta-identidad.md) |
 
 ## Agent skills
 

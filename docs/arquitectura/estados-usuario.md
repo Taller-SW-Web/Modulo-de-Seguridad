@@ -4,7 +4,7 @@
 |---|---|
 | **Dueño** | Product Owner, con Jose Luis (arquitectura de implementación) |
 | **Afecta a** | SPEC-01 a SPEC-05, SPEC-07, SPEC-08, SPEC-12, SPEC-14, SPEC-15 |
-| **Refleja** | El enum `EstadoCuenta` de `specs/openapi.yaml` |
+| **Refleja** | El enum `EstadoCuenta` de `specs/contrato-api/openapi.yaml` |
 
 Los cuatro estados de una cuenta están repartidos entre varias specs: SPEC-01
 crea `PENDIENTE_VERIFICACION`, SPEC-02 la pasa a `ACTIVO`, SPEC-14 y SPEC-15

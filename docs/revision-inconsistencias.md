@@ -1,11 +1,13 @@
 # Inconsistencias del proyecto
 
+> **Histórico de septiembre.** Fechas/estados describen esa revisión. El inventario vigente está en el [registro único](registro-inconsistencias.md).
+
 | Campo | Valor |
 |---|---|
 | **Dueño** | Product Owner |
 | **Revisión** | 26 al 28 de septiembre de 2026, sobre `main` en `6e14777`; los archivos citados no cambian hasta `1b8f2e3` |
 | **Alcance** | Specs de backend, `openapi.yaml`, catálogos, kit de integración, glosario y documentos de `docs/` |
-| **Estado** | Abierto: ninguna corregida todavía |
+| **Estado al iniciar la revisión histórica** | Abierto; cierres documentados en los puntos siguientes |
 
 Este documento reúne las contradicciones que aparecieron al comparar entre sí
 los documentos del proyecto: dos archivos que dicen cosas distintas sobre lo
@@ -54,7 +56,7 @@ Aparte, cuatro documentos se citan y todavía no existen (ver [al final](#docume
 
 ### 1. Una contraseña corta en el registro recibe el error equivocado
 
-- `specs/openapi.yaml:2608` — `RegistroRequest.contrasena` declara `minLength: 10`.
+- `specs/contrato-api/openapi.yaml:2608` — `RegistroRequest.contrasena` declara `minLength: 10`.
 - SPEC-07 y el catálogo de errores — toda regla de la política se responde con
   un único `422 POLITICA_INCUMPLIDA` y la lista de reglas falladas en `errores[]`.
 
@@ -71,7 +73,7 @@ política, o documentar que la longitud es la única regla que responde `400`.
 ### 2. `iss` tiene dos valores distintos
 
 - `specs/kit-integracion.md:122` y `:170` — `iss: "auth-service"`.
-- `specs/openapi.yaml:224` — el documento de descubrimiento declara
+- `specs/contrato-api/openapi.yaml:224` — el documento de descubrimiento declara
   `issuer: "http://localhost:8080/api/v1/auth"`.
 
 Spring configura la validación con `issuer-uri` y exige que el `iss` del token
@@ -88,7 +90,7 @@ descubrimiento y en los tokens emitidos.
 
 ### 3. No está escrito cómo viajan los scopes dentro del token, ni si se exige `aud`
 
-- `specs/openapi.yaml:2454` — la respuesta de `POST /auth/token` trae `scopes`
+- `specs/contrato-api/openapi.yaml:2454` — la respuesta de `POST /auth/token` trae `scopes`
   como arreglo.
 - Ni SPEC-17 ni el kit dicen qué claim lleva los scopes **dentro del JWT**: el
   estándar usa `scope` como texto separado por espacios; nuestra respuesta, un
@@ -105,7 +107,7 @@ respuesta, no puede validar los tokens de servicio.
 
 ### 4. `mfa_requerido` frente a `mfaRequerido`
 
-- `specs/SPEC-05-inicio-sesion.md:118` — ESC-05.5 muestra `"mfa_requerido": true`.
+- `specs/funcionales/SPEC-05-inicio-sesion.md:118` — ESC-05.5 muestra `"mfa_requerido": true`.
 - `DesafioMfa` en el contrato y ESC-09.8 usan `mfaRequerido`.
 
 Una prueba escrita a partir de SPEC-05 fallará contra el contrato.
@@ -120,8 +122,8 @@ Una prueba escrita a partir de SPEC-05 fallará contra el contrato.
 
 ### 5. `caducidadDiasAdmin` depende del rol en un endpoint público
 
-- `specs/openapi.yaml:2703` — `caducidadDiasAdmin` es «`null` para el resto de roles».
-- `specs/openapi.yaml:1339` — `GET /password/politica` es público (`security: []`):
+- `specs/contrato-api/openapi.yaml:2703` — `caducidadDiasAdmin` es «`null` para el resto de roles».
+- `specs/contrato-api/openapi.yaml:1339` — `GET /password/politica` es público (`security: []`):
   no sabe quién pregunta ni qué rol tiene.
 
 **Por decidir:** que el campo siempre valga 90 y describa la regla de los roles
@@ -132,7 +134,7 @@ de gestión, o que el endpoint se vuelva autenticado.
 ### 6. El límite de 90 días es «más de» en un sitio y «o más» en otro
 
 - `specs/catalogo-errores.md:112` y el contrato — contraseña de **más de** 90 días.
-- `specs/SPEC-07-politica-cambio-contrasena.md:102` — ESC-07.7 dice **90 días o más**.
+- `specs/funcionales/SPEC-07-politica-cambio-contrasena.md:102` — ESC-07.7 dice **90 días o más**.
 
 El día 90 exacto se trata distinto según qué documento se lea.
 
@@ -153,7 +155,7 @@ RF-02.4, para no revelar qué cuentas existen) y añadirlo como requisito de SPE
 
 ### 8. Un escenario acepta dos códigos de error distintos
 
-- `specs/SPEC-09-mfa-inicio-sesion.md:130` — ESC-09.11 espera «`401 TOKEN_INVALIDO`
+- `specs/funcionales/SPEC-09-mfa-inicio-sesion.md:130` — ESC-09.11 espera «`401 TOKEN_INVALIDO`
   o `401 CODIGO_INVALIDO`» ante un desafío inexistente o manipulado.
 - El contrato — `/auth/otp/solicitar` documenta `TOKEN_INVALIDO`; `/auth/otp/verificar`
   no lo documenta.
@@ -166,8 +168,8 @@ Una prueba no puede verificar un «o».
 
 ### 9. Cerrar sesión exige un token de acceso vigente
 
-- `specs/openapi.yaml:110` — la seguridad global es `tokenUsuario`.
-- `specs/openapi.yaml:1087` — `POST /auth/logout` no la sobreescribe, así que la hereda.
+- `specs/contrato-api/openapi.yaml:110` — la seguridad global es `tokenUsuario`.
+- `specs/contrato-api/openapi.yaml:1087` — `POST /auth/logout` no la sobreescribe, así que la hereda.
 
 Si el token de acceso ya venció, hay que renovar la sesión para poder cerrarla.
 SPEC-06 no lo menciona.
@@ -181,7 +183,7 @@ SPEC-06 no lo menciona.
 
 - `POST /usuarios/{id}/desbloquear` (SPEC-15) — no dice qué responde sobre una
   cuenta que no está `BLOQUEADO`.
-- `specs/openapi.yaml:496` — `POST /usuarios/{id}/reactivar` «no hace nada y
+- `specs/contrato-api/openapi.yaml:496` — `POST /usuarios/{id}/reactivar` «no hace nada y
   responde igual» sobre una cuenta que no está `INACTIVO`. La regla está solo en
   el contrato: SPEC-04 no la tiene.
 
@@ -192,7 +194,7 @@ reactivar a SPEC-04 con su escenario.
 
 ### 11. Nadie define el «canal preferido» del segundo factor
 
-- `specs/openapi.yaml:2674` — `DesafioMfa.canal` es el «canal preferido de la cuenta».
+- `specs/contrato-api/openapi.yaml:2674` — `DesafioMfa.canal` es el «canal preferido de la cuenta».
 - Ninguna spec dice dónde se guarda, quién lo elige ni cuál es su valor por defecto.
 
 **Por decidir:** si el canal preferido existe (y entonces SPEC-09 o SPEC-10 lo
@@ -202,7 +204,7 @@ define) o si el campo vale siempre `EMAIL` mientras el SMS siga simulado.
 
 ### 12. Se cita la decisión «Q10», que no existe
 
-- `specs/SPEC-01-registro-clientes.md:114` y `specs/SPEC-04-baja-reactivacion.md:94` —
+- `specs/funcionales/SPEC-01-registro-clientes.md:114` y `specs/funcionales/SPEC-04-baja-reactivacion.md:94` —
   la baja por decisión del titular está «pendiente de decisión (Q10)».
 - No hay en el repositorio ninguna lista de preguntas donde esté Q10.
 
@@ -217,7 +219,7 @@ define) o si el campo vale siempre `EMAIL` mientras el SMS siga simulado.
 
 ### 13. SPEC-17 y el kit dicen cosas distintas sobre cómo se piden los scopes
 
-- `specs/SPEC-17-tokens-servicio.md:108` — los scopes «se conceden por escrito en
+- `specs/funcionales/SPEC-17-tokens-servicio.md:108` — los scopes «se conceden por escrito en
   la sincronización entre equipos, **no por petición**».
 - `specs/kit-integracion.md:268` y `docs/integracion/acuerdos.md` — «pídanlo por
   **issue** con la etiqueta `integracion`».
@@ -229,7 +231,7 @@ define) o si el campo vale siempre `EMAIL` mientras el SMS siga simulado.
 ### 14. La trazabilidad cuenta 7 requisitos en SPEC-02, que tiene 8
 
 - `specs/trazabilidad.md:216` — SPEC-02 con 7 requisitos.
-- `specs/SPEC-02-verificacion-correo.md:53` — RF-02.8, añadido con el acuerdo A1.
+- `specs/funcionales/SPEC-02-verificacion-correo.md:53` — RF-02.8, añadido con el acuerdo A1.
 
 Se comprobaron las 18 filas de la tabla §6: es la única que no coincide.
 
@@ -249,7 +251,7 @@ Se comprobaron las 18 filas de la tabla §6: es la única que no coincide.
 
 ### 16. `NoEncontrado` dice que solo se alcanza con token de servicio
 
-- `specs/openapi.yaml:2314` — «Solo se llega aquí con un token de servicio válido
+- `specs/contrato-api/openapi.yaml:2314` — «Solo se llega aquí con un token de servicio válido
   y el scope correcto».
 - La misma respuesta la usan los endpoints de administración con token de usuario
   (`DELETE /usuarios/{id}`, roles, bloqueo…).
@@ -260,7 +262,7 @@ Se comprobaron las 18 filas de la tabla §6: es la única que no coincide.
 
 ### 17. La cabecera del contrato cita solo SPEC-17 y SPEC-18
 
-- `specs/openapi.yaml:49` — «Especificaciones de origen: SPEC-17 y SPEC-18».
+- `specs/contrato-api/openapi.yaml:49` — «Especificaciones de origen: SPEC-17 y SPEC-18».
 - Hoy el contrato cubre las 18 specs.
 
 **Corrección:** citar `specs/trazabilidad.md` §2, que tiene el mapa endpoint → spec.
@@ -269,7 +271,7 @@ Se comprobaron las 18 filas de la tabla §6: es la única que no coincide.
 
 ### 18. Un plan de specs no figura en ningún índice
 
-- `specs/SPEC-17-18-api-identidad.plan.md` no aparece en `trazabilidad.md` ni en
+- `specs/funcionales/SPEC-17-18-api-identidad.plan.md` no aparece en `trazabilidad.md` ni en
   el `README.md`.
 
 **Por decidir:** enlazarlo desde la trazabilidad o moverlo fuera de `specs/`,
