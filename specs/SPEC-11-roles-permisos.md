@@ -2,9 +2,9 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Eva Lucía Moreno Zevallos |
-| **Hito objetivo** | Hito 4 (Sem. 11) |
-| **Estado** | ✅ Aprobada |
+| **Responsable** | Sergio Alejandro Osorio Montenegro (reasignada el 11 de octubre de 2026, reparto por épicas) |
+| **Hito objetivo** | Hito 3 (Sem. 8), adelantada desde el Hito 4 |
+| **Estado** | 🔶 Implementada en la rama `osorio/spec-11`, en revisión |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
 
 > **Origen.** Es la antigua SPEC-05 «Gestión de roles y permisos», sin cambios de contenido: solo cambió de número al dividir el set de 9 a 18 specs (20 de septiembre). Ver [`trazabilidad.md`](trazabilidad.md) §1.
@@ -171,11 +171,11 @@ condiciones límite, de error o de seguridad.
 
 | Endpoint / evento | Añade, modifica o elimina | Acordado con el PO |
 |---|---|---|
-| `POST /api/v1/usuarios/{id}/roles` | Utiliza contrato existente | ⬜ |
-| `DELETE /api/v1/usuarios/{id}/roles/{rol}` | Utiliza contrato existente | ⬜ |
-| `GET /api/v1/roles` · `GET /api/v1/permisos` | Llena el catálogo que publica SPEC-18 | ⬜ |
-| Claim `permisos` del token | Pasa de vacío a los permisos de este módulo | ⬜ |
-| `usuario.roles_cambiados` | Publica evento | ⬜ |
+| `POST /api/v1/usuarios/{id}/roles` | Utiliza contrato existente | ✅ |
+| `DELETE /api/v1/usuarios/{id}/roles/{rol}` | Utiliza contrato existente | ✅ |
+| `GET /api/v1/roles` · `GET /api/v1/permisos` | Llena el catálogo que publica SPEC-18 | ✅ |
+| Claim `permisos` del token | Pasa de vacío a los permisos de este módulo | ✅ |
+| `usuario.roles_cambiados` | Publica evento | ✅ |
 
 ---
 
@@ -183,9 +183,36 @@ condiciones límite, de error o de seguridad.
 
 La spec se cierra cuando:
 
-- [ ] Todos los requisitos están implementados
-- [ ] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
-- [ ] Los no funcionales están verificados, o la desviación está documentada y aprobada
-- [ ] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
-- [ ] Nada de lo declarado fuera de alcance se construyó de forma encubierta
+- [x] Todos los requisitos están implementados
+- [x] Cada requisito clave tiene al menos dos escenarios automatizados, uno de ellos caso borde
+- [x] Los no funcionales están verificados, o la desviación está documentada y aprobada
+- [x] Los endpoints figuran en la documentación OpenAPI publicada (`specs/openapi.yaml`)
+- [x] Nada de lo declarado fuera de alcance se construyó de forma encubierta
 - [ ] El código está en `main` con revisión aprobada y desplegado en nube
+
+---
+
+## Implementación
+
+| Pieza | Dónde |
+|---|---|
+| Entidades y repositorios | `backend/.../rol/entity`, `backend/.../rol/repository` |
+| Permisos efectivos (RF-11.4), costura con SPEC-05/06 | `PermisosEfectivosService.calcular(usuarioId)` |
+| Asignar y revocar (RF-11.3, 11.5 a 11.8) | `RolService`, `RolUsuarioController` |
+| Catálogo de SPEC-18 | `CatalogoRolesService`, `CatalogoRolesController` |
+| Claims `roles` y `permisos` | `sesion/service/EmisorTokens` |
+| Escenarios automatizados | `Spec11IntegracionTest` (ESC-11.1 a 11.7 y RNF), `RolServiceTest` |
+
+Decisiones tomadas al implementar:
+
+- **Asignar un rol que ya tiene, o revocar uno que no tiene, no tiene efectos**: responde
+  `200`/`204` sin revocar sesiones, auditar ni publicar. Repetir la petición es seguro.
+- **El permiso se exige por ruta, antes de leer el cuerpo**: un usuario sin `rol.asignar`
+  recibe `403` aunque envíe un rol inválido, y nunca un `400` que le dé pistas.
+- **RF-11.7 con bloqueo de filas**: antes de contar los `ADMIN_SISTEMA` activos se bloquean
+  sus asignaciones (`FOR UPDATE`), así dos revocaciones simultáneas no dejan el sistema sin
+  administrador. Un administrador bloqueado o dado de baja no cuenta como activo.
+- **`GET /roles` y `GET /permisos`** aceptan el scope `roles:leer` (módulos) y también el
+  permiso `rol.asignar`, porque el panel de administración necesita el catálogo para
+  ofrecer los roles.
+

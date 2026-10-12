@@ -14,6 +14,15 @@ Módulo de Seguridad y Autenticación — Marketplace Multicanal de Productos De
 
 ```
 com.marketplace.auth
+├── comun/            # Transversal: errores RFC 7807 y seguridad (JWT RS256)
+│   ├── error/
+│   └── seguridad/
+├── rol/              # Roles y permisos (SPEC-11)
+│   ├── entity/
+│   ├── repository/
+│   ├── service/
+│   ├── dto/
+│   └── controller/
 ├── usuario/          # Dominio usuario (SPEC-01, 03, 04, 16)
 │   ├── entity/
 │   └── repository/
@@ -87,6 +96,31 @@ mvn test
 | `PGADMIN_PORT` | 5050 | Puerto de pgAdmin |
 | `BACKEND_PORT` | 8080 | Puerto del backend |
 | `SPRING_PROFILES_ACTIVE` | docker | Perfil de Spring Boot activo |
+| `JWT_EMISOR` | http://localhost:8080/api/v1/auth | Claim `iss` de los tokens |
+| `JWT_CLAVE_PRIVADA` | *(vacía)* | Clave RSA privada en PEM (PKCS#8). Vacía: par efímero, solo para desarrollo |
+| `JWT_CLAVE_PUBLICA` | *(vacía)* | Clave RSA pública en PEM (X.509) |
+
+### Probar SPEC-11 (roles y permisos) en local
+
+Con el perfil `dev` existe `/dev/token`, que emite un token sin contraseña mientras
+no esté el inicio de sesión (SPEC-05). **Nunca activar `dev` en la nube.**
+
+```bash
+SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
+
+# Token del administrador semilla
+TOKEN=$(curl -s -X POST localhost:8080/dev/token -H 'Content-Type: application/json'   -d '{"usuarioId":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"}' | jq -r .accessToken)
+
+# Asignar y revocar un rol al vendedor semilla
+curl -X POST localhost:8080/api/v1/usuarios/22222222-2222-2222-2222-222222222222/roles   -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"rol":"GESTOR_DESPACHO"}'
+curl -X DELETE localhost:8080/api/v1/usuarios/22222222-2222-2222-2222-222222222222/roles/GESTOR_DESPACHO   -H "Authorization: Bearer $TOKEN"
+
+# Token de servicio de otro módulo y catálogo de roles (SPEC-18)
+SERV=$(curl -s -X POST localhost:8080/dev/token-servicio -H 'Content-Type: application/json'   -d '{"clientId":"modulo-ventas","scopes":["roles:leer"]}' | jq -r .accessToken)
+curl localhost:8080/api/v1/roles -H "Authorization: Bearer $SERV"
+```
+
+Los escenarios ESC-11.1 a 11.7 están automatizados en `Spec11IntegracionTest`.
 
 ## Documentación
 

@@ -78,7 +78,7 @@ lleva el responsable de UX (ver §3.2).
 | **SPEC-08** | Recuperación de contraseña | Juan José | Hito 4 (Sem. 11) |
 | **SPEC-09** | Segundo factor en el inicio de sesión (OTP) | Luis David | Hito 4 (Sem. 11) |
 | **SPEC-10** | Activación y desactivación del segundo factor | Luis David | Hito 4 (Sem. 11) |
-| **SPEC-11** | Gestión de roles y permisos | Eva Lucía | Hito 4 (Sem. 11) |
+| **SPEC-11** | Gestión de roles y permisos | Sergio | Hito 3 (Sem. 8) |
 | **SPEC-12** | Registro de auditoría | Christian | Hito 3 (Sem. 8) |
 | **SPEC-13** | Consulta y exportación de la auditoría | Christian | Hito 5 (Sem. 14) |
 | **SPEC-14** | Bloqueo automático por intentos fallidos | Luis David | Hito 5 (Sem. 14) |
@@ -91,9 +91,9 @@ lleva el responsable de UX (ver §3.2).
 
 | Integrante | SPECs propias | Requisitos | Trabajo transversal permanente |
 |---|---|---|---|
-| Sergio | SPEC-17, 18 | 17 | Arquitectura, OpenAPI, mock server, ADRs, coordinación intermódulos, aprobación de las 18 specs |
+| Sergio | SPEC-11, 17, 18 | 27 | Arquitectura, OpenAPI, mock server, ADRs, coordinación intermódulos, aprobación de las 18 specs |
 | Jose Luis | SPEC-05, 06 | 12 | Revisión de código de todos los PR, estructura del proyecto backend, pruebas del núcleo |
-| Eva Lucía | SPEC-01, 04, 11, 16 | 31 | Modelo de datos de usuario/rol/permiso y sus migraciones Flyway |
+| Eva Lucía | SPEC-01, 04, 16 | 21 | Modelo de datos de usuario/rol/permiso y sus migraciones Flyway |
 | Juan José | SPEC-02, 07, 08 | 25 | Adaptador de correo (outbox) que usan también SPEC-09, SPEC-14, SPEC-15 y SPEC-16 |
 | Luis David | SPEC-09, 10, 14, 15 | 36 | Tabla `intento_login`, compartida con SPEC-05 |
 | Valery | Specs de interfaz (`specs/front/`) | — | Sistema de diseño, paleta, wireframes, prototipos Figma, 3 propuestas de UX |

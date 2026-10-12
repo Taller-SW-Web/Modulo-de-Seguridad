@@ -31,7 +31,7 @@ cliente— van aparte, en [`front/`](front/), y las lleva el responsable de UX.
 | 08 | Recuperación de contraseña | Juan José | 4 | [`SPEC-08-recuperacion-contrasena.md`](SPEC-08-recuperacion-contrasena.md) | ✅ Aprobada |
 | 09 | Segundo factor en el inicio de sesión (OTP) | Luis David | 4 | [`SPEC-09-mfa-inicio-sesion.md`](SPEC-09-mfa-inicio-sesion.md) | ✅ Aprobada |
 | 10 | Activación y desactivación del segundo factor | Luis David | 4 | [`SPEC-10-activacion-mfa.md`](SPEC-10-activacion-mfa.md) | ✅ Aprobada |
-| 11 | Gestión de roles y permisos | Eva Lucía | 4 | [`SPEC-11-roles-permisos.md`](SPEC-11-roles-permisos.md) | ✅ Aprobada |
+| 11 | Gestión de roles y permisos | Sergio | 3 | [`SPEC-11-roles-permisos.md`](SPEC-11-roles-permisos.md) | ✅ Aprobada |
 | 12 | Registro de auditoría | Christian | 3 | [`SPEC-12-registro-auditoria.md`](SPEC-12-registro-auditoria.md) | ✅ Aprobada |
 | 13 | Consulta y exportación de la auditoría | Christian | 5 | [`SPEC-13-consulta-auditoria.md`](SPEC-13-consulta-auditoria.md) | ✅ Aprobada |
 | 14 | Bloqueo automático por intentos fallidos | Luis David | 5 | [`SPEC-14-bloqueo-automatico.md`](SPEC-14-bloqueo-automatico.md) | ✅ Aprobada |
