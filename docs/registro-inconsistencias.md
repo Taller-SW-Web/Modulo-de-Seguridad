@@ -28,6 +28,7 @@ una recomendación o un mock no bastan. No hay cierre automático por plazo.
 | REF-01 | P1 | La reorganización dejó enlaces a OpenAPI y specs en sus rutas antiguas | Sergio | Enlaces y referencias de ruta actualizados; comandos de mock apuntan al contrato actual | Resuelto local: comprobación de enlaces locales y revisión de comandos |
 | BASE-01 | P0 | La rama local main estaba atrasada y la ruta del contrato difería de main público | Sergio | [Referencias fijadas](fuentes-oficiales.md): main público y origin/main coinciden; OpenAPI tiene el mismo blob en ambas rutas | Resuelto local: SHA públicos y locales comprobados; nueva publicación pendiente |
 | DOC-01 | P2 | Glosario, orientación, históricos y modelo descriptivo conservaban reparto/estado anterior | Sergio y dueños | Glosario épica/spec, fuentes por dimensión, banners históricos y descripción de A6/A7 alineados | Resuelto local: enlaces válidos; cambios físicos fuera de esta etapa |
+| DOC-02 | P1 | [SPEC-18, dependencias conocidas](../specs/funcionales/SPEC-18-consulta-identidad.md#dependencias-conocidas) conserva pedido.crear/producto.editar y permisos de consumidores por añadir; contradice RF-11.9 y el glosario, que limitan permisos a Seguridad | Sergio | Reconciliar la sección antes del plan de consultas de identidad; no ampliar claims ni permisos de módulos ajenos desde un plan | Abierto, fuera de la demo login/mis pedidos; cierre con SPEC-18 alineada a SPEC-11/A5, sin cambio de contrato improvisado |
 
 ## Huecos internos: diagnóstico y trabajo pendiente
 
@@ -91,6 +92,19 @@ en INT-05 y A11.
 | INT-05 | P0 | G5 Backend #2 confirma recorrido, Michael y entrega jueves 15; A10 sigue separado; rama de /pedidos/me pendiente | Sergio/Joseph; Jose Luis/Eva/Christian y Michael | Ficha A11 actualizada; acuse humano de G7 publicado; G7 adopta objetivo jueves 15 para presentar sábado 17, sin acreditar disponibilidad | Recorrido y acuse de G7 confirmados con evidencia; rama, URLs, hora, H-11, implementación y prueba en nube pendientes |
 | INT-06 | P1 | OpenAPI 0.5.0 de G6 publica 16 scopes pendientes, incluidos siete A9 y productos:fisicos:leer; #87 C1 pide confirmación sin respuesta | Sergio y PO de Productos | Mensaje G6 preparado; confirmación trazable del PO por cliente/scope/aud antes de provisión | Contrastado: condición A9 y otras concesiones siguen pendientes; catálogo no acredita grant |
 
+## Pendientes técnicos identificados al planificar — 12-oct
+
+El [plan H3](../plan/PLAN-IMPLEMENTACION.md) define el recorrido, no crea
+recursos ni acredita configuración. Estas decisiones se mantienen aquí;
+la [vista del plan](../plan/DECISIONES-Y-BLOQUEOS.md) solo las referencia.
+
+| ID | Prioridad | Evidencia / pendiente | Dueño | Tratamiento | Estado / criterio de cierre |
+|---|---|---|---|---|---|
+| TEC-01 | P0 | No están identificados plataforma/URLs de nube, PostgreSQL efectivo ni cadena aplicada; la ficha bilateral conserva esos campos pendientes | Christian; Jose Luis; Sergio coordina con G5 | Definir entorno, configuración, acceso del equipo, base propia y comprobación antes de desplegar | Pendiente; entorno confirmado y configuración/DB comprobados, sin crear recursos en este bloque |
+| TEC-02 | P0 | A/B/V y sus credenciales siguen pendientes; existe V100 pero no prueba una carga válida ni un login real en el entorno elegido | Eva; Juan José/Sergio en sus capacidades | Protocolo de fixtures reproducible con UUID estables, hash compatible y roles/estado/MFA válidos; entregar secretos por canal privado; enlazar H-12 sin inventar aceptación | Pendiente; fixtures revisadas y cargadas en entorno de prueba, login real y UUID coordinados con G5 |
+| TEC-03 | P0 | RS256/JWKS están definidos, pero no hay configuración acreditada de claves del backend ni persistencia entre reinicios | Sergio; Christian en custodia/despliegue | Definir par RSA/kid del entorno, almacenamiento seguro y JWKS público; no usar claves del mock ni regenerarlas en cada arranque | Pendiente; token real verificable, issuer exacto y continuidad de claves comprobada; rotación completa se verifica en SPEC-17 |
+| TEC-04 | P1 | pom declara Java 21/Spring Boot 3.3.5; el kit se ejecutó con Spring Security 6.5.0/JDK 23 y otros runtimes de su informe | Jose Luis/Sergio; Christian comprueba | Resolver el árbol efectivo del proyecto y probar las capacidades en su runtime; no atribuir a Java 21 una prueba hecha en JDK 23 ni actualizar versiones por este documento | Pendiente; build y casos de emisión/validación pasan en las dependencias reales del backend |
+
 ## Revisión y cierre de esta etapa
 
 El [verificador documental](../scripts/verificar-documentacion.py) comprueba
@@ -98,7 +112,9 @@ referencias locales y correspondencia del reparto. Las comprobaciones no
 resuelven huecos funcionales ni prueban tokens/despliegues. La validación
 adicional del punto 9 sí comprobó tokens firmados contra ejemplos del kit y
 formas mediante mocks; publicación, implementación y servicios siguen pendientes. La referencia pública sigue siendo el SHA fijado en fuentes:
-este inventario y reparto permanecen como cambios locales sin commit.
+parte de la preparación ya consta en los cuatro commits locales observados en
+[fuentes](fuentes-oficiales.md). Los ajustes de SDD de este bloque siguen en
+el árbol de trabajo; un commit local no acredita publicación o servicio.
 
 
 ## Evidencia del bloque 8/9 — 12-oct

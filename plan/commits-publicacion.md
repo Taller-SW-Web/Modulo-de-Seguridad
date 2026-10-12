@@ -1,9 +1,15 @@
 # Commits y publicación de la preparación de Hito 3
 
 **Corte:** 12-oct-2026. Comandos para ejecutar desde la raíz, en PowerShell.
-Esta guía no ha ejecutado `git add`, commits, push ni creación de PR.
+El agente no ha ejecutado `git add`, commits, push ni creación de PR.
 Publica documentación y herramientas de comprobación; no una integración
 implementada. [Estado y revisiones](../docs/fuentes-oficiales.md).
+
+**Actualización durante SDD-1/2:** los cuatro commits iniciales ya aparecen
+en la rama hasta `1f743bf76445bbc70e1dc3ec94a21818dec9492b`. No repetirlos.
+Parte de la estructura SDD entró en el cuarto; para completar este bloque usar
+el [commit de complemento](#complemento-sdd-12-después-de-los-cuatro-commits).
+No se reescribe ese historial ni se acredita push/merge por observar commits locales.
 
 ## Comprobación previa
 
@@ -91,6 +97,10 @@ seguimiento inicial y esta guía. Se corrige únicamente el carácter `q`
 accidental de `enum canal_otp` en DBML; no se modifica SQL ni migraciones.
 Se excluyen cachés Python. La guía UX/UI ya tenía un ajuste local menor.
 
+**Continuación SDD-1/2:** este mismo grupo incorpora la estructura/plantillas
+SDD, el plan técnico H3 y sus índices. Todavía no incluye los ocho planes
+individuales ni las tareas incrementales, y no modifica código de producción.
+
 ```powershell
 git add -- .gitignore AGENTS.md CONTEXT.md README.md backend/README.md docs/agents/domain.md docs/arquitectura/README.md docs/arquitectura/estados-usuario.md docs/arquitectura/modelo-datos.md docs/arquitectura/schema.dbml docs/plan-hito-1.md docs/responsabilidades.md docs/revision-inconsistencias.md "docs/sistema-diseño/Guia UX_UI Seguridad.md" specs/README.md plan scripts/verificar-documentacion.py
 git diff --cached --stat
@@ -154,6 +164,31 @@ Las rutas MFA históricas v1 siguen bloqueadas para implementación; v2 no es
 una sustitución de todo v1. GOV-01 conserva la decisión pendiente sobre el
 aviso contractual de una semana frente al calendario de la presentación.
 
+## Complemento SDD-1/2 después de los cuatro commits
+
+Commits iniciales comprobados localmente:
+
+| Commit | Grupo |
+|---|---|
+| d2c49139c5ebd98bc1353eb2d6c1133ff4438936 | Épicas y specs |
+| 4178f9ef089510ad46ae7702966452585982f88c | Contrato y kit |
+| 7c2b7845c793d3b33f80e8cd9fcb2c898a88514c | Acuerdos e integración |
+| 1f743bf76445bbc70e1dc3ec94a21818dec9492b | Orientación y parte de estructura SDD |
+
+Los cambios restantes completan el plan técnico, plantilla de seguimiento,
+índices y registro de decisiones. No generan código ni tableros individuales.
+
+```powershell
+git add -- README.md docs/fuentes-oficiales.md docs/responsabilidades.md docs/registro-inconsistencias.md docs/integracion/hito-3-ventas.md docs/integracion/preparacion-interna.md specs/epicas/README.md plan/README.md plan/commits-publicacion.md plan/seguimiento-epicas.md plan/PLAN-IMPLEMENTACION.md plan/DECISIONES-Y-BLOQUEOS.md plan/seguimiento/PLANTILLA.md
+git diff --cached --stat
+git diff --cached --check
+git commit -m "docs(sdd): completar estructura y plan tecnico de demo con Ventas"
+```
+
+Ejecutar después las comprobaciones de documentación y de rama antes del push.
+Actualizar la descripción del PR para incluir estructura SDD y plan técnico H3.
+Estos comandos son una propuesta: el agente no los ejecutó.
+
 ## Bloque siguiente: planes y tareas de implementación
 
 Seguir el flujo **spec funcional + UI + API + React → plan → tareas → código
@@ -161,9 +196,10 @@ incremental**. La referencia consultada es
 [Marketplace, plan](https://github.com/Taller-SW-Web/G1-Marketplace-SPECS/blob/64cc824ec47ad2758bd657f01e5881165189e1f1/plan/README.md)
 y [seguimiento](https://github.com/Taller-SW-Web/G1-Marketplace-SPECS/blob/64cc824ec47ad2758bd657f01e5881165189e1f1/plan/seguimiento/README.md).
 
-El [seguimiento actual](seguimiento-epicas.md) tiene 48 tareas generales:
-sirve para fijar dueño y cobertura, pero no reemplaza un plan técnico ni
-tareas pequeñas derivadas de él. En el siguiente bloque se prepararán planes
-por épica y capacidades técnicas, dependencias, tareas con criterio verificable
-y evidencia, manteniendo el dueño completo. No se ha generado código de
-producción ni se ha iniciado ese desglose en esta preparación de commits.
+El [seguimiento actual](seguimiento-epicas.md) tiene 48 filas generales:
+sirve para fijar dueño y cobertura, pero no reemplaza un plan individual ni
+tareas pequeñas derivadas de él. La continuación preparó el
+[flujo/plantillas SDD](flujo-sdd.md) y el [plan técnico H3](PLAN-IMPLEMENTACION.md).
+En los siguientes bloques se redactarán planes por épica/capacidad y se
+derivarán tareas verificables, manteniendo el dueño completo. No se ha generado
+código de producción ni los ocho planes y tableros individuales de una vez.
