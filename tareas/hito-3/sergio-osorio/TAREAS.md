@@ -59,16 +59,16 @@ EP-05-T006/T007 y TEC-IDENTIDAD-T005 exigen composición real.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| EP-05-T001 | Mappings y catálogo cerrado de roles/permisos | P0 | Esquema/historia revisados con Christian | Pendiente |
-| EP-05-T002 | AutorizacionPort y guard de administrador | P0 | EP-05-T001; cuenta Eva para comprobaciones conjuntas | Pendiente |
+| EP-05-T001 | Mappings y catálogo cerrado de roles/permisos | P0 | Esquema/historia revisados con Christian | En revisión |
+| EP-05-T002 | AutorizacionPort y guard de administrador | P0 | EP-05-T001; cuenta Eva para comprobaciones conjuntas | En revisión |
 | EP-05-T003 | Asignación individual con efectos atómicos | P1 | EP-05-T002; EP-01-T002; EP-02-T003; auditoría/outbox Christian | Pendiente |
 | EP-05-T004 | Revocación individual y protección de administrador | P1 | EP-05-T003; mismos providers reales | Pendiente |
 | EP-05-T005 | SeccionRoles y composición con detalle | P1 | EP-05-T003/T004; EP-02-T001/T008; EP-01-T004 y contrato de contenedor Eva | Pendiente |
 | EP-05-T006 | Verificar concurrencia, permisos y efectos | P0 | EP-05-T003/T004; login/MFA y providers reales | Pendiente |
 | EP-05-T007 | Defender roles/permisos desplegados | P1 | EP-05-T005/T006; despliegue Christian | Pendiente |
 | TEC-IDENTIDAD-T001 | Claves persistentes y FirmaPort | P0 | Configuración privada del entorno con Christian | En revisión |
-| TEC-IDENTIDAD-T002 | Validación JWT y filtro de acceso G7 | P0 | TEC-IDENTIDAD-T001; EP-05-T002 | Pendiente |
-| TEC-IDENTIDAD-T003 | Descubrimiento y JWKS públicos | P0 | TEC-IDENTIDAD-T001; base URL/issuer del entorno | Pendiente |
+| TEC-IDENTIDAD-T002 | Validación JWT y filtro de acceso G7 | P0 | TEC-IDENTIDAD-T001; EP-05-T002 | En revisión |
+| TEC-IDENTIDAD-T003 | Descubrimiento y JWKS públicos | P0 | TEC-IDENTIDAD-T001; base URL/issuer del entorno | En revisión |
 | TEC-IDENTIDAD-T004 | Pruebas criptográficas en runtime del backend | P0 | TEC-IDENTIDAD-T001/T002/T003 | Pendiente |
 | TEC-IDENTIDAD-T005 | Configuración y validación conjunta con G5 | P0 | TEC-IDENTIDAD-T004; EP-02-T010/T011; entorno y servicio G5 | Pendiente |
 
@@ -263,4 +263,8 @@ Evidencia EP-05 y TEC-IDENTIDAD se registra por separado.
 |---|---|---|---|---|
 | 12-oct-2026 | EP-05-* | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
 | 12-oct-2026 | TEC-IDENTIDAD-* | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
-| 12-oct-2026 | TEC-IDENTIDAD-T001 | Backend rama `osorio/tec-identidad-t001` sobre `936f9b8`; docs `b98b901`. FirmaPort.firmar + FirmarAccesoService (900 s, Clock), ClaveFirmaRsa (PKCS8 ≥3072, kid SHA-256 RFC 7638) y NimbusFirmadorJws (RS256, typ/kid, sin aud). Sin issuer/clave válida arranca con FirmaDenegada. JDK 21.0.9, nimbus-jose-jwt 9.37.4, spring-security-oauth2-jose 6.5.11: 32/32 tests (FirmarAccesoService 7, ClaveFirmaRsa 9, NimbusFirmadorJws 8, IdentidadConfig 8); clave de openssl genpkey cargada; 0 PEM en logs. Pendiente: clave/issuer reales del entorno (Christian) y contextLoads con Docker [Backend #1](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/1) | Por asignar | En revisión |
+| 12-oct-2026 | TEC-IDENTIDAD-T001 | [Backend #3](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/3), rama `feature/TEC-IDENTIDAD-T001` → `develop`; docs `b98b901`. `FirmaPort.firmar`: RS256, claims del contrato sin `aud`, 900 s con `Clock`; RSA PKCS8 ≥3072 externa, `kid` = huella SHA-256; sin clave/issuer arranca con `FirmaDenegada`. JDK 21.0.9, nimbus-jose-jwt 9.37.4. CI verde (Docker). Guía `docs/capacidades/identidad.md` | Por asignar | En revisión |
+| 12-oct-2026 | TEC-IDENTIDAD-T003 | [Backend #4](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/4) (apilado sobre #3). JWKS (`kty/use/alg/kid/n/e`) y descubrimiento públicos; `jwks_uri` derivado del issuer; 503 `NO_DISPONIBLE` sin clave. Servidor real verificado con `JwtDecoders.fromIssuerLocation` (como Ventas). `curl` sobre el jar: JWKS 200 con `Cache-Control`, `kid` estable tras reiniciar | Por asignar | En revisión |
+| 12-oct-2026 | EP-05-T001 | [Backend #5](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/5) → `develop`. Dominio `Rol`/`Permiso`/`CatalogoAutorizacion`/`PermisosEfectivos`; `AutorizacionPort.resolver`; entidades de `rol`, `permiso`, `rol_permiso`, `usuario_rol` (NAMED_ENUM, PK compuestas, usuario UUID). Semilla repetible `db/autorizacion/R__catalogo_autorizacion.sql` separada de V100 (ubicación final pendiente de TEC-INFRA-T002). 39 pruebas; 13 sobre PostgreSQL real (16.4 local y 16.6 en CI); ESC-11.4 = 10 permisos; `resolver` 2,53 ms | Por asignar | En revisión |
+| 12-oct-2026 | EP-05-T002 | [Backend #6](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/6) (apilado sobre #5). `exigirPermiso`/`exigirTitularOPrivilegio` con permisos actuales de la base (no del token); `bloquearCatalogoAdministrador` `FOR UPDATE` sobre `rol.ADMIN_SISTEMA`, `MANDATORY`; `usuariosConRol` para Eva; tipo común `ActorUsuario`. 55 pruebas; concurrencia real de dos transacciones (falla si se quita el `FOR UPDATE`) | Por asignar | En revisión |
+| 12-oct-2026 | TEC-IDENTIDAD-T002 | [Backend #8](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/8) (apilado sobre #4 y #6). `FirmaPort.validar` con `NimbusJwtDecoder` local: RS256, `kid`, issuer exacto, `exp` con tolerancia 0, perfil de persona; servicio → 403 `TOKEN_NO_APLICABLE`. Filtro stateless, errores RFC 7807 (401 `TOKEN_INVALIDO`, 403 `SCOPE_INSUFICIENTE`, 503), nunca HTML. 134 pruebas (133 sin Docker + `contextLoads`), ArchUnit 4/4. Arranque completo con PostgreSQL y clave `openssl` | Por asignar | En revisión |
