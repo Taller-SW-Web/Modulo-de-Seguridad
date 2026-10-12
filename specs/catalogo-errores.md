@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **Dueño** | Product Owner — igual que el contrato |
-| **Aplica a** | Las 18 specs y `specs/openapi.yaml` |
+| **Aplica a** | Las 18 specs y `specs/contrato-api/openapi.yaml` |
 | **Estado** | Borrador — los códigos marcados ✅ ya están publicados y no se tocan |
 
 Este documento existe porque los códigos de error estaban dispersos: cada spec
@@ -208,6 +208,6 @@ información o duplica algo que ya existe.
 1. Compruébalo contra este catálogo: puede que ya exista uno que sirva.
 2. Pregúntate si distingue dos situaciones que un atacante no debería poder
    distinguir. Si es así, no lo añadas.
-3. Acuérdalo con el PO y añádelo aquí **y** en `specs/openapi.yaml`, en la misma
+3. Acuérdalo con el PO y añádelo aquí **y** en `specs/contrato-api/openapi.yaml`, en la misma
    sesión.
 4. Anótalo en la sección *Impacto en el contrato* de tu spec.

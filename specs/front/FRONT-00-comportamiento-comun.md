@@ -2,7 +2,8 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Jose Luis Limachi Sarmiento |
+| **Épica principal** | [EP-02](../epicas/EP-02-autenticacion-sesiones.md) |
 | **Specs de backend que consume** | SPEC-06, SPEC-07, SPEC-11 · catálogo de errores |
 | **Wireframe** | No aplica: no es una pantalla, es lo que comparten todas |
 | **Estado** | Borrador |
@@ -11,8 +12,10 @@
 > **Por qué existe esta spec.** SPEC-06 (renovación y cierre de sesión) no
 > tiene pantalla propia, pero cada pantalla autenticada depende de ella. Lo
 > mismo pasa con los errores transversales del catálogo y con el medidor de
-> fuerza de contraseña, que usan cuatro pantallas. Aquí se definen una vez y
+> fuerza de contraseña, que usan las pantallas que definen una contraseña. Aquí se definen una vez y
 > las demás specs de interfaz los citan en vez de repetirlos.
+
+> **Bloques compartidos:** cada dueño implementa su capacidad completa; el contenedor integra sin asumir capas ajenas. [Reparto por bloque](../../docs/responsabilidades.md).
 
 ---
 
@@ -42,7 +45,7 @@ fuerza de contraseña. Si una spec de pantalla no dice otra cosa, se aplica esto
 | Dato | Origen | Dónde se guarda |
 |---|---|---|
 | `accessToken` | `SesionIniciada` | **Solo en memoria.** Nunca en `localStorage`, en la URL ni en registros de consola |
-| `refreshToken` | `SesionIniciada` | Pendiente de decisión (ver H-11). Hasta que exista, en memoria: recargar la página obliga a iniciar sesión |
+| `refreshToken` | `SesionIniciada` | Solo en memoria para esta versión (H-11); recargar obliga a iniciar sesión. Aceptación bilateral de Ventas pendiente |
 | `usuario` (`id`, `nombreCompleto`, `correo`, `roles`) | `SesionIniciada` | En memoria, junto a la sesión |
 | `permisos` | Claim `permisos` del `accessToken` | Se lee decodificando la carga útil del token, **sin** verificar la firma: solo sirve para mostrar u ocultar opciones. Quien decide es el backend |
 | `challengeToken` | `DesafioMfa` | Solo en memoria, mientras dura el desafío (FRONT-04) |

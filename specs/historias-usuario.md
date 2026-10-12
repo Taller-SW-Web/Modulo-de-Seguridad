@@ -78,15 +78,16 @@ escenarios.
 | HU | Historia | Requisitos | Escenarios |
 |---|---|---|---|
 | HU-09.1 | Como **usuario con segundo factor**, quiero recibir un código de 6 dígitos por correo o SMS al iniciar sesión, para confirmar que soy yo | RF-09.1 · 09.2 · 09.3 · 09.4 · 09.8 · 09.9 · 09.10 · 09.11 | ESC-09.1 · 09.2 · 09.3 · 09.8 · 09.11 |
-| HU-09.2 | Como **responsable de seguridad**, quiero limitar los intentos y las solicitudes de código, para que nadie lo adivine a fuerza de probar | RF-09.5 · 09.6 · 09.7 · 09.12 | ESC-09.4 · 09.5 · 09.6 · 09.7 · 09.9 · 09.10 |
+| HU-09.2 | Como **responsable de seguridad**, quiero limitar los intentos y las solicitudes de código, para que nadie lo adivine a fuerza de probar | RF-09.5 · 09.6 · 09.7 · 09.12 · 09.14 a 09.17 | ESC-09.4 · 09.5 · 09.6 · 09.7 · 09.9 · 09.10 · 09.12 a 09.14 |
 
 ## SPEC-10 — Activación y desactivación del segundo factor
 
 | HU | Historia | Requisitos | Escenarios |
 |---|---|---|---|
-| HU-10.1 | Como **cliente o vendedor**, quiero activar o desactivar el segundo factor cuando quiera, para decidir cuánta protección necesito | RF-10.2 · 10.3 · 10.5 | ESC-10.1 · 10.2 |
-| HU-10.2 | Como **responsable de seguridad**, quiero que el personal de gestión no pueda desactivar su segundo factor, para proteger las cuentas con más poder | RF-10.1 | ESC-10.3 · 10.5 |
-| HU-10.3 | Como **canal de venta autorizado**, quiero validar el correo o el celular de un cliente con un código, para confirmar su contacto sin un mecanismo propio | RF-10.4 | ESC-10.4 |
+| HU-10.1 | Como **cliente o vendedor**, quiero activar o desactivar el segundo factor cuando quiera, para decidir cuánta protección necesito | RF-10.2 · 10.3 · 10.5 | ESC-10.1 · 10.2 · 10.6 · 10.8 · 10.9 |
+| HU-10.2 | Como **responsable de seguridad**, quiero que el personal de gestión no pueda desactivar su segundo factor, para proteger las cuentas con más poder | RF-10.1 · 10.3 | ESC-10.3 · 10.5 · 10.20 |
+| HU-10.3 | Solicitud externa aplazada por A2: no hay verificación de contacto disponible en este ciclo | RF-10.4 | ESC-10.4 · 10.7 |
+| HU-10.4 | Como **titular**, quiero que el cambio MFA se vincule a mi sesión y acción, venza y se consuma una sola vez, para confirmar mi decisión de forma segura | RF-10.5 a 10.10 | ESC-10.6 · 10.8 a 10.19 |
 
 ## SPEC-11 — Roles y permisos
 

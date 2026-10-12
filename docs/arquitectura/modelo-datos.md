@@ -1,8 +1,10 @@
 # Modelo de Datos — Módulo de Seguridad y Autenticación (G7)
 
-> **Fuente de verdad:** `docs/arquitectura/schema.sql` (auditoría 29-sep). Este documento describe el esquema físico actual, sus decisiones de diseño y la trazabilidad con las especificaciones. El diagrama DBML correspondiente está en `schema.dbml`.
+> **Fuente de verdad:** [DDL](schema.sql) y [migraciones](../../backend/src/main/resources/db/migration/). Este documento describe el esquema físico actual, sus decisiones de diseño y la trazabilidad con las especificaciones. El diagrama DBML correspondiente está en `schema.dbml`.
 
 ---
+
+> **Alineación descriptiva 11-oct-2026:** A6 admite cuenta pendiente sin credencial hasta activación; DDL ya incluye ACTIVACION y BUSQUEDA_DOCUMENTO. Autores históricos de migraciones no sustituyen [dueños vigentes](../responsabilidades.md). Revisión detallada DDL/DBML/migraciones registrada como DAT-01; no se modifican aquí.
 
 ## 1. Visión General y Principios de Diseño
 
@@ -35,9 +37,9 @@ El modelo de datos soporta el **proveedor de identidad** del Marketplace Multica
 | `tipo_bloqueo` | `AUTOMATICO`, `MANUAL` | Naturaleza del bloqueo (SPEC-14/15). |
 | `resultado` | `EXITO`, `FALLO` | Resultado de intentos de login y auditoría. |
 | `actor_tipo` | `USUARIO`, `MODULO`, `SISTEMA` | Tipo de actor en `auditoria_seguridad` y `outbox`. |
-| `proposito_token` | `VERIFICAR_CORREO`, `CAMBIO_CORREO`, `RECUPERACION`, `DESBLOQUEO` | Propósito de `token_un_uso` (SPEC-02/08/14/16). |
+| `proposito_token` | `VERIFICAR_CORREO`, `CAMBIO_CORREO`, `RECUPERACION`, `DESBLOQUEO`, `ACTIVACION` | Propósito de `token_un_uso` (SPEC-02/08/14/16). |
 | `estado_cuenta_efectivo` | `ACTIVO`, `INACTIVO`, `BLOQUEADO`, `PENDIENTE_VERIFICACION` | Estado que ven la API y los módulos (vista `usuario_estado_efectivo`). |
-| `tipo_limite` | `REENVIO_VERIFICACION`, `RECUPERACION` | Tipo de límite en `solicitud_limitada` (RF-02.4, RF-08.8). |
+| `tipo_limite` | `REENVIO_VERIFICACION`, `RECUPERACION`, `BUSQUEDA_DOCUMENTO` | Tipo de límite en `solicitud_limitada` (RF-02.4, RF-08.8). |
 
 ---
 
@@ -55,7 +57,7 @@ erDiagram
     permiso ||--o{ rol_permiso : "N:M"
 
     %% V2: CREDENCIALES Y TOKENS UN SOLO USO
-    usuario ||--|| credencial : "1:1"
+    usuario ||--o| credencial : "0:1 hasta activar A6"
     usuario ||--o{ password_historial : "1:N"
     usuario ||--o{ otp : "1:N"
     usuario ||--o{ token_un_uso : "1:N"
@@ -480,7 +482,15 @@ Desde `specs/trazabilidad.md` §5. Cada tabla tiene **dueña única** (escribe l
 | **V2** | `V2__credenciales.sql` | Juan José | `credencial`, `password_historial`, `otp`, `token_un_uso`, `solicitud_limitada` (enum `tipo_limite` aquí) |
 | **V3** | `V3__sesion_y_bloqueo.sql` | Jose Luis | `token_refresco`, `desafio_mfa`, `intento_login`, `bloqueo`, vista `usuario_estado_efectivo` (enums `resultado`, `tipo_bloqueo` y `estado_cuenta_efectivo` aquí) |
 | **V4** | `V4__auditoria_y_clientes.sql` | Christian / Sergio | `auditoria_seguridad` + trigger, `cliente_servicio`, `scope`, `cliente_servicio_scope`, `outbox` |
-| **V5** | `V5__fk_otp_desafio.sql` | Juan José | FK compuesta `otp(desafio_id, usuario_id)` → `desafio_mfa(id, usuario_id)`: necesita `otp` (V2) y `desafio_mfa` (V3), y una migración ya aplicada no se edita |
+| **V5 (declarada; archivo ausente en el corte)** | `V5__fk_otp_desafio.sql` | Autor histórico indicado: Juan José; revisión vigente Luis David/Jose Luis | FK compuesta `otp(desafio_id, usuario_id)` → `desafio_mfa(id, usuario_id)`: necesita `otp` (V2) y `desafio_mfa` (V3), y una migración ya aplicada no se edita |
 | **V100** | `V100__datos_semilla.sql` | **Eva** | 6 roles, 8 permisos (solo `ADMIN_SISTEMA`), `rol_permiso`, usuarios de prueba (kit §6) |
 
 Cada tipo enum va en la migración de la **primera tabla que lo usa**; `otp` debe crearse después de `desafio_mfa` (FK compuesta), así que su FK a `desafio_mfa` va en V5. Las migraciones viven en `backend/src/main/resources/db/migration/`.
+
+
+## Contraste de implementación 11-oct — DAT-01
+
+[Revisión de datos](../integracion/revision-datos.md) registra divergencias
+concretas: la V5 declarada no existe en la cadena real; OTP en V2 difiere del
+DDL/DBML; el cambio de MFA no tiene persistencia definida. La tabla anterior
+no acredita migraciones aplicadas ni equivalencia entre DDL y base real.

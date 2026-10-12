@@ -4,7 +4,8 @@
 |---|---|
 | Spec de interfaz | `specs/front/FRONT-04-desafio-otp.md` |
 | Specs de backend | SPEC-09 (OTP), SPEC-07 (caducidad) |
-| Responsable | Por asignar |
+| **Responsable** | Luis David Morales Brenis |
+| **Épica principal** | [EP-04](../epicas/EP-04-segundo-factor.md) |
 
 ---
 
@@ -48,7 +49,7 @@ Reutiliza de FRONT-00: `api`, `errores`, `sesion` (guardar al éxito).
 |---|---|
 | `OtpPage` | `PinInput` de 6 casillas, botón «Verificar», enlace «Enviar otro código» |
 | `useDesafioOtp` | Guarda `challengeToken` en memoria; llama `api.otpSolicitar` y `api.otpVerificar`; mantiene `intentosRestantes` |
-| `CuentaRegresiva` | Cuenta atrás desde `expiraEn` (del código); al llegar a cero deshabilita |
+| `CuentaRegresiva` | Cuenta atrás con el menor vencimiento de código/desafío; al llegar a cero deshabilita |
 
 ---
 
@@ -68,7 +69,7 @@ Reutiliza de FRONT-00: `api`, `errores`, `sesion` (guardar al éxito).
 | Éxito | `200 SesionIniciada` | guarda sesión y navega |
 
 **Dos relojes**: el desafío (`DesafioMfa.expiraEn`) y el código (`expiraEn` de
-solicitar, 300 s). La cuenta atrás visible es la del código.
+solicitar, 300 s). La cuenta atrás visible es el menor tiempo restante de código y desafío.
 
 ---
 
@@ -110,3 +111,22 @@ solicitar, 300 s). La cuenta atrás visible es la del código.
 - **H-05**: `DEMASIADAS_SOLICITUDES` no indica cuándo reintentar.
 - **H-06**: no está escrito si un código nuevo invalida el anterior; la pantalla
   no ofrece cambiar de canal y trata cada código como el único válido.
+
+
+## Reenvío, límite y canal — corte contractual local 11-oct
+
+Tras 202 se calcula el menor tiempo de `expiraEn` y `desafioExpiraEn`.
+Si consume la base 1.0.0 sin este campo adicional, conserva el vencimiento
+absoluto del desafío recibido en login; nunca lo reinicia al reenviar.
+Reenvío exitoso sustituye OTP anterior y restablece tres intentos del código,
+sin prorrogar desafío. Al terminar este, volver al login.
+
+`429`: leer `Retry-After`, mostrar segundos y deshabilitar reenvío hasta
+liberar cuota; sin envío automático. Si aún hay código vigente, puede verificarlo.
+`400 VALIDACION` por SMS sin celular: mostrar «Elige correo para recibir
+el código.» y permitir EMAIL; no iniciar otro login ni consumir cuota.
+Sesión/configuración MFA no usa este challengeToken (SPEC-10).
+
+Casos adicionales: reenvío rechaza código anterior; SMS sin celular permite
+volver a EMAIL; cuenta regresiva no extiende desafío; Retry-After restringe
+reenvío, también cuando parte de la cuota fue usada por un cambio MFA.

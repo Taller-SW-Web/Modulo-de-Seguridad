@@ -3,7 +3,7 @@
 **Módulo de Seguridad y Autenticación (G7)** · Marketplace Multicanal · UNMSM 2026-II
 
 Si vienes de otro equipo, esta es la única página que necesitas leer. El
-contrato completo está en [`openapi.yaml`](openapi.yaml); esto es cómo usarlo.
+contrato completo está en [`contrato-api/openapi.yaml`](contrato-api/openapi.yaml); esto es cómo usarlo.
 
 > **Lo esencial en tres frases.** Vuestros usuarios inician sesión contra
 > nosotros y reciben un token. Ustedes **verifican ese token en local** con
@@ -12,6 +12,12 @@ contrato completo está en [`openapi.yaml`](openapi.yaml); esto es cómo usarlo.
 
 ---
 
+> **Corte local 11-oct:** [contratos](contrato-api/README.md) distingue base
+> pública 1.0.0 de revisiones locales 1.1.0/v2. Login, refresh, OTP de login
+> y JWKS conservan v1; configuración MFA segura usa v2 (SPEC-10).
+> No consumir las rutas históricas incompletas /auth/otp/habilitar/deshabilitar.
+> Sin publicación nueva ni excepción al aviso de una semana.
+
 ## 1. Empiecen ahora, no cuando esté implementado
 
 El contrato está congelado antes que el código. Levanten el entorno simulado:
@@ -19,17 +25,26 @@ El contrato está congelado antes que el código. Levanten el entorno simulado:
 ```bash
 git clone https://github.com/Taller-SW-Web/Modulo-de-Seguridad.git
 cd Modulo-de-Seguridad
-npx @stoplight/prism-cli mock specs/openapi.yaml -p 4010
+npx @stoplight/prism-cli@5.16.0 mock specs/openapi.yaml -p 4010
 ```
 
+El comando anterior usa la ruta del **main público fijado**. En esta rama
+reorganizada, aún sin publicar, el equivalente es:
+
+```bash
+npx @stoplight/prism-cli@5.16.0 mock specs/contrato-api/openapi.yaml -p 4010
+```
+
+No anunciar la ruta nueva como disponible en main antes de publicarla.
 Comprueben que responde:
 
 ```bash
 curl http://localhost:4010/auth/.well-known/jwks.json
 ```
 
-Solo hace falta **Node 18 o superior**. No se instala nada: `npx` lo descarga y
-lo ejecuta.
+Para esta revisión se comprobó **Prism 5.16.0 con Node 24.19.0**; esa
+versión de Prism exige Node **24.18.0 o superior**. `npx` descarga la
+herramienta en su caché; no la añade como dependencia de la aplicación.
 
 ### ⚠️ El prefijo `/api/v1`
 
@@ -51,9 +66,29 @@ no tocarán ni una línea de código.
 El frontend de ustedes les manda el token en `Authorization: Bearer <token>`. Lo
 verifican con nuestra clave pública. **No nos llaman.**
 
+### Configuración común
+
+Revisión local del kit, pendiente de publicación. Configurar por entorno:
+
+| Variable | Contenido | Ejemplo local del backend real |
+|---|---|---|
+| `SECURITY_ISSUER` | Emisor esperado; coincidencia exacta con `issuer` del descubrimiento | `http://localhost:8080/api/v1/auth` |
+| `SECURITY_DISCOVERY_URL` | Documento con `issuer` y `jwks_uri` | `http://localhost:8080/api/v1/auth/.well-known/openid-configuration` |
+| `SECURITY_JWKS_URL` | Claves públicas; `jwks_uri` del descubrimiento comprobado | `http://localhost:8080/api/v1/auth/.well-known/jwks.json` |
+
+En nube se usan URLs HTTPS acordadas; no hay despliegue acreditado todavía.
+Descubrimiento y JWKS son documentos diferentes. No configurar `auth-service`
+ni aceptar el issuer que elija el token entrante.
+
+**Usuario:** RS256, firma válida, issuer exacto, vencimiento vigente, `sub` UUID
+y `tipo: "acceso"`. No hay `aud` definido para usuario; no inventarlo.
+**Servicio:** `tipo: "servicio"`, audiencia de la API receptora y scopes
+concedidos (SPEC-17). Estos ejemplos aceptan solo usuarios. Cada endpoint
+autoriza después por roles y por los datos del titular.
+
 ### Spring Boot
 
-Una línea de configuración, gracias al documento de descubrimiento:
+Dependencias: Spring Security Resource Server y JOSE. Configuración:
 
 ```yaml
 spring:
@@ -61,89 +96,179 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/api/v1/auth
+          issuer-uri: ${SECURITY_ISSUER}
+          jwk-set-uri: ${SECURITY_JWKS_URL}
+          jws-algorithms: RS256
 ```
 
-**Contra el mock eso no sirve**, y conviene saber por qué: el mock sí publica el
-documento de descubrimiento, pero el `issuer` que declara apunta al backend
-real, y Spring rechaza la configuración cuando no coincide con la URL que le
-dieron. Contra el mock, apunten directamente al JWKS:
-
-```yaml
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://localhost:4010/auth/.well-known/jwks.json
-```
-
-Nuestros roles viajan en el claim `roles`, no en `scope`, así que necesitan un
-converter para que `hasRole()` funcione:
+Fragmentos de una clase `@Configuration`, con imports de Spring Security/OAuth2
+y `java.util`. El decoder conserva issuer y tiempo; agrega el perfil de usuario:
 
 ```java
+@Bean
+JwtDecoder jwtDecoder(
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuer,
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwksUrl) {
+    var decoder = NimbusJwtDecoder.withJwkSetUri(jwksUrl)
+        .jwsAlgorithm(SignatureAlgorithm.RS256).build();
+    var claimsConverter = MappedJwtClaimSetConverter.withDefaults(Map.of());
+    decoder.setClaimSetConverter(claims -> {
+        // Spring puede completar iat si falta: exigirlo antes de convertir.
+        if (claims.get("iat") == null)
+            throw new IllegalArgumentException("Falta iat");
+        return claimsConverter.convert(claims);
+    });
+    OAuth2TokenValidator<Jwt> perfil = jwt -> {
+        String sub = jwt.getSubject();
+        Object roles = jwt.getClaims().get("roles");
+        boolean valido = "acceso".equals(jwt.getClaimAsString("tipo"))
+            && roles instanceof List<?> lista && lista.stream().allMatch(String.class::isInstance)
+            && jwt.getExpiresAt() != null && jwt.getIssuedAt() != null
+            && jwt.getClaims().get("jti") instanceof String jti && !jti.isBlank()
+            && sub != null
+            && sub.matches("(?i)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
+        return valido ? OAuth2TokenValidatorResult.success()
+            : OAuth2TokenValidatorResult.failure(
+                new OAuth2Error("invalid_token", "Perfil de usuario inválido", null));
+    };
+    decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+        new JwtTimestampValidator(java.time.Duration.ZERO),
+        new JwtIssuerValidator(issuer), perfil));
+    return decoder;
+}
+
 @Bean
 SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     var converter = new JwtAuthenticationConverter();
     converter.setJwtGrantedAuthoritiesConverter(jwt -> {
         List<String> roles = jwt.getClaimAsStringList("roles");
         return roles == null ? List.of()
-            : roles.stream()
-                   .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
-                   .map(GrantedAuthority.class::cast)
-                   .toList();
+            : roles.stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r))
+                .map(GrantedAuthority.class::cast).toList();
     });
-
-    http.oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(converter)));
+    http.authorizeHttpRequests(a -> a.anyRequest().authenticated())
+        .oauth2ResourceServer(o -> o.jwt(j ->
+            j.jwtAuthenticationConverter(converter)));
     return http.build();
 }
 ```
 
-Y a partir de ahí:
-
-```java
-@PreAuthorize("hasRole('GESTOR_DESPACHO')")
-public void reasignarReparto(UUID pedidoId) { ... }
-```
+`@PreAuthorize("hasRole('CLIENTE')")` requiere habilitar method security.
+Consultar por `Jwt.getSubject()`. Adaptar rutas públicas y CSRF al consumidor.
+[Referencia oficial de Spring Security](https://docs.spring.io/spring-security/reference/6.5/servlet/oauth2/resource-server/jwt.html).
 
 ### Node
+
+Dependencia: `jose`. Compartir el JWKS por proceso para aprovechar su caché:
 
 ```js
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
-// Una sola vez al arrancar: la librería cachea las claves por ustedes.
-const jwks = createRemoteJWKSet(
-  new URL('http://localhost:4010/auth/.well-known/jwks.json')
-);
+const issuer = process.env.SECURITY_ISSUER;
+const jwksUrl = process.env.SECURITY_JWKS_URL;
+if (!issuer || !jwksUrl) throw new Error('Falta configuración de Seguridad');
+const jwks = createRemoteJWKSet(new URL(jwksUrl));
+const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function verificarToken(authorizationHeader) {
-  const token = authorizationHeader.replace(/^Bearer /, '');
-  const { payload } = await jwtVerify(token, jwks, {
-    issuer: 'auth-service',
+  const match = /^Bearer ([^\s]+)$/i.exec(authorizationHeader ?? '');
+  if (!match) throw new Error('TOKEN_INVALIDO');
+  const { payload } = await jwtVerify(match[1], jwks, {
+    issuer,
+    algorithms: ['RS256'],
+    requiredClaims: ['iss', 'sub', 'iat', 'exp', 'jti'],
   });
-  return payload; // { sub, email, roles, permisos, tipo, exp, jti }
+  if (payload.tipo !== 'acceso' || !uuid.test(payload.sub ?? '') ||
+      typeof payload.jti !== 'string' || payload.jti.trim().length === 0 ||
+      !Array.isArray(payload.roles) ||
+      !payload.roles.every(r => typeof r === 'string')) {
+    throw new Error('TOKEN_INVALIDO');
+  }
+  return payload;
 }
 ```
 
+El middleware traduce fallos a `401`. Para `/pedidos/me` exige
+`payload.roles.includes('CLIENTE')`; si falta el rol, `403`. Consulta por
+`payload.sub`, nunca por un identificador enviado por el navegador.
+[Referencia oficial de jose](https://github.com/panva/jose/blob/main/docs/jwt/verify/functions/jwtVerify.md).
+
 ### .NET
 
-`options.Authority` hace descubrimiento, así que sirve contra el backend real.
-Contra el mock, fijad `options.MetadataAddress` al JWKS o resolved la clave a
-mano, por el mismo motivo que en Spring.
+`MetadataAddress` recibe **descubrimiento**, nunca `jwks.json`:
 
 ```csharp
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+var issuer = builder.Configuration["SECURITY_ISSUER"]
+    ?? throw new InvalidOperationException("Falta SECURITY_ISSUER");
+var discovery = builder.Configuration["SECURITY_DISCOVERY_URL"]
+    ?? throw new InvalidOperationException("Falta SECURITY_DISCOVERY_URL");
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = "http://localhost:8080/api/v1/auth";
+        options.MetadataAddress = discovery;
+        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+        options.MapInboundClaims = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidIssuer = "auth-service",
-            RoleClaimType = "roles"   // nuestros roles no van en "scope"
+            ValidateIssuer = true, ValidIssuer = issuer,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true, RequireExpirationTime = true,
+            ValidAlgorithms = new[] { SecurityAlgorithms.RsaSha256 },
+            ValidateAudience = false, // solo usuario actual; no servicio
+            RoleClaimType = "roles", ClockSkew = TimeSpan.Zero
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                // Leer tipos JSON originales: roles debe ser un array, incluso vacío.
+                var json = context.SecurityToken switch
+                {
+                    JsonWebToken jwt => Base64UrlEncoder.Decode(jwt.EncodedPayload),
+                    JwtSecurityToken jwt => jwt.Payload.SerializeToJson(),
+                    _ => "{}"
+                };
+                using var document = JsonDocument.Parse(json);
+                var claims = document.RootElement;
+                bool valido =
+                    claims.TryGetProperty("tipo", out var tipo) &&
+                    tipo.ValueKind == JsonValueKind.String && tipo.GetString() == "acceso" &&
+                    claims.TryGetProperty("sub", out var sub) &&
+                    sub.ValueKind == JsonValueKind.String &&
+                    Guid.TryParseExact(sub.GetString(), "D", out _) &&
+                    claims.TryGetProperty("iat", out var iat) &&
+                    iat.ValueKind == JsonValueKind.Number && iat.TryGetInt64(out _) &&
+                    claims.TryGetProperty("jti", out var jti) &&
+                    jti.ValueKind == JsonValueKind.String &&
+                    !string.IsNullOrWhiteSpace(jti.GetString()) &&
+                    claims.TryGetProperty("roles", out var roles) &&
+                    roles.ValueKind == JsonValueKind.Array &&
+                    roles.EnumerateArray().All(r => r.ValueKind == JsonValueKind.String);
+                if (!valido) context.Fail("Perfil de usuario inválido");
+                return Task.CompletedTask;
+            }
         };
     });
+builder.Services.AddAuthorization();
 ```
+
+Activar `UseAuthentication()` y `UseAuthorization()`; exigir
+`[Authorize(Roles = "CLIENTE")]` y consultar por `sub` del principal.
+Imports: `Microsoft.AspNetCore.Authentication.JwtBearer`,
+`Microsoft.IdentityModel.Tokens`, `Microsoft.IdentityModel.JsonWebTokens`,
+`System.IdentityModel.Tokens.Jwt`, `System.Text.Json` y `System.Linq`,
+además de los namespaces comunes de System/ASP.NET Core.
+No reutilizar esta configuración para servicio.
+[Referencia oficial de JwtBearerOptions](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.jwtbearer.jwtbeareroptions).
+
+### Qué prueban los mocks
+
+Prism sirve formas y ejemplos; no autentica ni firma tokens. Los tokens y claves
+ilustrativos de OpenAPI no son un par criptográfico utilizable. Para probar los
+validadores hace falta un servidor o una fixture RS256 firmada y su JWKS público.
+Cambiar la URL al mock no convierte sus ejemplos en autenticación real.
+[Validación local del punto 9](../docs/integracion/validacion-hito-3.md) registra
+versiones, casos y límites; no acredita servidores del módulo.
 
 ### Reglas de la vía 1
 
@@ -213,16 +338,18 @@ curl -X POST http://localhost:4010/auth/token \
 
 Es la pregunta que más cuesta, así que va con una regla concreta:
 
-> **Si la operación mueve dinero, cancela algo o cambia permisos, introspeccionad.
-> Para todo lo demás, validen en local.**
+> Validar localmente no consulta revocaciones. Para estado actual, usar la
+> consulta acordada: introspección requiere su scope y token de servicio.
+> **Ventas/Postventa consultan la cuenta con `usuarios:leer` según A10**;
+> esto no equivale a introspeccionar una sesión.
 
 | Operación | Vía | Por qué |
 |---|---|---|
 | Listar productos, ver el catálogo | Local | Un desfase de 15 minutos no hace daño |
 | Añadir al carrito | Local | Reversible |
 | Consultar el estado de un pedido | Local | Solo lectura |
-| **Anular un pedido** | **Introspección** | Irreversible y con impacto económico |
-| **Aprobar un reembolso** | **Introspección** | Mueve dinero |
+| **Anular un pedido (Ventas)** | **Consulta de cuenta, A10** | Estado del cliente; no de la sesión individual |
+| **Aprobar un reembolso (Ventas/Postventa)** | **Consulta de cuenta, A10** | Estado actual; autorización de negocio local |
 | **Cambiar un precio** | **Introspección** | Afecta a todos los canales |
 | **Asignar o revocar un rol** | **Introspección** | Escala privilegios |
 
@@ -233,7 +360,7 @@ curl -X POST http://localhost:4010/auth/introspeccion \
   -d '{"token":"<token-del-usuario>"}'
 ```
 
-La respuesta es **siempre `200`**; el resultado va en `activo`:
+Una introspección autorizada y bien formada devuelve `200`; su resultado va en `activo`:
 
 ```json
 { "activo": false, "motivo": "USUARIO_INACTIVO" }
@@ -279,9 +406,20 @@ las decisiones se registran en
 | Chatbot Cliente | `cotizaciones:calcular`, `seguimientos:leer` *(API de Despacho, acuerdo A8)* | Cotizar el envío y mostrar el seguimiento |
 | Chatbot Cliente | `catalogo:leer`, `precios:leer`, `promociones:leer`, `promociones:evaluar`, `cupones:validar`, `recomendaciones:leer`, `inventario:disponibilidad:leer` *(API de Productos, acuerdo A9: **pendiente de que Productos confirme su lista**)* | Catálogo, precios, ofertas y stock en la conversación |
 | Retail Vendedor | `usuarios:leer`, `roles:leer` | Consultar clientes por `id` y comprobar el rol del vendedor. **Buscar por documento y registrar clientes no va con este token**, sino con el del vendedor (§8) |
-| Ventas y Postventa | `usuarios:leer`, `usuarios:leer:documento`, `tokens:introspeccion` | Emitir boletas y autorizar anulaciones. **Provisional:** Ventas no ha confirmado que necesite el documento en claro |
+| Ventas y Postventa (clientes separados) | `usuarios:leer` | Estado de cuenta según A10; documento en claro **provisional**; introspección fuera de A10 |
 | Despacho y Entrega | `usuarios:leer`, `direcciones:leer` | Entregar el paquete |
 | Productos y Ofertas | `tokens:introspeccion`, `roles:leer` | Autorizar cambios de precio |
+
+**A10 confirmado en #42 y ajustado en #44:** siete scopes propios de Ventas/Postventa,
+concesiones por consumidor y dos clientes nuevos previstos (`modulo-postventa`,
+`simulador-pasarela`). Detalle en la [matriz](../docs/integracion/matriz-scopes.md).
+Aprobación no acredita provisión. A9 sigue condicionado a Productos.
+`postventa:csat:escribir` se retira de Marketplace, Chatbot y Retail, sin
+reemplazo, según [#44](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/44#issuecomment-6118403027).
+`POST /api/v2/csat` es de Postventa: usa token del cliente, rol `CLIENTE` y
+verificación de propiedad del pedido por `sub`. No es un endpoint de Seguridad.
+`ventas:pedidos:leer` y `ventas:admin` no se conceden. El Hito 3 propuesto usa
+token **de usuario**, sin estos scopes.
 
 ### Scopes de la API de otro módulo
 
@@ -291,7 +429,7 @@ A4). El token lleva en `aud` la lista de APIs dueñas de los scopes concedidos
 por espacio. Dura una hora. Quien recibe el token comprueba `iss`, `aud`,
 `tipo`, `exp` y el scope, y responde sus propios `401`/`403`. Para pedir uno,
 abran un issue con `integracion` indicando cliente, scopes y API dueña. Detalle
-en [SPEC-17](SPEC-17-tokens-servicio.md#scopes-de-apis-de-otros-módulos).
+en [SPEC-17](funcionales/SPEC-17-tokens-servicio.md#scopes-de-apis-de-otros-módulos).
 
 ### El documento se enmascara según el scope
 
@@ -368,8 +506,14 @@ canjean con `POST /auth/otp/verificar`.
 
 **El acceso dura 15 minutos.** Renovadlo con `POST /auth/refresh` antes de que
 venza. El refresco **se usa una sola vez**: cada renovación les devuelve uno
-nuevo, y reutilizar uno viejo cierra todas las sesiones de ese usuario. Guarden
-siempre el último.
+nuevo. Reutilizar uno viejo revoca su **familia de refresco y sesión**, sin
+cerrar sesiones independientes (SPEC-06). Guarden el último y serialicen las
+renovaciones. OpenAPI necesita corrección descriptiva del PO (KIT-02).
+
+**Decisión de esta versión (H-11):** acceso y refresco en memoria, sin
+localStorage/sessionStorage; recargar o cerrar la página exige login.
+Aceptación con Ventas pendiente. Logout envía el último refresco a
+`POST /auth/logout` y limpia la memoria.
 
 ---
 
@@ -454,7 +598,7 @@ de su canal:
 Es una **lista cerrada** —`WEB`, `CHATBOT`, `RETAIL`, `MARKETPLACE`— y la URL de
 cada canal la resolvemos nosotros desde configuración. `CHATBOT` usa su propia
 pantalla; los otros tres, la nuestra, y al terminar `MARKETPLACE` y `RETAIL`
-vuelven al inicio de sesión de Marketplace. **No aceptamos una URL en
+vuelven al inicio de sesión **de su propio canal configurado**. **No aceptamos una URL en
 la petición**: un destino libre sería una redirección abierta, y el token de
 verificación viaja en el enlace. Si falta el campo, el destino es `WEB`. Para
 sumar un canal a la lista, pídanlo por issue.
@@ -483,8 +627,8 @@ persona registró o buscó a quién.
 
 Lo pidieron y la respuesta es no, por ahora. El SMS usa un adaptador simulado
 hasta el final del curso, así que un código por SMS no prueba nada; y el correo
-ya queda verificado por el registro. RF-10.4 de nuestra SPEC-10 queda
-especificado, pero **sin endpoint ni scope**.
+ya queda verificado por el registro. La verificación externa de contactos de
+RF-10.4 queda **aplazada**, sin endpoint ni scope; no es una capacidad disponible.
 
 Si tienen un caso que el registro con enlace no cubra, cuéntenlo en un issue y
 lo reevaluamos para el Hito 4.
@@ -511,7 +655,7 @@ Todos nuestros errores son `application/problem+json` (RFC 7807):
 | `TOKEN_INVALIDO` | Falta el token o no es válido | Pidan uno nuevo |
 | `SCOPE_INSUFICIENTE` | Su token no cubre esa operación | Pidan el scope en la sincronización. **No reintenten** |
 | `CREDENCIALES_INVALIDAS` | Correo o contraseña incorrectos | Mensaje genérico al usuario |
-| `CUENTA_NO_DISPONIBLE` | Bloqueada, inactiva o sin verificar | Mensaje genérico. No digan cuál |
+| `CUENTA_NO_DISPONIBLE` | Bloqueo administrativo sobre cuenta no operativa; **no es error de login** | En panel autorizado; login mantiene `401 CREDENCIALES_INVALIDAS` |
 | `REFRESCO_INVALIDO` | Refresco vencido o ya usado | Volver a iniciar sesión |
 | `LOTE_DEMASIADO_GRANDE` | Más de 100 identificadores | Partan el lote |
 | `NO_DISPONIBLE` | No podemos responder ahora | Usen su caché del JWKS |
@@ -536,8 +680,7 @@ Para que nadie lo asuma por interpretación:
   del usuario que introspecciona.
 - **Todavía no publicamos eventos asíncronos.** `usuario.desactivado`,
   `usuario.bloqueado` y `usuario.roles_cambiados` llegan en la semana 12. Hasta
-  entonces, la ventana de desfase es de 15 minutos y quien no la tolere usa la
-  introspección.
+  entonces, usar la comprobación de estado acordada y autorizada en cada flujo.
 - **No limitamos la tasa por módulo.** Si saturan la API, la saturan.
 
 ---

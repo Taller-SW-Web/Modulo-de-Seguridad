@@ -8,7 +8,7 @@ repositorio al explorar el código.
 - **[`CONTEXT.md`](../../CONTEXT.md)** en la raíz del repositorio: el glosario
   del dominio, con los términos canónicos y los que hay que evitar.
 - **`docs/arquitectura/adr/`**: lee los ADR que toquen el área en la que vas a
-  trabajar. Hoy hay cuatro:
+  trabajar. Los ADR de referencia son:
 
   | ADR | Decisión |
   |---|---|
@@ -16,11 +16,15 @@ repositorio al explorar el código.
   | [002](../arquitectura/adr/002-validacion-local-frente-a-introspeccion.md) | Validación local frente a introspección |
   | [003](../arquitectura/adr/003-contrato-antes-que-codigo.md) | Contrato antes que código |
   | [004](../arquitectura/adr/004-idioma-del-contrato.md) | Idioma del contrato |
+  | [005](../arquitectura/adr/005-sin-cuenta-de-invitado.md) | Sin cuenta de invitado |
+  | [006](../arquitectura/adr/006-sin-consulta-por-correo-ni-celular.md) | Sin consulta por correo/celular |
+  | [007](../arquitectura/adr/007-busqueda-por-documento-en-tienda.md) | Búsqueda por documento |
+  | [008](../arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md) | Evolución local de MFA y alta administrativa |
 
 > **Ojo con la ruta.** Los ADR de este repositorio están en
 > `docs/arquitectura/adr/`, no en el `docs/adr/` que asumen las plantillas por
 > defecto. No crees un `docs/adr/` nuevo: añade los ADR nuevos donde ya están
-> los cuatro existentes.
+> los existentes.
 
 Si alguno de estos archivos no existe, **sigue en silencio**. No señales su
 ausencia ni propongas crearlos de entrada. La skill `/domain-modeling` —a la que
@@ -45,12 +49,17 @@ Este repositorio es de **contexto único**: no es un monorepo y no hay
 │   ├── plan-hito-1.md
 │   └── responsabilidades.md
 └── specs/                          ← las 18 specs SDD de backend, las de interfaz (front/) y el contrato
-    ├── SPEC-0X-*.md
-    ├── openapi.yaml
+    ├── epicas/                     ← ocho funcionalidades
+    ├── funcionales/                ← 18 specs de backend
+    ├── contrato-api/openapi.yaml
+    ├── front/
+    ├── componentes-react/
     ├── catalogo-errores.md
     ├── catalogo-eventos.md
     └── trazabilidad.md
 ```
+
+[Fuentes oficiales](../fuentes-oficiales.md) distingue contrato, reglas, acuerdos e históricos; [plan actual](../../plan/README.md) mantiene tareas.
 
 ## Usa el vocabulario del glosario
 

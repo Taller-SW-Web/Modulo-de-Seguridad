@@ -1,5 +1,9 @@
 # auth-service
 
+El reparto actual es [por épicas completas](../specs/epicas/README.md). Los
+responsables de migraciones de esta guía son autores históricos; no asignan
+por separado las capas de las funcionalidades.
+
 Módulo de Seguridad y Autenticación — Marketplace Multicanal de Productos Deportivos.
 
 ## Stack
@@ -90,6 +94,6 @@ mvn test
 
 ## Documentación
 
-- [Implementación](../../docs/arquitectura/implementacion.md)
-- [Esquema de datos](../../docs/arquitectura/schema.sql)
-- [Contrato OpenAPI](../../specs/openapi.yaml)
+- [Implementación](../docs/arquitectura/implementacion.md)
+- [Esquema de datos](../docs/arquitectura/schema.sql)
+- [Contrato OpenAPI](../specs/contrato-api/openapi.yaml)

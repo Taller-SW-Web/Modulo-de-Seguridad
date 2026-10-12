@@ -4,7 +4,10 @@
 |---|---|
 | Spec de interfaz | `specs/front/FRONT-05-recuperar-contrasena.md` |
 | Specs de backend | SPEC-08 (recuperación), SPEC-07 (política), SPEC-14 (levanta bloqueo automático) |
-| Responsable | Por asignar |
+| **Responsable** | Juan José Cano Vasquez |
+| **Épica principal** | [EP-03](../epicas/EP-03-credenciales.md) |
+
+> **Corte de versión, 11-oct-2026:** H-15 decidido: vigencia/uso del enlace se comprueba al enviar el formulario. No se añade preconsulta de enlace; mantener los errores de recuperación existentes, sin equipararlos a errores de verificación de correo.
 
 ---
 

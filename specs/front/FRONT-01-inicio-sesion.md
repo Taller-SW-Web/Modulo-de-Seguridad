@@ -2,7 +2,8 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Jose Luis Limachi Sarmiento |
+| **Épica principal** | [EP-02](../epicas/EP-02-autenticacion-sesiones.md) |
 | **Specs de backend que consume** | SPEC-05, SPEC-07, SPEC-14 (y SPEC-09 al derivar al segundo factor) |
 | **Wireframe** | Stitch, proyecto `889177073946089595`, pantalla 1 (artboards con la numeración antigua; ver [`trazabilidad.md`](../trazabilidad.md) §1.1). Figma: pendiente |
 | **Estado** | Borrador |
@@ -162,7 +163,7 @@ Avisos de llegada (se muestran en el estado inicial):
 
 - Mostrar cuántos intentos quedan antes de un bloqueo, o que la cuenta está
   bloqueada: revelaría el estado de la cuenta (RF-14.6).
-- «Recordarme» o sesiones persistentes: depende de H-11.
+- «Recordarme» o sesiones persistentes: fuera de esta versión, tokens en memoria (H-11).
 - Inicio de sesión con Google, Facebook u otros proveedores (fuera de alcance
   de SPEC-05).
 - CAPTCHA (fuera de alcance de SPEC-14).

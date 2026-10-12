@@ -2,11 +2,14 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Luis David Morales Brenis |
+| **Épica principal** | [EP-07](../epicas/EP-07-bloqueo-desbloqueo.md) |
 | **Specs de backend que consume** | SPEC-14 |
 | **Wireframe** | Sin wireframe — pendiente |
 | **Estado** | Borrador |
 | **Aprobada por** | Pendiente |
+
+> **Corte de versión, 11-oct-2026:** H-14: en el flujo autorizado de soporte indicar «Solicita al administrador de la plataforma que revise tu cuenta.» El PO debe confirmar un canal concreto; no inventar correo/enlace. Login sigue genérico, sin revelar bloqueo manual.
 
 ---
 

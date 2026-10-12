@@ -1,254 +1,107 @@
-# División de responsabilidades — G7
+# Responsabilidades por épica — G7
 
-**Módulo:** Seguridad y autenticación de usuarios (gestor de accesos)
-**Curso:** Taller de Construcción de Software Web — UNMSM — Ciclo 2026-II
-**Repositorio:** https://github.com/Taller-SW-Web/Modulo-de-Seguridad
-**Versión:** 2.0 — Semana 5 (18 specs, tras el feedback del Hito 1)
+**Actualización:** 11 de octubre de 2026 · reparto acordado para preparar Hito 3.
+**Estado:** documentado en la rama de trabajo; pendiente de publicación. No
+acredita implementación, pruebas ni aceptación de otros equipos.
 
-> Este documento es el entregable del rubro **«Funcionalidades identificadas y
-> distribuidas por cada integrante»** del Hito 1 (Componente 2, 25%).
+## Ocho funcionalidades, siete estudiantes
 
----
+Una **épica** es una funcionalidad de usuario completa. Una **SPEC** describe
+una parte verificable. Dividir las specs no divide la responsabilidad entre
+estudiantes o capas.
 
-## 1. Por qué este módulo se reparte distinto
-
-Este módulo no es un canal de venta: es el **proveedor de identidad** de todo el
-marketplace. Según la matriz cruzada del curso, los otros seis módulos dependen
-de nosotros y **ninguno puede leer nuestra base de datos**. Eso impone dos
-consecuencias sobre el reparto:
-
-1. **El contrato de la API tiene dueño único.** Si cada integrante inventara sus
-   propios endpoints, los seis equipos consumidores recibirían un contrato
-   inconsistente. Por eso el contrato (SPEC-17 y SPEC-18) no se reparte: lo lleva el
-   Product Owner y todos los demás programan contra él.
-2. **Nadie es dueño exclusivo de una capa.** El curso evalúa el desarrollo
-   *individual* en cada revisión semanal. Ningún integrante ocupa un rol que sea
-   solo de gestión, y todos deben tener commits propios en `main`.
-
----
-
-## 2. Equipo y roles
-
-| # | Integrante | Código | Rol de equipo | Responsabilidad principal |
+| Épica | Funcionalidad | Dueño de punta a punta | Código | Specs |
 |---|---|---|---|---|
-| 1 | **Sergio Alejandro Osorio Montenegro** | 20130037 | Product Owner y Arquitecto de solución | Arquitectura del módulo, contrato OpenAPI, ADRs, priorización del backlog y coordinación con los otros 6 equipos |
-| 2 | **Jose Luis Limachi Sarmiento** | 22200287 | Tech Lead — Backend | Arquitectura interna del servicio, núcleo de autenticación, emisión y rotación de tokens, revisión de código del equipo |
-| 3 | **Eva Lucía Moreno Zevallos** | 20200277 | Backend | Dominio de usuario: registro, ciclo de vida de la cuenta, roles, permisos y atributos de perfil |
-| 4 | **Juan José Cano Vasquez** | 19200303 | Full Stack | Vertical de credenciales: política de contraseñas, recuperación y cambio (backend + sus pantallas) |
-| 5 | **Luis David Morales Brenis** | 23200280 | Pasivo / Versatil | Vertical de protección: OTP/MFA y bloqueo de cuentas (backend + sus pantallas) |
-| 6 | **Valery Cristin Gutierrez Bendezu** | 23200263 | Frontend y Diseño | Sistema de diseño, paleta de colores, wireframes, prototipos en Figma y pantallas públicas de la SPA |
-| 7 | **Christian Gabriel Arancivia Salas** | 23200077 | DevOps, QA y Frontend de administración | Contenedores, CI/CD, despliegue en nube, estrategia de pruebas y panel de administración |
+| [EP-01](../specs/epicas/EP-01-registro-gestion-usuarios.md) | Registro y gestión de usuarios | Eva Lucía Moreno Zevallos | 20200277 | 01, 02, 03, 04 |
+| [EP-02](../specs/epicas/EP-02-autenticacion-sesiones.md) | Autenticación y sesiones | Jose Luis Limachi Sarmiento | 22200287 | 05, 06 |
+| [EP-03](../specs/epicas/EP-03-credenciales.md) | Gestión de credenciales | Juan José Cano Vasquez | 19200303 | 07, 08 |
+| [EP-04](../specs/epicas/EP-04-segundo-factor.md) | OTP y segundo factor | Luis David Morales Brenis | 23200280 | 09, 10 |
+| [EP-05](../specs/epicas/EP-05-roles-permisos.md) | Roles y permisos | Sergio Alejandro Osorio Montenegro | 20130037 | 11 |
+| [EP-06](../specs/epicas/EP-06-auditoria.md) | Auditoría de seguridad | Christian Gabriel Arancivia Salas | 23200077 | 12, 13 |
+| [EP-07](../specs/epicas/EP-07-bloqueo-desbloqueo.md) | Bloqueo y desbloqueo | Luis David Morales Brenis | 23200280 | 14, 15 |
+| [EP-08](../specs/epicas/EP-08-atributos-perfil.md) | Atributos y perfil | Valery Cristin Gutierrez Bendezu | 23200263 | 16 |
 
-### Nota sobre el rol de arquitectura
+Luis David tiene dos épicas; los otros seis estudiantes tienen una cada uno.
+No hay una novena épica académica por el contrato.
 
-En la plataforma del curso, Jose Luis figura con el tag *Software Architect*. El
-acuerdo del equipo es:
+## Responsabilidad completa e interfaces
 
-- **Sergio** decide y documenta la **arquitectura de solución**: diagramas de
-  contexto y componentes, decisiones de seguridad (RS256 + JWKS), contrato de
-  API e integración con los otros seis módulos. Es quien presenta el rubro
-  *«Arquitectura del módulo preliminar»*.
-- **Jose Luis** es dueño de la **arquitectura de implementación**: estructura de
-  paquetes del servicio, capas, configuración de Spring Security, modelo de
-  datos físico y estándar de código. Firma como co-autor del documento de
-  arquitectura y es el revisor obligatorio de todo PR que toque el núcleo.
+Cada dueño especifica, implementa y demuestra su interfaz, backend,
+persistencia, validaciones, integración con dependencias, eventos y pruebas.
+Las tareas de frontend, backend y datos mantienen el mismo responsable. Un
+revisor comprueba el trabajo sin convertirse en dueño de una capa.
 
-Ambos nombres aparecen en `docs/arquitectura/`. Ninguna decisión de arquitectura
-entra sin que los dos estén de acuerdo; si no lo están, decide el Product Owner
-y se registra el motivo como ADR.
+Las dependencias se consumen mediante interfaces del dueño correspondiente:
+EP-02 usa protección de EP-07 y desafíos de EP-04; las épicas registran auditoría
+mediante EP-06. No se duplican sus reglas. Los adaptadores existentes de correo
+y outbox se reutilizan; el dueño conserva su flujo de negocio completo.
 
----
+### Pantallas con varias funcionalidades
 
-## 3. Reparto de las 18 especificaciones (SDD)
+Eva mantiene el contenedor de cuentas de FRONT-07 y FRONT-08. Los bloques de
+roles pertenecen a Sergio; bloqueo/desbloqueo, a Luis David; atributos, a Valery;
+historial, a Christian. Cada bloque incluye su componente interactivo, API,
+persistencia y pruebas, todos a cargo del mismo dueño. Componer bloques
+completos en una pantalla no reparte ninguna épica por capas.
 
-Las dieciocho especificaciones son el **backlog completo del ciclo**. Cada una
-la redacta, implementa y prueba su responsable. Son specs **de backend**: las
-pantallas se especifican aparte, en [`specs/front/`](../specs/front/), y las
-lleva el responsable de UX (ver §3.2).
+FRONT-00 no es otra épica: Jose Luis mantiene sesión y navegación autenticada;
+Juan José, política/medidor de contraseña; Sergio, controles de permisos;
+Valery, el sistema visual. El [índice de interfaz](../specs/front/README.md)
+documenta dueños de pantalla y bloques integrados.
 
-| SPEC | Funcionalidad | Responsable | Hito objetivo |
-|---|---|---|---|
-| **SPEC-01** | Registro de clientes | Eva Lucía | Hito 3 (Sem. 8) |
-| **SPEC-02** | Verificación de correo | Juan José | Hito 3 (Sem. 8) |
-| **SPEC-03** | Alta y consulta administrativa de cuentas | Christian | Hito 3 (Sem. 8) |
-| **SPEC-04** | Baja y reactivación de cuentas | Eva Lucía | Hito 3 (Sem. 8) |
-| **SPEC-05** | Inicio de sesión con correo y contraseña | Jose Luis | Hito 3 (Sem. 8) |
-| **SPEC-06** | Renovación y cierre de sesión | Jose Luis | Hito 3 (Sem. 8) |
-| **SPEC-07** | Política y cambio de contraseña | Juan José | Hito 3 (política) / Hito 4 (cambio) |
-| **SPEC-08** | Recuperación de contraseña | Juan José | Hito 4 (Sem. 11) |
-| **SPEC-09** | Segundo factor en el inicio de sesión (OTP) | Luis David | Hito 4 (Sem. 11) |
-| **SPEC-10** | Activación y desactivación del segundo factor | Luis David | Hito 4 (Sem. 11) |
-| **SPEC-11** | Gestión de roles y permisos | Eva Lucía | Hito 4 (Sem. 11) |
-| **SPEC-12** | Registro de auditoría | Christian | Hito 3 (Sem. 8) |
-| **SPEC-13** | Consulta y exportación de la auditoría | Christian | Hito 5 (Sem. 14) |
-| **SPEC-14** | Bloqueo automático por intentos fallidos | Luis David | Hito 5 (Sem. 14) |
-| **SPEC-15** | Bloqueo y desbloqueo por un administrador | Luis David | Hito 5 (Sem. 14) |
-| **SPEC-16** | Gestión de atributos de usuarios | Eva Lucía | Hito 5 (Sem. 14) |
-| **SPEC-17** | Claves públicas, tokens de servicio e introspección | Sergio | Hito 1 (contrato) / Hito 4 (implementación) |
-| **SPEC-18** | Consulta de identidad para los demás módulos | Sergio | Hito 1 (contrato) / Hito 4 (implementación) |
+## Responsabilidades técnicas adicionales
 
-### 3.1 Carga por integrante
-
-| Integrante | SPECs propias | Requisitos | Trabajo transversal permanente |
-|---|---|---|---|
-| Sergio | SPEC-17, 18 | 17 | Arquitectura, OpenAPI, mock server, ADRs, coordinación intermódulos, aprobación de las 18 specs |
-| Jose Luis | SPEC-05, 06 | 12 | Revisión de código de todos los PR, estructura del proyecto backend, pruebas del núcleo |
-| Eva Lucía | SPEC-01, 04, 11, 16 | 31 | Modelo de datos de usuario/rol/permiso y sus migraciones Flyway |
-| Juan José | SPEC-02, 07, 08 | 25 | Adaptador de correo (outbox) que usan también SPEC-09, SPEC-14, SPEC-15 y SPEC-16 |
-| Luis David | SPEC-09, 10, 14, 15 | 36 | Tabla `intento_login`, compartida con SPEC-05 |
-| Valery | Specs de interfaz (`specs/front/`) | — | Sistema de diseño, paleta, wireframes, prototipos Figma, 3 propuestas de UX |
-| Christian | SPEC-03, 12, 13 | 16 | Docker, Docker Compose, GitHub Actions, despliegue en nube, JMeter, evidencias de prueba, pantallas del panel de administración |
-
-**Por qué así.** Al dividir las specs no se movió ninguna función de dueño salvo
-dos, y las dos por afinidad con lo que la persona ya construye:
-
-- **La verificación de correo pasa a Juan José**, porque es un enlace de un solo
-  uso enviado por correo: el mismo mecanismo y el mismo adaptador (outbox) que ya
-  construye para la recuperación de contraseña.
-- **El alta y la consulta administrativa de cuentas pasan a Christian**, porque
-  son el backend del panel de administración que ya tenía asignado. Así puede
-  demostrar el panel de punta a punta.
-
-Eva conserva el resto del dominio «usuario» —registro, baja, roles y atributos—
-porque comparten tablas (`usuario`, `rol`, `permiso`, `perfil_*`) y partirlas
-obligaría a coordinar migraciones entre dos personas. Luis David conserva sus
-dos verticales completas, backend *más* pantalla, ahora en cuatro specs más
-pequeñas. Jose Luis lleva solo dos specs, pero son el núcleo del módulo y además
-revisa todo lo demás. Christian y Sergio tienen menos requisitos porque cargan
-con el trabajo transversal (DevOps y QA, y contrato y coordinación).
-
-### 3.2 Specs de backend y specs de interfaz
-
-El profesor pidió separar las especificaciones de interfaz. Desde el 20 de
-septiembre:
-
-- Las **18 specs de `specs/`** describen qué hace el servicio: requisitos,
-  escenarios verificables por la API, contrato. No describen pantallas.
-- Las **specs de interfaz de [`specs/front/`](../specs/front/)** describen cada
-  pantalla: estados, validaciones del lado del cliente, mensajes, accesibilidad,
-  y qué spec de backend consume. Las lleva Valery como responsable de UX, con su
-  propia plantilla. Por ahora solo existe la plantilla: se redactarán cuando el
-  equipo lo decida.
-
-### 3.3 Cambios sobre el reparto
-
-**20 de septiembre — de 9 a 18 specs.** Tras la presentación del Hito 1, el
-profesor pidió llegar a más de 10 y menos de 20 specs, con una por función: su
-ejemplo fue que «gestión de usuarios» agrupaba demasiadas funciones. Cada spec
-se partió por sus endpoints, que ya iban separados, sin cambiar ninguna regla;
-dos quedaron enteras porque ya eran una sola función (roles y atributos). El
-contrato publicado no cambió. La equivalencia completa entre números antiguos y
-nuevos está en [`specs/trazabilidad.md`](../specs/trazabilidad.md) §1.1 y §8.
-
-**13 de septiembre — dos cambios sobre el reparto inicial** *(con la numeración
-antigua de 9 specs)*.
-
-*La política de contraseñas dejó de ser una spec suelta.* El profesor indicó
-que no puede sostenerse por sí sola y debe ir dentro de otra. Se fusionó con la
-entonces SPEC-06 —recuperación y cambio— en la SPEC-03 antigua, «Gestión de
-credenciales y contraseñas». Al dividir el 20 de septiembre se mantuvo esa
-decisión: la política vive hoy en SPEC-07, junto al cambio de contraseña.
-
-*La auditoría pasó a tener dueño.* Aparecía seis veces como frase suelta en los
-no funcionales de cuatro specs —«queda registrada en `auditoria_seguridad`»— sin
-que ninguna dijera qué se registra, quién puede consultarlo ni cómo se exporta.
-Ocupó el número 06 antiguo, que liberó la fusión anterior. Hoy son SPEC-12
-(registro) y SPEC-13 (consulta y exportación).
-
----
-
-## 4. Quién entrega qué en el Hito 1 (Semana 4)
-
-El rubro del Hito 1 vale 25% del Componente 2 y tiene cuatro líneas.
-
-| Rubro del profesor | Responsable | Entregable concreto | Ubicación |
-|---|---|---|---|
-| Arquitectura del módulo preliminar | **Sergio** (con Jose Luis) | Diagramas de contexto, componentes y secuencia + ADRs | `docs/arquitectura/` |
-| Funcionalidades identificadas y distribuidas por cada integrante | **Sergio** | Este documento + tablero en GitHub Projects | `docs/responsabilidades.md` |
-| Especificaciones de requerimientos en detalle — SDD | **Cada responsable escribe la suya** | 9 archivos con las 7 secciones SDD | `specs/SPEC-0X-*.md` |
-| Diseño de wireframes | **Valery** | Wireframes de 8 pantallas en Figma + export PDF | `docs/wireframes/` + enlace Figma |
-
-> **Regla de evidencia individual.** Cada integrante hace *commit de su propia
-> especificación* con su propia cuenta de GitHub. El profesor evalúa desarrollo
-> individual y en el Hito 2 pide explícitamente «evidencia de uso de todos los
-> integrantes» en el repositorio. Un repo donde solo commitea el líder pierde
-> ese punto para los siete.
-
----
-
-## 5. Cómo trabajamos
-
-### 5.1 Flujo SDD por funcionalidad
-
-Ninguna línea de código se escribe antes de que su especificación esté aprobada.
-
-| Paso | Actividad | Responsable |
-|---|---|---|
-| 1 | Redactar la spec con las 7 secciones obligatorias | Responsable de la funcionalidad |
-| 2 | Revisar que no contradiga el contrato publicado, y aprobar | Product Owner |
-| 3 | Traducir los escenarios *Dado/Cuando/Entonces* a pruebas automatizadas | Responsable |
-| 4 | Implementar, usando la spec como entrada de la herramienta de IA | Responsable |
-| 5 | Revisar el PR: cada requisito debe tener su prueba | Otro integrante (el núcleo lo revisa Jose Luis) |
-| 6 | Verificar la lista de completitud y cerrar | Product Owner |
-
-### 5.2 Las 7 secciones obligatorias de una spec
-
-| Sección | Pregunta que responde |
+| Integrante | Responsabilidad adicional; no sustituye su épica |
 |---|---|
-| Contexto | ¿Por qué existe esta capacidad? |
-| Propósito | ¿Para qué sirve y a quién? |
-| Alcance | ¿Hasta dónde llega esta unidad de trabajo? |
-| Requisitos | ¿Qué debe hacer? (numerados y verificables) |
-| Escenarios | ¿Cómo lo verificamos? (mínimo 2 por requisito clave, uno de ellos caso borde) |
-| No funcionales | ¿Con qué condiciones de rendimiento, seguridad y límites? |
-| Fuera de alcance | ¿Qué NO hará, para no dejarlo a interpretación? |
+| Sergio | Product Owner, arquitectura de solución, edición exclusiva del contrato y capacidades de SPEC-17/18 |
+| Jose Luis | Arquitectura de implementación y revisión del núcleo |
+| Eva | Coherencia del dominio de cuentas y coordinación de la entidad usuario |
+| Juan José | Mecanismos de credenciales y revisión del adaptador de correo existente |
+| Luis David | Coherencia de desafíos, intentos fallidos y bloqueos con el login |
+| Valery | Sistema de diseño y revisión visual; no implementa todas las pantallas ajenas |
+| Christian | Infraestructura, despliegue y estrategia de comprobación; cada dueño implementa y prueba su épica |
 
-Una spec a la que le falte una sección **no se aprueba**. Plantilla en
-[`specs/_PLANTILLA.md`](../specs/_PLANTILLA.md).
+SPEC-17/18 también necesitan código: descubrimiento, JWKS, tokens de servicio,
+introspección y consultas. Sergio mantiene esa integración técnica. No añade
+una épica académica ni incorpora reglas de negocio de los módulos consumidores.
 
-### 5.3 Ramas y revisión
+## Cambio de reparto
 
-- `main` protegida: nadie commitea directo.
-- Una rama por spec: `spec-01-registro-clientes`, `spec-05-inicio-sesion`, …
-- Todo PR necesita **una aprobación** de otro integrante. Los que tocan
-  autenticación, tokens o permisos necesitan la de Jose Luis.
-- El PR enlaza la spec que implementa y marca qué requisitos cubre.
-
-### 5.4 Ceremonias
-
-| Actividad | Frecuencia | Propósito |
+| Spec | Dueño anterior | Dueño vigente |
 |---|---|---|
-| Planificación | Lunes | Repartir la semana y decidir qué se demuestra el sábado |
-| Sincronización rápida | Miércoles y viernes, 15 min | Detectar bloqueos, no informar avances |
-| Revisión con el profesor | Sábado | Validar avance; se evalúa desarrollo individual |
-| Sincronización entre módulos | Quincenal | Acordar cambios del contrato con los otros 6 equipos |
-| Retrospectiva | Después de cada hito | Ajustar antes del siguiente tramo |
+| SPEC-02 | Juan José | Eva Lucía |
+| SPEC-03 | Christian | Eva Lucía |
+| SPEC-11 | Eva Lucía | Sergio |
+| SPEC-16 | Eva Lucía | Valery |
 
----
+Las aprobaciones funcionales del 2 de octubre se conservan como antecedentes.
+La reasignación no modifica requisitos ni declara cerrados huecos contractuales;
+tampoco atribuye al nuevo dueño la autoría histórica. El
+[plan de Hito 1](plan-hito-1.md) conserva su reparto histórico.
 
-## 6. Compromisos con los otros seis equipos
+## Primera versión y seguimiento
 
-Somos el único módulo del que dependen los seis restantes. Tres compromisos:
+Las fichas de épica contienen primera versión, dependencias y escenarios de
+demostración. La meta común es Hito 3 / semana 8. Los hitos originales de las
+specs describen el alcance completo del ciclo y no sustituyen la primera
+versión individual. Ningún documento nuevo declara software terminado.
 
-1. **Contrato disponible en Semana 4.** OpenAPI publicado más un mock server con
-   credenciales de prueba conocidas, para que programen contra nosotros antes de
-   que exista la implementación.
-2. **Contrato estable.** Ningún cambio incompatible sin aviso de una semana y
-   sin convivencia entre versiones. Todo bajo `/api/v1`.
-3. **Entorno disponible desde el Hito 3.** El servicio desplegado se mantiene
-   accesible de forma continua, no solo durante las demostraciones.
+- [Catálogo de épicas](../specs/epicas/README.md).
+- [Plan vigente](../plan/README.md) y [tareas](../plan/seguimiento-epicas.md).
+- [Fuentes y revisiones](fuentes-oficiales.md).
+- [Registro vigente de inconsistencias](registro-inconsistencias.md).
 
-Responsable único de los tres: **Sergio (PO)**.
+## Flujo de trabajo
 
----
+1. El dueño completa sus specs con siete secciones y resuelve bloqueos. Si
+   afecta al contrato, prepara la propuesta para Sergio.
+2. El PO revisa coherencia y aprueba cambios funcionales o contractuales.
+3. El mismo dueño implementa y comprueba todas las capas.
+4. Otro integrante revisa el PR; Jose Luis revisa autenticación, tokens y
+   permisos. Revisar no reasigna implementación.
+5. Se registra evidencia de escenarios, persistencia e integración real.
 
-## 7. Riesgos del reparto y cómo los cubrimos
-
-| Riesgo | Mitigación | Dueño |
-|---|---|---|
-| Un integrante concentra conocimiento crítico | Toda funcionalidad está documentada en su spec; revisión cruzada obligatoria de PR | Sergio |
-| Desbalance de carga (el curso evalúa individual) | Revisión del tablero cada lunes; redistribución explícita si alguien acumula retraso | Sergio |
-| Los seis equipos quedan bloqueados esperando la API | Contrato + mock en Semana 4, antes de cualquier implementación | Sergio |
-| Curva de Spring Security y JWT | Prueba de concepto de login con JWT sin BD; programación en parejas en el núcleo | Jose Luis |
-| Pruebas concentradas en Semana 14 | Cada escenario de spec se convierte en prueba al implementar, no después | Christian |
-| Frontend bloqueado esperando al backend | La SPA se desarrolla contra el mock del OpenAPI desde Semana 4 | Valery |
+Se mantienen revisión cruzada y evidencia individual del curso. Un mock o un
+diseño no acredita una funcionalidad implementada. Esta preparación no crea
+commits, PRs ni issues. Los cambios incompatibles requieren versionado y la
+publicación respeta ADR-003.

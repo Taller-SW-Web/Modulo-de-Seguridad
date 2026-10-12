@@ -1,7 +1,7 @@
 # Componentes React — Módulo de Seguridad y Autenticación (G7)
 
 Especificación de los componentes React de la SPA, derivada del análisis de las
-specs de backend (`specs/`) y de interfaz (`specs/front/`). **No contiene
+specs de backend (`specs/funcionales/`) y de interfaz (`specs/front/`). **No contiene
 código**: describe la estructura, estados, hooks, validaciones y endpoints que
 debe implementar cada pantalla. Es la guía de entrada para el desarrollo por
 lotes.
@@ -23,6 +23,32 @@ lotes.
 | **3** | [12 · Desbloqueo con enlace](FRONT-12-desbloqueo-con-enlace.md) | 14 | Documentado |
 | **3** | [13 · Actividad reciente](FRONT-13-actividad-propia.md) | 13 | Documentado |
 | **3** | [14 · Panel admin: auditoría](FRONT-14-admin-auditoria.md) | 13 | Documentado |
+
+## Responsables por pantalla y bloque
+
+Reparto vigente del 11-oct-2026; no implica aprobación de pantallas. [Dueños completos](../../docs/responsabilidades.md) y [épicas](../epicas/README.md).
+
+| FRONT | Responsable |
+|---|---|
+| 00 | Jose Luis |
+| 01 | Jose Luis |
+| 02 | Eva Lucía |
+| 03 | Eva Lucía |
+| 04 | Luis David |
+| 05 | Juan José |
+| 06 | Valery |
+| 07 | Eva Lucía (contenedor; bloques por épica) |
+| 08 | Eva Lucía (contenedor; bloques por épica) |
+| 09 | Luis David |
+| 10 | Juan José |
+| 11 | Eva Lucía |
+| 12 | Luis David |
+| 13 | Christian |
+| 14 | Christian |
+
+FRONT-00 integra sesión (Jose Luis), política (Juan José) y autorización (Sergio). FRONT-07/08 integra cuentas (Eva), roles (Sergio), bloqueo (Luis David), atributos (Valery) y auditoría (Christian); cada dueño desarrolla su bloque de punta a punta. Lotes y revisión UX no dividen el trabajo por capas.
+
+«Documentado» no acredita aprobación ni implementación. H-01/H-02 están definidos en contrato local v2; quedan publicación e implementación. Seguimiento en el [registro](../../docs/registro-inconsistencias.md).
 
 ## Convenciones comunes (todas las pantallas)
 

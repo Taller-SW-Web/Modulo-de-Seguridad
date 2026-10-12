@@ -2,7 +2,8 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Juan José Cano Vasquez |
+| **Épica principal** | [EP-03](../epicas/EP-03-credenciales.md) |
 | **Specs de backend que consume** | SPEC-07 |
 | **Wireframe** | Sin wireframe — pendiente |
 | **Estado** | Borrador |
