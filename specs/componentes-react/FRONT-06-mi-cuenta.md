@@ -4,7 +4,10 @@
 |---|---|
 | Spec de interfaz | `specs/front/FRONT-06-mi-cuenta.md` |
 | Specs de backend | SPEC-16 (atributos) · SPEC-18 (direcciones) · enlaza a SPEC-10/07/13 |
-| Responsable | Por asignar |
+| **Responsable** | Valery Cristin Gutierrez Bendezu |
+| **Épica principal** | [EP-08](../epicas/EP-08-atributos-perfil.md) |
+
+> **Corte de versión, 11-oct-2026:** H-03: celular cambiado queda no verificado por A2; no ofrecer OTP de login para verificarlo. H-04: direcciones solo listado/creación. H-13: documento no editable por titular sin atributos.editar. [Tratamiento vigente](../../docs/integracion/preparacion-interna.md).
 
 ---
 
@@ -123,11 +126,16 @@ El `PATCH` envía **solo los campos que cambiaron** (RF-16.9).
 Cambiar contraseña (FRONT-10); cambiar roles/estado; autobaja (Q10);
 editar/eliminar direcciones (H-04); verificar celular (H-03); documento completo.
 
-## Huecos detectados
+## Límites y estado contractual vigente
 
-- **H-01**: `/auth/me` no incluye `mfaHabilitado`, `fechaNacimiento` ni atributos
-  de vendedor.
-- **H-03**: no hay forma de verificar el celular tras cambiarlo.
-- **H-04**: las direcciones solo se listan y añaden.
-- **H-13**: no decidido si el titular registra/corrige su documento; la pantalla
-  lo muestra solo de lectura.
+- **H-01:** contrato local v1 1.1.0 devuelve mfaHabilitado y atributos aplicables
+  al titular. Mostrar fechaNacimiento para CLIENTE y codigoVendedor/tienda/
+  fechaIngreso para VENDEDOR como lectura; ambos conjuntos si tiene ambos roles.
+  Ausente/null se muestra «Sin registrar». Publicación y servidor pendientes.
+- **H-03:** celular cambiado no verificado; A2 excluye verificación externa.
+- **H-04:** solo listado/creación de direcciones.
+- **H-13:** titular modifica nombres/apellidos/celular. Documento, fechaNacimiento
+  y atributos de vendedor requieren edición administrativa con atributos.editar.
+  En esta pantalla se leen, no se editan. Documento enmascarado.
+- Segundo factor se modifica mediante FRONT-09 y contrato v2; no interruptor
+  conectado a las rutas históricas v1 incompletas.

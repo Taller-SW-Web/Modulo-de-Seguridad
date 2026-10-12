@@ -1,11 +1,12 @@
 # Módulo de Seguridad y Autenticación
 
 El proveedor de identidad del Marketplace Multicanal de Productos Deportivos:
-es dueño de la entidad usuario y resuelve toda decisión de acceso del sistema.
+es dueño de identidad, credenciales, roles globales y permisos de Seguridad.
+Cada consumidor decide acceso a sus recursos con su propio dominio.
 Los otros seis módulos dependen de él y ninguno puede leer su base de datos.
 
 Este glosario fija el vocabulario del dominio. Los términos que aparecen en
-`specs/openapi.yaml` son parte del contrato y **no se renombran
+`specs/contrato-api/openapi.yaml` son parte del contrato y **no se renombran
 unilateralmente**: seis equipos ajenos programan contra ellos.
 
 ## Language
@@ -23,7 +24,7 @@ depende de este para identificar a sus usuarios.
 _Avoid_: cliente, consumidor a secas, módulo externo, tercero
 
 **Contrato**:
-La descripción pública y versionada de la API en `specs/openapi.yaml`, junto con
+La descripción versionada de la API ([índice](specs/contrato-api/README.md)), junto con
 los códigos de rol, scopes, códigos de error y eventos que la acompañan. Es lo
 único que los módulos consumidores necesitan conocer, y tiene dueño único.
 _Avoid_: la API a secas, el swagger, la documentación
@@ -31,8 +32,14 @@ _Avoid_: la API a secas, el swagger, la documentación
 **SPEC**:
 Una unidad de funcionalidad especificada con las siete secciones de
 `specs/_PLANTILLA.md`, numerada y con un responsable único. Es la unidad de
-reparto del trabajo y la unidad de aprobación.
-_Avoid_: historia de usuario, requerimiento, feature, épica
+especificación y aprobación; el reparto académico es por épica completa.
+_Avoid_: historia de usuario, requerimiento, feature, y SPEC como sinónimo de épica
+
+**Épica**:
+Una de las ocho funcionalidades completas asignadas a un estudiante: interfaz,
+backend, datos, pruebas y demostración. Agrupa varias specs. [Reparto](specs/epicas/README.md).
+SPEC-17/SPEC-18 son integración técnica de Sergio, no una novena épica.
+_Avoid_: dividir una épica entre responsables de frontend y backend
 
 ### Tokens
 
@@ -69,6 +76,12 @@ El paso intermedio del inicio de sesión de una cuenta con segundo factor: no ha
 tokens todavía, solo un comprobante de vida corta con el que canjear el código
 de un solo uso. Viaja como `challengeToken` en el contrato.
 _Avoid_: challenge, reto, token MFA, token temporal
+
+**Cambio de segundo factor**:
+Operación separada del desafío de login para habilitar/deshabilitar MFA.
+Viaja como `mfaChangeToken` opaco en contrato v2 local, vinculado en servidor
+a usuario, familia de sesión y acción; requiere acceso vigente y confirmación.
+_Avoid_: reutilizar challengeToken de login, token de acceso, verificación de contacto
 
 ### Cuentas
 

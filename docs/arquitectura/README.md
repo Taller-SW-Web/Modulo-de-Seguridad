@@ -96,4 +96,4 @@ node bin/archify.mjs deliver sequence     docs/arquitectura/comunicacion-modulos
 - [ ] `modelo-datos.md` — diagrama entidad-relación de las 17 tablas de `specs/trazabilidad.md` §5 (**Eva Lucía**)
 - [ ] `implementacion.md` — estructura de paquetes y capas del backend (**Jose Luis**)
 - [ ] `despliegue.md` — topología de despliegue y contenedores (**Christian**)
-- [x] `../../specs/openapi.yaml` — contrato publicado y mock levantado (**Sergio**)
+- [x] `../../specs/contrato-api/openapi.yaml` — contrato publicado y mock levantado (**Sergio**)

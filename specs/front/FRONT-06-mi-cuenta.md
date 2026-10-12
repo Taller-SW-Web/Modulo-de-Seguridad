@@ -2,11 +2,14 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Valery Cristin Gutierrez Bendezu |
+| **Épica principal** | [EP-08](../epicas/EP-08-atributos-perfil.md) |
 | **Specs de backend que consume** | SPEC-16 (enlaza a FRONT-09, FRONT-10 y FRONT-13) |
 | **Wireframe** | Stitch, proyecto `889177073946089595`, pantalla 6 (numeración antigua; ver [`trazabilidad.md`](../trazabilidad.md) §1.1). Figma: pendiente |
 | **Estado** | Borrador |
 | **Aprobada por** | Pendiente |
+
+> **Corte de versión, 11-oct-2026:** H-03: celular cambiado queda no verificado por A2; no ofrecer OTP de login para verificarlo. H-04: direcciones solo listado/creación. H-13: documento no editable por titular sin atributos.editar. [Tratamiento vigente](../../docs/integracion/preparacion-interna.md).
 
 ---
 
@@ -39,7 +42,7 @@ cerrar sesión.
 |---|---|---|
 | Datos personales | Nombres, apellidos | Sí, en línea, con «Guardar» y «Cancelar» |
 | Contacto | Correo con etiqueta «Verificado»; celular con etiqueta «Verificado» o «Sin verificar» (`celularVerificado`) | Correo: con su propio flujo (diálogo). Celular: sí |
-| Documento | Tipo de documento y `documentoEnmascarado` (`*****234`) | No, si ya existe. Ver H-13 si no existe |
+| Documento | Tipo de documento y `documentoEnmascarado` (`*****234`) | No; edición administrativa con atributos.editar (H-13) |
 | Seguridad | Enlaces a «Segundo factor» (FRONT-09), «Cambiar contraseña» (FRONT-10), «Actividad reciente» (FRONT-13) y botón «Cerrar sesión» | — |
 | Direcciones (solo `CLIENTE`) | Lista con etiqueta, dirección, distrito, provincia, departamento, referencia; la predeterminada marcada con el texto «Predeterminada»; botón «Añadir dirección» | Solo añadir (H-04) |
 
@@ -169,20 +172,20 @@ campo reenviado sin cambios lo ensuciaría.
 
 ---
 
-## Huecos detectados en el backend
+## Límites y estado contractual vigente
 
-- **H-01** — `Usuario` (respuesta de `/auth/me`) no incluye `mfaHabilitado`,
-  `fechaNacimiento` ni los atributos de vendedor (`codigoVendedor`, `tienda`,
-  `fechaIngreso`). La pantalla no puede mostrarlos aunque SPEC-16 los defina.
-- **H-03** — Tras cambiar el celular no hay manera de verificarlo: el contrato
-  remite a `/auth/otp/solicitar` y `/auth/otp/verificar`, pero ambos exigen un
-  `challengeToken` que solo emite el login.
-- **H-04** — Las direcciones solo se pueden listar y añadir.
-- **H-13** — No está decidido si el titular puede registrar o corregir su
-  documento: RF-16.2 limita la edición propia a nombres, apellidos y teléfono,
-  pero `AtributosUsuario` acepta `tipoDocumento` y `numeroDocumento`. Hasta que
-  se decida, la pantalla lo muestra solo de lectura y, si no existe, dice
-  «Sin registrar».
+- **H-01:** contrato local v1 1.1.0 devuelve mfaHabilitado y atributos aplicables
+  al titular. Mostrar fechaNacimiento para CLIENTE y codigoVendedor/tienda/
+  fechaIngreso para VENDEDOR como lectura; ambos conjuntos si tiene ambos roles.
+  Ausente/null se muestra «Sin registrar». Publicación y servidor pendientes.
+- **H-03:** celular cambiado no verificado; A2 excluye verificación externa.
+- **H-04:** solo listado/creación de direcciones.
+- **H-13:** titular modifica nombres/apellidos/celular. Documento, fechaNacimiento
+  y atributos de vendedor requieren edición administrativa con atributos.editar.
+  En esta pantalla se leen, no se editan. Documento enmascarado.
+- Segundo factor se modifica mediante FRONT-09 y contrato v2; no interruptor
+  conectado a las rutas históricas v1 incompletas.
+
 
 ---
 
@@ -194,4 +197,4 @@ campo reenviado sin cambios lo ensuciaría.
 - [ ] El `PATCH` envía solo los campos modificados
 - [ ] La sección de direcciones solo existe para `CLIENTE`
 - [ ] Los escenarios de interfaz están automatizados o verificados a mano con evidencia
-- [ ] El wireframe y la implementación coinciden, salvo el interruptor del segundo factor (H-01)
+- [ ] El wireframe y la implementación coinciden, con navegación a FRONT-09 para segundo factor

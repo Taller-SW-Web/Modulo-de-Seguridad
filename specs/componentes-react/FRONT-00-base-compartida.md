@@ -5,8 +5,12 @@
 
 | Campo | Valor |
 |---|---|
+| **Responsable** | Jose Luis Limachi Sarmiento |
+| **Épica principal** | [EP-02](../epicas/EP-02-autenticacion-sesiones.md) |
 | Specs de backend | SPEC-06, SPEC-07, SPEC-11 |
 | Wireframe | No aplica |
+
+> **Bloques compartidos:** cada dueño implementa su capacidad completa; el contenedor integra sin asumir capas ajenas. [Reparto por bloque](../../docs/responsabilidades.md).
 
 ---
 
@@ -17,7 +21,7 @@
 | Dato | Origen | Dónde |
 |---|---|---|
 | `accessToken` | `SesionIniciada` | Solo en memoria. Nunca en `localStorage`, URL ni consola |
-| `refreshToken` | `SesionIniciada` | En memoria (decisión H-11 pendiente) |
+| `refreshToken` | `SesionIniciada` | Solo en memoria para esta versión; recargar exige login (aceptación con Ventas pendiente) |
 | `usuario` (`id`, `nombreCompleto`, `correo`, `roles`) | `SesionIniciada` | En memoria, junto a la sesión |
 | `permisos` | claim `permisos` | Se leen del token decodificado, sin verificar firma: solo ocultan/muestran opciones |
 | `challengeToken` | `DesafioMfa` | En memoria, mientras dura el desafío (FRONT-04) |
@@ -76,7 +80,7 @@ Solo `TOKEN_INVALIDO` dispara renovación; `CREDENCIALES_INVALIDAS` y
 
 ## 3. Medidor de fuerza de contraseña
 
-Lo usan FRONT-02, 05, 10 y 11. Se construye con `GET /password/politica`, nunca
+Lo usan FRONT-02, 05 y 10; la activación A6 lo consume cuando se especifique. Se construye con `GET /password/politica`, nunca
 con reglas en el código. Tres estados por regla (texto e icono, no solo color):
 
 | Estado | Cuándo |

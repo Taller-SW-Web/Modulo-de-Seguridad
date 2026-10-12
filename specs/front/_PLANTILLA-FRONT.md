@@ -26,7 +26,7 @@ tres frases.*
 ## Endpoints que usa
 
 *Qué endpoints llama la pantalla y en qué momento. Los contratos están en
-`specs/openapi.yaml`; aquí solo se dice cuándo se llama cada uno.*
+`specs/contrato-api/openapi.yaml`; aquí solo se dice cuándo se llama cada uno.*
 
 | Momento | Endpoint | Spec de backend |
 |---|---|---|

@@ -7,15 +7,15 @@ Grupo 7 — Taller de Construcción de Software Web — UNMSM — Ciclo 2026-II
 
 | Integrante | Código | Rol |
 |---|---|---|
-| Sergio Alejandro Osorio Montenegro | 20130037 | Product Owner y Arquitecto de solución |
-| Jose Luis Limachi Sarmiento | 22200287 | Tech Lead — Backend |
-| Eva Lucía Moreno Zevallos | 20200277 | Backend |
-| Juan José Cano Vasquez | 19200303 | Full Stack |
-| Luis David Morales Brenis | 23200280 |  Pasivo / Versatil |
-| Valery Cristin Gutierrez Bendezu | 23200263 | Frontend y Diseño (UX) |
-| Christian Gabriel Arancivia Salas | 23200077 | DevOps, QA y Frontend de administración |
+| Sergio Alejandro Osorio Montenegro | 20130037 | PO; roles/permisos e integración técnica |
+| Jose Luis Limachi Sarmiento | 22200287 | Tech Lead; autenticación y sesiones |
+| Eva Lucía Moreno Zevallos | 20200277 | Registro y gestión de usuarios |
+| Juan José Cano Vasquez | 19200303 | Gestión de credenciales |
+| Luis David Morales Brenis | 23200280 | OTP/MFA y bloqueo/desbloqueo |
+| Valery Cristin Gutierrez Bendezu | 23200263 | Atributos/perfil; revisión UX |
+| Christian Gabriel Arancivia Salas | 23200077 | Auditoría; DevOps y QA |
 
-Qué spec lleva cada uno y cómo trabajamos: [`docs/responsabilidades.md`](docs/responsabilidades.md).
+[Ocho épicas completas y specs](specs/epicas/README.md). Quién lleva cada una: [`docs/responsabilidades.md`](docs/responsabilidades.md).
 
 ---
 
@@ -87,25 +87,31 @@ siguen vivas.
 
 ## Estado
 
-**Semana 6 — Hito 2 en curso** (presentación: sábado 3 de octubre). El Hito 1
-se presentó el 19 de septiembre; con su feedback las specs pasaron de 9 a 18
-—una por función— y las de interfaz se separaron de las de backend. Todavía no
-hay código de producción: esta semana se implementan los repositorios de datos.
+**12-oct-2026 — preparación del Hito 3 / semana 8.** Reparto por ocho épicas
+y consolidación de fuentes/inconsistencias. Existe una base de persistencia;
+este seguimiento no acredita integración funcional desplegada. La aprobación
+original de specs no cierra huecos de contrato/interfaz.
 
-| Entregable del Hito 2 | Estado |
-|---|---|
-| Repositorio con evidencia de uso de todos los integrantes | 🔶 Una rama y un PR por persona — issues [#21 a #25](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues?q=label%3Ahito-2) |
-| Diseño e implementación de los repositorios de BD | 🔶 Esquema auditado y probado en PostgreSQL en [`docs/arquitectura/schema.sql`](docs/arquitectura/schema.sql); migraciones Flyway `V1` a `V4` en curso |
-| Mockups y sistema de diseño | 🔶 Guía en [`docs/diseno/sistema-diseno.md`](docs/diseno/sistema-diseno.md); biblioteca y mockups en Figma en curso |
-| Experiencia de usuario (3 propuestas) | 🔶 En curso — [#25](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/25) |
+- [Plan actual](plan/README.md) y [tareas por épica](plan/seguimiento-epicas.md).
+- [Revisión pública y fuentes](docs/fuentes-oficiales.md).
+- [Registro único de inconsistencias](docs/registro-inconsistencias.md).
+- [Preparación de commits y publicación](plan/commits-publicacion.md).
+
+**Hito 3:** recorrido de login real en Seguridad → consulta de mis pedidos en
+Ventas confirmado en [G5 Backend #2](https://github.com/Taller-SW-Web/G5-Ventas-Postventas-Backend/issues/2).
+Michael coordina F1/JWT; G5 entrega como máximo el jueves 15/10 y G7 adopta
+ese día como objetivo para probar antes del sábado 17/10. Configuración,
+rama y prueba conjunta siguen pendientes. Marketplace y los otros módulos
+siguen en el alcance general. [Ficha de coordinación](docs/integracion/hito-3-ventas.md)
+y [preparación interna](docs/integracion/preparacion-interna.md).
 
 | Base del Hito 1 | Dónde |
 |---|---|
-| Arquitectura | [`docs/arquitectura/`](docs/arquitectura/) — 6 diagramas y 6 ADR |
+| Arquitectura | [`docs/arquitectura/`](docs/arquitectura/) — diagramas y decisiones ADR |
 | Funcionalidades distribuidas | [`docs/responsabilidades.md`](docs/responsabilidades.md) |
 | Especificaciones SDD | ✅ 18 specs de backend **aprobadas** el 2-oct — índice en [`specs/trazabilidad.md`](specs/trazabilidad.md) —, 15 de interfaz en [`specs/front/`](specs/front/) y 15 de componentes React en [`specs/componentes-react/`](specs/componentes-react/) |
-| Contrato OpenAPI + mock | [`specs/openapi.yaml`](specs/openapi.yaml) — valida sin errores y el mock de Prism responde |
-| Acuerdos con los otros módulos | [`docs/integracion/acuerdos.md`](docs/integracion/acuerdos.md) — A1 a A5 |
+| Contrato OpenAPI + mock | [`specs/contrato-api/openapi.yaml`](specs/contrato-api/openapi.yaml) — valida sin errores y el mock de Prism responde |
+| Acuerdos con los otros módulos | [`docs/integracion/acuerdos.md`](docs/integracion/acuerdos.md) — decisiones y concesiones; comprobar estado |
 
 ---
 
@@ -113,9 +119,9 @@ hay código de producción: esta semana se implementan los repositorios de datos
 
 | Si eres… | Lee esto |
 |---|---|
-| Integrante del G7 | [`docs/plan-hito-1.md`](docs/plan-hito-1.md) — tu tarea concreta de esta semana |
+| Integrante del G7 | [`plan/`](plan/) — tareas y criterios actuales |
 | Integrante nuevo | [`docs/responsabilidades.md`](docs/responsabilidades.md) — quién hace qué y cómo trabajamos |
-| **De otro equipo del curso** | [`specs/openapi.yaml`](specs/openapi.yaml) — el contrato. No necesitas nada más para empezar a programar contra nosotros |
+| **De otro equipo del curso** | [`specs/contrato-api/openapi.yaml`](specs/contrato-api/openapi.yaml) — el contrato; consultar [kit](specs/kit-integracion.md) y [revisión de referencia](docs/fuentes-oficiales.md) |
 | Quieres la vista del usuario | [`specs/historias-usuario.md`](specs/historias-usuario.md) — 41 historias, cada una enlazada a sus RF y escenarios |
 | Vas a escribir una spec | [`specs/_PLANTILLA.md`](specs/_PLANTILLA.md), y después [`specs/trazabilidad.md`](specs/trazabilidad.md) para ver qué endpoints, eventos y pantallas te tocan |
 | Vas a especificar una pantalla | [`specs/front/`](specs/front/) — las specs de interfaz van aparte, con su propia plantilla |
@@ -133,6 +139,12 @@ funcionalidad se considera definida cuando su spec está completa con sus siete
 secciones; solo entonces se implementa. Si el código se desvía de la spec, se
 corrige el código o se actualiza la spec de forma explícita — nunca a posteriori
 y en silencio.
+
+El orden es **specs funcionales/UI/API/React → plan → tareas → código
+incremental y verificación**. La estructura y el plan técnico de la demo con
+Ventas están preparados; los planes individuales y su desglose de tareas
+se escribirán por bloques. [Flujo SDD](plan/flujo-sdd.md),
+[plan H3](plan/PLAN-IMPLEMENTACION.md) y [planes por épica](plan/funcionalidades/README.md).
 
 Los escenarios *Dado / Cuando / Entonces* de cada spec son, literalmente, el
 plan de pruebas: se traducen a pruebas automatizadas antes de implementar.
@@ -162,7 +174,7 @@ base de datos.
 | Vía | Cuándo usarla | Coste |
 |---|---|---|
 | **Validación local del token** con la clave pública de `/api/v1/auth/.well-known/jwks.json` | En cada petición ordinaria. Es el caso normal | Ninguna llamada de red. No detecta cambios de estado hasta que el token vence (15 min) |
-| **Introspección remota** `POST /api/v1/auth/introspeccion` | Antes de operaciones sensibles: anulaciones, reembolsos, cambios de precio | Una llamada de red y dependencia de nuestra disponibilidad |
+| **Comprobación remota** | Según el acuerdo: introspección con su scope o consulta de cuenta para Ventas/Postventa (A10) | Una llamada de red; cuenta y sesión son comprobaciones diferentes |
 | **Eventos asíncronos** en RabbitMQ | Para enterarse de bajas, bloqueos y cambios de rol sin preguntar | Ninguna, pero es eventualmente consistente |
 
 El token se firma con **RS256 y no con HS256** precisamente por esto: reciben la
@@ -172,14 +184,17 @@ emitir un token de administrador.
 
 ### Programen contra nosotros antes de que existamos
 
-El contrato está publicado antes que el código. Levanten el mock:
+La base contractual se publicó antes que el código. Esta revisión local
+actualiza sus rutas y separa v1 de la propuesta parcial v2; consultar
+[fuentes oficiales](docs/fuentes-oficiales.md) antes de fijar una revisión.
+Para probar los formatos de v1, levanten el mock:
 
 ```bash
-npx @stoplight/prism-cli mock specs/openapi.yaml -p 4010
+npx --yes @stoplight/prism-cli@5.16.0 mock specs/contrato-api/openapi.yaml -p 4010 --errors true
 curl http://localhost:4010/auth/.well-known/jwks.json
 ```
 
-Responde con los ejemplos reales del contrato, incluidos los caminos de error, y
+Responde con ejemplos ilustrativos del contrato, incluidos los caminos de error, y
 valida sus peticiones. Pueden forzar cualquier respuesta con la cabecera
 `Prefer` —`Prefer: code=401`— para probar sus caminos de fallo.
 
@@ -187,3 +202,7 @@ valida sus peticiones. Pueden forzar cualquier respuesta con la cabecera
 > sí lo lleva. Parametricen la URL base y no tocarán código al cambiar.
 
 La guía completa está en [`specs/kit-integracion.md`](specs/kit-integracion.md).
+
+El comando se comprobó con Node 24.19.0. Los ejemplos de JWT/JWKS del mock
+son ilustrativos; para verificar firmas se necesitan tokens RS256 firmados
+y las claves públicas correspondientes.

@@ -4,7 +4,8 @@
 |---|---|
 | Spec de interfaz | `specs/front/FRONT-01-inicio-sesion.md` |
 | Specs de backend | SPEC-05 (login), SPEC-07 (caducidad), SPEC-14 (bloqueo), SPEC-09 (deriva a MFA) |
-| Responsable | Por asignar |
+| **Responsable** | Jose Luis Limachi Sarmiento |
+| **Épica principal** | [EP-02](../epicas/EP-02-autenticacion-sesiones.md) |
 
 ---
 

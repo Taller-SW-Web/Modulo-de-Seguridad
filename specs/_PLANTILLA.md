@@ -10,7 +10,7 @@
 > **Plantilla de specs de backend.** Las de interfaz usan [`front/_PLANTILLA-FRONT.md`](front/_PLANTILLA-FRONT.md).
 >
 > **Cómo usar esta plantilla.** Copia este archivo a
-> `specs/SPEC-0X-nombre-corto.md`, borra los comentarios en cursiva y rellena las
+> `specs/funcionales/SPEC-0X-nombre-corto.md`, borra los comentarios en cursiva y rellena las
 > siete secciones. **Una spec a la que le falte una sección no se aprueba.**
 > Si al escribirla no puedes imaginar una demostración de dos minutos que la
 > muestre funcionando, es demasiado grande: pártela. Si la implementarías en
@@ -103,7 +103,7 @@ pregúntale al PO.*
 
 ## Impacto en el contrato
 
-*¿Esta spec añade, modifica o elimina endpoints de `specs/openapi.yaml`? ¿Cambia
+*¿Esta spec añade, modifica o elimina endpoints de `specs/contrato-api/openapi.yaml`? ¿Cambia
 algún claim del JWT? ¿Publica algún evento nuevo en RabbitMQ?*
 
 **Si la respuesta a cualquiera es sí, el cambio lo aplica el Product Owner, no

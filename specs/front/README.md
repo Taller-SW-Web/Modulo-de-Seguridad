@@ -2,16 +2,40 @@
 
 | Campo | Valor |
 |---|---|
-| **Dueño** | Valery Cristin Gutierrez Bendezu — responsable de UX |
-| **Estado** | Primera redacción de las 15 specs, todas en **Borrador** y sin responsable asignado |
+| **Dueño** | Dueño de cada épica; Valery revisa UX |
+| **Estado** | 15 specs con responsables por épica; aprobación funcional pendiente |
 | **Plantilla** | [`_PLANTILLA-FRONT.md`](_PLANTILLA-FRONT.md) |
 | **Cómo se programa** | [`../componentes-react/`](../componentes-react/): una spec de componentes React por pantalla, con el mismo número |
 | **Sistema de diseño** | [`../../docs/diseno/sistema-diseno.md`](../../docs/diseno/sistema-diseno.md) |
 
-Las 18 specs de `specs/` son **de backend**: dicen qué hace el servicio y se
+Las 18 specs de `specs/funcionales/` son **de backend**: dicen qué hace el servicio y se
 verifican contra su API. Esta carpeta guarda las **specs de interfaz**: cómo se
 ve y cómo se comporta cada pantalla de la SPA. Van aparte por indicación del
-profesor, y las lleva la persona responsable de UX.
+profesor, y las mantiene el dueño de la funcionalidad completa; UX revisa.
+
+## Responsables por pantalla y bloque
+
+Reparto vigente del 11-oct-2026; no implica aprobación de pantallas. [Dueños completos](../../docs/responsabilidades.md) y [épicas](../epicas/README.md).
+
+| FRONT | Responsable |
+|---|---|
+| 00 | Jose Luis |
+| 01 | Jose Luis |
+| 02 | Eva Lucía |
+| 03 | Eva Lucía |
+| 04 | Luis David |
+| 05 | Juan José |
+| 06 | Valery |
+| 07 | Eva Lucía (contenedor; bloques por épica) |
+| 08 | Eva Lucía (contenedor; bloques por épica) |
+| 09 | Luis David |
+| 10 | Juan José |
+| 11 | Eva Lucía |
+| 12 | Luis David |
+| 13 | Christian |
+| 14 | Christian |
+
+FRONT-00 integra sesión (Jose Luis), política (Juan José) y autorización (Sergio). FRONT-07/08 integra cuentas (Eva), roles (Sergio), bloqueo (Luis David), atributos (Valery) y auditoría (Christian); cada dueño desarrolla su bloque de punta a punta. Lotes y revisión UX no dividen el trabajo por capas.
 
 ## Qué va aquí y qué no
 
@@ -50,7 +74,7 @@ tienen wireframe. `FRONT-00` no es una pantalla: recoge lo que comparten todas.
 | [06](FRONT-06-mi-cuenta.md) | Mi cuenta: perfil y direcciones | 16 | Pantalla 6 | 🔶 Borrador |
 | [07](FRONT-07-admin-listado-usuarios.md) | Panel admin: listado de usuarios | 03, 04, 11, 15 | Pantalla 7 | 🔶 Borrador |
 | [08](FRONT-08-admin-detalle-usuario.md) | Panel admin: detalle de usuario | 11, 13, 15 (03, 04, 16) | Pantalla 8 | 🔶 Borrador |
-| [09](FRONT-09-segundo-factor.md) | Segundo factor: activar y desactivar | 10 | ⬜ Falta | 🔴 Bloqueada por H-01 y H-02 |
+| [09](FRONT-09-segundo-factor.md) | Segundo factor: activar y desactivar | 10 | ⬜ Falta | Definida local; publicación/implementación pendientes |
 | [10](FRONT-10-cambio-contrasena.md) | Cambiar contraseña | 07 | ⬜ Falta | 🔶 Borrador |
 | [11](FRONT-11-admin-alta-usuario.md) | Panel admin: alta de cuenta | 03, 07 | ⬜ Falta | 🔶 Borrador |
 | [12](FRONT-12-desbloqueo-con-enlace.md) | Desbloqueo con el enlace del correo | 14 | ⬜ Falta | 🔶 Borrador |
@@ -76,7 +100,7 @@ Los de SPEC-17 y SPEC-18 (JWKS, `/auth/token`, introspección, `/usuarios/lote`,
 | `POST /auth/registro` | 02 |
 | `POST /auth/verificar-correo` · `POST /auth/verificar-correo/reenviar` | 03 |
 | `POST /auth/otp/solicitar` · `POST /auth/otp/verificar` | 04 |
-| `POST /auth/otp/habilitar` · `POST /auth/otp/deshabilitar` | 09 |
+| `POST /api/v2/auth/mfa/cambios` · `/reenviar` · `/confirmar` | 09 |
 | `GET /password/politica` | 00 (medidor), 02, 05, 10, 11 |
 | `POST /password/recuperar` · `POST /password/restablecer` | 05 |
 | `POST /password/cambiar` | 10 |
@@ -87,7 +111,7 @@ Los de SPEC-17 y SPEC-18 (JWKS, `/auth/token`, introspección, `/usuarios/lote`,
 | `POST /usuarios/{id}/correo` | 06 |
 | `GET /usuarios/{id}/direcciones` · `POST /usuarios/{id}/direcciones` | 06 |
 | `GET /usuarios` | 07 |
-| `POST /usuarios` | 11 |
+| `POST /api/v2/usuarios` | 11 |
 | `GET /usuarios/{id}` | 08 |
 | `DELETE /usuarios/{id}` · `POST /usuarios/{id}/reactivar` | 07, 08 |
 | `POST /usuarios/{id}/bloquear` · `POST /usuarios/{id}/desbloquear` | 07, 08 |
@@ -99,10 +123,11 @@ Los de SPEC-17 y SPEC-18 (JWKS, `/auth/token`, introspección, `/usuarios/lote`,
 
 ## Huecos detectados en el backend y el contrato
 
-Salieron al redactar las specs de interfaz. **No se ha tocado ninguna spec de
-backend ni `openapi.yaml`**: cada hueco se lleva al PO y al responsable de la
-spec de backend, que deciden si cambiar el contrato o dejarlo por escrito como
-fuera de alcance.
+El estado vigente de H-01 a H-15, sus dueños, prioridades y cierres están en el [registro único](../../docs/registro-inconsistencias.md). Esta tabla conserva el diagnóstico de origen, no un segundo seguimiento.
+
+Diagnóstico histórico al redactar interfaz. En el corte 11-oct se editaron
+specs y contrato por delegación del PO informada por Luis. La tabla siguiente
+conserva los problemas de origen; su resolución vigente está en el registro.
 
 | # | Hueco | Spec de backend | Afecta a | Gravedad |
 |---|---|---|---|---|
@@ -124,3 +149,13 @@ fuera de alcance.
 
 🔴 bloquea una pantalla · 🟠 limita una pantalla · 🟡 obliga a una solución
 provisional · 🟢 menor.
+
+
+## Tratamientos del corte 11-oct
+
+La tabla H-01–H-15 anterior conserva diagnóstico de origen.
+El [registro vigente](../../docs/registro-inconsistencias.md) gobierna su estado.
+Memoria de sesión definida (H-11); FRONT-11 alineada con A6; direcciones
+limitadas a listado/creación; sin OTP para verificar celular; exportación
+aplazada. FRONT-09 está definida en contrato local v2; publicación y servicios pendientes. El recorrido mínimo de
+Ventas no convierte los pendientes de registro/MFA/atributos en resueltos.

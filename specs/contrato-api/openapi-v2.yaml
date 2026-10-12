@@ -1,0 +1,602 @@
+openapi: 3.1.0
+info:
+  title: Seguridad — evolución parcial v2
+  version: 2.0.0
+  x-estado: revision-local-no-publicada
+  description: |-
+    Edición local delegada por Sergio según autorización comunicada por Luis David.
+    Solo configuración MFA segura y alta administrativa estricta. Login, OTP de
+    login, refresh, activación de cuenta, consultas y JWKS permanecen en v1.
+    No hay issuer ni audiencia de usuario nuevos. Publicación sujeta a ADR-003;
+    no se presume aceptación de consumidores ni disponibilidad en nube.
+    Las rutas MFA v1 incompletas no se despliegan; base 1.0.0 en historico/.
+servers:
+- url: http://localhost:8080/api/v2
+  description: Implementación futura local; no confirma despliegue
+- url: http://localhost:4011
+  description: Mock documental; no verifica firmas ni persistencia
+security:
+- tokenUsuario: []
+paths:
+  /auth/mfa/cambios:
+    post:
+      tags:
+      - Segundo factor
+      operationId: solicitarCambioMfaV2
+      summary: Solicita cambio MFA
+      description: |-
+        SPEC-10. Token de acceso del titular y sesión vigente. El servidor resuelve
+        usuario, correo y acción; la petición no admite usuarioId, destino ni propósito.
+        mfaChangeToken es opaco, almacenado por hash y vinculado a usuario, familia de
+        sesión y acción. No es challengeToken ni JWT de acceso. Validar identidad,
+        sesión y operación antes del código; sin filtraciones en logs/errores.
+        Cambio: 600 s; OTP: 300 s; confirmar exige ambos vigentes. Un cambio pendiente
+        por usuario. Reenvío invalida OTP anterior y no extiende cambio. Tres intentos
+        por código; tres envíos por usuario en 15 min compartidos con login.
+        Ya en el estado pedido: 400 VALIDACION sin envío. Cualquier rol de gestión
+        impide desactivar: 422 MFA_OBLIGATORIO. Revalidar cuenta, roles y familia al
+        confirmar. Token de servicio: 403 TOKEN_NO_APLICABLE; operación consumida,
+        vencida, de otra cuenta/familia: 401 TOKEN_INVALIDO.
+        Persistir consumo, estado y auditoría crítica atómicamente; fallo de auditoría
+        503 NO_DISPONIBLE, sin cambio. Confirmar no crea ni renueva sesión.
+        JWT nuevo por refresh en la misma familia conserva vínculo. No se admite un
+        JWT de otra sesión aunque pertenezca al mismo usuario. No se cambia el JWT
+        público: la relación jti-familia se resuelve internamente (DAT-01).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SolicitarCambioMfa'
+            examples:
+              valido:
+                value:
+                  accion: HABILITAR
+      responses:
+        '400':
+          description: VALIDACION
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                validacion:
+                  value:
+                    type: https://g7.unmsm.pe/errores/validacion
+                    title: Validacion
+                    status: 400
+                    code: VALIDACION
+        '401':
+          description: TOKEN_INVALIDO
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                token_invalido:
+                  value:
+                    type: https://g7.unmsm.pe/errores/token-invalido
+                    title: Token invalido
+                    status: 401
+                    code: TOKEN_INVALIDO
+        '403':
+          description: TOKEN_NO_APLICABLE
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                token_no_aplicable:
+                  value:
+                    type: https://g7.unmsm.pe/errores/token-no-aplicable
+                    title: Token no aplicable
+                    status: 403
+                    code: TOKEN_NO_APLICABLE
+        '422':
+          description: MFA_OBLIGATORIO
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                mfa_obligatorio:
+                  value:
+                    type: https://g7.unmsm.pe/errores/mfa-obligatorio
+                    title: Mfa obligatorio
+                    status: 422
+                    code: MFA_OBLIGATORIO
+        '429':
+          description: DEMASIADAS_SOLICITUDES
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                demasiadas_solicitudes:
+                  value:
+                    type: https://g7.unmsm.pe/errores/demasiadas-solicitudes
+                    title: Demasiadas solicitudes
+                    status: 429
+                    code: DEMASIADAS_SOLICITUDES
+          headers:
+            Retry-After:
+              $ref: ./openapi.yaml#/components/headers/RetryAfter
+        '503':
+          description: NO_DISPONIBLE
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                no_disponible:
+                  value:
+                    type: https://g7.unmsm.pe/errores/no-disponible
+                    title: No disponible
+                    status: 503
+                    code: NO_DISPONIBLE
+        '202':
+          description: Código enviado; el estado MFA todavía no cambia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CambioMfaSolicitado'
+              examples:
+                enviado:
+                  value:
+                    mfaChangeToken: cambio-opaco-ejemplo-no-utilizable
+                    canal: EMAIL
+                    destinoEnmascarado: m****a@ejemplo.com
+                    expiraEn: 300
+                    cambioExpiraEn: 600
+  /auth/mfa/cambios/reenviar:
+    post:
+      tags:
+      - Segundo factor
+      operationId: reenviarCambioMfaV2
+      summary: Reenvía código del cambio MFA
+      description: |-
+        SPEC-10. Token de acceso del titular y sesión vigente. El servidor resuelve
+        usuario, correo y acción; la petición no admite usuarioId, destino ni propósito.
+        mfaChangeToken es opaco, almacenado por hash y vinculado a usuario, familia de
+        sesión y acción. No es challengeToken ni JWT de acceso. Validar identidad,
+        sesión y operación antes del código; sin filtraciones en logs/errores.
+        Cambio: 600 s; OTP: 300 s; confirmar exige ambos vigentes. Un cambio pendiente
+        por usuario. Reenvío invalida OTP anterior y no extiende cambio. Tres intentos
+        por código; tres envíos por usuario en 15 min compartidos con login.
+        Ya en el estado pedido: 400 VALIDACION sin envío. Cualquier rol de gestión
+        impide desactivar: 422 MFA_OBLIGATORIO. Revalidar cuenta, roles y familia al
+        confirmar. Token de servicio: 403 TOKEN_NO_APLICABLE; operación consumida,
+        vencida, de otra cuenta/familia: 401 TOKEN_INVALIDO.
+        Persistir consumo, estado y auditoría crítica atómicamente; fallo de auditoría
+        503 NO_DISPONIBLE, sin cambio. Confirmar no crea ni renueva sesión.
+        JWT nuevo por refresh en la misma familia conserva vínculo. No se admite un
+        JWT de otra sesión aunque pertenezca al mismo usuario. No se cambia el JWT
+        público: la relación jti-familia se resuelve internamente (DAT-01).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReenviarCambioMfa'
+            examples:
+              valido:
+                value:
+                  mfaChangeToken: cambio-opaco-ejemplo-no-utilizable
+      responses:
+        '400':
+          description: VALIDACION
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                validacion:
+                  value:
+                    type: https://g7.unmsm.pe/errores/validacion
+                    title: Validacion
+                    status: 400
+                    code: VALIDACION
+        '401':
+          description: TOKEN_INVALIDO
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                token_invalido:
+                  value:
+                    type: https://g7.unmsm.pe/errores/token-invalido
+                    title: Token invalido
+                    status: 401
+                    code: TOKEN_INVALIDO
+        '403':
+          description: TOKEN_NO_APLICABLE
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                token_no_aplicable:
+                  value:
+                    type: https://g7.unmsm.pe/errores/token-no-aplicable
+                    title: Token no aplicable
+                    status: 403
+                    code: TOKEN_NO_APLICABLE
+        '422':
+          description: MFA_OBLIGATORIO
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                mfa_obligatorio:
+                  value:
+                    type: https://g7.unmsm.pe/errores/mfa-obligatorio
+                    title: Mfa obligatorio
+                    status: 422
+                    code: MFA_OBLIGATORIO
+        '429':
+          description: DEMASIADAS_SOLICITUDES
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                demasiadas_solicitudes:
+                  value:
+                    type: https://g7.unmsm.pe/errores/demasiadas-solicitudes
+                    title: Demasiadas solicitudes
+                    status: 429
+                    code: DEMASIADAS_SOLICITUDES
+          headers:
+            Retry-After:
+              $ref: ./openapi.yaml#/components/headers/RetryAfter
+        '503':
+          description: NO_DISPONIBLE
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                no_disponible:
+                  value:
+                    type: https://g7.unmsm.pe/errores/no-disponible
+                    title: No disponible
+                    status: 503
+                    code: NO_DISPONIBLE
+        '202':
+          description: Código enviado; el estado MFA todavía no cambia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CambioMfaSolicitado'
+              examples:
+                enviado:
+                  value:
+                    mfaChangeToken: cambio-opaco-ejemplo-no-utilizable
+                    canal: EMAIL
+                    destinoEnmascarado: m****a@ejemplo.com
+                    expiraEn: 300
+                    cambioExpiraEn: 240
+  /auth/mfa/cambios/confirmar:
+    post:
+      tags:
+      - Segundo factor
+      operationId: confirmarCambioMfaV2
+      summary: Confirma cambio MFA
+      description: |-
+        SPEC-10. Token de acceso del titular y sesión vigente. El servidor resuelve
+        usuario, correo y acción; la petición no admite usuarioId, destino ni propósito.
+        mfaChangeToken es opaco, almacenado por hash y vinculado a usuario, familia de
+        sesión y acción. No es challengeToken ni JWT de acceso. Validar identidad,
+        sesión y operación antes del código; sin filtraciones en logs/errores.
+        Cambio: 600 s; OTP: 300 s; confirmar exige ambos vigentes. Un cambio pendiente
+        por usuario. Reenvío invalida OTP anterior y no extiende cambio. Tres intentos
+        por código; tres envíos por usuario en 15 min compartidos con login.
+        Ya en el estado pedido: 400 VALIDACION sin envío. Cualquier rol de gestión
+        impide desactivar: 422 MFA_OBLIGATORIO. Revalidar cuenta, roles y familia al
+        confirmar. Token de servicio: 403 TOKEN_NO_APLICABLE; operación consumida,
+        vencida, de otra cuenta/familia: 401 TOKEN_INVALIDO.
+        Persistir consumo, estado y auditoría crítica atómicamente; fallo de auditoría
+        503 NO_DISPONIBLE, sin cambio. Confirmar no crea ni renueva sesión.
+        JWT nuevo por refresh en la misma familia conserva vínculo. No se admite un
+        JWT de otra sesión aunque pertenezca al mismo usuario. No se cambia el JWT
+        público: la relación jti-familia se resuelve internamente (DAT-01).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmarCambioMfa'
+            examples:
+              valido:
+                value:
+                  mfaChangeToken: cambio-opaco-ejemplo-no-utilizable
+                  codigo: '123456'
+      responses:
+        '400':
+          description: VALIDACION
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                validacion:
+                  value:
+                    type: https://g7.unmsm.pe/errores/validacion
+                    title: Validacion
+                    status: 400
+                    code: VALIDACION
+        '401':
+          description: TOKEN_INVALIDO (sesión/cambio); CODIGO_INVALIDO (OTP); OTP_INTENTOS_AGOTADOS (tercer
+            fallo)
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                token_invalido:
+                  value:
+                    type: https://g7.unmsm.pe/errores/token-invalido
+                    title: Token invalido
+                    status: 401
+                    code: TOKEN_INVALIDO
+                codigo_invalido:
+                  value:
+                    type: https://g7.unmsm.pe/errores/codigo-invalido
+                    title: Codigo invalido
+                    status: 401
+                    code: CODIGO_INVALIDO
+                    intentosRestantes: 2
+                otp_intentos_agotados:
+                  value:
+                    type: https://g7.unmsm.pe/errores/otp-intentos-agotados
+                    title: Otp intentos agotados
+                    status: 401
+                    code: OTP_INTENTOS_AGOTADOS
+        '403':
+          description: TOKEN_NO_APLICABLE
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                token_no_aplicable:
+                  value:
+                    type: https://g7.unmsm.pe/errores/token-no-aplicable
+                    title: Token no aplicable
+                    status: 403
+                    code: TOKEN_NO_APLICABLE
+        '422':
+          description: MFA_OBLIGATORIO
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                mfa_obligatorio:
+                  value:
+                    type: https://g7.unmsm.pe/errores/mfa-obligatorio
+                    title: Mfa obligatorio
+                    status: 422
+                    code: MFA_OBLIGATORIO
+        '429':
+          description: DEMASIADAS_SOLICITUDES
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                demasiadas_solicitudes:
+                  value:
+                    type: https://g7.unmsm.pe/errores/demasiadas-solicitudes
+                    title: Demasiadas solicitudes
+                    status: 429
+                    code: DEMASIADAS_SOLICITUDES
+          headers:
+            Retry-After:
+              $ref: ./openapi.yaml#/components/headers/RetryAfter
+        '503':
+          description: NO_DISPONIBLE
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                no_disponible:
+                  value:
+                    type: https://g7.unmsm.pe/errores/no-disponible
+                    title: No disponible
+                    status: 503
+                    code: NO_DISPONIBLE
+        '204':
+          description: Estado actualizado y auditado; operación consumida; sin cuerpo
+        '410':
+          description: OTP_EXPIRADO
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                otp_expirado:
+                  value:
+                    type: https://g7.unmsm.pe/errores/otp-expirado
+                    title: Otp expirado
+                    status: 410
+                    code: OTP_EXPIRADO
+  /usuarios:
+    post:
+      tags:
+      - Administración
+      operationId: crearUsuarioV2
+      summary: Da de alta una cuenta de personal (vendedor, gestión o perfil de otro módulo)
+      description: |-
+        Definido por SPEC-03. **Solo `ADMIN_SISTEMA`** (permiso `usuario.crear`).
+        Crea una cuenta con rol `VENDEDOR`, con uno de los cuatro de gestión, o
+        **sin rol** para un perfil que vive en otro módulo, como el repartidor de
+        Despacho (acuerdos A5 y A6). Los clientes no se crean aquí.
+
+        **El administrador no define la contraseña** (acuerdo A6): la cuenta
+        nace `PENDIENTE_VERIFICACION` y se envía al correo un enlace de
+        activación de un solo uso, válido **72 horas**. La persona define su
+        contraseña y acepta los términos en `POST /api/v1/auth/activar-cuenta`; solo
+        entonces pasa a `ACTIVO` y se publica `usuario.creado`.
+
+        Revisión estricta v2: rol opcional entre cinco roles; CLIENTE y contraseña inicial no admitidos. Activación permanece en POST /api/v1/auth/activar-cuenta.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearUsuarioRequest'
+            examples:
+              sinRol:
+                value:
+                  correo: persona@ejemplo.com
+                  nombres: Persona
+                  apellidos: Prueba
+      responses:
+        '201':
+          description: Cuenta creada en `PENDIENTE_VERIFICACION`; enlace de activación enviado
+          content:
+            application/json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Usuario
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: ./openapi.yaml#/components/responses/ScopeInsuficiente
+        '409':
+          description: El correo ya está registrado
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                correoNoDisponible:
+                  value:
+                    type: https://g7.unmsm.pe/errores/correo-no-disponible
+                    title: No se pudo usar ese correo
+                    status: 409
+                    code: CORREO_NO_DISPONIBLE
+        '400':
+          description: VALIDACION
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                validacion:
+                  value:
+                    type: https://g7.unmsm.pe/errores/validacion
+                    title: Validacion
+                    status: 400
+                    code: VALIDACION
+        '503':
+          description: NO_DISPONIBLE
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                no_disponible:
+                  value:
+                    type: https://g7.unmsm.pe/errores/no-disponible
+                    title: No disponible
+                    status: 503
+                    code: NO_DISPONIBLE
+components:
+  securitySchemes:
+    tokenUsuario:
+      $ref: ./openapi.yaml#/components/securitySchemes/tokenUsuario
+  schemas:
+    SolicitarCambioMfa:
+      type: object
+      additionalProperties: false
+      required:
+      - accion
+      properties:
+        accion:
+          type: string
+          enum:
+          - HABILITAR
+          - DESHABILITAR
+    ReenviarCambioMfa:
+      type: object
+      additionalProperties: false
+      required:
+      - mfaChangeToken
+      properties:
+        mfaChangeToken:
+          type: string
+          minLength: 1
+    ConfirmarCambioMfa:
+      type: object
+      additionalProperties: false
+      required:
+      - mfaChangeToken
+      - codigo
+      properties:
+        mfaChangeToken:
+          type: string
+          minLength: 1
+        codigo:
+          type: string
+          pattern: ^[0-9]{6}$
+    CambioMfaSolicitado:
+      type: object
+      required:
+      - mfaChangeToken
+      - canal
+      - destinoEnmascarado
+      - expiraEn
+      - cambioExpiraEn
+      properties:
+        mfaChangeToken:
+          type: string
+          minLength: 1
+        canal:
+          type: string
+          const: EMAIL
+        destinoEnmascarado:
+          type: string
+        expiraEn:
+          type: integer
+          minimum: 1
+          maximum: 300
+        cambioExpiraEn:
+          type: integer
+          minimum: 1
+          maximum: 600
+    CrearUsuarioRequest:
+      type: object
+      description: |
+        Alta de una cuenta de personal por `ADMIN_SISTEMA`. Sin contraseña: la
+        define la persona con el enlace de activación (acuerdo A6).
+      required:
+      - correo
+      - nombres
+      - apellidos
+      properties:
+        correo:
+          type: string
+          format: email
+          maxLength: 254
+        nombres:
+          type: string
+          minLength: 1
+          maxLength: 100
+        apellidos:
+          type: string
+          minLength: 1
+          maxLength: 100
+        rol:
+          type: string
+          enum:
+          - VENDEDOR
+          - ADMIN_VENTAS
+          - GESTOR_DESPACHO
+          - GESTOR_COMERCIAL
+          - ADMIN_SISTEMA
+          description: Opcional; ausente crea cuenta sin rol. CLIENTE usa registro público o asistido.
+      additionalProperties: false

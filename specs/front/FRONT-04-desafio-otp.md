@@ -2,7 +2,8 @@
 
 | Campo | Valor |
 |---|---|
-| **Responsable** | Por asignar |
+| **Responsable** | Luis David Morales Brenis |
+| **Épica principal** | [EP-04](../epicas/EP-04-segundo-factor.md) |
 | **Specs de backend que consume** | SPEC-09, SPEC-07 (caducidad) |
 | **Wireframe** | Stitch, proyecto `889177073946089595`, pantalla 4 (numeración antigua; ver [`trazabilidad.md`](../trazabilidad.md) §1.1). Figma: pendiente |
 | **Estado** | Borrador |
@@ -37,7 +38,7 @@ preferido y el envío lo dispara esta pantalla.
 | Estado | Cuándo ocurre | Qué ve el usuario |
 |---|---|---|
 | Enviando código | Al abrir, mientras responde `/otp/solicitar` | Indicador «Enviando tu código…» |
-| Esperando el código | `202` de `/otp/solicitar` | «Escribe el código que enviamos a {destinoEnmascarado}.», seis casillas, cuenta atrás de validez del código desde `expiraEn`, «Te quedan 3 intentos», botón «Verificar» y enlace «Enviar otro código» |
+| Esperando el código | `202` de `/otp/solicitar` | «Escribe el código que enviamos a {destinoEnmascarado}.», seis casillas, cuenta atrás con el menor tiempo restante de código/desafío, «Te quedan 3 intentos», botón «Verificar» y enlace «Enviar otro código» |
 | Verificando | Tras completar el código | Casillas de solo lectura e indicador |
 | Código incorrecto | `401 CODIGO_INVALIDO` | Mensaje con `intentosRestantes`; casillas vacías y foco en la primera |
 | Intentos agotados | `401 OTP_INTENTOS_AGOTADOS` | Mensaje, casillas deshabilitadas y botón destacado «Enviar otro código» |
@@ -49,7 +50,7 @@ preferido y el envío lo dispara esta pantalla.
 
 **Dos relojes distintos.** El desafío del login dura `DesafioMfa.expiraEn`
 segundos; cada código dura el `expiraEn` de `/otp/solicitar` (300). La cuenta
-atrás visible es la del código. Si vence el desafío, ningún código sirve y se
+atrás visible es el menor tiempo restante del código y desafío. Si vence el desafío, ningún código sirve y se
 vuelve a FRONT-01.
 
 **Intentos.** El contador arranca en 3 (RF-09.5) porque `/otp/solicitar` no
@@ -177,3 +178,22 @@ nuevo vuelve a mostrar 3.
 - [ ] El `challengeToken` solo vive en memoria
 - [ ] Los escenarios de interfaz están automatizados o verificados a mano con evidencia
 - [ ] El wireframe y la implementación coinciden
+
+
+## Reenvío, límite y canal — corte contractual local 11-oct
+
+Tras 202 se calcula el menor tiempo de `expiraEn` y `desafioExpiraEn`.
+Si consume la base 1.0.0 sin este campo adicional, conserva el vencimiento
+absoluto del desafío recibido en login; nunca lo reinicia al reenviar.
+Reenvío exitoso sustituye OTP anterior y restablece tres intentos del código,
+sin prorrogar desafío. Al terminar este, volver al login.
+
+`429`: leer `Retry-After`, mostrar segundos y deshabilitar reenvío hasta
+liberar cuota; sin envío automático. Si aún hay código vigente, puede verificarlo.
+`400 VALIDACION` por SMS sin celular: mostrar «Elige correo para recibir
+el código.» y permitir EMAIL; no iniciar otro login ni consumir cuota.
+Sesión/configuración MFA no usa este challengeToken (SPEC-10).
+
+Casos adicionales: reenvío rechaza código anterior; SMS sin celular permite
+volver a EMAIL; cuenta regresiva no extiende desafío; Retry-After restringe
+reenvío, también cuando parte de la cuota fue usada por un cambio MFA.

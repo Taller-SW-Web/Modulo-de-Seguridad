@@ -4,7 +4,8 @@
 |---|---|
 | Spec de interfaz | `specs/front/FRONT-02-registro-cliente.md` |
 | Specs de backend | SPEC-01 (registro), SPEC-07 (política) · SPEC-02 al terminar |
-| Responsable | Por asignar |
+| **Responsable** | Eva Lucía Moreno Zevallos |
+| **Épica principal** | [EP-01](../epicas/EP-01-registro-gestion-usuarios.md) |
 
 ---
 

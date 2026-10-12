@@ -5,7 +5,8 @@
 | Spec de interfaz | `specs/front/FRONT-13-actividad-propia.md` |
 | Specs de backend | SPEC-13 (RF-13.5) · catálogo de acciones de SPEC-12 |
 | Wireframe | Sin wireframe — pendiente |
-| Responsable | Por asignar |
+| **Responsable** | Christian Gabriel Arancivia Salas |
+| **Épica principal** | [EP-06](../epicas/EP-06-auditoria.md) |
 
 ---
 

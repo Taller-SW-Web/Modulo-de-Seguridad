@@ -1,5 +1,7 @@
 # Plan de ataque — Hito 1 (Semana 4)
 
+> **Histórico del Hito 1.** Fechas/asignaciones corresponden a septiembre. El reparto vigente es [por épicas](../specs/epicas/README.md); tareas actuales en [plan](../plan/README.md).
+
 **Presentación:** sábado 19 de septiembre de 2026
 **Hoy:** sábado 12 de septiembre de 2026 — quedan **7 días**
 **Peso:** 25% del Componente 2 (que a su vez vale 40% de la nota)
@@ -69,17 +71,17 @@ equipos el viernes 18 y no el mismo día de la presentación.
 
 - [x] `docs/arquitectura/` — diagramas de contexto, componentes, secuencia de login y de renovación de token
 - [x] `docs/arquitectura/adr/` — 3 ADRs: RS256 frente a HS256, validación local frente a introspección, integración asíncrona por eventos
-- [ ] `specs/SPEC-17-tokens-servicio.md`
-- [ ] `specs/SPEC-18-consulta-identidad.md`
-- [ ] `specs/openapi.yaml` — todos los endpoints del contrato
+- [ ] `specs/funcionales/SPEC-17-tokens-servicio.md`
+- [ ] `specs/funcionales/SPEC-18-consulta-identidad.md`
+- [ ] `specs/contrato-api/openapi.yaml` — todos los endpoints del contrato
 - [ ] Mock server levantado y documentado en el README
 - [ ] Aprobar las 16 specs de los demás
 - [ ] Comunicar el contrato a los 6 equipos (viernes)
 
 ### Jose Luis — Tech Lead, Backend
 
-- [ ] `specs/SPEC-05-inicio-sesion.md`
-- [ ] `specs/SPEC-06-renovacion-cierre-sesion.md`
+- [ ] `specs/funcionales/SPEC-05-inicio-sesion.md`
+- [ ] `specs/funcionales/SPEC-06-renovacion-cierre-sesion.md`
 - [ ] Estructura de paquetes del backend documentada en `docs/arquitectura/implementacion.md`
 - [ ] Prueba de concepto de login con Spring Security + JWT, **sin base de datos** (para descubrir los problemas ahora, no en la semana 7)
 - [ ] Configurar la protección de `main` y la plantilla de PR
@@ -87,25 +89,25 @@ equipos el viernes 18 y no el mismo día de la presentación.
 
 ### Eva Lucía — Backend
 
-- [ ] `specs/SPEC-01-registro-clientes.md`
-- [ ] `specs/SPEC-04-baja-reactivacion.md`
-- [ ] `specs/SPEC-11-roles-permisos.md`
-- [ ] `specs/SPEC-16-atributos.md`
+- [ ] `specs/funcionales/SPEC-01-registro-clientes.md`
+- [ ] `specs/funcionales/SPEC-04-baja-reactivacion.md`
+- [ ] `specs/funcionales/SPEC-11-roles-permisos.md`
+- [ ] `specs/funcionales/SPEC-16-atributos.md`
 - [ ] `docs/arquitectura/modelo-datos.md` — las 17 tablas con sus relaciones (diagrama entidad-relación)
 
 ### Juan José — Full Stack
 
-- [ ] `specs/SPEC-02-verificacion-correo.md`
-- [ ] `specs/SPEC-07-politica-cambio-contrasena.md` — política de robustez, historial, caducidad y cambio
-- [ ] `specs/SPEC-08-recuperacion-contrasena.md`
+- [ ] `specs/funcionales/SPEC-02-verificacion-correo.md`
+- [ ] `specs/funcionales/SPEC-07-politica-cambio-contrasena.md` — política de robustez, historial, caducidad y cambio
+- [ ] `specs/funcionales/SPEC-08-recuperacion-contrasena.md`
 - [ ] Revisar los wireframes de sus dos pantallas (2 y 5) con Valery
 
 ### Luis David — Full Stack
 
-- [ ] `specs/SPEC-09-mfa-inicio-sesion.md`
-- [ ] `specs/SPEC-10-activacion-mfa.md`
-- [ ] `specs/SPEC-14-bloqueo-automatico.md`
-- [ ] `specs/SPEC-15-bloqueo-manual.md`
+- [ ] `specs/funcionales/SPEC-09-mfa-inicio-sesion.md`
+- [ ] `specs/funcionales/SPEC-10-activacion-mfa.md`
+- [ ] `specs/funcionales/SPEC-14-bloqueo-automatico.md`
+- [ ] `specs/funcionales/SPEC-15-bloqueo-manual.md`
 - [ ] Revisar los wireframes de sus dos pantallas con Valery
 
 ### Valery — Frontend y Diseño
@@ -120,9 +122,9 @@ equipos el viernes 18 y no el mismo día de la presentación.
 - [ ] Crear la cuenta de nube del grupo y documentar límites del nivel gratuito
 - [ ] `docs/arquitectura/despliegue.md` — cómo se despliega el módulo (aunque todavía no se despliegue)
 - [ ] Esqueleto del `docker-compose.yml` (backend, frontend, PostgreSQL, RabbitMQ) — sin implementación, solo la topología
-- [ ] `specs/SPEC-03-alta-consulta-cuentas.md`
-- [ ] `specs/SPEC-12-registro-auditoria.md` — **borrador ya disponible en el repo**, revisarlo y hacerlo suyo
-- [ ] `specs/SPEC-13-consulta-auditoria.md`
+- [ ] `specs/funcionales/SPEC-03-alta-consulta-cuentas.md`
+- [ ] `specs/funcionales/SPEC-12-registro-auditoria.md` — **borrador ya disponible en el repo**, revisarlo y hacerlo suyo
+- [ ] `specs/funcionales/SPEC-13-consulta-auditoria.md`
 - [ ] Wireframes del panel de administración, coordinados con Valery
 - [ ] Montar el tablero de GitHub Projects con las 18 specs como épicas
 

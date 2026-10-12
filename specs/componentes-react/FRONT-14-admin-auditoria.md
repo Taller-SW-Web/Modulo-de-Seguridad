@@ -5,7 +5,10 @@
 | Spec de interfaz | `specs/front/FRONT-14-admin-auditoria.md` |
 | Specs de backend | SPEC-13 · catálogo de acciones de SPEC-12 |
 | Wireframe | Sin wireframe — pendiente |
-| Responsable | Por asignar |
+| **Responsable** | Christian Gabriel Arancivia Salas |
+| **Épica principal** | [EP-06](../epicas/EP-06-auditoria.md) |
+
+> **Corte de versión, 11-oct-2026:** Exportación (H-08) aplazada de la primera versión Hito 3. No se muestran sus botones ni se llama /auditoria/exportar en esa demo. El contenido de exportación describe alcance posterior: antes de implementarlo, alinear actorId/resultado/ip con el PO. Consulta mantiene un filtro accion por petición.
 
 ---
 
