@@ -20,7 +20,7 @@ Si esperan a que tengamos algo funcionando, seis equipos pierden cuatro semanas.
 El contrato se publica en la **semana 4**, antes de escribir el código que lo
 implementa:
 
-1. `specs/openapi.yaml` con todos los endpoints, los esquemas de petición y
+1. `specs/contrato-api/openapi.yaml` con todos los endpoints, los esquemas de petición y
    respuesta, y los caminos de error.
 2. Un **mock server** que responde ese contrato con datos y credenciales de
    prueba conocidas.
@@ -48,7 +48,7 @@ barato descubrirlo en la semana 4 que en la 11.
 - Los desacuerdos de diseño salen en la revisión del contrato, no en la
   integración del Hito 4.
 - El frontend de nuestro propio módulo también se desarrolla contra el mock, así
-  que Valery no espera al backend.
+  que cada dueño puede preparar su interfaz antes de integrar su backend.
 - El contrato es el entregable que ningún otro grupo podrá enseñar el sábado.
 
 **En contra**

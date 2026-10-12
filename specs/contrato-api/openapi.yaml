@@ -2,7 +2,8 @@ openapi: 3.1.0
 
 info:
   title: Módulo de Seguridad y Autenticación — API de identidad
-  version: 1.0.0
+  version: 1.1.0
+  x-estado: revision-local-no-publicada
   summary: Proveedor de identidad del Marketplace Multicanal de Productos Deportivos
   description: |
     Este módulo es el **proveedor de identidad** del marketplace. Es dueño de la
@@ -22,9 +23,14 @@ info:
        módulo. Úsalo solo para lo que el token de usuario no lleva.
     3. Un token de acceso vive **15 minutos** y sigue siendo válido aunque el
        usuario haya sido desactivado en ese intervalo. Antes de una operación
-       sensible —anular, reembolsar, cambiar precios— usa
-       `/auth/introspeccion`.
+       sensible consulta vigencia mediante `/auth/introspeccion` según ADR-002.
+       A10 distingue esta validación del token de la consulta de estado de cuenta
+       mediante `GET /usuarios/{id}` antes de anular o reembolsar.
 
+    Revisión local 11-oct-2026, editada por delegación del PO informada por Luis David.
+    No publicada ni desplegada. La base 1.0.0 está congelada en historico/.
+    Configuración MFA segura y alta administrativa estricta: openapi-v2.yaml.
+    La demo H3 con Ventas consume login/JWKS v1; no depende de esos cambios.
     La guía práctica con ejemplos ejecutables está en `specs/kit-integracion.md`.
 
     ## Probar los caminos de error sin pedirnos nada
@@ -386,6 +392,10 @@ paths:
         rechaza la petición: se responde con menos, no con un error.
 
         Nunca se devuelve el hash de contraseña.
+
+        Titular y administración (usuario.ver) pueden leer mfaHabilitado y atributos
+        aplicables al rol. La consulta de servicio omite esos campos privados, incluso
+        con usuarios:leer:documento. Documento del titular/administrador enmascarado.
       security:
         - tokenServicio: [usuarios:leer]
         - tokenUsuario: []
@@ -840,8 +850,9 @@ paths:
         Con `canalOrigen` el enlace del correo lleva a la pantalla del canal que
         originó el registro; la URL de cada canal la resolvemos nosotros.
         `CHATBOT` tiene su propia pantalla; `WEB`, `MARKETPLACE` y `RETAIL` usan
-        la nuestra, y al terminar `MARKETPLACE` y `RETAIL` redirigen al inicio
-        de sesión de Marketplace (acuerdo A1, revisado el 2 de octubre).
+        la nuestra. Al terminar, cada canal vuelve a su propio login configurado
+        por entorno: MARKETPLACE al de Marketplace y RETAIL al de Retail (A1).
+        No se recibe una URL de retorno arbitraria ni se entrega token en la URL.
 
         **El mensaje de error no permite deducir si el correo ya existe.** Un
         correo repetido responde `409` con un texto que no confirma ni niega la
@@ -1040,7 +1051,8 @@ paths:
         **El refresco se usa una sola vez.** Cada renovación emite uno nuevo e
         invalida el anterior. Si aparece un refresco ya rotado, se asume robo o
         duplicación de sesión y se revoca **toda la familia**: el usuario queda
-        desconectado de todos sus dispositivos.
+        desconectado de la sesión asociada a esa familia. Las otras sesiones
+        independientes de la cuenta permanecen vigentes.
       security: []
       requestBody:
         required: true
@@ -1133,7 +1145,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Usuario'
+                $ref: '#/components/schemas/PerfilUsuario'
               examples:
                 propio:
                   value:
@@ -1146,6 +1158,8 @@ paths:
                     estado: ACTIVO
                     correoVerificado: true
                     roles: ["CLIENTE"]
+                    mfaHabilitado: false
+                    fechaNacimiento: null
         '401':
           $ref: '#/components/responses/NoAutenticado'
         '403':
@@ -1177,6 +1191,13 @@ paths:
         Código de **6 dígitos**, válido **5 minutos**, con un máximo de **3
         intentos** y **3 solicitudes cada 15 minutos**. Se envía por correo; el
         canal SMS usa un adaptador simulado en desarrollo.
+
+        Reenvío aceptado invalida el código previo solo del mismo desafío y no
+        extiende el vencimiento del desafío. Login y cambio MFA comparten el
+        límite de tres envíos por usuario en 15 minutos.
+        SMS sin celular registrado: 400 VALIDACION, sin enviar ni consumir cuota.
+        Primero se valida el desafío; si es inválido: 401 TOKEN_INVALIDO.
+        La pantalla usa el menor valor entre expiraEn y desafioExpiraEn.
       security: []
       requestBody:
         required: true
@@ -1209,13 +1230,35 @@ paths:
                   expiraEn:
                     type: integer
                     description: Segundos de validez del código.
+                  desafioExpiraEn:
+                    type: integer
+                    minimum: 1
+                    maximum: 300
+                    description: Segundos restantes del desafío; el reenvío no lo prorroga.
               examples:
                 enviado:
                   value:
                     canal: EMAIL
                     destinoEnmascarado: "m****a@ejemplo.com"
                     expiraEn: 300
+                    desafioExpiraEn: 240
+        '400':
+          description: SMS solicitado sin celular registrado, tras validar el desafío
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+              examples:
+                smsSinCelular:
+                  value:
+                    type: https://g7.unmsm.pe/errores/validacion
+                    title: Datos de entrada inválidos
+                    status: 400
+                    code: VALIDACION
+                    detail: Selecciona EMAIL para recibir el código.
         '429':
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
           description: Se superó el límite de 3 solicitudes en 15 minutos
           content:
             application/problem+json:
@@ -1409,6 +1452,9 @@ paths:
           description: |
             Solicitud aceptada. **No confirma ni niega que la cuenta exista.**
         '429':
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
           description: |
             Más de 3 solicitudes en una hora para el mismo correo (RF-08.8). Se
             responde igual exista o no la cuenta.
@@ -1527,12 +1573,15 @@ paths:
 
   /auth/otp/habilitar:
     post:
+      deprecated: true
+      x-estado-implementacion: bloqueada-por-seguridad
       tags: [Segundo factor]
       operationId: habilitarMfa
       summary: Activa el segundo factor de la propia cuenta
       description: |
-        Definido por SPEC-10. Envía un código de confirmación; el MFA queda
-        activo solo cuando ese código se verifica.
+        Referencia histórica v1: no completa la confirmación por OTP requerida.
+        No desplegar esta operación. El flujo seguro está en
+        `/api/v2/auth/mfa/cambios` y sus operaciones reenviar/confirmar.
       responses:
         '202':
           description: Código de confirmación enviado
@@ -1541,13 +1590,15 @@ paths:
 
   /auth/otp/deshabilitar:
     post:
+      deprecated: true
+      x-estado-implementacion: bloqueada-por-seguridad
       tags: [Segundo factor]
       operationId: deshabilitarMfa
       summary: Desactiva el segundo factor de la propia cuenta
       description: |
-        Definido por SPEC-10. **Quien tenga algún rol de gestión no puede
-        desactivarlo** (`ADMIN_VENTAS`, `GESTOR_DESPACHO`, `GESTOR_COMERCIAL`,
-        `ADMIN_SISTEMA`): para ellos el segundo factor es obligatorio.
+        Referencia histórica v1: no completa la confirmación por OTP requerida.
+        No desplegar esta operación. El flujo seguro está en
+        `/api/v2/auth/mfa/cambios` y sus operaciones reenviar/confirmar.
       responses:
         '204':
           description: Segundo factor desactivado
@@ -1693,6 +1744,9 @@ paths:
         '202':
           description: Solicitud aceptada. **No confirma ni niega nada.**
         '429':
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
           description: Más de 3 solicitudes en una hora para ese correo
           content:
             application/problem+json:
@@ -1888,6 +1942,9 @@ paths:
         '404':
           $ref: '#/components/responses/NoEncontrado'
         '429':
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
           description: Más de 60 búsquedas en una hora por el mismo vendedor
           content:
             application/problem+json:
@@ -2155,15 +2212,13 @@ paths:
       operationId: actualizarAtributos
       summary: Actualiza los atributos de perfil
       description: |
-        Definido por SPEC-16. **Un usuario solo puede modificar los suyos**;
-        quien tenga el permiso `atributos.editar` (`ADMIN_SISTEMA`) puede
-        modificar los de cualquiera. Los atributos de vendedor no son
-        aplicables a un cliente ni al revés. El correo no se cambia aquí: tiene
-        su propio flujo en `/usuarios/{id}/correo`. Para leer los propios
-        atributos se usa `/auth/me`.
-
-        Publica `usuario.atributos_actualizados` con la lista de campos que
-        cambiaron, nunca con sus valores.
+        Definido por SPEC-16. El titular solo edita nombres, apellidos y celular.
+        Documento y atributos específicos de rol exigen edición administrativa
+        con atributos.editar, también si el administrador edita su propia cuenta.
+        Sin permiso: 403 SCOPE_INSUFICIENTE; no se aplican cambios parciales.
+        Cada conjunto de atributos exige su rol; CLIENTE y VENDEDOR pueden coexistir.
+        El correo usa su flujo en /usuarios/{id}/correo; lectura propia en /auth/me.
+        Publica usuario.atributos_actualizados con nombres de campos, nunca valores.
       parameters:
         - $ref: '#/components/parameters/UsuarioId'
       requestBody:
@@ -2410,14 +2465,18 @@ components:
 
         | Claim | Contenido |
         |---|---|
-        | `sub` | Identificador del usuario |
+        | `sub` | UUID del usuario |
         | `email` | Correo electrónico |
         | `roles` | Códigos de rol, p. ej. `["VENDEDOR"]` |
         | `permisos` | Permisos efectivos, sin duplicados, escritos con punto (`usuario.ver`). Hoy, los de este módulo (SPEC-11) |
-        | `tipo` | `acceso`, `refresco` o `servicio` |
-        | `iss` | Emisor: el módulo de seguridad |
+        | `tipo` | Exclusivamente `acceso`; rechazar refresco o servicio |
+        | `iss` | Coincide exactamente con el issuer del descubrimiento del entorno |
         | `iat` / `exp` | Emisión y expiración. El acceso dura 15 minutos |
         | `jti` | Identificador único del token, usado para revocar |
+
+        Perfil actual de usuario: no se exige una audiencia adicional. No exigir
+        api-ventas ni api-postventa a tokens de usuario. Los tokens de servicio
+        sí requieren la audiencia de la API dueña y un validador separado.
 
     tokenServicio:
       type: oauth2
@@ -2452,6 +2511,14 @@ components:
       examples:
         cliente:
           value: "11111111-1111-1111-1111-111111111111"
+
+  headers:
+    RetryAfter:
+      description: |
+        Segundos enteros positivos hasta liberar cuota según la ventana de la spec.
+        En correo público, misma política exista o no la cuenta.
+      schema: { type: integer, minimum: 1 }
+      example: 60
 
   responses:
     NoAutenticado:
@@ -2710,7 +2777,34 @@ components:
         correoVerificado: { type: boolean }
         celularVerificado:
           type: boolean
-          description: '`false` tras cambiar el celular, hasta verificarlo por SMS (SPEC-16 RF-16.7).'
+          description: '`false` tras cambiar el celular. A2 no ofrece verificación externa de celular en este ciclo.'
+        mfaHabilitado:
+          type: boolean
+          readOnly: true
+          description: |
+            Estado efectivo para el titular o administrador con usuario.ver.
+            true si existe cualquier rol de gestión, aunque la bandera almacenada sea false.
+            Se omite en consultas con token de servicio.
+        fechaNacimiento:
+          type: [string, "null"]
+          format: date
+          readOnly: true
+          description: Solo titular/administrador y rol CLIENTE; null si aún no registrado.
+        codigoVendedor:
+          type: [string, "null"]
+          maxLength: 50
+          readOnly: true
+          description: Solo titular/administrador y rol VENDEDOR; null si aún no registrado.
+        tienda:
+          type: [string, "null"]
+          maxLength: 100
+          readOnly: true
+          description: Solo titular/administrador y rol VENDEDOR; null si aún no registrado.
+        fechaIngreso:
+          type: [string, "null"]
+          format: date
+          readOnly: true
+          description: Solo titular/administrador y rol VENDEDOR; null si aún no registrado.
         roles:
           type: array
           items: { $ref: '#/components/schemas/CodigoRol' }
@@ -2747,6 +2841,13 @@ components:
             - tipo: MANUAL
               hasta: null
               motivo: "Actividad sospechosa reportada por el canal retail"
+
+    PerfilUsuario:
+      description: Perfil privado del titular. No se usa en respuestas con token de servicio.
+      allOf:
+        - $ref: '#/components/schemas/Usuario'
+        - type: object
+          required: [mfaHabilitado]
 
     LoteUsuarios:
       type: object
@@ -2991,8 +3092,9 @@ components:
     AtributosUsuario:
       type: object
       description: |
-        Atributos de perfil. **Los de cliente y los de vendedor son
-        excluyentes**: enviar `codigoVendedor` a una cuenta `CLIENTE` responde
+        Atributos de perfil. Cada conjunto exige el rol correspondiente:
+        CLIENTE para fechaNacimiento; VENDEDOR para codigoVendedor, tienda y fechaIngreso.
+        Una cuenta con ambos roles admite ambos conjuntos. Sin el rol requerido:
         `422 ATRIBUTO_NO_APLICABLE`. El número de documento se cifra con AES y
         se devuelve enmascarado salvo con el scope `usuarios:leer:documento`.
       properties:
@@ -3009,8 +3111,8 @@ components:
           pattern: '^\+51[0-9]{9}$'
           description: |
             `+51` seguido de 9 dígitos. Cambiarlo deja `celularVerificado` en
-            `false` hasta completar un código por SMS con `/auth/otp/solicitar`
-            y `/auth/otp/verificar` (SPEC-16 RF-16.7).
+            `false`. No hay verificación externa disponible por A2; los desafíos
+            de login no se usan para verificar contactos (SPEC-16 RF-16.7).
           examples: ["+51987654321"]
         codigoVendedor:
           type: string
