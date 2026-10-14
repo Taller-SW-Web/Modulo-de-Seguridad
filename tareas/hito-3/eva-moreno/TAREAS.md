@@ -55,7 +55,7 @@ T007 prepara datos sin modificar cuentas ajenas; T008 cierra el recorrido real.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| EP-01-T001 | Mapping y lectura de cuentas | P0 | Acceso al esquema de prueba revisado con Christian | Pendiente |
+| EP-01-T001 | Mapping y lectura de cuentas | P0 | Acceso al esquema de prueba revisado con Christian | En revision |
 | EP-01-T002 | Ports de cuenta y escritura acotada | P0 | T001 | Pendiente |
 | EP-01-T003 | Listado administrativo protegido | P1 | T001–T002; autorización/roles Sergio, estado Luis, proyección Valery | Pendiente |
 | EP-01-T004 | Detalle administrativo protegido | P1 | T002; autorización Sergio, estado Luis, proyección Valery | Pendiente |
@@ -211,3 +211,4 @@ de otro integrante. No marcar EP-01 completa: este tablero cubre solo H3.
 | Fecha | ID | Resultado / prueba / enlace de evidencia | Revisor | Estado |
 |---|---|---|---|---|
 | 12-oct-2026 | Todas | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
+| 14-oct-2026 | EP-01-T001 | Implementacion completa: domain/model, application/dto+service+ports, adapter/persistence (entities, repositories, mappers), adapter/web (controller, DTOs, mapper), config, tests (Testcontainers PostgreSQL). Pendiente: quitar BOM UTF-8 y ejecutar gradlew compileJava/test. | Pendiente | Implementado (pendiente compilar) |
