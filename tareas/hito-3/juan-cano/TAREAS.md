@@ -56,7 +56,7 @@ T008–T009 verifican efectos y recorrido real con los proveedores entregados.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| EP-03-T001 | Credencial versionada, hashing e historial | P0 | Esquema/historia revisados con Christian | Pendiente |
+| EP-03-T001 | Credencial versionada, hashing e historial | P0 | Esquema/historia revisados con Christian | Parcial; revisión del esquema real pendiente |
 | EP-03-T002 | Política backend y endpoint de consulta | P0 | T001; datos de cuenta Eva para validación personal | Pendiente |
 | EP-03-T003 | CredencialesPort y caducidad | P0 | T001–T002; roles Sergio y cuentas Eva | Pendiente |
 | EP-03-T004 | TokensUnUsoPort para desbloqueo | P0 | Esquema/historia revisados con Christian | Pendiente |
@@ -220,3 +220,4 @@ Los ports compartidos se revisan con sus consumidores.
 | Fecha | ID | Resultado / prueba / enlace de evidencia | Revisor | Estado |
 |---|---|---|---|---|
 | 12-oct-2026 | Todas | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
+| 14-oct-2026 | EP-03-T001 | Fuentes H3 revisadas; rama del backend basada en `develop`. Con JDK 21.0.12.1, `gradlew.bat test --rerun-tasks`: 53 tests, 0 fallos/errores/omisiones; revalidado en `feature/EP-03-T001` basada en `develop`; incluye hashing Argon2id (m=19456,t=2,p=1), BCrypt costo mínimo 12, historial (incluida prueba de no verificar dos veces el hash actual), mappers, reglas de arquitectura y 3 pruebas PostgreSQL 16.6 de mapping, V101 propuesta, lock y conflicto `@Version`. Bouncy Castle 1.86 resuelto. V101 permanece en `docs/migraciones-propuestas`; la fixture prueba la forma histórica V2, no la base Supabase. DAT-01/TEC-INFRA-T002 debe confirmar si la DB real sigue esa forma antes de promover o aplicar la migración; la especificación descriptiva conserva una forma distinta de `credencial`. | Pendiente de revisión | Parcial; revisión del esquema real pendiente |
