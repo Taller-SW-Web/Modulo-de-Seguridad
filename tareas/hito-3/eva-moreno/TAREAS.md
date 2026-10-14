@@ -212,4 +212,23 @@ de otro integrante. No marcar EP-01 completa: este tablero cubre solo H3.
 |---|---|---|---|---|
 | 12-oct-2026 | Todas | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
 | 14-oct-2026 | EP-01-T001 | Implementación completa T001: domain/model (EstadoCuenta, CodigoRol, Usuario), application/dto (FiltroCuenta, Paginacion, CuentaSnapshot, PaginaResultado, ConsultaCuentasQuery), application/port/in (CuentasPort, CuentaEscrituraInterna, CambioBasicos, ContadoresProteccion), application/port/out (UsuarioRepositoryPort, UsuarioEstadoEfectivoPort), application/service (ConsultaCuentasService), adapter/out/persistence (UsuarioJpaEntity, UsuarioEstadoEfectivoJpaEntity, UsuarioRolJpaEntity, repositorios JPA, UsuarioPersistenceMapper, UsuarioRepositoryAdapter), adapter/in/web (UsuarioController GET /api/v1/usuarios y /api/v1/usuarios/{id}, DTOs, UsuarioWebMapper), configuration (UsuarioConfiguration), shared/domain (ActorUsuario, ContextoPeticion). Compilación exitosa (gradlew compileJava). Tests de integración requieren Docker/Testcontainers (pendiente entorno). Estado efectivo via @Subselect en vista usuario_estado_efectivo respeta vencimiento de bloqueo automático. Proyección segura: sin hashes/credenciales, documento enmascarado. | Pendiente | Completado |
-| 14-oct-2026 | EP-01-T002 | Implementación completa T002: adapter/out/persistence/adapter/CuentaEscrituraAdapter (actualizarBasicos, guardarContadores, guardarMfaVoluntario reservado SPEC-10), adapter/in/transaction/CuentasPortTransaccional (decorador @Transactional: lectura REQUIRED+readOnly, bloquear REQUIRED, escritura MANDATORY), configuration/UsuarioConfiguration (wireado decorador + adapter escritura como beans primarios). Tests: CuentasPortTransaccionalTest (propagación, readOnly, delegación), CuentaEscrituraAdapterContractTest (MANDATORY, UnsupportedOperationException SPEC-10). Compilación y tests unitarios exitosos (gradlew test). Docs: docs/ports/cuentas-port-consumo.md para Jose Luis/Luis/Valery/Sergio. Lock pesimista en bloquear() via repo. Mutaciones exigen tx existente (MANDATORY). Snapshot sin secretos. | Pendiente | Completado |
+| 14-oct-2026 | EP-01-T002 | Implementación T002 + fixes post-PR review:
+- adapter/out/persistence/adapter/CuentaEscrituraAdapter (actualizarBasicos, guardarContadores, guardarMfaVoluntario reservado SPEC-10)
+- adapter/in/transaction/CuentasPortTransaccional (decorador @Transactional: lectura REQUIRED+readOnly, bloquear REQUIRED, escritura MANDATORY)
+- configuration/UsuarioConfiguration (wireado decorador @Primary + adapter escritura)
+- Tests: CuentasPortTransaccionalTest, CuentaEscrituraAdapterContractTest (MANDATORY, UnsupportedOperationException SPEC-10)
+- Docs: docs/ports/cuentas-port-consumo.md
+
+Fixes post-PR review:
+- Merge origin/develop: restaurar AuthServiceApplication.java, AuthServiceApplicationTests.java, TestAuthServiceApplication.java
+- Revertir a Java 21 + Gradle 8.14.3 (AGENTS.md)
+- Eliminar UsuarioRolJpaEntity (tabla de Sergio, columnas no coinciden con V1)
+- Eliminar shared/domain/ActorUsuario.java, ContextoPeticion.java (duplican PR #6/#11 de Christian)
+- UsuarioJpaEntity: quitar password_hash, password_algoritmo, correo_normalizado, roles ElementCollection (no existen en V1, credencial es de Juan José)
+- CuentaSnapshot: estadoBase/estadoEfectivo -> String, roles -> Set<String> (ArchUnit: no tipos dominio en DTOs exportados)
+- FiltroCuenta: estado/rol -> String (no enums dominio en puertos exportados)
+- UsuarioEstadoEfectivoRepository: quitar ref UsuarioRolJpaEntity, agregar countActiveByIds usando estado efectivo
+- countActiveByIds usa vista usuario_estado_efectivo (bloqueo vencido -> ACTIVO)
+- UsuarioRepositoryAdapter: usar findByCorreo, estado efectivo para countActiveByIds, roles vacíos (vienen via AutorizacionPort)
+- Tests: limpiar CuentaEscrituraAdapterContractTest (quitar passwordAlgoritmo, campos eliminados)
+- Compilación pendiente Java 21 en CI (entorno local solo Java 17) | Pendiente | Completado (fixes aplicados, pendiente CI) |
