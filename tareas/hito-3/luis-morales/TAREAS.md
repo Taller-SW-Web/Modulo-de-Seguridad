@@ -59,13 +59,13 @@ controladas; los cierres EP-04-T006 y EP-07-T007 requieren composición real.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| EP-04-T001 | Persistencia de desafío y OTP vinculados | P0 | Esquema/historia revisados con Christian | Pendiente |
-| EP-04-T002 | MfaPort y desafío sin sesión | P0 | EP-04-T001; cuentas Eva, revisión Juan José, roles Sergio | Pendiente |
+| EP-04-T001 | Persistencia de desafío y OTP vinculados | P0 | Esquema/historia revisados con Christian | En curso |
+| EP-04-T002 | MfaPort y desafío sin sesión | P0 | EP-04-T001; cuentas Eva, revisión Juan José, roles Sergio | En curso |
 | EP-04-T003 | Solicitar/reenvíar OTP con cuota persistida | P0 | EP-04-T002; correo/outbox/auditoría Christian | Pendiente |
 | EP-04-T004 | Verificar OTP y abrir una sola sesión | P0 | EP-04-T003; EP-02-T003; caducidad Juan José, protección/roles reales | Pendiente |
 | EP-04-T005 | OtpPage y manejo del desafío | P1 | EP-04-T003/T004; EP-02-T001/T008/T009 | Pendiente |
 | EP-04-T006 | Probar y defender MFA real | P1 | EP-04-T004/T005; login/correo/despliegue reales | Pendiente |
-| EP-07-T001 | Persistencia de racha, huellas y bloqueo | P0 | Esquema/historia revisados con Christian | Pendiente |
+| EP-07-T001 | Persistencia de racha, huellas y bloqueo | P0 | Esquema/historia revisados con Christian | En curso |
 | EP-07-T002 | ProteccionPort y fallos distintos | P0 | EP-07-T001; EP-01-T002; guard de roles Sergio | Pendiente |
 | EP-07-T003 | Quinto fallo, progresión y correo/evento | P0 | EP-07-T002; EP-03-T004; auditoría/outbox Christian | Pendiente |
 | EP-07-T004 | Desbloqueo por enlace atómico | P1 | EP-07-T003; EP-03-T004; guard Sergio | Pendiente |
@@ -289,10 +289,18 @@ Valery entregan sus capacidades según sus planes; no se les asignan aquí tarea
 
 ## Registro de ejecución y revisión
 
-Todas las tareas comienzan pendientes. Cada cierre necesita criterios, evidencia
+Las filas iniciales conservan el estado histórico; los avances se registran abajo. Cada cierre necesita criterios, evidencia
 y revisión de otro integrante; ports compartidos se revisan con sus consumidores.
 
 | Fecha | ID | Resultado / prueba / enlace de evidencia | Revisor | Estado |
 |---|---|---|---|---|
 | 12-oct-2026 | EP-04-* | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
 | 12-oct-2026 | EP-07-* | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
+| 12-oct-2026 | EP-04-T001 | Avance en backend rama `codex/ep-04-t001`, base `7ad39a2`; fuentes SDD `c0e0b61`. Modelos y puerto/adaptador criptográfico: desafíos 32 bytes/SHA-256/300 s, OTP de seis dígitos/HMAC contextual, revisión de credencial y representaciones redactadas. Java 21.0.10: compileJava/compileTestJava/bootJar correctos; 24 tests MFA + 4 de arquitectura, 28/28. Evidencia `docs/evidencia/EP-04-T001.md` dentro del backend. Pendientes: revisión de esquema/historial con Christian, V103, entidades/repositorios/mappers y pruebas PostgreSQL; Docker instalado pero motor no disponible. Sin HTTP, correo ni sesión integrada. Cambios locales sin commit/push. | Por asignar | En curso |
+| 12-oct-2026 | EP-04-T001 | Segundo avance en la misma rama: entidades/repositorios/mappers propios, PersistenciaMfaPort/adaptador transaccional, configuración HMAC por variables externas y propuesta V103 fuera de ejecución automática. Docker iniciado; clean build y 48/48 tests completos correctos, incluidos 8 PostgreSQL sobre fixture mínima V2/V3, contextLoads y arquitectura. Supabase sin consultar/modificar. Pendiente: revisión de esquema/historial con Christian, ajuste/promoción de V103 y revisión humana. Preparado para PR en borrador; cambios locales sin commit/push. Evidencia ampliada en `docs/evidencia/EP-04-T001.md` del backend. | Por asignar | En curso |
+| 14-oct-2026 | EP-04-T001 | Merge local `0395a` incorpora PR #13 de Christian y #3 de Sergio. Fixture mínima reemplazada por copias exactas V1–V4 en recursos de test; V103 probada sobre 21 tablas históricas, vista y trigger. Build completo: 82/82 tests, sin omisiones (45 MFA/HMAC, 32 firma, 4 arquitectura, 1 arranque; 10 PostgreSQL MFA). La primera aserción de 22 tablas se corrigió tras contrastar los archivos: solicitud_limitada no está en V1–V4. V103 sigue propuesta; inventario de columnas/FK/índices del DDL manual de Supabase pendiente de Christian. Evidencia y consultas de lectura en el backend; sin Supabase, commit ni push. No se declara T001 cerrada. | Por asignar | En curso |
+| 14-oct-2026 | EP-07-T001 | Rama independiente `codex/ep-07-t001`, worktree `build/luis-ep07-t001`, base develop `52fd0e6`. Modelos/puertos internos, HMAC contextual con pepper externo y key id por racha, entidades/repositorios/mappers propios e insert de huellas deduplicable. V104 propuesta fuera de Flyway. PostgreSQL local V1–V4 completas + V104: 16 tests; suite total 79/79 correcta, sin omisiones, incluidos firma/arquitectura/contextLoads y bootJar. Corregido mapping JDBC CHAR(64) detectado por validación; vector HMAC independiente. Sin Supabase, commits ni push. Pendientes inventario real con Christian y revisión humana; no T002/T003 ni HTTP/correo/UI. Evidencia `docs/evidencia/EP-07-T001.md` en backend. | Por asignar | En curso |
+| 14-oct-2026 | EP-04-T002 | Rama `codex/ep-04-t002`, worktree `.worktrees/luis-ep04-t002`, base T001 `0395a` (depende de PR #9). MfaPort/DTO exportados, política obligatoria/voluntaria, creación de desafíos 300 s/EMAIL con revisión y validación preparatoria. Puertos de salida estrechos y decorador MANDATORY, sin mocks/wiring de producción. Clean build 113/113, cero omisiones (33 nuevas: 6 política, 13 servicio, 10 validación, 4 PostgreSQL; 80 heredadas). Persistencia/crypto reales locales con dobles de proveedores solo en tests; reglas nuevas de CI verificadas por artefactos ignorados. No Supabase, commit/push ni T003/T004. Pendientes proveedores/puentes reales, wiring, locks/composición y cierre de V103/T001. Evidencia `docs/evidencia/EP-04-T002.md` y guía `docs/capacidades/mfa-desafios.md` del backend. | Por asignar | En curso |
+
+| 14-oct-2026 | EP-04-T001 | Contraste por SELECT real de columnas/FK/índices; inventario en PR #9 preparado para actualizar. V103 y mapping OTP ajustados al esquema manual (expiracion/canal_otp/desafio_id existentes); revisión de credencial opaca sin FK a id inexistente ni DDL ajeno. PostgreSQL 17.6 de pruebas, 13 casos MFA; test bootJar completo 218/218 sin omisiones. Aislado escaneo JPA de fixtures por capacidad, validate conservado. Pendiente publicación/CI remoto, revisión Christian/Juan José de la entrega y aplicación coordinada; Supabase sin DDL. | Por asignar | En curso |
+| 14-oct-2026 | EP-07-T001 | V104 contrastada por SELECT con esquema manual; inventario/REVISION-V104 para actualizar PR #14. 16 casos propios en PostgreSQL 17.6 y test bootJar completo 212/212 sin omisiones. Bloqueos históricos conservados con revisión y tablas RLS nuevas solo en contenedor. Pendiente publicación/CI remoto, revisión humana y aplicación/grants/backup Christian; sin DDL remoto. | Por asignar | En curso |
