@@ -63,7 +63,7 @@ propio; T011 comprueba el aporte real a G5.
 | EP-02-T004 | Refresh atómico y detección de reúso | P0 | T003; autorización/estado y auditoría de sus dueños | En revisión |
 | EP-02-T005 | Logout público e idempotente | P0 | T003; auditoría Christian | En revisión |
 | EP-02-T006 | Login y continuación MFA sin bypass | P0 | T003; cuentas, credenciales, protección/MFA, roles/firma y auditoría | En revisión |
-| EP-02-T007 | Pruebas de atomicidad, concurrencia y composición | P0 | T003–T006; providers reales para composición | Pendiente |
+| EP-02-T007 | Pruebas de atomicidad, concurrencia y composición | P0 | T003–T006; providers reales para composición | En revisión |
 | EP-02-T008 | Sesión en memoria, HTTP y rutas protegidas | P0 | T001; T004–T005 para aceptación real | Pendiente |
 | EP-02-T009 | Pantalla de login y transición a OTP | P1 | T006, T008; pantalla OTP de Luis para aceptación real | Pendiente |
 | EP-02-T010 | Verificar y defender autenticación desplegada | P1 | T007–T009; proveedores/entorno reales | Pendiente |
@@ -204,8 +204,9 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
   login p95 <800 ms y refresh p95 <300 ms con 50 concurrentes; este último objetivo
   propuesto y cualquier desviación se registran para revisión según el plan.
   No sustituir esa medición por una petición rápida ni pedir cerrar toda la carga H4/H5.
-- **Evidencia:** comandos, condiciones, resultados y limitaciones; pruebas con
-  dobles se identifican como aisladas y no cierran composición real.
+- **Evidencia:** comandos, condiciones, resultados y limitaciones en
+  `docs/evidencia/EP-02-T007.md` del backend (rama `jose-limachi_hito3`);
+  pruebas con dobles identificadas como aisladas, sin cerrar composición real.
 
 ### EP-02-T008 — Implementar sesión en memoria, HTTP y rutas
 
