@@ -62,7 +62,7 @@ propio; T011 comprueba el aporte real a G5.
 | EP-02-T003 | Apertura, resolución y revocación de familias | P0 | T002; cuentas Eva, firma Sergio | En revisión |
 | EP-02-T004 | Refresh atómico y detección de reúso | P0 | T003; autorización/estado y auditoría de sus dueños | En revisión |
 | EP-02-T005 | Logout público e idempotente | P0 | T003; auditoría Christian | En revisión |
-| EP-02-T006 | Login y continuación MFA sin bypass | P0 | T003; cuentas, credenciales, protección/MFA, roles/firma y auditoría | Pendiente |
+| EP-02-T006 | Login y continuación MFA sin bypass | P0 | T003; cuentas, credenciales, protección/MFA, roles/firma y auditoría | En revisión |
 | EP-02-T007 | Pruebas de atomicidad, concurrencia y composición | P0 | T003–T006; providers reales para composición | Pendiente |
 | EP-02-T008 | Sesión en memoria, HTTP y rutas protegidas | P0 | T001; T004–T005 para aceptación real | Pendiente |
 | EP-02-T009 | Pantalla de login y transición a OTP | P1 | T006, T008; pantalla OTP de Luis para aceptación real | Pendiente |
@@ -186,7 +186,8 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
   `PASSWORD_CADUCADA` al completar autenticación. Usar auditoría canónica;
   no duplicar validación de contraseña, bloqueo ni OTP.
 - **Comprobar/evidencia:** tests de todas las ramas, administración con MFA aunque
-  bandera voluntaria false y cambio de credencial durante desafío. Guardar
+  bandera voluntaria false y cambio de credencial durante desafío (resultados en
+  `docs/evidencia/EP-02-T006.md` del backend, rama `jose-limachi_hito3`). Guardar
   respuestas/evidencia sanitizadas y diferencias de latencia de negativos.
 
 ### EP-02-T007 — Probar garantías del backend y composición entre dueños
