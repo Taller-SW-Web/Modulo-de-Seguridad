@@ -58,7 +58,7 @@ propio; T011 comprueba el aporte real a G5.
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
 | EP-02-T001 | Arranque React y contratos compartidos | P0 | Diseño de entorno aprobado | Pendiente |
-| EP-02-T002 | Persistencia de familias y asociación de acceso | P0 | Esquema/historia revisados con Christian | Pendiente |
+| EP-02-T002 | Persistencia de familias y asociación de acceso | P0 | Esquema/historia revisados con Christian | En revisión |
 | EP-02-T003 | Apertura, resolución y revocación de familias | P0 | T002; cuentas Eva, firma Sergio | Pendiente |
 | EP-02-T004 | Refresh atómico y detección de reúso | P0 | T003; autorización/estado y auditoría de sus dueños | Pendiente |
 | EP-02-T005 | Logout público e idempotente | P0 | T003; auditoría Christian | Pendiente |
@@ -104,8 +104,12 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
 - **Comprobar:** migración sobre PostgreSQL de prueba con datos previos coherentes
   e incoherentes, constraints y validación JPA. No resetear Supabase ni editar
   migraciones ya aplicadas. Consultar cuenta solo mediante Eva.
-- **Evidencia:** scripts versionados, resultados y revisión del cambio; no
-  ejecutar migración remota hasta comprobar la historia/esquema real.
+- **Evidencia:** rama `jose-limachi_hito3` del backend (commit `bbc7518`):
+  V102 propuesta en `docs/migraciones-propuestas/` y resultados en
+  `docs/evidencia/EP-02-T002.md` (unitarios 13/13 y arquitectura 23/23 en
+  verde; PG 11/11 omitidos sin Docker, por correr en CI). Revisión de otro
+  integrante pendiente; no ejecutar migración remota hasta comprobar la
+  historia/esquema real con Christian.
 
 ### EP-02-T003 — Entregar SesionesPort y abrir familias reales
 
