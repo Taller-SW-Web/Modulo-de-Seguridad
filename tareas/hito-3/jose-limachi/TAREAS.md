@@ -64,9 +64,9 @@ propio; T011 comprueba el aporte real a G5.
 | EP-02-T005 | Logout público e idempotente | P0 | T003; auditoría Christian | En revisión |
 | EP-02-T006 | Login y continuación MFA sin bypass | P0 | T003; cuentas, credenciales, protección/MFA, roles/firma y auditoría | En revisión |
 | EP-02-T007 | Pruebas de atomicidad, concurrencia y composición | P0 | T003–T006; providers reales para composición | En revisión |
-| EP-02-T008 | Sesión en memoria, HTTP y rutas protegidas | P0 | T001; T004–T005 para aceptación real | Pendiente |
-| EP-02-T009 | Pantalla de login y transición a OTP | P1 | T006, T008; pantalla OTP de Luis para aceptación real | Pendiente |
-| EP-02-T010 | Verificar y defender autenticación desplegada | P1 | T007–T009; proveedores/entorno reales | Pendiente |
+| EP-02-T008 | Sesión en memoria, HTTP y rutas protegidas | P0 | T001; T004–T005 para aceptación real | En revisión |
+| EP-02-T009 | Pantalla de login y transición a OTP | P1 | T006, T008; pantalla OTP de Luis para aceptación real | En revisión |
+| EP-02-T010 | Verificar y defender autenticación desplegada | P1 | T007–T009; proveedores/entorno reales | En revisión |
 | EP-02-T011 | Comprobar login G7 → mis pedidos G5 | P0 | T010; configuración Sergio/Christian, fixtures Eva y servicio Michael | Pendiente |
 
 Txxx refiere a EP-02. Una dependencia externa se entrega según el plan de su
@@ -225,7 +225,9 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
   guards de React no sustituyen autorización del backend.
 - **Comprobar/evidencia:** tests de requests paralelas, renovación fallida,
   logout en carrera, recarga, 401 semántico y retorno externo rechazado;
-  comprobar ausencia en URL/localStorage/sessionStorage/cookies persistentes.
+  comprobar ausencia en URL/localStorage/sessionStorage/cookies persistentes
+  (resultados en `docs/evidencia/EP-02-T008.md` del frontend, rama
+  `jose-limachi`).
 
 ### EP-02-T009 — Implementar LoginPage y su transición a OTP
 
@@ -243,7 +245,9 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
   gestión sin sesión antes de OTP; teclado, mostrar contraseña, autocomplete,
   alertas y móvil 390 px. Después comprobar login contra API real.
 - **Evidencia:** tests y recorrido/capturas sanitizadas; UI de inexistente,
-  bloqueada/inactiva/pendiente indistinguible de contraseña equivocada.
+  bloqueada/inactiva/pendiente indistinguible de contraseña equivocada
+  (resultados en `docs/evidencia/EP-02-T009.md` del frontend, rama
+  `jose-limachi`).
 
 ### EP-02-T010 — Verificar y defender autenticación desplegada
 
@@ -257,7 +261,9 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
   reinicio conserva claves/familias. Coordinar con Sergio que solo operaciones
   públicas H3 precisas se permitan, sin wildcard `/auth/**` ni errores HTML.
 - **Evidencia:** revisión/URL desplegada, resultados y diagrama del recorrido;
-  uso de IA trazado a fuentes y tareas. No declarar todas las specs futuras
+  uso de IA trazado a fuentes y tareas (ver `docs/evidencia/EP-02-T010.md` del
+  backend, rama `jose-limachi_hito3`: lo verificable sin despliegue + protocolo
+  pendiente). No declarar todas las specs futuras
   terminadas ni revocación instantánea de accesos remotos.
 
 ### EP-02-T011 — Comprobar el aporte a la demo conjunta con Ventas
