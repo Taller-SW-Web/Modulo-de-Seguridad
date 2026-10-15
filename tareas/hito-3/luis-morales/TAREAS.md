@@ -65,7 +65,7 @@ controladas; los cierres EP-04-T006 y EP-07-T007 requieren composición real.
 | EP-04-T004 | Verificar OTP y abrir una sola sesión | P0 | EP-04-T003; EP-02-T003; caducidad Juan José, protección/roles reales | Pendiente |
 | EP-04-T005 | OtpPage y manejo del desafío | P1 | EP-04-T003/T004; EP-02-T001/T008/T009 | Pendiente |
 | EP-04-T006 | Probar y defender MFA real | P1 | EP-04-T004/T005; login/correo/despliegue reales | Pendiente |
-| EP-07-T001 | Persistencia de racha, huellas y bloqueo | P0 | Esquema/historia revisados con Christian | En curso |
+| EP-07-T001 | Persistencia de racha, huellas y bloqueo | P0 | Esquema/historia revisados con Christian | En revisión |
 | EP-07-T002 | ProteccionPort y fallos distintos | P0 | EP-07-T001; EP-01-T002; guard de roles Sergio | Pendiente |
 | EP-07-T003 | Quinto fallo, progresión y correo/evento | P0 | EP-07-T002; EP-03-T004; auditoría/outbox Christian | Pendiente |
 | EP-07-T004 | Desbloqueo por enlace atómico | P1 | EP-07-T003; EP-03-T004; guard Sergio | Pendiente |
@@ -304,3 +304,4 @@ y revisión de otro integrante; ports compartidos se revisan con sus consumidore
 
 | 14-oct-2026 | EP-04-T001 | Contraste por SELECT real de columnas/FK/índices; inventario en PR #9 preparado para actualizar. V103 y mapping OTP ajustados al esquema manual (expiracion/canal_otp/desafio_id existentes); revisión de credencial opaca sin FK a id inexistente ni DDL ajeno. PostgreSQL 17.6 de pruebas, 13 casos MFA; test bootJar completo 218/218 sin omisiones. Aislado escaneo JPA de fixtures por capacidad, validate conservado. Pendiente publicación/CI remoto, revisión Christian/Juan José de la entrega y aplicación coordinada; Supabase sin DDL. | Por asignar | En curso |
 | 14-oct-2026 | EP-07-T001 | V104 contrastada por SELECT con esquema manual; inventario/REVISION-V104 para actualizar PR #14. 16 casos propios en PostgreSQL 17.6 y test bootJar completo 212/212 sin omisiones. Bloqueos históricos conservados con revisión y tablas RLS nuevas solo en contenedor. Pendiente publicación/CI remoto, revisión humana y aplicación/grants/backup Christian; sin DDL remoto. | Por asignar | En curso |
+| 15-oct-2026 | EP-07-T001 | PR #14 preparado localmente con develop 4dc22, incluido #9, sin conflictos. Criterios T001 implementados y test bootJar completo 339/339 sin fallos ni omisiones; 42 casos propios, incluidos 16 PostgreSQL 17.6. Prueba de reinicio reforzada con dos commits/contextos JPA y proveedor HMAC reconstruido. Evidencia actualizada en backend; pendientes commit/push, CI del nuevo SHA y revisión humana de código/V104. Aplicación remota coordinada por Christian; T002 y siguientes conservan su alcance pendiente. | Otro integrante | En revisión |
