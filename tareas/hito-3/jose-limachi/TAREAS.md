@@ -59,7 +59,7 @@ propio; T011 comprueba el aporte real a G5.
 |---|---|---|---|---|
 | EP-02-T001 | Arranque React y contratos compartidos | P0 | Diseño de entorno aprobado | Pendiente |
 | EP-02-T002 | Persistencia de familias y asociación de acceso | P0 | Esquema/historia revisados con Christian | En revisión |
-| EP-02-T003 | Apertura, resolución y revocación de familias | P0 | T002; cuentas Eva, firma Sergio | Pendiente |
+| EP-02-T003 | Apertura, resolución y revocación de familias | P0 | T002; cuentas Eva, firma Sergio | En revisión |
 | EP-02-T004 | Refresh atómico y detección de reúso | P0 | T003; autorización/estado y auditoría de sus dueños | Pendiente |
 | EP-02-T005 | Logout público e idempotente | P0 | T003; auditoría Christian | Pendiente |
 | EP-02-T006 | Login y continuación MFA sin bypass | P0 | T003; cuentas, credenciales, protección/MFA, roles/firma y auditoría | Pendiente |
@@ -128,7 +128,9 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
   rollback y locks cuenta→familias ordenadas. Un `familiaId` HTTP nunca decide
   sesión actual. Tokens/contraseñas no aparecen en logs.
 - **Entrega/evidencia:** contrato probado a Luis/Juan José/Sergio y tests;
-  asociar cada acceso nuevo también en refresh. Revocar refrescos no promete
+  resultados en `docs/evidencia/EP-02-T003.md` del backend (rama
+  `jose-limachi_hito3`; `renovar`/`cerrar` llegan con T004/T005). Asociar cada
+  acceso nuevo también en refresh. Revocar refrescos no promete
   invalidar inmediatamente un JWT ya emitido en G5.
 
 ### EP-02-T004 — Implementar POST /api/v1/auth/refresh
