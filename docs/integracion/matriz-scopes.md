@@ -53,6 +53,10 @@ externos. Los pedidos nuevos siguen por issues de integración.
 | Productos | cupones:validar | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Productos | recomendaciones:leer | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Productos | inventario:disponibilidad:leer | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | inventario:reservar | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | inventario:consumir | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | inventario:liberar | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | inventario:reintegrar | api-productos | modulo-postventa | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
 
 ## Clientes y límites
 
@@ -71,6 +75,12 @@ Ventas como consumidor. [Evidencia](correcciones-modulos.md#g2--despacho);
 A10 respalda las concesiones y la provisión sigue pendiente. Despacho también
 enumera Ventas como consumidor previsto de seguimientos:leer, pero G5 declaró
 no necesitarlo; no se añade esa concesión.
+
+Las cuatro filas de inventario de #51 (15-oct) siguen el contrato de
+Productos: `inventario:reservar`, `inventario:consumir` e `inventario:liberar`
+solo para modulo-ventas, e `inventario:reintegrar` solo para modulo-postventa.
+Productos no aprobó reservar/consumir para modulo-postventa ni
+`inventario:disponibilidad:leer` para modulo-postventa; no se registran.
 
 ## Retirados o no concedidos
 
