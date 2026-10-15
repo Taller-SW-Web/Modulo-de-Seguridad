@@ -60,7 +60,7 @@ propio; T011 comprueba el aporte real a G5.
 | EP-02-T001 | Arranque React y contratos compartidos | P0 | Diseño de entorno aprobado | Pendiente |
 | EP-02-T002 | Persistencia de familias y asociación de acceso | P0 | Esquema/historia revisados con Christian | En revisión |
 | EP-02-T003 | Apertura, resolución y revocación de familias | P0 | T002; cuentas Eva, firma Sergio | En revisión |
-| EP-02-T004 | Refresh atómico y detección de reúso | P0 | T003; autorización/estado y auditoría de sus dueños | Pendiente |
+| EP-02-T004 | Refresh atómico y detección de reúso | P0 | T003; autorización/estado y auditoría de sus dueños | En revisión |
 | EP-02-T005 | Logout público e idempotente | P0 | T003; auditoría Christian | Pendiente |
 | EP-02-T006 | Login y continuación MFA sin bypass | P0 | T003; cuentas, credenciales, protección/MFA, roles/firma y auditoría | Pendiente |
 | EP-02-T007 | Pruebas de atomicidad, concurrencia y composición | P0 | T003–T006; providers reales para composición | Pendiente |
@@ -149,7 +149,8 @@ son obligatorios dentro del alcance; la prioridad indica orden habilitante.
   rotación, el segundo reúso revoca la familia, incluido el sucesor. Auditar
   `REFRESCO_REUTILIZADO`; fallo técnico revierte el conjunto.
 - **Evidencia:** tests con estado DB posterior, respuestas sanitizadas y ausencia
-  de secretos en logs. No repetir automáticamente una rotación incierta.
+  de secretos en logs (resultados en `docs/evidencia/EP-02-T004.md` del backend,
+  rama `jose-limachi_hito3`). No repetir automáticamente una rotación incierta.
 
 ### EP-02-T005 — Implementar POST /api/v1/auth/logout
 
