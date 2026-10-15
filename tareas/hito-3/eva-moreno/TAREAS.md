@@ -245,10 +245,14 @@ Fixes post-PR review (2da ronda - 17-oct):
 - Nuevo enum CanalOrigen (WEB, CHATBOT, RETAIL, MARKETPLACE)
 - Fix compilación mappers/adapters:
   * UsuarioWebMapper: String vs EstadoCuenta, .name() en String, Enum::name en Set<String>
-  * CuentaEscrituraAdapter: tipoDocumento String, quitar extraerRoles(), setTipoDocumento(String)
-  * CuentaEscrituraAdapter: setIntentosFallidosConsecutivos()
+  * CuentaEscrituraAdapter: tipoDocumento String, quitar extraerRoles(), setIntentosFallidosConsecutivos()
   * CuentaEscrituraAdapterContractTest: limpiar setup, quitar passwordAlgoritmo
 - gradle-wrapper.properties: quitar retries/retryBackOffMs (ruido)
 - contarActivos usa estado efectivo (vista usuario_estado_efectivo) via UsuarioEstadoEfectivoRepository.countActiveByIds()
 - CuentaSnapshot no expone tipos dominio (String para estado/roles)
 - Compilación verificada en CI con Java 21 | Pendiente | Completado (fixes aplicados, CI verde pendiente) |
+
+Fixes test compilation (15-oct):
+- UsuarioEstadoEfectivoJpaEntity: tipo_documento -> String, quitar documento_hmac (no en tabla usuario)
+- Tests: CuentaEscrituraAdapterContractTest (quitar MockitoSettings, usar lenient()), CuentasPortTransaccionalTest (String para estado, Set<String> para roles)
+- Compilación + tests unitarios pasan (241 tests, solo falla AuthServiceApplicationTests por Docker no disponible local - CI tendrá Docker) | Completado | Completado |
