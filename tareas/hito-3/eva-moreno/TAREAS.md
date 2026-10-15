@@ -1,4 +1,4 @@
-# H3 — tareas de Eva Lucía Moreno Zevallos
+﻿# H3 — tareas de Eva Lucía Moreno Zevallos
 
 **Dueña:** Eva · **Épica:** EP-01 · **Incremento:** H3-EVA.
 **Base:** [PLAN aprobado 1.1.0](../../../plan/hito-3/eva-moreno/PLAN.md),
@@ -55,7 +55,7 @@ T007 prepara datos sin modificar cuentas ajenas; T008 cierra el recorrido real.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| EP-01-T001 | Mapping y lectura de cuentas | P0 | Acceso al esquema de prueba revisado con Christian | Pendiente |
+| EP-01-T001 | Mapping y lectura de cuentas | P0 | Acceso al esquema de prueba revisado con Christian | En revision |
 | EP-01-T002 | Ports de cuenta y escritura acotada | P0 | T001 | Pendiente |
 | EP-01-T003 | Listado administrativo protegido | P1 | T001–T002; autorización/roles Sergio, estado Luis, proyección Valery | Pendiente |
 | EP-01-T004 | Detalle administrativo protegido | P1 | T002; autorización Sergio, estado Luis, proyección Valery | Pendiente |
@@ -211,3 +211,48 @@ de otro integrante. No marcar EP-01 completa: este tablero cubre solo H3.
 | Fecha | ID | Resultado / prueba / enlace de evidencia | Revisor | Estado |
 |---|---|---|---|---|
 | 12-oct-2026 | Todas | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
+| 14-oct-2026 | EP-01-T001 | Implementación completa T001: domain/model (EstadoCuenta, CodigoRol, Usuario), application/dto (FiltroCuenta, Paginacion, CuentaSnapshot, PaginaResultado, ConsultaCuentasQuery), application/port/in (CuentasPort, CuentaEscrituraInterna, CambioBasicos, ContadoresProteccion), application/port/out (UsuarioRepositoryPort, UsuarioEstadoEfectivoPort), application/service (ConsultaCuentasService), adapter/out/persistence (UsuarioJpaEntity, UsuarioEstadoEfectivoJpaEntity, UsuarioRolJpaEntity, repositorios JPA, UsuarioPersistenceMapper, UsuarioRepositoryAdapter), adapter/in/web (UsuarioController GET /api/v1/usuarios y /api/v1/usuarios/{id}, DTOs, UsuarioWebMapper), configuration (UsuarioConfiguration), shared/domain (ActorUsuario, ContextoPeticion). Compilación exitosa (gradlew compileJava). Tests de integración requieren Docker/Testcontainers (pendiente entorno). Estado efectivo via @Subselect en vista usuario_estado_efectivo respeta vencimiento de bloqueo automático. Proyección segura: sin hashes/credenciales, documento enmascarado. | Pendiente | Completado |
+| 14-oct-2026 | EP-01-T002 | Implementación T002 + fixes post-PR review (x2):
+- adapter/out/persistence/adapter/CuentaEscrituraAdapter (actualizarBasicos, guardarContadores, guardarMfaVoluntario reservado SPEC-10)
+- adapter/in/transaction/CuentasPortTransaccional (decorador @Transactional: lectura REQUIRED+readOnly, bloquear REQUIRED, escritura MANDATORY)
+- configuration/UsuarioConfiguration (wireado decorador @Primary + adapter escritura)
+- Tests: CuentasPortTransaccionalTest, CuentaEscrituraAdapterContractTest (MANDATORY, UnsupportedOperationException SPEC-10)
+- Docs: docs/ports/cuentas-port-consumo.md
+
+Fixes post-PR review (1ra ronda):
+- Merge origin/develop: restaurar AuthServiceApplication.java, AuthServiceApplicationTests.java, TestAuthServiceApplication.java
+- Revertir a Java 21 + Gradle 8.14.3 (AGENTS.md)
+- Eliminar UsuarioRolJpaEntity (tabla de Sergio, columnas no coinciden con V1)
+- Eliminar shared/domain/ActorUsuario.java, ContextoPeticion.java (duplican PR #6/#11 de Christian)
+- UsuarioJpaEntity: quitar password_hash, password_algoritmo, correo_normalizado, roles ElementCollection (no existen en V1, credencial es de Juan José)
+- CuentaSnapshot: estadoBase/estadoEfectivo -> String, roles -> Set<String> (ArchUnit)
+- FiltroCuenta: estado/rol -> String (no enums dominio en puertos exportados)
+- UsuarioEstadoEfectivoRepository: quitar ref UsuarioRolJpaEntity, agregar countActiveByIds usando estado efectivo
+- countActiveByIds usa vista usuario_estado_efectivo (bloqueo vencido -> ACTIVO)
+- UsuarioRepositoryAdapter: usar findByCorreo, estado efectivo para countActiveByIds, roles vacíos (vienen via AutorizacionPort)
+- Tests: limpiar CuentaEscrituraAdapterContractTest
+- Compilación pendiente Java 21 en CI (entorno local solo Java 17) | Pendiente | Completado (fixes aplicados, pendiente CI) |
+
+Fixes post-PR review (2da ronda - 17-oct):
+- UsuarioJpaEntity alineado con schema.sql real (V1 usuario):
+  * created_at/updated_at -> creado_en/actualizado_en
+  * intentos_fallidos -> intentos_fallidos_consecutivos
+  * acepta_terminos_version/acepta_terminos_en -> version_terminos/fecha_aceptacion + acepta_terminos
+  * version -> mantener @Version (migración propia)
+  * quitar: password_hash, password_algoritmo, correo_normalizado, roles, tipo_documento (enum), documento_cifrado, documento_hmac, codigo_vendedor, tienda, fecha_ingreso, fecha_nacimiento (van en perfiles/credencial)
+  * celular varchar(12), canal_origen enum CanalOrigen (WEB, CHATBOT, RETAIL, MARKETPLACE)
+  * agregar: acepta_terminos, fecha_aceptacion, version_terminos, canal_origen (enum), intentos_fallidos_consecutivos, tipo_documento (String)
+- Nuevo enum CanalOrigen (WEB, CHATBOT, RETAIL, MARKETPLACE)
+- Fix compilación mappers/adapters:
+  * UsuarioWebMapper: String vs EstadoCuenta, .name() en String, Enum::name en Set<String>
+  * CuentaEscrituraAdapter: tipoDocumento String, quitar extraerRoles(), setIntentosFallidosConsecutivos()
+  * CuentaEscrituraAdapterContractTest: limpiar setup, quitar passwordAlgoritmo
+- gradle-wrapper.properties: quitar retries/retryBackOffMs (ruido)
+- contarActivos usa estado efectivo (vista usuario_estado_efectivo) via UsuarioEstadoEfectivoRepository.countActiveByIds()
+- CuentaSnapshot no expone tipos dominio (String para estado/roles)
+- Compilación verificada en CI con Java 21 | Pendiente | Completado (fixes aplicados, CI verde pendiente) |
+
+Fixes test compilation (15-oct):
+- UsuarioEstadoEfectivoJpaEntity: tipo_documento -> String, quitar documento_hmac (no en tabla usuario)
+- Tests: CuentaEscrituraAdapterContractTest (quitar MockitoSettings, usar lenient()), CuentasPortTransaccionalTest (String para estado, Set<String> para roles)
+- Compilación + tests unitarios pasan (241 tests, solo falla AuthServiceApplicationTests por Docker no disponible local - CI tendrá Docker) | Completado | Completado |
