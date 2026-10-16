@@ -1,0 +1,674 @@
+# yaml-language-server: $schema=https://api.icepanel.io/v1/schemas/LandscapeImportData
+namespace: g7-seguridad
+modelObjects:
+- id: dom
+  name: Marketplace Multicanal de Productos Deportivos
+  type: domain
+- id: act-usuario
+  name: Usuario final
+  type: actor
+  parentId: dom
+  caption: Cliente o vendedor
+- id: act-admin
+  name: Administrador
+  type: actor
+  parentId: dom
+  caption: ADMIN_SISTEMA, con MFA obligatorio
+- id: sys-g7
+  name: Módulo de Seguridad (G7)
+  type: system
+  parentId: dom
+  caption: Proveedor de identidad del marketplace
+  description: Autentica usuarios, emite JWT RS256, gestiona roles, bloqueo, MFA y auditoría.
+  technologyIds:
+  - y0A4IinymBFl3GEKZXjM
+  icon:
+    technologyId: y0A4IinymBFl3GEKZXjM
+- id: sys-g5
+  name: Módulo de Ventas (G5)
+  type: system
+  parentId: dom
+  caption: Consume nuestros JWT
+  external: true
+- id: sys-otros
+  name: Otros módulos del marketplace
+  type: system
+  parentId: dom
+  caption: Inventario, postventa, despacho…
+  external: true
+- id: sys-rabbit
+  name: CloudAMQP (RabbitMQ)
+  type: system
+  parentId: dom
+  caption: Broker de eventos gestionado
+  external: true
+  technologyIds:
+  - tlMmwwF58dQ4Jqwwdn8X
+  icon:
+    technologyId: tlMmwwF58dQ4Jqwwdn8X
+- id: sys-smtp
+  name: Proveedor SMTP
+  type: system
+  parentId: dom
+  caption: 'Brevo / Gmail: OTP y avisos'
+  external: true
+  technologyIds:
+  - gOv2MS45DJvgrMFrJAgk
+  - GWI9DPXI8sypmXh1OrQw
+  icon:
+    technologyId: gOv2MS45DJvgrMFrJAgk
+- id: app-spa
+  name: SPA de seguridad
+  type: app
+  parentId: sys-g7
+  caption: React 19 · Vite 7 · Mantine 9
+  description: Se ejecuta en el navegador; desplegada como sitio estático.
+  technologyIds:
+  - 9ZYWgwsvAwKsjKK8lNgg
+  - unq9eBvtMu9rTTSQqqUP
+  - RGGR8ElsMwiF1HjOmLMm
+  - DuW3weUCKJvpeej23jVp
+  - 2xBuwaRiSkpnXWZoS5K9
+  icon:
+    technologyId: 9ZYWgwsvAwKsjKK8lNgg
+- id: app-api
+  name: AUTH-SERVICE
+  type: app
+  parentId: sys-g7
+  caption: Java 21 · Spring Boot 3.5 · Docker
+  description: API REST /api/v1, arquitectura hexagonal.
+  technologyIds:
+  - y0A4IinymBFl3GEKZXjM
+  - 7NkfDiLzoYOcrpKn1Xda
+  - 4QZq23Fxy9oyoCTmURM6
+  - dpVdzSv0Dt4GylOqnnQg
+  - KFG1HuJNRSI0DRSUC9nd
+  - BhSbUVGIeC8kJxslDwLD
+  icon:
+    technologyId: y0A4IinymBFl3GEKZXjM
+- id: store-db
+  name: Base de datos de seguridad
+  type: store
+  parentId: sys-g7
+  caption: Supabase PostgreSQL · RLS
+  description: Usuarios, credenciales, sesiones, auditoría y outbox. El runtime entra como g7_runtime.
+  technologyIds:
+  - 1aUmrxbw4ZWRPtTxuf3u
+  - AtAwOo48GPChCWOkPkkj
+  - KFG1HuJNRSI0DRSUC9nd
+  icon:
+    technologyId: 1aUmrxbw4ZWRPtTxuf3u
+- id: f-rutas
+  name: App / Rutas
+  type: component
+  parentId: app-spa
+  caption: React Router 7
+  description: Mapa de URLs de la SPA.
+  technologyIds:
+  - 2xBuwaRiSkpnXWZoS5K9
+  - 9ZYWgwsvAwKsjKK8lNgg
+  icon:
+    technologyId: 2xBuwaRiSkpnXWZoS5K9
+- id: f-guardas
+  name: Guardas de ruta
+  type: component
+  parentId: app-spa
+  caption: RutaPublica · RutaAutenticada · RutaAdmin
+  description: Sin sesión o sin permiso no montan la pantalla ni llaman al API.
+  technologyIds:
+  - 2xBuwaRiSkpnXWZoS5K9
+  - 9ZYWgwsvAwKsjKK8lNgg
+  icon:
+    technologyId: 2xBuwaRiSkpnXWZoS5K9
+- id: f-acceso
+  name: Pantallas de acceso
+  type: component
+  parentId: app-spa
+  caption: Login · OTP · Desbloqueo
+  description: FRONT-01, FRONT-04, FRONT-12.
+  technologyIds:
+  - 9ZYWgwsvAwKsjKK8lNgg
+  - DuW3weUCKJvpeej23jVp
+  icon:
+    technologyId: 9ZYWgwsvAwKsjKK8lNgg
+- id: f-cuenta
+  name: Pantallas de Mi cuenta
+  type: component
+  parentId: app-spa
+  caption: Perfil · Contraseña · Actividad
+  description: Perfil y edición propia, FRONT-10 con MedidorPassword, FRONT-13.
+  technologyIds:
+  - 9ZYWgwsvAwKsjKK8lNgg
+  - DuW3weUCKJvpeej23jVp
+  icon:
+    technologyId: 9ZYWgwsvAwKsjKK8lNgg
+- id: f-admin
+  name: Pantallas de administración
+  type: component
+  parentId: app-spa
+  caption: Listado · Detalle + roles
+  description: FRONT-07 con filtros y FRONT-08 con SeccionRoles.
+  technologyIds:
+  - 9ZYWgwsvAwKsjKK8lNgg
+  - DuW3weUCKJvpeej23jVp
+  icon:
+    technologyId: 9ZYWgwsvAwKsjKK8lNgg
+- id: f-sesion
+  name: ProveedorSesion
+  type: component
+  parentId: app-spa
+  caption: Contexto React
+  description: Usuario, permisos y logout.
+  technologyIds:
+  - 9ZYWgwsvAwKsjKK8lNgg
+  - unq9eBvtMu9rTTSQqqUP
+  icon:
+    technologyId: 9ZYWgwsvAwKsjKK8lNgg
+- id: f-almacen
+  name: AlmacenSesion
+  type: component
+  parentId: app-spa
+  caption: Tokens solo en memoria
+  description: Ni localStorage, ni sessionStorage, ni cookies.
+  technologyIds:
+  - unq9eBvtMu9rTTSQqqUP
+  - BhSbUVGIeC8kJxslDwLD
+  icon:
+    technologyId: unq9eBvtMu9rTTSQqqUP
+- id: f-desafio
+  name: Desafío MFA
+  type: component
+  parentId: app-spa
+  caption: challengeToken en memoria
+  description: Entre login y OTP.
+  technologyIds:
+  - unq9eBvtMu9rTTSQqqUP
+  icon:
+    technologyId: unq9eBvtMu9rTTSQqqUP
+- id: f-api
+  name: Api
+  type: component
+  parentId: app-spa
+  caption: Un método por endpoint
+  technologyIds:
+  - unq9eBvtMu9rTTSQqqUP
+  - AKd30nIcOMCYnGrIIzFs
+  icon:
+    technologyId: unq9eBvtMu9rTTSQqqUP
+- id: f-http
+  name: ClienteHttp
+  type: component
+  parentId: app-spa
+  caption: fetch + Bearer
+  description: Una sola renovación en vuelo contra /auth/refresh; si falla, cierra la sesión.
+  technologyIds:
+  - unq9eBvtMu9rTTSQqqUP
+  - 20VtuIRnZRytNwM9vvxn
+  - OfYKvSfjuhOFZLhcoeAB
+  icon:
+    technologyId: unq9eBvtMu9rTTSQqqUP
+- id: b-seguridad
+  name: Filtro de seguridad
+  type: component
+  parentId: app-api
+  caption: Spring Security · resource server
+  description: Valida el JWT RS256 de cada petición; CORS y salud pública.
+  technologyIds:
+  - M8wTWhwNJfsMnYw8s7Os
+  - 7NkfDiLzoYOcrpKn1Xda
+  - BhSbUVGIeC8kJxslDwLD
+  icon:
+    technologyId: M8wTWhwNJfsMnYw8s7Os
+- id: b-sesion
+  name: Sesión
+  type: component
+  parentId: app-api
+  caption: Login · Refresh · Logout
+  description: Familias de refresco con rotación y detección de reúso.
+  technologyIds:
+  - M8wTWhwNJfsMnYw8s7Os
+  - 7NkfDiLzoYOcrpKn1Xda
+  - BhSbUVGIeC8kJxslDwLD
+  icon:
+    technologyId: M8wTWhwNJfsMnYw8s7Os
+- id: b-identidad
+  name: Identidad y JWKS
+  type: component
+  parentId: app-api
+  caption: Firma RS256 · descubrimiento
+  description: Emite el JWT y publica la clave pública.
+  technologyIds:
+  - BhSbUVGIeC8kJxslDwLD
+  - 7NkfDiLzoYOcrpKn1Xda
+  - M8wTWhwNJfsMnYw8s7Os
+  icon:
+    technologyId: BhSbUVGIeC8kJxslDwLD
+- id: b-mfa
+  name: MFA (OTP)
+  type: component
+  parentId: app-api
+  caption: Desafío · solicitar · verificar
+  description: Código por correo con cuota.
+  technologyIds:
+  - M8wTWhwNJfsMnYw8s7Os
+  - 7NkfDiLzoYOcrpKn1Xda
+  icon:
+    technologyId: M8wTWhwNJfsMnYw8s7Os
+- id: b-credencial
+  name: Credenciales
+  type: component
+  parentId: app-api
+  caption: Argon2id · política · cambio
+  description: Historial de contraseñas y lista de comunes.
+  technologyIds:
+  - 9WvCKoQbYCY5jogWN92t
+  - M8wTWhwNJfsMnYw8s7Os
+  - 7NkfDiLzoYOcrpKn1Xda
+  icon:
+    technologyId: 9WvCKoQbYCY5jogWN92t
+- id: b-proteccion
+  name: Protección
+  type: component
+  parentId: app-api
+  caption: Racha de fallos · bloqueo · desbloqueo
+  description: Bloqueo automático tras 5 fallos y enlace de un solo uso.
+  technologyIds:
+  - M8wTWhwNJfsMnYw8s7Os
+  - 7NkfDiLzoYOcrpKn1Xda
+  icon:
+    technologyId: M8wTWhwNJfsMnYw8s7Os
+- id: b-usuario
+  name: Usuarios
+  type: component
+  parentId: app-api
+  caption: Listado y detalle para el admin
+  description: GET /usuarios con filtros.
+  technologyIds:
+  - M8wTWhwNJfsMnYw8s7Os
+  - 7NkfDiLzoYOcrpKn1Xda
+  icon:
+    technologyId: M8wTWhwNJfsMnYw8s7Os
+- id: b-perfil
+  name: Perfil
+  type: component
+  parentId: app-api
+  caption: /auth/me · atributos propios
+  description: Datos personales cifrados.
+  technologyIds:
+  - M8wTWhwNJfsMnYw8s7Os
+  - 7NkfDiLzoYOcrpKn1Xda
+  icon:
+    technologyId: M8wTWhwNJfsMnYw8s7Os
+- id: b-autorizacion
+  name: Autorización y roles
+  type: component
+  parentId: app-api
+  caption: Permisos · asignar/revocar
+  description: Protege al último administrador.
+  technologyIds:
+  - M8wTWhwNJfsMnYw8s7Os
+  - 7NkfDiLzoYOcrpKn1Xda
+  icon:
+    technologyId: M8wTWhwNJfsMnYw8s7Os
+- id: b-auditoria
+  name: Auditoría y mensajería
+  type: component
+  parentId: app-api
+  caption: Auditoría · outbox AES-GCM · workers
+  description: Crítica en el mismo commit; correos y eventos con reintentos 10/30/60 s.
+  technologyIds:
+  - M8wTWhwNJfsMnYw8s7Os
+  - 7NkfDiLzoYOcrpKn1Xda
+  - cAlnYgrQ5Q18f0EEUXgI
+  - szKYj50b4M6iZQpBSfVF
+  icon:
+    technologyId: M8wTWhwNJfsMnYw8s7Os
+modelConnections:
+- id: c-01
+  name: Usa
+  direction: outgoing
+  originId: act-usuario
+  targetId: app-spa
+  description: HTTPS desde el navegador
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
+- id: c-02
+  name: Administra cuentas y roles
+  direction: outgoing
+  originId: act-admin
+  targetId: app-spa
+  description: HTTPS desde el navegador
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
+- id: c-03
+  name: Llama al API
+  direction: outgoing
+  originId: app-spa
+  targetId: app-api
+  description: 'HTTPS + JSON, Authorization: Bearer'
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
+- id: c-04
+  name: Lee y escribe
+  direction: outgoing
+  originId: app-api
+  targetId: store-db
+  description: JDBC + TLS verify-full, pool Hikari de 5
+- id: c-05
+  name: Publica eventos
+  direction: outgoing
+  originId: app-api
+  targetId: sys-rabbit
+  description: AMQPS, exchange seguridad.usuarios con confirmaciones
+  technologyIds:
+  - szKYj50b4M6iZQpBSfVF
+  - uJEz1lYRraeHB1o1idt3
+- id: c-06
+  name: Envía correos
+  direction: outgoing
+  originId: app-api
+  targetId: sys-smtp
+  description: SMTP STARTTLS desde el outbox
+  technologyIds:
+  - cAlnYgrQ5Q18f0EEUXgI
+- id: c-07
+  name: Valida JWT con el JWKS
+  direction: outgoing
+  originId: sys-g5
+  targetId: app-api
+  description: GET /api/v1/auth/.well-known/jwks.json
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
+- id: c-08
+  name: Valida JWT con el JWKS
+  direction: outgoing
+  originId: sys-otros
+  targetId: app-api
+  description: Sin llamar al login
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
+- id: c-09
+  name: Consume eventos usuario.*
+  direction: outgoing
+  originId: sys-otros
+  targetId: sys-rabbit
+  technologyIds:
+  - szKYj50b4M6iZQpBSfVF
+  - uJEz1lYRraeHB1o1idt3
+- id: c-10
+  name: Navega
+  direction: outgoing
+  originId: act-usuario
+  targetId: f-rutas
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
+- id: c-11
+  name: Navega
+  direction: outgoing
+  originId: act-admin
+  targetId: f-rutas
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
+- id: c-12
+  name: Protege cada ruta
+  direction: outgoing
+  originId: f-rutas
+  targetId: f-guardas
+- id: c-13
+  name: Monta si hay permiso
+  direction: outgoing
+  originId: f-guardas
+  targetId: f-acceso
+- id: c-14
+  name: Usa
+  direction: outgoing
+  originId: f-acceso
+  targetId: f-api
+- id: c-15
+  name: Monta si hay permiso
+  direction: outgoing
+  originId: f-guardas
+  targetId: f-cuenta
+- id: c-16
+  name: Usa
+  direction: outgoing
+  originId: f-cuenta
+  targetId: f-api
+- id: c-17
+  name: Monta si hay permiso
+  direction: outgoing
+  originId: f-guardas
+  targetId: f-admin
+- id: c-18
+  name: Usa
+  direction: outgoing
+  originId: f-admin
+  targetId: f-api
+- id: c-19
+  name: Consulta permisos
+  direction: outgoing
+  originId: f-guardas
+  targetId: f-sesion
+- id: c-20
+  name: Guarda/lee el desafío
+  direction: outgoing
+  originId: f-acceso
+  targetId: f-desafio
+  description: Solo si mfaRequerido
+- id: c-21
+  name: Inicia sesión
+  direction: outgoing
+  originId: f-acceso
+  targetId: f-sesion
+- id: c-22
+  name: Usuario y logout
+  direction: outgoing
+  originId: f-cuenta
+  targetId: f-sesion
+- id: c-23
+  name: Guarda la sesión
+  direction: outgoing
+  originId: f-sesion
+  targetId: f-almacen
+- id: c-24
+  name: Delega la petición
+  direction: outgoing
+  originId: f-api
+  targetId: f-http
+- id: c-25
+  name: Lee y renueva tokens
+  direction: outgoing
+  originId: f-http
+  targetId: f-almacen
+- id: c-26
+  name: HTTPS + JSON
+  direction: outgoing
+  originId: f-http
+  targetId: b-seguridad
+  description: 'Authorization: Bearer'
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
+- id: c-27
+  name: Enruta login/refresh/logout
+  direction: outgoing
+  originId: b-seguridad
+  targetId: b-sesion
+- id: c-28
+  name: Enruta /usuarios
+  direction: outgoing
+  originId: b-seguridad
+  targetId: b-usuario
+- id: c-29
+  name: Enruta /auth/me
+  direction: outgoing
+  originId: b-seguridad
+  targetId: b-perfil
+- id: c-30
+  name: Enruta /usuarios/{id}/roles
+  direction: outgoing
+  originId: b-seguridad
+  targetId: b-autorizacion
+- id: c-31
+  name: Enruta /password/*
+  direction: outgoing
+  originId: b-seguridad
+  targetId: b-credencial
+- id: c-32
+  name: Enruta /auth/otp/*
+  direction: outgoing
+  originId: b-seguridad
+  targetId: b-mfa
+- id: c-33
+  name: Enruta /auth/desbloquear
+  direction: outgoing
+  originId: b-seguridad
+  targetId: b-proteccion
+- id: c-34
+  name: Verifica la contraseña
+  direction: outgoing
+  originId: b-sesion
+  targetId: b-credencial
+- id: c-35
+  name: Registra fallos y consulta bloqueo
+  direction: outgoing
+  originId: b-sesion
+  targetId: b-proteccion
+- id: c-36
+  name: Abre desafío si hay MFA
+  direction: outgoing
+  originId: b-sesion
+  targetId: b-mfa
+- id: c-37
+  name: Firma el JWT
+  direction: outgoing
+  originId: b-sesion
+  targetId: b-identidad
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
+- id: c-38
+  name: Abre la sesión tras el OTP
+  direction: outgoing
+  originId: b-mfa
+  targetId: b-sesion
+- id: c-39
+  name: Revoca sesiones al cambiar roles
+  direction: outgoing
+  originId: b-autorizacion
+  targetId: b-sesion
+- id: c-40
+  name: Audita y encola efectos
+  direction: outgoing
+  originId: b-sesion
+  targetId: b-auditoria
+- id: c-41
+  name: Audita y encola efectos
+  direction: outgoing
+  originId: b-mfa
+  targetId: b-auditoria
+- id: c-42
+  name: Audita y encola efectos
+  direction: outgoing
+  originId: b-credencial
+  targetId: b-auditoria
+- id: c-43
+  name: Audita y encola efectos
+  direction: outgoing
+  originId: b-proteccion
+  targetId: b-auditoria
+- id: c-44
+  name: Audita y encola efectos
+  direction: outgoing
+  originId: b-autorizacion
+  targetId: b-auditoria
+- id: c-45
+  name: Persiste
+  direction: outgoing
+  originId: b-sesion
+  targetId: store-db
+  description: JPA sobre sus propias tablas
+- id: c-46
+  name: Persiste
+  direction: outgoing
+  originId: b-mfa
+  targetId: store-db
+  description: JPA sobre sus propias tablas
+- id: c-47
+  name: Persiste
+  direction: outgoing
+  originId: b-credencial
+  targetId: store-db
+  description: JPA sobre sus propias tablas
+- id: c-48
+  name: Persiste
+  direction: outgoing
+  originId: b-proteccion
+  targetId: store-db
+  description: JPA sobre sus propias tablas
+- id: c-49
+  name: Persiste
+  direction: outgoing
+  originId: b-usuario
+  targetId: store-db
+  description: JPA sobre sus propias tablas
+- id: c-50
+  name: Persiste
+  direction: outgoing
+  originId: b-perfil
+  targetId: store-db
+  description: JPA sobre sus propias tablas
+- id: c-51
+  name: Persiste
+  direction: outgoing
+  originId: b-autorizacion
+  targetId: store-db
+  description: JPA sobre sus propias tablas
+- id: c-52
+  name: Persiste
+  direction: outgoing
+  originId: b-auditoria
+  targetId: store-db
+  description: JPA sobre sus propias tablas
+- id: c-53
+  name: Envía correos
+  direction: outgoing
+  originId: b-auditoria
+  targetId: sys-smtp
+  description: Worker SMTP
+  technologyIds:
+  - cAlnYgrQ5Q18f0EEUXgI
+- id: c-54
+  name: Publica eventos
+  direction: outgoing
+  originId: b-auditoria
+  targetId: sys-rabbit
+  description: Worker con confirmaciones
+  technologyIds:
+  - szKYj50b4M6iZQpBSfVF
+  - uJEz1lYRraeHB1o1idt3
+- id: c-55
+  name: Descarga el JWKS
+  direction: outgoing
+  originId: sys-g5
+  targetId: b-identidad
+  technologyIds:
+  - 20VtuIRnZRytNwM9vvxn
+  - AKd30nIcOMCYnGrIIzFs
+  - OfYKvSfjuhOFZLhcoeAB
