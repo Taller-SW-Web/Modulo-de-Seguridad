@@ -63,9 +63,9 @@ EP-05-T006/T007 y TEC-IDENTIDAD-T005 exigen composición real.
 | EP-05-T002 | AutorizacionPort y guard de administrador | P0 | EP-05-T001; cuenta Eva para comprobaciones conjuntas | Fusionada (#6) |
 | EP-05-T003 | Asignación individual con efectos atómicos | P1 | EP-05-T002; EP-01-T002; EP-02-T003; auditoría/outbox Christian | Fusionada (#11); faltan sesiones/auditoría/eventos reales |
 | EP-05-T004 | Revocación individual y protección de administrador | P1 | EP-05-T003; mismos providers reales | Fusionada (#12); faltan los mismos providers |
-| EP-05-T005 | SeccionRoles y composición con detalle | P1 | EP-05-T003/T004; EP-02-T001/T008; EP-01-T004 y contrato de contenedor Eva | Pendiente |
-| EP-05-T006 | Verificar concurrencia, permisos y efectos | P0 | EP-05-T003/T004; login/MFA y providers reales | En revisión (#26: puente a cuentas) |
-| EP-05-T007 | Defender roles/permisos desplegados | P1 | EP-05-T005/T006; despliegue Christian | Pendiente |
+| EP-05-T005 | SeccionRoles y composición con detalle | P1 | EP-05-T003/T004; EP-02-T001/T008; EP-01-T004 y contrato de contenedor Eva | Fusionada (F#3) |
+| EP-05-T006 | Verificar concurrencia, permisos y efectos | P0 | EP-05-T003/T004; login/MFA y providers reales | Fusionada (B#26, B#41) |
+| EP-05-T007 | Defender roles/permisos desplegados | P1 | EP-05-T005/T006; despliegue Christian | Pendiente (despliegue) |
 | TEC-IDENTIDAD-T001 | Claves persistentes y FirmaPort | P0 | Configuración privada del entorno con Christian | Fusionada (#3) |
 | TEC-IDENTIDAD-T002 | Validación JWT y filtro de acceso G7 | P0 | TEC-IDENTIDAD-T001; EP-05-T002 | Fusionada (#8) |
 | TEC-IDENTIDAD-T003 | Descubrimiento y JWKS públicos | P0 | TEC-IDENTIDAD-T001; base URL/issuer del entorno | Fusionada (#4) |
@@ -278,3 +278,5 @@ Evidencia EP-05 y TEC-IDENTIDAD se registra por separado.
 | 15-oct-2026 | EP-08-T003 (reparto) | [Backend #27](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/27): `GET /auth/me` sobre el `PerfilPort` de Valery; documento sin clave falla cerrado (503). 6 PostgreSQL + 7 HTTP. Apilado sobre #23 | Pendiente | En revisión |
 | 15-oct-2026 | EP-01-T007 (reparto) | [Backend #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/33): cuentas A/B/V/ADM/M/L/C con UUID estables, por capacidades de cuentas, credenciales y roles; desactivado por defecto; clave por variable de entorno. 4 PostgreSQL; 2 mutaciones detectadas. Evidencia `docs/evidencia/EP-01-T007.md` | Pendiente | En revisión |
 | 15-oct-2026 | Revisión | Auditorías como revisor: #18, #20, #24, #28, #29, #30, #31 y #32 aprobados con verificación local (PostgreSQL y mutaciones); #16 con cambios pedidos | — | Hecho |
+| 16-oct-2026 | EP-05-T005 | Fusionada (F#3). SeccionRoles en FRONT-08 | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-05-T006 | Fusionada (B#26, B#41). Puentes reales: cuentas, sesiones, auditoría y eventos; recorrido real de asignar/revocar y último admin | CI en verde (merge propio, 15-oct) | Fusionada |
