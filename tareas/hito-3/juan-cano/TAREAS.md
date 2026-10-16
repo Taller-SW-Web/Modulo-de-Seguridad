@@ -56,15 +56,15 @@ T008–T009 verifican efectos y recorrido real con los proveedores entregados.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| EP-03-T001 | Credencial versionada, hashing e historial | P0 | Esquema/historia revisados con Christian | Pendiente |
-| EP-03-T002 | Política backend y endpoint de consulta | P0 | T001; datos de cuenta Eva para validación personal | Pendiente |
-| EP-03-T003 | CredencialesPort y caducidad | P0 | T001–T002; roles Sergio y cuentas Eva | Pendiente |
-| EP-03-T004 | TokensUnUsoPort para desbloqueo | P0 | Esquema/historia revisados con Christian | Pendiente |
-| EP-03-T005 | Cambio de contraseña transaccional | P1 | T001–T003; EP-01-T002; EP-02-T003; auditoría/correo Christian | Pendiente |
-| EP-03-T006 | Medidor y hook de política React | P1 | T002; EP-02-T001/T008; perfil Valery para orientación personal | Pendiente |
-| EP-03-T007 | Formulario de cambio de contraseña | P1 | T005–T006; navegación/perfil Valery | Pendiente |
-| EP-03-T008 | Pruebas de composición y atomicidad | P1 | T005; providers reales para pruebas conjuntas | Pendiente |
-| EP-03-T009 | Verificar y defender cambio desplegado | P1 | T007–T008; login/MFA y despliegue reales | Pendiente |
+| EP-03-T001 | Credencial versionada, hashing e historial | P0 | Esquema/historia revisados con Christian | Fusionada (B#18) |
+| EP-03-T002 | Política backend y endpoint de consulta | P0 | T001; datos de cuenta Eva para validación personal | Fusionada (B#28) |
+| EP-03-T003 | CredencialesPort y caducidad | P0 | T001–T002; roles Sergio y cuentas Eva | Fusionada (B#28) |
+| EP-03-T004 | TokensUnUsoPort para desbloqueo | P0 | Esquema/historia revisados con Christian | Fusionada (B#20) |
+| EP-03-T005 | Cambio de contraseña transaccional | P1 | T001–T003; EP-01-T002; EP-02-T003; auditoría/correo Christian | Fusionada (B#43) |
+| EP-03-T006 | Medidor y hook de política React | P1 | T002; EP-02-T001/T008; perfil Valery para orientación personal | Fusionada (F#8) |
+| EP-03-T007 | Formulario de cambio de contraseña | P1 | T005–T006; navegación/perfil Valery | Fusionada (F#8) |
+| EP-03-T008 | Pruebas de composición y atomicidad | P1 | T005; providers reales para pruebas conjuntas | En curso |
+| EP-03-T009 | Verificar y defender cambio desplegado | P1 | T007–T008; login/MFA y despliegue reales | Pendiente (despliegue) |
 
 Txxx pertenece a EP-03 salvo prefijo explícito. Los otros dueños entregan sus
 capacidades según su plan; un doble solo acredita una prueba aislada.
@@ -220,3 +220,11 @@ Los ports compartidos se revisan con sus consumidores.
 | Fecha | ID | Resultado / prueba / enlace de evidencia | Revisor | Estado |
 |---|---|---|---|---|
 | 12-oct-2026 | Todas | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
+| 16-oct-2026 | EP-03-T001 | Fusionada (B#18). Credencial versionada, Argon2id e historial | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-03-T002 | Fusionada (B#28). Política y GET /password/politica | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-03-T003 | Fusionada (B#28). CredencialesPort y caducidad | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-03-T004 | Fusionada (B#20). TokensUnUsoPort | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-03-T005 | Fusionada (B#43). POST /password/cambiar; recorrido real 8/8; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-03-T006 | Fusionada (F#8). Medidor de política React; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-03-T007 | Fusionada (F#8). FRONT-10 cambio de contraseña; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-03-T008 | En curso. Unitarias + recorrido real; falta PG del cambio en CI | CI en verde (merge propio, 15-oct) | En curso |

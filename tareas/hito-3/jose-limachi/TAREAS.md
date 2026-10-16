@@ -57,17 +57,17 @@ propio; T011 comprueba el aporte real a G5.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| EP-02-T001 | Arranque React y contratos compartidos | P0 | Diseño de entorno aprobado | Pendiente |
-| EP-02-T002 | Persistencia de familias y asociación de acceso | P0 | Esquema/historia revisados con Christian | Pendiente |
-| EP-02-T003 | Apertura, resolución y revocación de familias | P0 | T002; cuentas Eva, firma Sergio | Pendiente |
-| EP-02-T004 | Refresh atómico y detección de reúso | P0 | T003; autorización/estado y auditoría de sus dueños | Pendiente |
-| EP-02-T005 | Logout público e idempotente | P0 | T003; auditoría Christian | Pendiente |
-| EP-02-T006 | Login y continuación MFA sin bypass | P0 | T003; cuentas, credenciales, protección/MFA, roles/firma y auditoría | Pendiente |
-| EP-02-T007 | Pruebas de atomicidad, concurrencia y composición | P0 | T003–T006; providers reales para composición | Pendiente |
-| EP-02-T008 | Sesión en memoria, HTTP y rutas protegidas | P0 | T001; T004–T005 para aceptación real | Pendiente |
-| EP-02-T009 | Pantalla de login y transición a OTP | P1 | T006, T008; pantalla OTP de Luis para aceptación real | Pendiente |
-| EP-02-T010 | Verificar y defender autenticación desplegada | P1 | T007–T009; proveedores/entorno reales | Pendiente |
-| EP-02-T011 | Comprobar login G7 → mis pedidos G5 | P0 | T010; configuración Sergio/Christian, fixtures Eva y servicio Michael | Pendiente |
+| EP-02-T001 | Arranque React y contratos compartidos | P0 | Diseño de entorno aprobado | Fusionada (F#2) |
+| EP-02-T002 | Persistencia de familias y asociación de acceso | P0 | Esquema/historia revisados con Christian | Fusionada (B#24, B#31) |
+| EP-02-T003 | Apertura, resolución y revocación de familias | P0 | T002; cuentas Eva, firma Sergio | Fusionada (B#29) |
+| EP-02-T004 | Refresh atómico y detección de reúso | P0 | T003; autorización/estado y auditoría de sus dueños | Fusionada (B#29) |
+| EP-02-T005 | Logout público e idempotente | P0 | T003; auditoría Christian | Fusionada (B#29) |
+| EP-02-T006 | Login y continuación MFA sin bypass | P0 | T003; cuentas, credenciales, protección/MFA, roles/firma y auditoría | Fusionada (B#38, B#39) |
+| EP-02-T007 | Pruebas de atomicidad, concurrencia y composición | P0 | T003–T006; providers reales para composición | Fusionada (B#45) |
+| EP-02-T008 | Sesión en memoria, HTTP y rutas protegidas | P0 | T001; T004–T005 para aceptación real | Fusionada (F#2) |
+| EP-02-T009 | Pantalla de login y transición a OTP | P1 | T006, T008; pantalla OTP de Luis para aceptación real | Fusionada (F#2, F#5) |
+| EP-02-T010 | Verificar y defender autenticación desplegada | P1 | T007–T009; proveedores/entorno reales | Pendiente (despliegue) |
+| EP-02-T011 | Comprobar login G7 → mis pedidos G5 | P0 | T010; configuración Sergio/Christian, fixtures Eva y servicio Michael | Pendiente (prueba conjunta G5) |
 
 Txxx refiere a EP-02. Una dependencia externa se entrega según el plan de su
 dueño; no se asigna aquí su implementación ni un ID futuro. Todos los resultados
@@ -277,3 +277,12 @@ aprobados no requieren una nueva aprobación rutinaria para comenzar.
 | Fecha | ID | Resultado / prueba / enlace de evidencia | Revisor | Estado |
 |---|---|---|---|---|
 | 12-oct-2026 | Todas | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
+| 16-oct-2026 | EP-02-T001 | Fusionada (F#2). Base React: Mantine, router, cliente HTTP; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-02-T002 | Fusionada (B#24, B#31). Familias y accesos + cascadas V102; Luis | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-02-T003 | Fusionada (B#29). Apertura, resolución y revocación; Luis | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-02-T004 | Fusionada (B#29). Refresh atómico y reúso; Luis | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-02-T005 | Fusionada (B#29). Logout idempotente; Luis | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-02-T006 | Fusionada (B#38, B#39). POST /auth/login + continuación MFA; Sergio. Evidencia docs/evidencia/EP-02-T006.md | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-02-T007 | Fusionada (B#45). Carga 50 concurrentes: login p95 673–693 ms, refresh 269–283 ms; corrige 2 agotamientos del pool; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-02-T008 | Fusionada (F#2). Sesión en memoria, una renovación en vuelo, guards; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-02-T009 | Fusionada (F#2, F#5). FRONT-01 login y transición a OTP; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |

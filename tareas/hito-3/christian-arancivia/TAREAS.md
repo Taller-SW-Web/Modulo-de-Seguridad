@@ -63,19 +63,19 @@ hechos, dependencias y servicios reales.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| EP-06-T001 | Persistencia y formato seguro de auditoría | P0 | Revisión inicial TEC-INFRA-T002 | Pendiente |
-| EP-06-T002 | AuditoriaPort crítica en commit del productor | P0 | EP-06-T001; aplicación revisada de V106 | Pendiente |
-| EP-06-T003 | No crítica después de commit y reintento privado | P0 | EP-06-T001/T002; broker TEC-INFRA-T004 | Pendiente |
-| EP-06-T004 | Consulta propia paginada | P1 | EP-06-T002/T003; acceso de Sergio/Jose Luis | Pendiente |
-| EP-06-T005 | ActividadPage y TablaActividad | P1 | EP-06-T004; EP-02-T001/T008; navegación Valery | Pendiente |
+| EP-06-T001 | Persistencia y formato seguro de auditoría | P0 | Revisión inicial TEC-INFRA-T002 | Fusionada (B#34) |
+| EP-06-T002 | AuditoriaPort crítica en commit del productor | P0 | EP-06-T001; aplicación revisada de V106 | Fusionada (B#41) |
+| EP-06-T003 | No crítica después de commit y reintento privado | P0 | EP-06-T001/T002; broker TEC-INFRA-T004 | Fusionada (B#41, B#45) |
+| EP-06-T004 | Consulta propia paginada | P1 | EP-06-T002/T003; acceso de Sergio/Jose Luis | Fusionada (B#42) |
+| EP-06-T005 | ActividadPage y TablaActividad | P1 | EP-06-T004; EP-02-T001/T008; navegación Valery | Fusionada (F#8) |
 | EP-06-T006 | Verificar privacidad, titularidad y atomicidad | P0 | EP-06-T002/T003/T004; productores y grants reales | Pendiente |
-| EP-06-T007 | Defender actividad propia desplegada | P1 | EP-06-T005/T006; TEC-INFRA-T005; hechos reales | Pendiente |
-| TEC-INFRA-T001 | Identificar/configurar entorno y build | P0 | Accesos privados al proyecto/servicios correctos | Pendiente |
-| TEC-INFRA-T002 | Revisar DB, coordinar migraciones y privilegios | P0 | TEC-INFRA-T001; migraciones de cada dueño al aplicar | Pendiente |
-| TEC-INFRA-T003 | MensajeriaPort y outbox con reclamo durable | P0 | Revisión DB; V106 conjunta con EP-06-T001 | Pendiente |
-| TEC-INFRA-T004 | Correo y eventos con reintentos/confirmación | P0 | TEC-INFRA-T003; SMTP/broker y ports de validez reales | Pendiente |
-| TEC-INFRA-T005 | Desplegar y verificar backend/SPA en nube | P0 | Build de dueños; DB/grants/transporte/claves revisados | Pendiente |
-| TEC-INFRA-T006 | Comprobar entorno en prueba conjunta G5 | P0 | TEC-INFRA-T005; login/JWKS G7 y servicio Michael | Pendiente |
+| EP-06-T007 | Defender actividad propia desplegada | P1 | EP-06-T005/T006; TEC-INFRA-T005; hechos reales | Pendiente (despliegue) |
+| TEC-INFRA-T001 | Identificar/configurar entorno y build | P0 | Accesos privados al proyecto/servicios correctos | Fusionada (B#13) |
+| TEC-INFRA-T002 | Revisar DB, coordinar migraciones y privilegios | P0 | TEC-INFRA-T001; migraciones de cada dueño al aplicar | En curso (B#35, B#44) |
+| TEC-INFRA-T003 | MensajeriaPort y outbox con reclamo durable | P0 | Revisión DB; V106 conjunta con EP-06-T001 | Fusionada (B#41) |
+| TEC-INFRA-T004 | Correo y eventos con reintentos/confirmación | P0 | TEC-INFRA-T003; SMTP/broker y ports de validez reales | En revisión (B#41, B#46) |
+| TEC-INFRA-T005 | Desplegar y verificar backend/SPA en nube | P0 | Build de dueños; DB/grants/transporte/claves revisados | En curso (B#36) |
+| TEC-INFRA-T006 | Comprobar entorno en prueba conjunta G5 | P0 | TEC-INFRA-T005; login/JWKS G7 y servicio Michael | Pendiente (prueba conjunta G5) |
 
 Revisión inicial y aplicación de TEC-INFRA-T002 son pasos sucesivos, no una
 dependencia circular. EP-01/02/03/04/05/07 identifican tareas de sus dueños.
@@ -303,3 +303,13 @@ puede aportar a varios cierres sin duplicar su tarea de implementación.
 |---|---|---|---|---|
 | 12-oct-2026 | EP-06-* | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
 | 12-oct-2026 | TEC-INFRA-* | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
+| 16-oct-2026 | EP-06-T001 | Fusionada (B#34). Núcleo y persistencia de auditoría (correcciones de Sergio) | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-06-T002 | Fusionada (B#41). Crítica en el commit del productor; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-06-T003 | Fusionada (B#41, B#45). No crítica tras commit en ejecutor aparte; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-06-T004 | Fusionada (B#42). GET /auth/me/actividad; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-06-T005 | Fusionada (F#8). FRONT-13 actividad; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | TEC-INFRA-T001 | Fusionada (B#13). Configuración JDBC externa | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | TEC-INFRA-T002 | En curso (B#35, B#44). Runbook y grants ensayados 26/26, V101–V106 en db/migration; falta aplicar la ventana | CI en verde (merge propio, 15-oct) | En curso |
+| 16-oct-2026 | TEC-INFRA-T003 | Fusionada (B#41). Outbox con reclamo SKIP LOCKED y correo cifrado; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | TEC-INFRA-T004 | En revisión (B#41, B#46). Worker SMTP + publicador RabbitMQ con confirmaciones; falta broker y SMTP reales | CI en verde (merge propio, 15-oct) | En revisión |
+| 16-oct-2026 | TEC-INFRA-T005 | En curso (B#36). Imagen Docker, CORS, salud y guía; falta plataforma | CI en verde (merge propio, 15-oct) | En curso |

@@ -55,14 +55,14 @@ T007 prepara datos sin modificar cuentas ajenas; T008 cierra el recorrido real.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| EP-01-T001 | Mapping y lectura de cuentas | P0 | Acceso al esquema de prueba revisado con Christian | Pendiente |
-| EP-01-T002 | Ports de cuenta y escritura acotada | P0 | T001 | Pendiente |
-| EP-01-T003 | Listado administrativo protegido | P1 | T001–T002; autorización/roles Sergio, estado Luis, proyección Valery | Pendiente |
-| EP-01-T004 | Detalle administrativo protegido | P1 | T002; autorización Sergio, estado Luis, proyección Valery | Pendiente |
-| EP-01-T005 | Pantalla de listado y filtros | P1 | T003; EP-02-T001 y T008 de Jose Luis | Pendiente |
-| EP-01-T006 | Pantalla de detalle y composición | P1 | T004–T005; SeccionRoles Sergio, lectura de bloqueo Luis | Pendiente |
-| EP-01-T007 | Fixtures reproducibles e identidad para G5 | P0 | T002; credenciales Juan José, roles Sergio; entorno Christian | Pendiente |
-| EP-01-T008 | Verificar y defender la lectura completa | P1 | T003–T007; login/MFA reales; despliegue Christian | Pendiente |
+| EP-01-T001 | Mapping y lectura de cuentas | P0 | Acceso al esquema de prueba revisado con Christian | Fusionada (B#17) |
+| EP-01-T002 | Ports de cuenta y escritura acotada | P0 | T001 | Fusionada (B#17, B#26) |
+| EP-01-T003 | Listado administrativo protegido | P1 | T001–T002; autorización/roles Sergio, estado Luis, proyección Valery | Fusionada (B#25) |
+| EP-01-T004 | Detalle administrativo protegido | P1 | T002; autorización Sergio, estado Luis, proyección Valery | Fusionada (B#25) |
+| EP-01-T005 | Pantalla de listado y filtros | P1 | T003; EP-02-T001 y T008 de Jose Luis | Fusionada (F#3) |
+| EP-01-T006 | Pantalla de detalle y composición | P1 | T004–T005; SeccionRoles Sergio, lectura de bloqueo Luis | Fusionada (F#3) |
+| EP-01-T007 | Fixtures reproducibles e identidad para G5 | P0 | T002; credenciales Juan José, roles Sergio; entorno Christian | Fusionada (B#33, B#40) |
+| EP-01-T008 | Verificar y defender la lectura completa | P1 | T003–T007; login/MFA reales; despliegue Christian | Pendiente (despliegue) |
 
 Las referencias Txxx de esta tabla pertenecen a EP-01 salvo indicación contraria.
 Las dependencias habilitan aceptación real, no impiden escribir pruebas aisladas.
@@ -211,3 +211,10 @@ de otro integrante. No marcar EP-01 completa: este tablero cubre solo H3.
 | Fecha | ID | Resultado / prueba / enlace de evidencia | Revisor | Estado |
 |---|---|---|---|---|
 | 12-oct-2026 | Todas | Tareas derivadas; sin implementación ni ejecución | Por asignar al revisar | Pendiente |
+| 16-oct-2026 | EP-01-T001 | Fusionada (B#17). Mapping y lectura de cuentas con estado efectivo | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-01-T002 | Fusionada (B#17, B#26). CuentasPort + escritura acotada (contadores, puente de roles) | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-01-T003 | Fusionada (B#25). GET /usuarios con filtros; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-01-T004 | Fusionada (B#25). GET /usuarios/{id}; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-01-T005 | Fusionada (F#3). FRONT-07 listado y filtros; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-01-T006 | Fusionada (F#3). FRONT-08 detalle + SeccionRoles; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 16-oct-2026 | EP-01-T007 | Fusionada (B#33, B#40). Cuentas A/B/V/ADM/M/L/C con UUID estables; correo ADM configurable; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
