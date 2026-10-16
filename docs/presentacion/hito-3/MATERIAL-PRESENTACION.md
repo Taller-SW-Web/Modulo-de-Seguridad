@@ -131,6 +131,26 @@ flowchart LR
   W -->|/api/v1| R
 ```
 
+### 2.7 C3 — Componentes del frontend (SPA)
+
+Nivel 3 de C4 sobre el contenedor SPA, construido a partir del código de
+`G7-Modulo-de-Seguridad-Frontend` (`src/App.tsx`, `src/pantallas/*`, `src/shared/*`).
+Imagen lista para el Canva: [`c3-frontend.png`](c3-frontend.png); fuente editable:
+[`c3-frontend.mmd`](c3-frontend.mmd) (se puede abrir en mermaid.live).
+
+![C3 del frontend](c3-frontend.png)
+
+| Componente | Responsabilidad |
+|---|---|
+| App / Rutas | Mapa de URLs con React Router 7 |
+| Guardas de ruta | `RutaPublica`, `RutaAutenticada`, `RutaAdmin`: sin sesión o sin permiso no montan la pantalla ni llaman al API |
+| Pantallas | Acceso (login, OTP, desbloqueo), Mi cuenta (perfil, contraseña con medidor, actividad), Administración (listado y detalle con roles) |
+| ProveedorSesion | Contexto React con usuario, permisos y logout |
+| AlmacenSesion | Tokens solo en memoria: ni localStorage, ni sessionStorage, ni cookies |
+| Desafío MFA | Guarda el `challengeToken` en memoria entre login y OTP |
+| Api | Un método por endpoint del contrato |
+| ClienteHttp | `fetch` con `Authorization: Bearer` y una sola renovación en vuelo contra `/auth/refresh` |
+
 ---
 
 ## 3. Uso de IA (15 %)
