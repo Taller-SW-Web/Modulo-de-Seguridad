@@ -1,0 +1,73 @@
+%%{init: {"flowchart": {"nodeSpacing": 30, "rankSpacing": 45}, "themeVariables": {"fontFamily": "Segoe UI, Arial", "fontSize": "15px"}}}%%
+flowchart TB
+  usuario(["👤 Usuario<br/>cliente · vendedor · admin"])
+
+  subgraph SPA["SPA del módulo de seguridad — React 19 · Vite 7 · Mantine 9 (se ejecuta en el navegador)"]
+    direction TB
+
+    subgraph RUTEO["Ruteo · React Router 7"]
+      direction LR
+      app["<b>App / Rutas</b><br/>mapa de URLs"]
+      guardas["<b>Guardas de ruta</b><br/>RutaPublica · RutaAutenticada · RutaAdmin<br/>exigen sesión y permiso antes de montar"]
+    end
+
+    subgraph PANTALLAS["Pantallas"]
+      direction LR
+      subgraph ACCESO["Acceso"]
+        direction TB
+        login["<b>LoginPage</b><br/>FRONT-01"]
+        otp["<b>OtpPage</b><br/>FRONT-04 · 2.º factor"]
+        desbloqueo["<b>DesbloqueoPage</b><br/>FRONT-12 · enlace del correo"]
+      end
+      subgraph CUENTA["Mi cuenta"]
+        direction TB
+        cuenta["<b>MiCuentaPage</b><br/>perfil + edición"]
+        cambio["<b>CambiarContrasenaPage</b><br/>FRONT-10 + MedidorPassword"]
+        actividad["<b>ActividadPage</b><br/>FRONT-13"]
+      end
+      subgraph ADMIN["Administración"]
+        direction TB
+        adminL["<b>AdminListadoPage</b><br/>FRONT-07 · filtros"]
+        adminD["<b>AdminDetallePage</b><br/>FRONT-08 · SeccionRoles"]
+      end
+    end
+
+    subgraph NUCLEO["Núcleo compartido (src/shared)"]
+      direction LR
+      sesion["<b>ProveedorSesion</b><br/>contexto React: usuario,<br/>permisos y logout"]
+      almacen["<b>AlmacenSesion</b><br/>tokens solo en memoria<br/>(sin localStorage ni cookies)"]
+      desafio["<b>Desafío MFA</b><br/>challengeToken en memoria"]
+      apiCli["<b>Api</b><br/>un método por endpoint"]
+      http["<b>ClienteHttp</b> (fetch)<br/>añade Bearer y hace una sola<br/>renovación en vuelo"]
+    end
+  end
+
+  backend[["<b>AUTH-SERVICE G7</b><br/>Spring Boot · REST /api/v1 · JWT RS256"]]
+
+  usuario -->|"HTTPS"| app
+  app --> guardas
+  guardas --> PANTALLAS
+  guardas -.->|"consulta permisos"| sesion
+  ACCESO -.->|"si mfaRequerido"| desafio
+  PANTALLAS -->|"usan"| apiCli
+  PANTALLAS -->|"usuario y logout"| sesion
+  sesion --> almacen
+  apiCli --> http
+  http -.->|"lee y renueva tokens"| almacen
+  http ==>|"HTTPS + JSON · Authorization: Bearer<br/>/auth/login · /auth/refresh · /auth/me · /usuarios …"| backend
+
+  classDef persona fill:#08427b,stroke:#052e56,color:#fff
+  classDef comp fill:#1168bd,stroke:#0b4884,color:#fff
+  classDef pantalla fill:#85bbf0,stroke:#5d82a8,color:#000
+  classDef externo fill:#8a8a8a,stroke:#6b6b6b,color:#fff
+  class usuario persona
+  class app,guardas,sesion,almacen,desafio,apiCli,http comp
+  class login,otp,desbloqueo,cuenta,cambio,actividad,adminL,adminD pantalla
+  class backend externo
+  style SPA fill:#ffffff,stroke:#0b4884,stroke-width:2px,stroke-dasharray:6 4,color:#0b4884
+  style RUTEO fill:#f3f7fc,stroke:#9fb8d6,color:#333
+  style PANTALLAS fill:#f3f7fc,stroke:#9fb8d6,color:#333
+  style NUCLEO fill:#f3f7fc,stroke:#9fb8d6,color:#333
+  style ACCESO fill:#ffffff,stroke:#c5d6ea,color:#333
+  style CUENTA fill:#ffffff,stroke:#c5d6ea,color:#333
+  style ADMIN fill:#ffffff,stroke:#c5d6ea,color:#333
