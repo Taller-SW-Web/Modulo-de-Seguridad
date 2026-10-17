@@ -40,7 +40,7 @@ de login mantienen `401 CREDENCIALES_INVALIDAS` sin enumerar cuentas; el
 | G3 Chatbot | Issuer literal y supuesto rol de servicio siguen en docs, aunque #20 registra corrección confirmada | G7 #20; #31 para Despacho, #33 para Productos, #42 para Ventas | Alinear las fuentes publicadas con la confirmación; no exigir rehacer código sin comprobarlo |
 | G4 Retail | Contrato general antiguo y F03 contradicen el contrato consolidado | Issue de integración por identificar; A6/A7 en PR #35 como antecedente | Declarar contrato vigente, corregir formatos/búsqueda/alta y marcar documentos reemplazados |
 | G5 Ventas/Postventa | `customerId` alternativo, `403` por scope retirado y base de backend antigua en el corte revisado | G7 #42 para A10; G5 Backend #2 para demo H3/A11 | Recorrido/Michael/fecha G5 confirmados; faltan correcciones enlazadas, rama, configuración y prueba |
-| G6 Productos | Catálogo verificable; concesiones pendientes y condición de A9 sin respuesta del PO | G7 #33 y G6 #87, apartado C1 ya abierto | PO confirma catálogo/grants y registra evidencia; publicación/provisión se comprueban después |
+| G6 Productos | Catálogo verificable; A9 confirmado el 16-oct en #87 A2 (siete scopes de Chatbot); concesiones de otros consumidores pendientes | G7 #33 y G6 #87, apartado C1 ya abierto | PO confirma catálogo/grants y registra evidencia; publicación/provisión se comprueban después |
 
 Las búsquedas no localizaron un issue específico de estas correcciones en
 G1/G2/G4. Al publicar, revisar de nuevo y reutilizar el hilo pertinente si
@@ -273,7 +273,8 @@ Despacho; los siete pedidos de Chatbot están en el catálogo.
 
 La presencia en YAML prueba definición, no la confirmación requerida por A9.
 [G6 #87 C1](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87)
-ya solicita esa confirmación y no tenía respuestas en este corte. El documento
+solicitó esa confirmación; G6 la dio el 16-oct en [A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) para los siete
+scopes de `modulo-chatbot`. El documento
 humano conserva referencias a versiones anteriores: al confirmar, fijar
 commit y versión OpenAPI que efectivamente gobiernan.
 
