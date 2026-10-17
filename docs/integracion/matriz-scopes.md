@@ -1,6 +1,6 @@
 # Matriz de scopes y concesiones
 
-**Corte:** 11-oct-2026. Registro documental, no aprovisionamiento realizado.
+**Corte:** 16-oct-2026. Registro documental, no aprovisionamiento realizado.
 Cada fila identifica dueño de API, scope, audiencia, consumidor y evidencia.
 Un scope solicitado/provisional/condicionado no se emite como aprobado.
 
@@ -46,17 +46,18 @@ externos. Los pedidos nuevos siguen por issues de integración.
 | Ventas | ventas:pedidos:estado | api-ventas | modulo-despacho | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Ventas | ventas:pagos:webhook | api-ventas | simulador-pasarela | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Postventa | postventa:reembolsos:procesar | api-postventa | modulo-ventas | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | catalogo:leer | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | precios:leer | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | promociones:leer | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | promociones:evaluar | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | cupones:validar | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | recomendaciones:leer | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | inventario:disponibilidad:leer | api-productos | modulo-chatbot | Condicionada: confirmar catálogo del PO de Productos | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-5945904161) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | catalogo:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H3 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | precios:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H3 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | promociones:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | promociones:evaluar | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | cupones:validar | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | recomendaciones:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | inventario:disponibilidad:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H3 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Productos | inventario:reservar | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Productos | inventario:consumir | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Productos | inventario:liberar | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Productos | inventario:reintegrar | api-productos | modulo-postventa | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Ventas | ventas:pedidos:consultar | api-ventas | modulo-postventa | Aprobada; definido por el dueño de api-ventas, solo `GET /api/v1/pedidos/{id}` | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51) | Pendiente; ninguna credencial/provisión acreditada aquí |
 
 ## Clientes y límites
 
@@ -81,6 +82,21 @@ Productos: `inventario:reservar`, `inventario:consumir` e `inventario:liberar`
 solo para modulo-ventas, e `inventario:reintegrar` solo para modulo-postventa.
 Productos no aprobó reservar/consumir para modulo-postventa ni
 `inventario:disponibilidad:leer` para modulo-postventa; no se registran.
+
+`ventas:pedidos:consultar` (16-oct, pedido original de #51) lo define el dueño
+de api-ventas para modulo-postventa: consulta módulo a módulo de un `pedidoId`
+conocido en `GET /api/v1/pedidos/{id}` (validar `ENTREGADO` antes de devolución,
+reembolso o CSAT). No reabre `ventas:pedidos:leer`, retirado en A10: no lista
+pedidos de cualquier cliente.
+
+Los siete scopes de Productos para modulo-chatbot (A9) quedan aprobados con la
+[respuesta oficial de G6 en #87, punto A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656): misma lista, audiencia
+`api-productos`. Chatbot los pidió para H3 (`catalogo:leer`, `precios:leer`,
+`inventario:disponibilidad:leer`) y H4 (el resto). G6 precisa que para Chatbot
+la disponibilidad es la ruta comercial `GET /api/v1/inventario/disponibilidad/comercial`
+(`canal=CHATBOT`); la ruta detallada no está autorizada para ese cliente. La
+aprobación es documental: la emisión de tokens de servicio y las credenciales
+siguen el plan de Hito 4.
 
 ## Retirados o no concedidos
 
@@ -123,6 +139,8 @@ Se verificaron 16 scopes en su OpenAPI 0.5.0 de la revisión fijada en
 API sirve como propuesta; no prueba aprobación del PO requerida por A9.
 [Mensaje G6 y evidencia](correcciones-modulos.md#g6--productos-y-ofertas).
 
-G6 #87 C1 ya solicita esa confirmación y no tenía respuesta al consultar.
-Antes de provisionar, enlazar confirmación/issue por cliente y conservar
-audiencia `api-productos`. No convertir el catálogo en concesiones efectivas.
+G6 respondió en [#87, punto A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) (16-oct): confirma los siete de
+`modulo-chatbot`, ya aprobados arriba. Las concesiones de los demás consumidores
+(incluida `productos:fisicos:leer` para `modulo-despacho`) siguen sin confirmar
+por cliente. Conservar audiencia `api-productos` y no convertir el catálogo en
+concesiones efectivas.

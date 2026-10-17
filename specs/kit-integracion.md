@@ -404,16 +404,18 @@ las decisiones se registran en
 | Marketplace Cliente | `cotizaciones:calcular`, `seguimientos:leer` *(API de Despacho, acuerdo A4)* | Cotizar el envío y consultar su seguimiento |
 | Chatbot Cliente | `usuarios:leer`, `tokens:introspeccion` | Confirmar identidad en la conversación y la sesión antes de cobrar |
 | Chatbot Cliente | `cotizaciones:calcular`, `seguimientos:leer` *(API de Despacho, acuerdo A8)* | Cotizar el envío y mostrar el seguimiento |
-| Chatbot Cliente | `catalogo:leer`, `precios:leer`, `promociones:leer`, `promociones:evaluar`, `cupones:validar`, `recomendaciones:leer`, `inventario:disponibilidad:leer` *(API de Productos, acuerdo A9: **pendiente de que Productos confirme su lista**)* | Catálogo, precios, ofertas y stock en la conversación |
+| Chatbot Cliente | `catalogo:leer`, `precios:leer`, `promociones:leer`, `promociones:evaluar`, `cupones:validar`, `recomendaciones:leer`, `inventario:disponibilidad:leer` *(API de Productos, acuerdo A9: aprobado el 16-oct con la ratificación de G6; disponibilidad por la ruta comercial)* | Catálogo, precios, ofertas y stock en la conversación |
 | Retail Vendedor | `usuarios:leer`, `roles:leer` | Consultar clientes por `id` y comprobar el rol del vendedor. **Buscar por documento y registrar clientes no va con este token**, sino con el del vendedor (§8) |
 | Ventas y Postventa (clientes separados) | `usuarios:leer` | Estado de cuenta según A10; documento en claro retirado para Ventas; introspección fuera de A10 |
+| Postventa | `ventas:pedidos:consultar` *(API de Ventas, #51)* | Validar que un pedido conocido esté `ENTREGADO` antes de devolución, reembolso o CSAT |
 | Despacho y Entrega | `usuarios:leer`, `direcciones:leer` | Entregar el paquete |
 | Productos y Ofertas | `tokens:introspeccion`, `roles:leer` | Autorizar cambios de precio |
 
 **A10 confirmado en #42 y ajustado en #44:** siete scopes propios de Ventas/Postventa,
 concesiones por consumidor y dos clientes nuevos previstos (`modulo-postventa`,
 `simulador-pasarela`). Detalle en la [matriz](../docs/integracion/matriz-scopes.md).
-Aprobación no acredita provisión. A9 sigue condicionado a Productos.
+Aprobación no acredita provisión. A9 quedó aprobado el 16-oct con la ratificación de G6.
+`ventas:pedidos:consultar` (api-ventas) se concede a `modulo-postventa` por #51, solo para `GET /pedidos/{id}`.
 La fila provisional `usuarios:leer:documento` de Ventas también se retira,
 sin reemplazo, por [confirmación final #42](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6118843852).
 El catálogo genérico no cambia; esta retirada afecta solo la concesión a Ventas.
