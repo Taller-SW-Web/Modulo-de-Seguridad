@@ -7,11 +7,24 @@ Grupo 7 — Taller de Construcción de Software Web — UNMSM — Ciclo 2026-II
 
 Este repo conserva specs, contrato, planes y tareas. El código se implementa en
 [Modulo-de-Seguridad-Backend](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend)
-y un repositorio frontend independiente pendiente de comunicar. El clon local
+y [G7-Modulo-de-Seguridad-Frontend](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend). El clon local
 `Backend-auth-service/` es un Git independiente ignorado por el padre.
 [Backend hexagonal H3](plan/hito-3/BACKEND-HEXAGONAL.md) fija Java 21,
 Spring Boot 3.5.16, Gradle 8.14.3, puertos/adaptadores, DTO y mappers. La carpeta
 antigua `backend/` y su pom quedan descartados como base de implementación.
+
+### Entorno desplegado H3
+
+| | URL |
+|---|---|
+| SPA | https://g7-seguridad-spa.onrender.com |
+| API | https://g7-auth-service.onrender.com/api/v1 |
+| Issuer | `https://g7-auth-service.onrender.com/api/v1/auth` |
+| JWKS | https://g7-auth-service.onrender.com/api/v1/auth/.well-known/jwks.json |
+
+Render, PostgreSQL en Supabase y SMTP de Brevo. Revisiones, comprobaciones y
+pendientes en la [ficha del entorno](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/blob/develop/docs/despliegue/DESPLIEGUE-T005.md#entorno-real-h3) (B#56, visible en `develop` al fusionarse);
+prueba conjunta con Ventas en la [ficha de integración](docs/integracion/hito-3-ventas.md#prueba-conjunta-en-nube--16-oct-2026).
 
 ## Integrantes y roles
 
@@ -121,8 +134,10 @@ distingue diseño cerrado de dependencias/configuración aún por comprobar.
 **Hito 3:** recorrido de login real en Seguridad → consulta de mis pedidos en
 Ventas confirmado en [G5 Backend #2](https://github.com/Taller-SW-Web/G5-Ventas-Postventas-Backend/issues/2).
 Michael coordina F1/JWT; G5 entrega como máximo el jueves 15/10 y G7 adopta
-ese día como objetivo para probar antes del sábado 17/10. Configuración,
-rama y prueba conjunta siguen pendientes. Marketplace y los otros módulos
+ese día como objetivo para probar antes del sábado 17/10. El 16-oct ambos
+servicios estaban en nube y la prueba por API con tokens de usuario dio los
+resultados esperados en siete casos; el frontend de G5 sigue pendiente y los
+casos negativos deben repetirse tras el redespliegue posterior de G5. Marketplace y los otros módulos
 siguen en el alcance general. [Ficha de coordinación](docs/integracion/hito-3-ventas.md)
 y [preparación interna](docs/integracion/preparacion-interna.md).
 
@@ -236,4 +251,5 @@ Cada dueño conserva su recorrido completo; tablas de escritor único y consumo
 por interfaces internas. PostgreSQL está en Supabase; acceso/configuración y
 servicios reales se comprueban al implementar. Los siete tableros están en
 [tareas/hito-3](tareas/hito-3/README.md); ejecutar una tarea lista por vez,
-con sus fuentes, dependencias y comprobaciones. No hay demo acreditada.
+con sus fuentes, dependencias y comprobaciones. La ronda en nube del 16-oct
+acredita los recorridos que documenta, no el cierre de las épicas.
