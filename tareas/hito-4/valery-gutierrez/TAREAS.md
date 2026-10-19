@@ -1,7 +1,11 @@
 # H4 — tareas de Valery Cristin Gutierrez Bendezu
 
-**Épica:** EP-08 Perfil. **Plan:** [H4 v1.1 §3](../../../plan/hito-4/README.md#valery--ep-08-perfil).
-**Rama:** `feat/EP-08-direcciones-correo` (backend y frontend). Cada tarea es un commit `FEAT-04-Tn: …`.
+**Épica:** EP-08 Perfil. **Plan:** [H4 v1.2 §3](../../../plan/hito-4/README.md#valery--ep-08-perfil).
+**Ramas:** corte backend temprano `feat/EP-08-direcciones-base` para T1/T2 en S1;
+continuación `feat/EP-08-direcciones-correo` desde `develop` actualizado (backend y
+frontend) para T3–T5. T6 conserva su alcance P2. Cada tarea conserva su ID.
+El primer corte no cierra FEAT-04 ni acredita todos sus RF: integra capacidad real
+de direcciones y puerto con pruebas para desbloquear a Sergio, sin esperar al correo.
 
 **Fuentes comunes:** [SPEC-16](../../../specs/funcionales/SPEC-16-atributos.md),
 [FRONT-06](../../../specs/front/FRONT-06-mi-cuenta.md),
@@ -11,7 +15,7 @@
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
 | FEAT-04-T1 | `GET` y `POST /usuarios/{id}/direcciones` | P1 | — (tabla `direccion` ya existe) | Pendiente |
-| FEAT-04-T2 | Puerto exportado de lectura de direcciones | P1 · **dom 26-oct** | T1 | Pendiente |
+| FEAT-04-T2 | Puerto exportado de lectura de direcciones | P1 · **lun 26-oct** | T1 | Pendiente |
 | FEAT-04-T3 | `POST /usuarios/{id}/correo` | P1 | Juan José FEAT-03-T1; Eva FEAT-01-T3 | Pendiente |
 | FEAT-04-T4 | Mi cuenta (FRONT-06) con direcciones y correo | P1 | T1, T3 | Pendiente |
 | FEAT-04-T5 | Pruebas y evidencia desplegada | P1 | T1–T4 | Pendiente |
@@ -24,7 +28,7 @@
 
 ### FEAT-04-T2 — Puerto `ConsultaDireccionesPort` exportado
 - **Resultado:** puerto de entrada de solo lectura (por id de usuario) para la FEAT-06 de Sergio (`direcciones:leer`, G1 F-022). Sin exponer entidades JPA.
-- **Aceptación:** ArchUnit en verde; Sergio lo consume por un adaptador puente.
+- **Aceptación:** puerto e implementación real con pruebas de persistencia/HTTP y ArchUnit aplicables en verde; fusionar T1/T2 como corte backend y comprobar su despliegue. Sergio lo consume desde `develop` actualizado mediante un adaptador puente. No entregar solo una interfaz ni dar por completada la pantalla de T4.
 - **Evidencia:** aviso al grupo con la firma del puerto.
 
 ### FEAT-04-T3 — Cambio de correo

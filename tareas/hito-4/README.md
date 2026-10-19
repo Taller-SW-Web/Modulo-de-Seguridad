@@ -1,11 +1,13 @@
 # Tareas del Hito 4
 
-Se derivan del [plan H4 v1.1](../../plan/hito-4/README.md) (19-oct-2026). Presentación:
+Se derivan del [plan H4 v1.2](../../plan/hito-4/README.md) (19-oct-2026). Presentación:
 **sábado 7-nov**; congelamiento: **jueves 5-nov**.
 
 **Regla de entrega:** una FEAT = una rama = un PR por repo. Las tareas de este tablero
 son **commits dentro de la rama de su FEAT**, no ramas ni PR propios (ver §6 del plan).
-Un tablero detallado no obliga a abrir un PR por tarea.
+Un tablero detallado no obliga a abrir un PR por tarea. Excepciones para dependencias
+compartidas: FEAT-03-T1 y FEAT-04-T1/T2 tienen PR backend temprano propio, con pruebas
+y contrato estable; no cierran su FEAT completa ni todos sus RF.
 
 ## Tableros
 
@@ -23,11 +25,12 @@ Un tablero detallado no obliga a abrir un PR por tarea.
 
 ```text
 S1 (20–26 oct)
-  Juan José FEAT-03-T1 (tokens de un uso, mié 22) ──► Eva FEAT-01-T2 · Valery FEAT-04-T3
-  David FEAT-11-T1/T2 (prueba temprana G1, sáb 25)  ◄── despliegue actual de develop
+  Juan José FEAT-03-T1 (tokens de un uso, jue 22) ──► Eva FEAT-01-T2 · Valery FEAT-04-T3
+  David FEAT-11-T3 (paquete) → T1 (configuración) → T2 (G1 con operación propia y A/B, dom 25)
+    ◄── despliegue de integración develop revalidado + disponibilidad de G1
   Christian FEAT-09-T1/T2 (deploy + smoke en el pipeline) ──► Jose Luis FEAT-12-T4
   Sergio FEAT-05-T1/T2 (clientes, scopes, /auth/token)
-  Valery FEAT-04-T1/T2 (direcciones + puerto) ──► Sergio FEAT-06-T3
+  Valery FEAT-04-T1/T2 (PR backend temprano, direcciones + puerto real) ──► Sergio FEAT-06-T3
 S2 (27 oct–2 nov)
   Pantallas, pruebas PostgreSQL y E2E de cada FEAT; Christian aplica V108+
   Eva FEAT-01-T3 (verificación) ──► Valery FEAT-04-T3 (cambio de correo)
@@ -37,13 +40,13 @@ S3 (3–7 nov)
 
 | Necesita | De | Entrega | Para |
 |---|---|---|---|
-| Propósitos `VERIFICAR_CORREO`, `CAMBIO_CORREO`, `RECUPERACION` | Juan José FEAT-03-T1 | mié 22-oct | Eva FEAT-01, Valery FEAT-04 |
-| Puerto de lectura de direcciones | Valery FEAT-04-T2 | dom 26-oct | Sergio FEAT-06-T3 |
-| Verificación de correo reutilizable | Eva FEAT-01-T3 | jue 30-oct | Valery FEAT-04-T3 |
-| Job de despliegue y smoke test | Christian FEAT-09-T1/T2 | dom 26-oct | Jose Luis FEAT-12-T4 |
+| Propósitos `VERIFICAR_CORREO`, `CAMBIO_CORREO`, `RECUPERACION` | Juan José FEAT-03-T1 | jue 22-oct | Eva FEAT-01, Valery FEAT-04 |
+| Puerto de lectura de direcciones | Valery FEAT-04-T2 | lun 26-oct | Sergio FEAT-06-T3 |
+| Verificación de correo reutilizable | Eva FEAT-01-T3 | vie 30-oct | Valery FEAT-04-T3 |
+| Job de despliegue y smoke test | Christian FEAT-09-T1/T2 | lun 26-oct | Jose Luis FEAT-12-T4 |
 | Migraciones V108+ aplicadas | Christian FEAT-09-T4 | según cada FEAT | Todas las FEAT con datos |
 | Cambios del OpenAPI | Sergio (PO) | antes de fusionar cada FEAT | Todos |
-| Cliente técnico y token de servicio | Sergio FEAT-05-T2 | dom 26-oct | David FEAT-11-T4/T5 |
+| Cliente técnico y token de servicio | Sergio FEAT-05-T2 (objetivo; disponible al desplegar y comprobar) | lun 26-oct | David FEAT-11-T4/T5 |
 
 ## Formato de cada tarea
 
@@ -52,7 +55,10 @@ Cada tarea indica **fuentes**, **resultado** (backend y frontend cuando correspo
 solo con la API, y una FEAT cuenta para el 75 % solo con pantalla, API, despliegue y
 evidencia (plan §1).
 
-Estados: **Pendiente → En curso → En PR (borrador) → Fusionada → Desplegada**.
+Estados: **Pendiente → En curso → En PR (borrador) → Fusionada → Desplegada → Verificada**.
+Desplegada identifica el SHA/entorno; Verificada añade criterios y evidencia. Solo esta
+última acredita el RF. Las fechas son objetivos, no disponibilidad confirmada.
+La base H3 se comprueba en S1; los reportes E2E/CI/CD se amplían hasta S3.
 **Bloqueada** solo si falta una entrega de otro; se anota cuál y se sigue con otra tarea.
 
 ## Cómo pedir ayuda a la IA
@@ -65,6 +71,9 @@ Sustituir nombre, tablero e ID; una tarea por pedido:
 > comprobaciones indicadas y deja el commit con el mensaje `FEAT-xx-Tn: …`, sin push.
 
 ## Decisiones pendientes
+
+El [paquete inicial G1](../../docs/integracion/hito-4-marketplace.md) concentra matriz,
+pendientes externos y guion de la primera prueba. No sustituye los tableros.
 
 Ver plan §8: «crear roles» (consulta al profesor, no bloquea), scopes de
 `modulo-marketplace` con G6 y fusión del backend #55.

@@ -1,6 +1,6 @@
 # H4 — tareas de Eva Lucía Moreno Zevallos
 
-**Épica:** EP-01 Cuentas. **Plan:** [H4 v1.1 §3](../../../plan/hito-4/README.md#eva--ep-01-cuentas).
+**Épica:** EP-01 Cuentas. **Plan:** [H4 v1.2 §3](../../../plan/hito-4/README.md#eva--ep-01-cuentas).
 **Ramas:** `feat/EP-01-registro-verificacion` (backend y frontend, mismo nombre) y
 `feat/EP-01-baja-reactivacion`. Cada tarea es un commit `FEAT-0x-Tn: …` en su rama.
 
@@ -15,7 +15,7 @@
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
 | FEAT-01-T1 | `POST /auth/registro` | P1 | — | Pendiente |
-| FEAT-01-T2 | Token de verificación y correo | P1 | Juan José FEAT-03-T1 (mié 22) | Pendiente |
+| FEAT-01-T2 | Token de verificación y correo | P1 | Juan José FEAT-03-T1 (jue 22; reutilizar lo existente sin esperar una reimplementación) | Pendiente |
 | FEAT-01-T3 | Verificar y reenviar | P1 | T2 | Pendiente |
 | FEAT-01-T4 | Retorno por canal | P1 | T3; David FEAT-11-T1 (URL de G1) | Pendiente |
 | FEAT-01-T5 | Pantallas FRONT-02 y FRONT-03 | P1 | T1, T3 | Pendiente |
@@ -27,8 +27,9 @@
 ### FEAT-01-T1 — `POST /auth/registro`
 - **Resultado:** caso de uso de registro en el módulo de cuentas: datos de SPEC-01, `canalOrigen`,
   política de contraseña de Juan José (`/password/politica`), cuenta `PENDIENTE_VERIFICACION` y rol CLIENTE, sin sesión.
-- **Aceptación:** correo existente → la misma respuesta que uno nuevo (sin enumeración); contraseña
+- **Aceptación:** registro correcto → 201; correo existente → 409 `CORREO_NO_DISPONIBLE`, con el mensaje neutro publicado y sin datos del propietario; contraseña
   rechazada → error del catálogo; documento cifrado/HMAC como en V107.
+- **Nota contractual:** 201 y 409 son distinguibles; no afirmar que el registro oculta totalmente la existencia de la cuenta. Un cambio a respuesta uniforme requiere decisión y publicación del PO.
 - **Evidencia:** pruebas unitarias del servicio y PostgreSQL del adaptador; ArchUnit en verde.
 
 ### FEAT-01-T2 — Token de verificación y correo

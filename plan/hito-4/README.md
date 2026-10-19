@@ -1,8 +1,10 @@
 # Hito 4 — repartición por FEAT
 
 **Corte:** 19-oct-2026. **Presentación:** sábado 7-nov-2026. **Responsable del plan:** Sergio (PO).
-**Versión 1.1 (19-oct):** incorpora los ajustes de David: prueba temprana con G1,
-criterio de «terminado» para el 75 %, evidencia del recorrido CI/CD completo y
+**Versión 1.2 (19-oct):** alinea tareas con el contrato publicado, ordena las entregas
+compartidas y prepara el [paquete inicial G1](../../docs/integracion/hito-4-marketplace.md).
+Conserva el reparto y las funcionalidades de la versión 1.1, que incorpora los ajustes de David: prueba temprana con G1,
+el criterio de «terminado» para el 75 %, evidencia del recorrido CI/CD completo y
 «crear roles» como decisión pendiente. David asume la integración con G1.
 Tareas detalladas en los [tableros H4](../../tareas/hito-4/README.md).
 
@@ -26,7 +28,9 @@ Es una **estimación para planificar**, no una certificación.
 **Cuándo cuenta un RF como hecho:** solo si funciona **con pantalla (cuando la spec la
 tiene), API, despliegue y evidencia** sanitizada en `docs/evidencia/`. Código fusionado
 sin desplegar o sin pantalla no suma. Con ese criterio, los 80 RF de H3 se vuelven a
-comprobar en el despliegue durante S1 (FEAT-09-T6, FEAT-12-T3 y FEAT-11-T2).
+comprobar en el despliegue durante S1 (primer corte de FEAT-09-T6, FEAT-12-T3 y
+FEAT-11-T2); los reportes finales se amplían hasta S3. El inventario RF debe enlazar
+cada requisito con su caso y evidencia antes de confirmar el porcentaje real.
 
 | Spec | RF | Hecho en H3 | Tras P1 | Tras P1+P2 | FEAT H4 |
 |---|---:|---:|---:|---:|---|
@@ -60,10 +64,10 @@ Los cuatro criterios de la rúbrica; el peso de cada uno lo confirma el profesor
 
 | Criterio | Cómo lo cubrimos | Dueños |
 |---|---|---|
-| CI/CD (build, compile, test, deploy) | Hoy el CI de ambos repos hace build, pruebas e imagen Docker, pero **no despliega**: Render despliega por su cuenta. FEAT-09 añade el job de despliegue y el smoke test al pipeline, y deja un run completo como evidencia | Christian (FEAT-09) |
+| CI/CD (build, compile, test, deploy) | Hoy el CI hace build y pruebas en ambos repos, e imagen Docker en backend, pero **no despliega**: Render despliega por su cuenta. FEAT-09 añade el job de despliegue y el smoke test al pipeline, y deja un run completo como evidencia | Christian (FEAT-09) |
 | Diseño de APIs | OpenAPI v1/v2 actualizado por FEAT, ejemplos y pruebas de contrato; el PO publica | Sergio + cada dueño propone |
 | Demo funcional: nuevas funcionalidades | Registro, verificación, recuperación, direcciones, tokens de servicio, bloqueo manual, MFA v2, auditoría admin | Todos |
-| Seguridad: autenticación en pantallas y APIs | Guards por permiso en SPA, tokens de usuario y de servicio validados por scope/aud, E2E en CI, integración G1 y G5 | Jose Luis (FEAT-12) + David (FEAT-11) + Sergio |
+| Seguridad: autenticación en pantallas y APIs | Guards por permiso en SPA, tokens de usuario validados por firma, emisor, tipo y permisos aplicables; tokens de servicio por audiencia y scope, E2E en CI, integración G1 y G5 | Jose Luis (FEAT-12) + David (FEAT-11) + Sergio |
 
 ## 3. Reparto por integrante
 
@@ -95,9 +99,9 @@ la rama de su FEAT (ver §6).
 ### Juan José — EP-03 Credenciales
 
 **FEAT-03 `feat/EP-03-recuperacion` (P1, G1 F-004/F-005)** — SPEC-08, FRONT-05
-- T1 *(semana 1, desbloquea a Eva y Valery; va en rama corta propia `feat/EP-03-tokens-un-uso`)* Habilitar en `TokensUnUsoPort` los propósitos `VERIFICAR_CORREO`, `CAMBIO_CORREO` y `RECUPERACION` (el enum ya existe; hoy solo se usa el desbloqueo).
+- T1 *(semana 1, desbloquea a Eva y Valery; va en rama corta propia `feat/EP-03-tokens-un-uso`)* Reutilizar emisión, consumo e invalidación existentes para `VERIFICAR_CORREO` y `RECUPERACION`; comprobar su política por propósito y completar `CAMBIO_CORREO` vinculando el destino nuevo con Valery/Eva. No duplicar la persistencia ni los mecanismos ya disponibles.
 - T2 `POST /password/recuperar`: respuesta neutra exista o no la cuenta, límite de frecuencia y correo con enlace.
-- T3 `POST /password/restablecer`: token de un solo uso, caducidad y política; revoca todas las sesiones y audita.
+- T3 `POST /password/restablecer`: token de un solo uso, caducidad y política; revoca todas las sesiones, levanta solo el bloqueo automático si existe y audita; no levanta el bloqueo manual.
 - T4 Pantallas FRONT-05 (solicitar y restablecer) y retorno seguro.
 - T5 Pruebas: válido, usado, vencido, inválido, contraseña rechazada; nada sensible en logs.
 
@@ -105,9 +109,9 @@ la rama de su FEAT (ver §6).
 
 **FEAT-11 `feat/INT-G1-marketplace` (P1, G1 y rúbrica de seguridad)** — David la pidió el 19-oct. Va primero.
 - T1 Alta del origen y las URL de retorno de G1 por entorno (`G7_CORS_ORIGENES` y lista de retorno).
-- T2 **Prueba temprana con G1 (S1, hasta el sáb 25-oct):** login + una operación protegida (`GET /auth/me`) desde G1 contra el despliegue.
-- T3 Paquete para G1: matriz por operación (versión, estado, SHA, URL) y cuentas A, B, pendiente, bloqueada y MFA por canal seguro.
-- T4 Seguimiento por operación a medida que se fusionan FEAT-01, 03, 04, 05 y 06; avisa a G1 de cada una.
+- T2 **Prueba temprana con G1 (S1, hasta el dom 25-oct):** comprobar login y `/auth/me` de G7; después ejecutar desde la web y API de G1 una operación protegida de su dominio, con usuarios A/B y denegaciones. Refresh y logout forman parte de F-002/F-003.
+- T3 **Antes de T2:** [paquete para G1](../../docs/integracion/hito-4-marketplace.md), matriz por operación (versión, estado, SHA, URL), acuerdo navegador/BFF y cuentas A/B por canal seguro. Los escenarios pendiente, bloqueado y MFA se preparan según disponibilidad; no se declaran provisionados sin comprobación.
+- T4 Registrar por separado cada fusión, despliegue y comprobación de FEAT-01, 03, 04, 05 y 06; comunicar a G1 el estado real y el SHA del entorno, no solo el merge.
 - T5 Prueba conjunta final con dos usuarios (F-001 a F-005 y cliente técnico) con evidencia sanitizada.
 
 **FEAT-07 `feat/EP-04-mfa-v2` (P2)** — SPEC-10, FRONT-09: `POST /auth/mfa/cambios`, `/reenviar` y `/confirmar` (v2); adaptador SMS simulado de SPEC-09.
@@ -119,11 +123,11 @@ la rama de su FEAT (ver §6).
 **FEAT-05 `feat/TEC-IDENTIDAD-tokens-servicio` (P1, G1 INT-001)** — SPEC-17
 - T1 Registro de clientes y scopes desde la [matriz](../../docs/integracion/matriz-scopes.md) (`cliente_servicio`, `scope`); secretos con hash, entregados por canal seguro.
 - T2 `POST /auth/token` con `client_credentials`: `tipo=servicio`, `aud` por API dueña y `scope` RFC 9068.
-- T3 `POST /auth/introspeccion` con el estado actual del usuario.
-- T4 Rotación de clave con dos `kid` publicados.
+- T3 `POST /auth/introspeccion` con `activo` y el estado actual del usuario según el contrato.
+- T4 Rotación de clave con dos `kid` publicados; conservar la anterior al menos 24 horas y validar los tokens vigentes durante la transición.
 - T5 `GET /roles` y `GET /permisos`.
 
-**FEAT-06 `feat/TEC-IDENTIDAD-consulta-identidad` (P1)** — SPEC-18: `GET /usuarios/{id}` y `/usuarios/lote` con token de servicio (`usuarios:leer`), `direcciones:leer` consumiendo el puerto de Valery; 401/403 neutros.
+**FEAT-06 `feat/TEC-IDENTIDAD-consulta-identidad` (P1)** — SPEC-18: `GET /usuarios/{id}` y `POST /usuarios/lote` con token de servicio (`usuarios:leer`), `direcciones:leer` consumiendo el puerto de Valery; 401/403 neutros.
 
 **Como PO:** publica los cambios del OpenAPI que pidan los dueños, responde a G1 y prioriza.
 
@@ -132,7 +136,7 @@ la rama de su FEAT (ver §6).
 **FEAT-09 `feat/TEC-INFRA-cicd` (P1, rúbrica CI/CD)**
 - T1 Job de despliegue en GitHub Actions: tras el CI verde en la rama desplegada, dispara el deploy hook de Render (secreto en GitHub) y espera la versión nueva.
 - T2 Smoke test en el pipeline (`/actuator/health`, JWKS, login de prueba); si falla, el run queda en rojo.
-- T3 Frontend en Vercel con `VITE_API_BASE_URL` por entorno, desplegado desde el pipeline.
+- T3 Frontend desplegado desde el pipeline con `VITE_API_BASE_URL` por entorno; conservar Render, ya utilizado, salvo decisión documentada de cambiar de proveedor.
 - T4 Ventana de migraciones V108+ de las FEAT en Supabase, con su runbook.
 - T5 Eventos reales en CloudAMQP (`G7_EVENTOS_PUBLICAR=true`) y SMTP real (Brevo por el 2525).
 - T6 Evidencia del recorrido completo build → compile → test → deploy → smoke (enlace al run) y checklist de secretos.
@@ -143,7 +147,7 @@ la rama de su FEAT (ver §6).
 
 **FEAT-04 `feat/EP-08-direcciones-correo` (P1)** — SPEC-16, FRONT-06
 - T1 `GET` y `POST /usuarios/{id}/direcciones` del titular (tabla `direccion` ya existe).
-- T2 Puerto exportado de lectura de direcciones para FEAT-06 de Sergio (G1 F-022).
+- T2 Puerto exportado de lectura de direcciones para FEAT-06 de Sergio (G1 F-022). **T1/T2 se entregan en S1 por PR backend corto** (`feat/EP-08-direcciones-base`), con implementación, pruebas y despliegue comprobado; el resto continúa desde `develop` actualizado. Ese corte no cierra FEAT-04 ni cuenta todos sus RF.
 - T3 `POST /usuarios/{id}/correo`: cambio con contraseña actual; usa la verificación de Eva (semana 2).
 - T4 Mi cuenta (FRONT-06) con direcciones y cambio de correo; eventos `usuario.atributos_actualizados`.
 - T5 Pruebas y evidencia desplegada.
@@ -153,9 +157,9 @@ la rama de su FEAT (ver §6).
 
 | Sprint | Fechas | Objetivo |
 |---|---|---|
-| S1 | lun 20 – dom 26 oct | Juan José entrega T1 (tokens de un uso) el miércoles. **David: prueba temprana con G1 (login + `/auth/me`) hasta el sábado 25.** Cada FEAT con su backend principal y su PR en borrador. Christian: job de despliegue y smoke test. Sergio: respuesta a G1, contrato y consulta al profesor sobre «crear roles» |
-| S2 | lun 27 oct – dom 2 nov | Pantallas y pruebas completas. Dependencias cruzadas: verificación → cambio de correo; direcciones → `direcciones:leer` |
-| S3 | lun 3 – sáb 7 nov | **Congelamiento el jueves 5-nov.** Fusión `develop → main`, despliegue, prueba conjunta G1/G5 y ensayo de la demo |
+| S1 | mar 20 – lun 26 oct | Juan José entrega T1 (tokens de un uso) el jueves 22. **David: paquete previo y prueba temprana G1 con operación propia y A/B hasta el domingo 25 (fecha a coordinar con G1).** Cada FEAT con su backend principal y su PR en borrador. Christian: job de despliegue y smoke test. Sergio: respuesta a G1, contrato y consulta al profesor sobre «crear roles» |
+| S2 | mar 27 oct – lun 2 nov | Pantallas y pruebas completas. Dependencias cruzadas: verificación → cambio de correo; direcciones → `direcciones:leer` |
+| S3 | mar 3 – sáb 7 nov | **Congelamiento el jueves 5-nov.** Fusión `develop → main`, despliegue, prueba conjunta G1/G5 y ensayo de la demo |
 
 **Reunión corta cada lunes y jueves:** qué terminó, qué bloquea y qué toma cada uno.
 
@@ -168,8 +172,8 @@ el alcance o el contrato.
 | Pedido de G1 | Respuesta en H4 |
 |---|---|
 | F-001 Registro + verificación de correo | FEAT-01 Eva |
-| F-002 Login, MFA, perfil y continuidad | Ya disponible (v1); prueba temprana en S1 (FEAT-11-T2 David) |
-| F-003 Logout, refresh y revocación | Ya disponible; prueba conjunta en FEAT-11 David |
+| F-002 Login, MFA, perfil y continuidad | Implementado en H3 (v1), sujeto a revalidación del entorno; prueba temprana en S1 (FEAT-11-T2 David) |
+| F-003 Logout, refresh y revocación | Implementado en H3, sujeto a revalidación del entorno; prueba conjunta en FEAT-11 David |
 | F-004/F-005 Recuperación y restablecimiento | FEAT-03 Juan José |
 | Cliente técnico `modulo-marketplace` para `api-productos` | FEAT-05 Sergio; los scopes los confirma G6 por cliente (la aprobación de Chatbot no aplica a G1) |
 | Direcciones del titular / `direcciones:leer` | FEAT-04 Valery + FEAT-06 Sergio |
@@ -181,8 +185,13 @@ JWT de acceso; nada de tokens, OTP ni enlaces en URL de retorno ni en logs.
 
 ## 6. Cómo trabajamos con ramas por FEAT
 
+Este flujo aplica a los repositorios de código backend/frontend. La documentación
+SDD se publica por PR hacia `main` de este repositorio.
+
 En H3 abrimos una rama y un PR por tarea. Para H4, **una FEAT = una rama = un PR por repo**,
-y las tareas son commits dentro de esa rama.
+y las tareas son commits dentro de esa rama. Los cortes backend compartidos
+FEAT-03-T1 y FEAT-04-T1/T2 tienen PR temprano propio para desbloquear consumidores;
+se conserva el ID y el resto de su FEAT parte de `develop` actualizado.
 
 ### Nombres
 
@@ -208,10 +217,15 @@ develop ──► (jue 5-nov) PR release H4 → main → despliegue automático
 3. Hacer un commit por tarea. Si la FEAT dura más de unos días, traer `develop` a la rama
    (`git merge origin/develop`) para no acumular conflictos.
 4. Pasar el PR a «Ready for review» cuando la FEAT esté **completa de punta a punta**:
-   backend, pantalla, pruebas y evidencia.
+   backend, pantalla, pruebas pertinentes y evidencia local. La comprobación en el
+   entorno de integración se registra después de fusionar y desplegar; la FEAT/RF no
+   se marca Verificada hasta superar esa comprobación.
 5. Fusionar con el CI en verde. No se exige aprobación, pero conviene pedir que alguien la mire.
    Después, borrar la rama.
-6. `main` solo recibe el PR de versión desde `develop` (jueves 5-nov). Render despliega `main`.
+6. Durante S1/S2, `develop` alimenta el entorno de integración; Christian configura el pipeline
+   con CI verde, espera de versión y smoke/E2E. El jueves 5-nov se promueve `develop → main`
+   para la entrega final y se comprueba el despliegue de ese SHA. No cambiar la rama del
+   servicio ni sus orígenes sin registrar entorno, aviso a consumidores y comprobación.
 
 ### Reglas que no cambian
 
@@ -231,10 +245,10 @@ develop ──► (jue 5-nov) PR release H4 → main → despliegue automático
 - [ ] Recorrido de punta a punta probado en el despliegue, con evidencia sanitizada en `docs/evidencia/`.
 - [ ] Tablero actualizado (estado y PR) y el contrato OpenAPI publicado si cambió.
 
-## 8. Decisiones pendientes (no bloquean)
+## 8. Decisiones pendientes y dependencias acotadas
 
 | Tema | Situación | Quién | Cuándo |
 |---|---|---|---|
 | «Crear roles» | Las specs definen un [catálogo cerrado de seis roles](../../specs/funcionales/SPEC-11-roles-permisos.md) (RF-11.1). Asignar y retirar roles ya funciona. Crear roles nuevos cambiaría el alcance de SPEC-11 y el contrato | Sergio consulta al profesor | S1; si se pide, entra como FEAT nueva en S2, sin tocar las demás |
 | Scopes de `modulo-marketplace` en `api-productos` | G6 debe confirmarlos por cliente | Sergio con G6 | S1 |
-| Fusión del backend #55 (bloqueo en el detalle) | Abierto; FEAT-08 se apoya en él. Fusionar despliega | Equipo | Inicio de S1 |
+| Fusión del backend #55 (bloqueo en el detalle) | Pendiente de comprobar; FEAT-08 se apoya en él. Fusión, despliegue y comprobación son estados distintos | Equipo | Inicio de S1 |

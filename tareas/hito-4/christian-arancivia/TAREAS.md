@@ -1,7 +1,7 @@
 # H4 — tareas de Christian Gabriel Arancivia Salas
 
 **Épicas:** TEC-INFRA y EP-06 Auditoría.
-**Plan:** [H4 v1.1 §3](../../../plan/hito-4/README.md#christian--ep-06-auditoría--infraestructura).
+**Plan:** [H4 v1.2 §3](../../../plan/hito-4/README.md#christian--ep-06-auditoría--infraestructura).
 **Ramas:** `feat/TEC-INFRA-cicd` (backend y frontend) y `feat/EP-06-auditoria-admin`.
 Cada tarea es un commit `FEAT-xx-Tn: …` en su rama.
 
@@ -17,8 +17,8 @@ recorrido completo **build → compile → test → deploy** en el pipeline.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-09-T1 | Job de despliegue en GitHub Actions | P1 · dom 26-oct | — | Pendiente |
-| FEAT-09-T2 | Smoke test en el pipeline | P1 · dom 26-oct | T1 | Pendiente |
+| FEAT-09-T1 | Job de despliegue en GitHub Actions | P1 · lun 26-oct | — | Pendiente |
+| FEAT-09-T2 | Smoke test en el pipeline | P1 · lun 26-oct | T1 | Pendiente |
 | FEAT-09-T3 | Frontend desplegado desde el pipeline | P1 | — | Pendiente |
 | FEAT-09-T4 | Ventana de migraciones V108+ | P1 · continuo | PR de cada FEAT | Pendiente |
 | FEAT-09-T5 | CloudAMQP y SMTP real | P1 | — | Pendiente |
@@ -32,14 +32,14 @@ recorrido completo **build → compile → test → deploy** en el pipeline.
 ### FEAT-09-T1 — Despliegue desde el pipeline
 - **Resultado:** job `deploy` que corre solo si build y test pasan en la rama desplegada; dispara el deploy hook de Render (secreto de GitHub) y espera la versión nueva. Desactivar el autodeploy propio de Render para que no despliegue código sin CI.
 - **Aceptación:** un push con pruebas en rojo no despliega.
-- **Decisión con el equipo:** qué rama despliega (hoy `develop`; el plan propone `main` tras la versión del 5-nov).
+- **Entornos:** durante S1/S2 desplegar `develop` para integración; el 5-nov promover a `main` para la entrega final. Configurar la rama del servicio/pipeline correspondiente y registrar el cambio de entorno, SHA esperado y aviso a G1/G5. El despliegue de integración habilita pruebas antes de S3.
 
 ### FEAT-09-T2 — Smoke test
 - **Resultado:** tras desplegar, comprobar `/actuator/health`, JWKS y un login de prueba con una cuenta de fixtures (credenciales en secretos de GitHub).
-- **Aceptación:** si falla, el run queda en rojo. Jose Luis encadena aquí su job E2E (FEAT-12-T4).
+- **Aceptación:** verificar el SHA desplegado, no solo que una versión anterior responda 200; si falla, el run queda en rojo. Jose Luis encadena aquí su job E2E (FEAT-12-T4).
 
 ### FEAT-09-T3 — Frontend
-- **Resultado:** despliegue del SPA (Vercel u otro) desde el pipeline con `VITE_API_BASE_URL` por entorno; agregar ese origen a `G7_CORS_ORIGENES`.
+- **Resultado:** despliegue del SPA en Render, conservando el proveedor actual salvo decisión documentada de migración desde el pipeline con `VITE_API_BASE_URL` por entorno; agregar ese origen a `G7_CORS_ORIGENES`.
 
 ### FEAT-09-T4 — Migraciones V108+
 - **Resultado:** revisar y aplicar en Supabase las migraciones de cada FEAT en su ventana, con aviso al grupo y runbook. Sin baseline-on-migrate, repair ni reset.
