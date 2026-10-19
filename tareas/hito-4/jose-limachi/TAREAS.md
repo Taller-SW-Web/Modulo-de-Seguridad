@@ -1,6 +1,6 @@
 # H4 — tareas de Jose Luis Limachi Sarmiento
 
-**Épica:** EP-02 Sesiones. **Plan:** [H4 v1.1 §3](../../../plan/hito-4/README.md#jose-luis--ep-02-sesiones--seguridad-de-punta-a-punta).
+**Épica:** EP-02 Sesiones. **Plan:** [H4 v1.2 §3](../../../plan/hito-4/README.md#jose-luis--ep-02-sesiones--seguridad-de-punta-a-punta).
 **Rama:** `feat/EP-02-seguridad-e2e` (backend y frontend). Cada tarea es un commit `FEAT-12-Tn: …`.
 La integración con G1 pasó a David (FEAT-11); esta FEAT cubre el criterio de seguridad
 de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
@@ -40,5 +40,5 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 - **Evidencia:** enlace al run en verde.
 
 ### FEAT-12-T5 — Prueba conjunta con G5
-- **Resultado:** token de usuario G7 aceptado por G5 en `/pedidos/me`; token vencido o de otro `aud` rechazado.
+- **Resultado:** token de usuario G7 aceptado por G5 en `/pedidos/me`; sin token, vencido, firma alterada, emisor incorrecto o `tipo` distinto de `acceso` → 401; usuario sin rol CLIENTE → 403. A solo ve sus pedidos y B no accede a los de A al manipular identificadores. No exigir `aud` adicional a tokens humanos (OpenAPI/kit vigente); esa validación corresponde al perfil de servicio.
 - **Evidencia:** `docs/evidencia/h4/FEAT-12.md` sin tokens completos.

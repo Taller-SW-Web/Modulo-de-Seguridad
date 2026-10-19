@@ -1,7 +1,7 @@
 # H4 — tareas de Sergio Alejandro Osorio Montenegro
 
 **Épicas:** EP-05 Roles y permisos + identidad técnica (TEC-IDENTIDAD). Product Owner.
-**Plan:** [H4 v1.1 §3](../../../plan/hito-4/README.md#sergio--ep-05--identidad-técnica-po).
+**Plan:** [H4 v1.2 §3](../../../plan/hito-4/README.md#sergio--ep-05--identidad-técnica-po).
 **Ramas:** `feat/TEC-IDENTIDAD-tokens-servicio` y `feat/TEC-IDENTIDAD-consulta-identidad`.
 Cada tarea es un commit `FEAT-0x-Tn: …` en su rama.
 
@@ -14,16 +14,16 @@ Cada tarea es un commit `FEAT-0x-Tn: …` en su rama.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| PO-T1 | Respuesta a G1 y consulta «crear roles» al profesor | P1 · lun 20-oct | — | Pendiente |
+| PO-T1 | Respuesta a G1 y consulta «crear roles» al profesor | P1 · mar 20-oct | — | Pendiente |
 | PO-T2 | Publicar cambios del OpenAPI por FEAT | P1 · continuo | Pedido del dueño | Pendiente |
 | FEAT-05-T1 | Registro de clientes y scopes | P1 | Christian V108+ si hay migración | Pendiente |
-| FEAT-05-T2 | `POST /auth/token` (`client_credentials`) | P1 · dom 26-oct | T1 | Pendiente |
+| FEAT-05-T2 | `POST /auth/token` (`client_credentials`) | P1 · lun 26-oct | T1 | Pendiente |
 | FEAT-05-T3 | `POST /auth/introspeccion` | P1 | T2 | Pendiente |
 | FEAT-05-T4 | Rotación de clave con dos `kid` | P1 | — | Pendiente |
 | FEAT-05-T5 | `GET /roles` y `GET /permisos` | P1 | — | Pendiente |
 | FEAT-06-T1 | `GET /usuarios/{id}` con token de servicio | P1 | FEAT-05-T2 | Pendiente |
 | FEAT-06-T2 | `POST /usuarios/lote` | P1 | T1 | Pendiente |
-| FEAT-06-T3 | `direcciones:leer` | P1 | Valery FEAT-04-T2 | Pendiente |
+| FEAT-06-T3 | `direcciones:leer` | P1 | Valery FEAT-04-T1/T2 fusionadas por corte temprano; FEAT-05-T2 | Pendiente |
 | FEAT-06-T4 | Evidencia desplegada con G1 y G5 | P1 | T1–T3 | Pendiente |
 
 ## Como PO
@@ -44,24 +44,26 @@ Cada tarea es un commit `FEAT-0x-Tn: …` en su rama.
 
 ### FEAT-05-T2 — `POST /auth/token`
 - **Resultado:** `client_credentials` → JWT RS256 con `tipo=servicio`, `aud` de la API dueña y `scope` (RFC 9068).
-- **Aceptación:** secreto erróneo → `invalid_client`; scope pedido fuera de lo asignado → `invalid_scope`; cliente inactivo → rechazado.
+- **Aceptación:** secreto erróneo o cliente inactivo → 401 `CLIENTE_INVALIDO` (`application/problem+json`). Emitir únicamente scopes concedidos según RF-17.5/OpenAPI, aunque se soliciten más; no introducir `invalid_scope` ni cambiar la política publicada. Respuesta con `accessToken`, `tokenType`, `expiresIn` y `scopes`; JWT con `scope` separado por espacios y `aud` como lista de APIs dueñas.
 
 ### FEAT-05-T3 — Introspección
-- **Resultado:** `active` + estado actual del usuario para tokens de usuario; solo clientes autorizados.
+- **Resultado:** `activo` y los campos del contrato vigente; validar el token de servicio con `tokens:introspeccion`. Usuario desactivado, bloqueado o con roles cambiados → 200 con `activo: false` y motivo; token de servicio inválido → 401, scope insuficiente → 403.
 
 ### FEAT-05-T4 — Rotación de clave
-- **Resultado:** JWKS publica la clave actual y la anterior; los tokens firmados con la anterior siguen válidos hasta vencer. Sin claves efímeras ni privadas en git.
+- **Resultado:** JWKS publica la clave actual y la anterior simultáneamente; conservar la anterior al menos 24 horas (RF-17.3) y comprobar que los tokens vigentes siguen validándose durante la transición. Sin claves efímeras ni privadas en git.
 
 ### FEAT-05-T5 — Catálogo
-- **Resultado:** `GET /roles` y `GET /permisos` con los seis roles fijos y sus permisos.
+- **Resultado:** `GET /roles` y `GET /permisos` con los seis roles fijos y sus permisos; token de servicio con `roles:leer`, errores 401/403 contractuales.
 
 ## FEAT-06 — Consulta de identidad (SPEC-18)
 
 ### FEAT-06-T1/T2 — `GET /usuarios/{id}` y `POST /usuarios/lote` con `usuarios:leer`
-- **Aceptación:** token de usuario o sin scope → 403 neutro; ids inexistentes no se distinguen de los no permitidos; límite del lote.
+- **Aceptación:** para servicios, validar firma, emisor, tipo, audiencia `api-seguridad` y `usuarios:leer`; credencial inválida → 401 antes de consultar existencia, scope insuficiente → 403 sin revelar el faltante. Conservar en `GET /usuarios/{id}` el acceso de administración por token de usuario con `usuario.ver`; no aplicar una prohibición global de tokens humanos.
+- **Datos y lote:** máximo 100 IDs; devolver encontrados y no hallados por separado según RF-18.2. Nunca hashes; documento enmascarado salvo `usuarios:leer:documento`. Mantener los campos privados del perfil fuera de respuestas de servicio.
+- **Auditoría:** registrar módulo, endpoint, usuario consultado, fecha y documento en claro/enmascarado según RF-18.6, sin copiar valores sensibles.
 
 ### FEAT-06-T3 — `direcciones:leer`
-- **Resultado:** `GET /usuarios/{id}/direcciones` para servicios, consumiendo el puerto de Valery por un adaptador puente.
+- **Resultado:** `GET /usuarios/{id}/direcciones` para servicios con `direcciones:leer`, consumiendo el puerto implementado de Valery por un adaptador puente; sin documento ni fecha de nacimiento. Mantener la autorización del titular/administración prevista por SPEC-16. Grant de G1 pendiente de aprobación explícita; no heredarlo de otro módulo.
 
 ### FEAT-06-T4 — Evidencia
 - **Evidencia:** `docs/evidencia/h4/FEAT-05-06.md`: token de servicio de G1 y lectura con scope, sin tokens completos.
