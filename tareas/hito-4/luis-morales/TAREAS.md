@@ -46,6 +46,13 @@ David es el contacto técnico con G1. Cambios de alcance o del contrato pasan po
 - **Resultado:** antes de T1/T2, preparar la [matriz por operación y solicitud de datos](../../../docs/integracion/hito-4-marketplace.md): versión, estado, SHA de código/despliegue y URL; acordar transporte, origen/retorno y operación G1. Coordinar cuentas A/B y escenarios pendiente, bloqueado y MFA según disponibilidad por canal seguro. No crear cuentas ni afirmar su entrega solo por escribir este documento.
 - **Evidencia:** paquete inicial publicado; completar respuestas y referencia de entrega privada sin secretos. T3 permanece En curso hasta confirmar datos y cuentas; redactar el mensaje no acredita envío ni acuerdo.
 
+**Avance 20-oct:** este ajuste incorpora la respuesta de G1 al paquete de #64.
+Frontend recibido y favoritos A/B elegidos; retorno propuesto y sesión opaca
+compatible, aún sin implementar ni probar. T3 sigue **En curso**: faltan URL/readiness
+BFF, SHAs desplegados G1/G7 y run, retorno/transporte confirmados, referencia privada
+de cuentas A/B y datos, ejecutores y horario de Lima. Retomar cuando lleguen estos
+insumos; no se ejecutó integración conjunta ni se enviaron mensajes desde esta sesión.
+
 ### FEAT-11-T4 — Seguimiento por operación
 - **Resultado:** registrar por operación código fusionado, SHA desplegado, resultado comprobado y aviso a G1. Una fusión no acredita disponibilidad. Coordinar credenciales de `modulo-marketplace` solo después de aprobación de scopes, provisión segura y comprobación del servicio; nunca publicar secretos ni afirmar que el grant existe por estar planificado.
 
