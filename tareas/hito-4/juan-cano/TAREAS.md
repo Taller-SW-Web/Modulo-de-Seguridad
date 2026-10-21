@@ -11,7 +11,7 @@
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-03-T1 | Propósitos de token de un uso habilitados | P1 · **jue 22-oct** | — | Pendiente |
+| FEAT-03-T1 | Propósitos de token de un uso habilitados | P1 · **jue 22-oct** | — | PR backend creado; revisión/merge y coordinación pendientes |
 | FEAT-03-T2 | `POST /password/recuperar` | P1 | T1 | Pendiente |
 | FEAT-03-T3 | `POST /password/restablecer` | P1 | T2 | Pendiente |
 | FEAT-03-T4 | Pantallas FRONT-05 | P1 | T2, T3 | Pendiente |
@@ -22,10 +22,11 @@
 > la usan tres FEAT. T2–T5 van en `feat/EP-03-recuperacion`, creada desde `develop` ya con T1.
 
 ### FEAT-03-T1 — Reutilizar y completar propósitos en `TokensUnUsoPort`
-- **Resultado:** reutilizar la emisión, consumo e invalidación existentes para `VERIFICAR_CORREO` y `RECUPERACION`; revisar caducidad y pruebas de cada propósito. En la base backend `4bd7b61`, `CAMBIO_CORREO` está explícitamente pendiente: acordar con Eva/Valery y completar el vínculo entre token, usuario y dirección nueva. No basta con quitar la excepción ni duplicar repositorios.
+- **Resultado:** reutilizar la emisión, consumo e invalidación existentes para `VERIFICAR_CORREO` y `RECUPERACION`; revisar caducidad y pruebas de cada propósito. Completar el soporte de `CAMBIO_CORREO` vinculando el token con el usuario y la dirección nueva para que los flujos de Eva/Valery puedan consumirlo. Esta tarea no implementa la solicitud, el envío de confirmación ni la actualización del correo. No duplicar repositorios ni mecanismos existentes.
 - **Dependencias:** Eva puede avanzar con las capacidades de verificación existentes; el corte T1 completa lo faltante y publica el contrato interno estable, no obliga a rehacer los tres propósitos.
 - **Aceptación:** un token de un propósito no sirve para otro; consumo único bajo concurrencia; hash, nunca el valor en tabla.
 - **Evidencia:** pruebas PostgreSQL por propósito y aviso al grupo con la firma del puerto.
+- **Avance (21-oct-2026):** implementado en `feat/EP-03-tokens-un-uso`, basada en `develop` `4bd7b61`; PR backend creado. Define TTL de 24 h para `VERIFICAR_CORREO` y `CAMBIO_CORREO`, máximo 30 min para `RECUPERACION`, y persiste el destino pendiente de `CAMBIO_CORREO` en el snapshot interno con redacción en `toString`. La prueba focalizada ejecutada con JDK 21 y PostgreSQL 16.6 en Docker/Testcontainers pasó 22/22 (servicio, wiring, arquitectura y PostgreSQL; 0 fallos/errores/omisiones). Evidencia técnica: `Modulo-de-Seguridad-Backend/docs/evidencia/FEAT-03-T1.md`. Sin conexión a Supabase. Falta registrar el resultado de revisión/merge y compartir y confirmar la firma del puerto con Eva y Valery.
 
 ### FEAT-03-T2 — `POST /password/recuperar`
 - **Resultado:** respuesta idéntica exista o no la cuenta; si la cuenta es elegible conforme a SPEC-08, incluso con bloqueo automático, token `RECUPERACION` y correo con enlace por el outbox; límite con `solicitud_limitada`.
