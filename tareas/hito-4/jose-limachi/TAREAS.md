@@ -13,11 +13,24 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-12-T1 | `issuer`, discovery y `jwks_uri` por entorno | P1 | — | Pendiente |
+| FEAT-12-T1 | `issuer`, discovery y `jwks_uri` por entorno | P1 | — | En curso |
 | FEAT-12-T2 | Auditoría `SESION_CERRADA` en el logout | P1 | — | Pendiente |
 | FEAT-12-T3 | Suite E2E Playwright | P1 | — | Pendiente |
 | FEAT-12-T4 | Job E2E en el CI contra el despliegue | P1 | T3; Christian FEAT-09-T1/T2 | Pendiente |
 | FEAT-12-T5 | Prueba conjunta con G5 | P1 | T4 | Pendiente |
+
+> **22-oct-2026 · FEAT-12-T1 (En curso):** commit local en `feat/EP-02-seguridad-e2e`
+> (backend, sin PR/push). Prueba nueva `ConfiguracionEntornoHttpTest` (2/2 en verde):
+> las tres URLs absolutas salen de la variable del entorno, no de `localhost` ni de la
+> petición; el `iss` del token emitido coincide con el discovery y su firma se verifica
+> con el JWKS publicado. `configuration` + `identidad`: 155 pruebas, 0 fallos (suite
+> completa: los 19 fallos son solo por falta de Docker/Testcontainers). Despliegue
+> comprobado en solo lectura: discovery y JWKS responden 200 con el issuer público de
+> Render. **Pendiente:** `iss` de un token real en el despliegue (requiere credenciales
+> por canal seguro; si no, junto con FEAT-12-T5 en S3) → todavía no **Verificada**.
+> Evidencia: `docs/evidencia/h4/FEAT-12.md` del backend. Observación para FEAT-09: el
+> discovery desplegado no incluye `token_endpoint`/`introspection_endpoint`, así que el
+> SHA desplegado es anterior a FEAT-05.
 
 ### FEAT-12-T1 — Configuración por entorno del emisor
 - **Resultado (backend):** `issuer`, `/.well-known/openid-configuration` y `jwks_uri` absolutos a partir de la URL pública del entorno (variable), no de `localhost`.
