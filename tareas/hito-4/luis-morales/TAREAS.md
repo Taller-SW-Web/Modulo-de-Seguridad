@@ -21,10 +21,10 @@ Cada tarea es un commit `FEAT-xx-Tn: …` en su rama.
 | FEAT-11-T3 | Paquete para G1 (primero) | P1 | —; datos de entorno por confirmar con G1 | En curso |
 | FEAT-11-T4 | Seguimiento por operación | P1 | FEAT-01/03/04/05/06 por fusión, despliegue y comprobación | Pendiente |
 | FEAT-11-T5 | Prueba conjunta final con G1 | P1 · S3 | T4 | Pendiente |
-| FEAT-07-T1 | `POST /auth/mfa/cambios` (v2) | P2 | — | Pendiente |
-| FEAT-07-T2 | Reenviar y confirmar (v2) | P2 | T1 | Pendiente |
-| FEAT-07-T3 | Adaptador SMS simulado | P2 | T1 | Pendiente |
-| FEAT-07-T4 | Pantalla FRONT-09 y evidencia | P2 | T1–T3 | Pendiente |
+| FEAT-07-T1 | `POST /auth/mfa/cambios` (v2) | P2 | — | Implementada y fusionada (#57) |
+| FEAT-07-T2 | Reenviar y confirmar (v2) | P2 | T1 | Implementada y fusionada (#57) |
+| FEAT-07-T3 | Adaptador SMS simulado | P2 | T1 | Implementada y fusionada (#57); solo simulado |
+| FEAT-07-T4 | Pantalla FRONT-09 y evidencia | P2 | T1–T3 | Fusionada (#11); recorrido EMAIL desplegado comprobado |
 | FEAT-08-T1 | Bloquear y desbloquear por ADMIN | P2 | Backend #55 fusionado | Pendiente |
 | FEAT-08-T2 | Acciones en FRONT-08 y evidencia | P2 | T1 | Pendiente |
 
@@ -62,6 +62,11 @@ insumos; no se ejecutó integración conjunta ni se enviaron mensajes desde esta
 - **Evidencia:** `docs/evidencia/h4/FEAT-11.md`.
 
 ## FEAT-07 — Activación de MFA v2 (P2)
+
+**Corte 23-oct:** backend #57 y frontend #11 fusionados y desplegados; David comprobó
+habilitación, login con código por correo y deshabilitación con su cuenta C.
+[Evidencia y límites](../../../docs/evidencia/h4/FEAT-07.md): quedan casos negativos
+de aceptación desplegada, sin marcar toda la FEAT/RF como Verificada. SMS es simulado.
 
 ### FEAT-07-T1 — `POST /auth/mfa/cambios`
 - **Resultado:** inicia el cambio de MFA (activar, cambiar canal o desactivar según SPEC-10) con reautenticación; envía código al canal nuevo.
