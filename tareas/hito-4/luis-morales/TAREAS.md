@@ -25,8 +25,8 @@ Cada tarea es un commit `FEAT-xx-Tn: …` en su rama.
 | FEAT-07-T2 | Reenviar y confirmar (v2) | P2 | T1 | Implementada y fusionada (#57) |
 | FEAT-07-T3 | Adaptador SMS simulado | P2 | T1 | Implementada y fusionada (#57); solo simulado |
 | FEAT-07-T4 | Pantalla FRONT-09 y evidencia | P2 | T1–T3 | Fusionada (#11); recorrido EMAIL desplegado comprobado |
-| FEAT-08-T1 | Bloquear y desbloquear por ADMIN | P2 | Backend #55 fusionado | Pendiente |
-| FEAT-08-T2 | Acciones en FRONT-08 y evidencia | P2 | T1 | Pendiente |
+| FEAT-08-T1 | Bloquear y desbloquear por ADMIN | P2 | Backend #55 fusionado | Implementada y fusionada (#65); recorrido principal desplegado comprobado |
+| FEAT-08-T2 | Acciones en FRONT-08 y evidencia | P2 | T1 | Fusionada (#14); recorrido desplegado y evidencia registrados |
 
 ## FEAT-11 — Integración con G1 Marketplace (P1)
 
@@ -84,6 +84,14 @@ de aceptación desplegada, sin marcar toda la FEAT/RF como Verificada. SMS es si
 - **Evidencia:** `docs/evidencia/h4/FEAT-07.md`.
 
 ## FEAT-08 — Bloqueo manual (P2)
+
+**Corte 23-oct:** backend #65 y frontend #14 fusionados; David confirmó ambos
+despliegues y probó bloqueo manual, login rechazado, desbloqueo, nuevo ingreso,
+correos y auditoría con su cuenta C, restaurada operativa.
+[Evidencia y límites](../../../docs/evidencia/h4/FEAT-08.md): revocación probada en
+PostgreSQL local; F5 no la acredita en nube. Se conservan los casos no ejecutados
+y la confirmación independiente de SHAs efectivos pendientes, sin marcar toda
+la FEAT/RF como Verificada. FEAT-11 conserva su estado En curso.
 
 ### FEAT-08-T1 — `POST /usuarios/{id}/bloquear` y `/desbloquear`
 - **Resultado:** ADMIN_SISTEMA bloquea con motivo obligatorio y sin vencimiento automático (RF-15.2); revoca sesiones; desbloqueo manual; auditoría y eventos. El objeto de bloqueo del detalle depende de fusionar y comprobar backend #55.
