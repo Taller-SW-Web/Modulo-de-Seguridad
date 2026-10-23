@@ -1,77 +1,86 @@
 # FEAT-07 — Configuración del segundo factor H4
 
-Responsable: Luis David Morales Brenis. Corte: 20-oct-2026, America/Lima.
-Estado: implementación publicada y correcciones frontend locales; **pendiente de aceptación desplegada**.
+Responsable: Luis David Morales Brenis. Corte: 23-oct-2026, America/Lima.
+Estado: **T1–T4 implementadas y fusionadas; recorrido principal EMAIL comprobado en el despliegue**.
+Este registro no certifica todos los RF ni marca toda la FEAT como Verificada.
 
-## Fuentes y cambios
+## Fuentes y alcance
 
-Fuentes SDD: main 029171b61335ec0412af777c2d8a0559d8dadb16 (#64), SPEC-10,
-FRONT-09 y contrato publicado v2. Se respetan acciones HABILITAR/DESHABILITAR y EMAIL;
-no se agregan campos de reautenticación/canal del resumen H4 ni se modifica OpenAPI.
+Fuentes SDD consumidas inicialmente: main `029171b61335ec0412af777c2d8a0559d8dadb16`
+(#64), SPEC-10, FRONT-09 y contrato publicado v2. Se respetan acciones
+HABILITAR/DESHABILITAR y EMAIL; no se modifica OpenAPI ni se agregan campos de
+reautenticación/canal del resumen H4.
 
-- [Backend #57](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/57):
-  T1/T2 solicitan, reenvían y confirman; T3 añade receptor SMS exclusivamente simulado.
-  Cambio de 600 s, OTP de 300 s, tres intentos y cuota compartida de tres envíos/900 s.
-  Estado, consumo, auditoría y aviso cifrado se confirman de forma atómica.
-- [Frontend #11](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/11):
-  T4 configura el segundo factor desde Mi cuenta. Tokens y códigos solo en memoria;
-  aplica estado únicamente tras 204 y nueva lectura del perfil.
+T1/T2: solicitar, reenviar y confirmar cambios; cambio de 600 s, OTP de 300 s,
+tres intentos y cuota compartida de tres envíos/900 s. Estado, consumo, auditoría
+crítica y aviso cifrado se confirman atómicamente. T3 añade un receptor SMS
+exclusivamente simulado. T4 configura MFA desde Mi cuenta, con tokens/códigos en
+memoria, lectura del perfil tras 204, renovación compartida y modal protegido
+mientras hay petición en vuelo. Las correcciones de la revisión frontend de Sergio
+quedaron integradas en #11.
 
-Bases de código: backend develop 4bd7b61165ff2e4940c68a8b0f050ba395b7b7ad;
-frontend develop 82c94149c8e2326d3d6013a167026a6b38d75b4a.
-Implementación frontend publicada: a40c7c28202d51398f52883c03920803eba133f5;
-las correcciones de auditoría descritas abajo todavía no tienen commit propio.
+## Fusión, preparación y despliegue
 
-## Auditoría frontend de Sergio
+Orden realizado: infraestructura V108 de Christian (#63) → backend #57 → frontend #11
+→ despliegue backend → despliegue frontend → recorrido manual.
 
-La revisión del PR #11 confirmó el contrato e identificó un cierre de sesión indebido
-con access vencido. Solicitar ahora permite refresh reactivo y una repetición.
-Reenviar/confirmar renuevan antes de enviar cuando restan 60 s o menos, o exp no es
-legible, mediante la renovación compartida. No repiten una mutación por TOKEN_INVALIDO.
+| Componente | PR fusionado | SHA desplegado | URL |
+|---|---|---|---|
+| Backend | [#57](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/57) | `1ac02a707d8c24c9c37d725c3d860a3660390c19` | https://g7-auth-service.onrender.com |
+| Frontend | [#11](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/11) | `62f704c16fd8971c70dfff22a08d4c5f2a44833a` | https://g7-seguridad-spa.onrender.com |
 
-X, Escape, clic exterior y Cancelar están bloqueados mientras hay petición en vuelo.
-Cancelar limpia errores; una URL base mal configurada no se presenta como fallo de red.
-Se corrigieron el nombre del test 204 y el estado histórico de la evidencia local.
-El cuerpo del PR necesita quitar la línea final de triple acento grave desde GitHub;
-no se editó el PR ni se enviaron mensajes desde esta sesión.
+David aportó capturas de Render el 23-oct: backend `1ac02a7` con «Deploy succeeded / Live»
+y arranque correcto; frontend `62f704c` con igual estado y publicación a las 12:22 de Lima.
+Ambos servicios usan develop. Fueron despliegues manuales de SHA específico: Render
+avisa que esta modalidad deshabilita Auto-Deploy. No se acredita su reactivación
+posterior ni un pipeline automático H4.
 
-## Verificación
+Christian informó la aplicación de V108 y grants en el marco de #63. Esta sesión no
+aplicó migraciones ni inspeccionó remotamente su historial. Las dos copias de
+`V108__cambio_mfa.sql` conservan SHA-256
+`d1cb23c5538c988c247c181dd674b64e865d53bc08b7a4ff15834293a7f1eda8`.
+El recorrido posterior acredita acceso funcional del runtime para ese flujo;
+no certifica todos los permisos del esquema.
 
-Frontend: Node 22.22.3; typecheck y lint correctos; **79/79 pruebas, 13 archivos**,
-con un worker. Trece casos de pantalla y diez de API MFA; cubren access vencido,
-refresh preventivo compartido, rechazo/red al renovar, logout durante refresh,
-cambio inválido sin repetición, modal ocupado, cancelación, cuotas y vencimientos.
-API simulada: no acredita navegador contra backend desplegado ni recepción de correo.
-Build de producción correcto; se conserva advertencia de Vite por chunk JS de 537,59 kB.
+## Verificación automatizada
 
-Backend: selección inicial 157 casos distintos aprobados, incluidos 62 PostgreSQL,
-arquitectura y bootJar. El primer CI ejecutó 794 pruebas y falló solo el conteo de
-MigracionesAlineadasTest: esperaba siete migraciones y V108 es la octava.
-Corrección publicada por David en 8a653a599baa9914f6c4f0cd6dc116194cac33a2.
-[CI Backend 205](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/actions/runs/39502445692)
-completado con success; test de alineación también aprobado localmente.
+Backend integrado para #57: build completo local con **836 pruebas, cero fallos y
+cero omitidas**, arquitectura y bootJar correctos;
+[CI aprobado](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/actions/runs/39913457248).
+Incluye alineación de V108 y actualización de develop.
 
-Un intento local de build completo quedó interrumpido después de un fallo en la
-preparación de familia revocada de CambioContrasenaPostgresTest; no se cuenta como
-aprobado. Su repetición aislada no pudo inicializar Testcontainers porque Docker
-estaba apagado. No se modificó código ni pruebas de contraseña para ocultarlo.
-El CI aprobado corresponde al SHA publicado indicado, no al entorno local interrumpido.
+Frontend: Node 22.22.3; **79/79 pruebas en 13 archivos**, typecheck, lint y build correctos.
+Los dobles cubren renovación, errores, cancelación, modal ocupado, cuotas y vencimientos.
+El build conserva advertencia de Vite por chunk JS de 537,59 kB. Esas pruebas no
+acreditan por sí solas navegador contra backend desplegado ni recepción SMTP.
 
-## Despliegue y aceptación pendientes
+## Recorrido desplegado con cuenta propia C
 
-Orden requerido: backend #57 revisado/fusionado, V108 aplicada y permisos de runtime
-comprobados por Christian, y después frontend #11. El CI aprobado no sustituye revisión.
+Ejecutor: David, 23-oct-2026, hora de Lima. Cuenta propia C,
+UUID `00000000-0000-4000-8000-00000000f00f`; no se usaron cuentas de otros módulos.
+Capturas y confirmaciones recibidas en la conversación de trabajo. No se publican
+credenciales, OTP, tokens ni volcados completos de la base.
 
-V108__cambio_mfa.sql conserva copias idénticas en recursos Flyway y propuesta backend:
-SHA-256 d1cb23c5538c988c247c181dd674b64e865d53bc08b7a4ff15834293a7f1eda8.
-Christian debe confirmar reserva/historial, esquema, ventana y permisos del rol JDBC.
-No se aplicó ninguna migración remota ni se presupone preparado el entorno.
+| Caso | Resultado observado | Evidencia aportada |
+|---|---|---|
+| Estado inicial | ACTIVO, solo CLIENTE, correo verificado, credencial presente, sin cambio obligatorio y MFA false | Captura de consulta de solo lectura |
+| Habilitar EMAIL | Código recibido y confirmado; pantalla «Segundo factor activo» | Captura FRONT-09 y confirmación de David |
+| Login con MFA | Tras salir exige código antes de abrir sesión; correo recibido y código aceptado | Confirmación explícita de David |
+| Deshabilitar | Confirmado por código; siguiente login sin OTP | Confirmación explícita de David |
+| Auditoría | MFA_ACTIVADO / EXITO a las 12:37:22.548826 y MFA_DESACTIVADO / EXITO a las 12:42:48.877286 | Captura de auditoría del 23-oct-2026, hora de Lima |
 
-Registrar URLs y SHAs realmente desplegados; probar activar/desactivar con correo real,
-roles obligatorios, OTP incorrecto/vencido/agotado, cuota, refresh, logout/revocación
-y ausencia de secretos en trazas. Medir los criterios de rendimiento pendientes.
-Solo después evaluar el estado Verificada.
+C quedó restaurada sin MFA. Estos resultados acreditan el recorrido principal
+positivo y su auditoría; no son una prueba conjunta con G1.
 
-FEAT-11 conserva prioridad y queda En curso a la espera de BFF/readiness, SHAs desplegados,
-transporte/retorno confirmados, cuentas/datos A/B y horario de G1. Su cookie opaca sigue
-siendo propuesta sin implementación/prueba conjunta acreditada; no se implementó Marketplace.
+## Límites y pendientes de aceptación
+
+No se ejecutaron individualmente en el despliegue todos los casos negativos:
+roles de gestión/MFA obligatorio, código erróneo/vencido/agotado, cuota, cambio
+usado o de otra familia, renovación durante el cambio, revocación y concurrencia.
+Tampoco se midió rendimiento ni se inspeccionaron exhaustivamente las trazas en nube.
+Su cobertura automatizada no equivale a evidencia desplegada. Conservar estos casos
+pendientes antes de declarar todos los RF de FEAT-07 Verificados. SMS sigue simulado.
+
+FEAT-11 sigue En curso, pendiente de datos y prueba conjunta G1. La sesión opaca
+del BFF sigue como propuesta sin implementación/prueba conjunta acreditada;
+este registro no implementa ni declara completada la integración Marketplace.
