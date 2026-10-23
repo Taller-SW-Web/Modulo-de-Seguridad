@@ -11,11 +11,11 @@
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-03-T1 | Propósitos de token de un uso habilitados | P1 · **jue 22-oct** | — | PR backend creado; revisión/merge y coordinación pendientes |
-| FEAT-03-T2 | `POST /password/recuperar` | P1 | T1 | Pendiente |
-| FEAT-03-T3 | `POST /password/restablecer` | P1 | T2 | Pendiente |
-| FEAT-03-T4 | Pantallas FRONT-05 | P1 | T2, T3 | Pendiente |
-| FEAT-03-T5 | Pruebas y evidencia desplegada | P1 | T1–T4 | Pendiente |
+| FEAT-03-T1 | Propósitos de token de un uso habilitados | P1 · **jue 22-oct** | — | Integrada en `develop` por PR #58; confirmar la firma con Eva y Valery |
+| FEAT-03-T2 | `POST /password/recuperar` | P1 | T1 | Implementada y verificada localmente; pendiente de revisión/merge |
+| FEAT-03-T3 | `POST /password/restablecer` | P1 | T2 | Implementada y verificada localmente; pendiente de revisión/merge |
+| FEAT-03-T4 | Pantallas FRONT-05 | P1 | T2, T3 | Implementada y verificada localmente; evidencia desplegada pendiente |
+| FEAT-03-T5 | Pruebas y evidencia desplegada | P1 | T1–T4 | Recorrido local completo aprobado; despliegue y prueba conjunta con G1 pendientes |
 
 > **T1 desbloquea a Eva (FEAT-01-T2) y Valery (FEAT-04-T3).** Entrega temprana compartida (plan §6):
 > T1 va en su propia rama corta `feat/EP-03-tokens-un-uso`, fusionada el jueves 22, porque
@@ -26,7 +26,7 @@
 - **Dependencias:** Eva puede avanzar con las capacidades de verificación existentes; el corte T1 completa lo faltante y publica el contrato interno estable, no obliga a rehacer los tres propósitos.
 - **Aceptación:** un token de un propósito no sirve para otro; consumo único bajo concurrencia; hash, nunca el valor en tabla.
 - **Evidencia:** pruebas PostgreSQL por propósito y aviso al grupo con la firma del puerto.
-- **Avance (21-oct-2026):** implementado en `feat/EP-03-tokens-un-uso`, basada en `develop` `4bd7b61`; PR backend creado. Define TTL de 24 h para `VERIFICAR_CORREO` y `CAMBIO_CORREO`, máximo 30 min para `RECUPERACION`, y persiste el destino pendiente de `CAMBIO_CORREO` en el snapshot interno con redacción en `toString`. La prueba focalizada ejecutada con JDK 21 y PostgreSQL 16.6 en Docker/Testcontainers pasó 22/22 (servicio, wiring, arquitectura y PostgreSQL; 0 fallos/errores/omisiones). Evidencia técnica: `Modulo-de-Seguridad-Backend/docs/evidencia/FEAT-03-T1.md`. Sin conexión a Supabase. Falta registrar el resultado de revisión/merge y compartir y confirmar la firma del puerto con Eva y Valery.
+- **Avance (actualizado 23-oct-2026):** implementado en `feat/EP-03-tokens-un-uso`; el código está integrado en el `develop` local por PR #58 y forma parte de la base de `feat/EP-03-recuperacion`. Define TTL de 24 h para `VERIFICAR_CORREO` y `CAMBIO_CORREO`, máximo 30 min para `RECUPERACION`, y persiste el destino pendiente de `CAMBIO_CORREO` en el snapshot interno con redacción en `toString`. La verificación focalizada con JDK 21 y PostgreSQL 16.6 en Docker/Testcontainers pasó 22/22. Evidencia: `Modulo-de-Seguridad-Backend/docs/evidencia/FEAT-03-T1.md`. Aún falta confirmar la firma del puerto con Eva y Valery; no se conectó a Supabase.
 
 ### FEAT-03-T2 — `POST /password/recuperar`
 - **Resultado:** respuesta idéntica exista o no la cuenta; si la cuenta es elegible conforme a SPEC-08, incluso con bloqueo automático, token `RECUPERACION` y correo con enlace por el outbox; límite con `solicitud_limitada`.
@@ -46,3 +46,4 @@
 ### FEAT-03-T5 — Recorrido de punta a punta
 - **Resultado:** solicitar → correo → restablecer → login con la nueva, en el despliegue; repetirlo con G1 junto con David (F-004/F-005).
 - **Evidencia:** `docs/evidencia/h4/FEAT-03.md` con SHAs y capturas sanitizadas.
+- **Actualización (23-oct-2026):** recorrido local de navegador aprobado con backend real de la rama, PostgreSQL 16.6 desechable y Mailpit: HTTP 202 → correo recibido → HTTP 204 → login HTTP 200; el token se retiró de la URL. Evidencia y capturas sanitizadas en `G7-Modulo-de-Seguridad-Frontend/docs/evidencia/h4/FEAT-03.md`. El 401 observado el 22-oct no se reprodujo; no se atribuye una causa retrospectiva. La SPA pública responde 200, pero salud y política del backend no respondieron dentro de 20 s y no se confirmó el SHA desplegado. Falta ejecutar el recorrido desplegado y la prueba F-004/F-005 coordinada con G1/David; FEAT-03-T5 y el cierre de la FEAT siguen pendientes.
