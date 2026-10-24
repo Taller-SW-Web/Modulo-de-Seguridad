@@ -15,7 +15,7 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 |---|---|---|---|---|
 | FEAT-12-T1 | `issuer`, discovery y `jwks_uri` por entorno | P1 | — | En curso |
 | FEAT-12-T2 | Auditoría `SESION_CERRADA` en el logout | P1 | — | En curso |
-| FEAT-12-T3 | Suite E2E Playwright | P1 | — | Pendiente |
+| FEAT-12-T3 | Suite E2E Playwright | P1 | — | En curso |
 | FEAT-12-T4 | Job E2E en el CI contra el despliegue | P1 | T3; Christian FEAT-09-T1/T2 | Pendiente |
 | FEAT-12-T5 | Prueba conjunta con G5 | P1 | T4 | Pendiente |
 
@@ -51,6 +51,21 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 > actividad en el despliegue (credenciales por canal seguro; si no, junto con
 > FEAT-12-T5 en S3) → todavía no **Verificada**. Evidencia: `docs/evidencia/h4/FEAT-12.md`
 > del backend (sección T2).
+
+> **24-oct-2026 · FEAT-12-T3 (En curso):** rama homónima `feat/EP-02-seguridad-e2e` en el
+> frontend (base `develop` `e9cd51d`), PR en borrador. Suite Playwright con los seis casos
+> del tablero: login cliente; login admin con OTP leído por API del receptor de correo de
+> pruebas; refresh silencioso (reloj de Playwright +900 s; se observa `POST /auth/refresh`
+> y que el reenvío sale con token nuevo, sin salir de la pantalla); logout; ruta
+> `/admin/usuarios` con CLIENTE bloqueada **sin** llamar a `GET /usuarios`; y ruta privada
+> sin sesión → `/login?volver=…` con regreso tras iniciar sesión. Sin credenciales en el
+> repo: cuentas fixture `@fixtures.g7.test` y la contraseña solo por `E2E_CUENTAS_CLAVE`;
+> ningún caso muta el estado de las cuentas. `typecheck`, `lint`, `build` y las 98 pruebas
+> Vitest en verde; Chromium instalado y smoke de reloj/SPA en verde. **Pendiente:** la
+> ejecución completa contra el stack de pruebas, porque esta máquina no tiene Docker ni
+> PostgreSQL; quedan listos `e2e/stack.yml` (PostgreSQL 16 + Mailpit) y `e2e/README.md`
+> con la receta, que también servirá a FEAT-12-T4. Evidencia:
+> `docs/evidencia/h4/FEAT-12.md` del frontend.
 
 ### FEAT-12-T1 — Configuración por entorno del emisor
 - **Resultado (backend):** `issuer`, `/.well-known/openid-configuration` y `jwks_uri` absolutos a partir de la URL pública del entorno (variable), no de `localhost`.
