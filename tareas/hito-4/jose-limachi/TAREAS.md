@@ -43,9 +43,11 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 > Pruebas: `SesionServiceTest` 16/16 en verde local; `CerrarSesionPostgresTest` y
 > `SesionesIntegracionPostgresTest` (HTTP + PostgreSQL; con T2 la integración incluye ya
 > auditoría) acreditan que tras el logout aparece **un solo** `SESION_CERRADA` en
-> `/auth/me/actividad` y que el repetido no lo duplica. Local: 790 pruebas, 21 fallos —
-> todos la falta de Docker/Testcontainers, comprobado idéntico con la rama sin cambios
-> (`git stash`); las PostgreSQL/HTTP corren en el CI. **Pendiente:** captura de la
+> `/auth/me/actividad` y que el repetido no lo duplica. **CI en verde** (run 40106674716,
+> commit `cce2953`: los tres checks, con las pruebas Docker); el artefacto confirma
+> `SesionesIntegracionPostgresTest` 9/9. Local: 790 pruebas, 21 fallos — todos la falta
+> de Docker/Testcontainers, comprobado idéntico con la rama sin cambios
+> (`git stash`). **Pendiente:** captura de la
 > actividad en el despliegue (credenciales por canal seguro; si no, junto con
 > FEAT-12-T5 en S3) → todavía no **Verificada**. Evidencia: `docs/evidencia/h4/FEAT-12.md`
 > del backend (sección T2).
