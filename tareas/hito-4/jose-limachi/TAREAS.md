@@ -14,7 +14,7 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
 | FEAT-12-T1 | `issuer`, discovery y `jwks_uri` por entorno | P1 | — | En curso |
-| FEAT-12-T2 | Auditoría `SESION_CERRADA` en el logout | P1 | — | Pendiente |
+| FEAT-12-T2 | Auditoría `SESION_CERRADA` en el logout | P1 | — | En curso |
 | FEAT-12-T3 | Suite E2E Playwright | P1 | — | Pendiente |
 | FEAT-12-T4 | Job E2E en el CI contra el despliegue | P1 | T3; Christian FEAT-09-T1/T2 | Pendiente |
 | FEAT-12-T5 | Prueba conjunta con G5 | P1 | T4 | Pendiente |
@@ -31,6 +31,24 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 > Evidencia: `docs/evidencia/h4/FEAT-12.md` del backend. Observación para FEAT-09: el
 > discovery desplegado no incluye `token_endpoint`/`introspection_endpoint`, así que el
 > SHA desplegado es anterior a FEAT-05.
+
+> **24-oct-2026 · FEAT-12-T2 (En curso):** commit en la misma rama del backend; entra en
+> el [PR #60](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/60) (borrador,
+> CI en verde con T1). El hecho `SESION_CERRADA` sale por el puerto nuevo `EfectosCierrePort`
+> y su adaptador hacia `AuditoriaPort` (Christian, EP-06): no crítico, se registra tras el
+> commit, con ip/agente de la petición (`cerrar` ahora recibe `ContextoPeticion`) y con la
+> familia solo por su id — sin tokens ni refrescos. Nace **solo** desde `Cerrada`: un logout
+> repetido o un refresco desconocido responden 204 sin duplicar el hecho ni inventar
+> identidad. El catálogo SPEC-12 no cambia (`SESION_CERRADA` ya existía, no crítica).
+> Pruebas: `SesionServiceTest` 16/16 en verde local; `CerrarSesionPostgresTest` y
+> `SesionesIntegracionPostgresTest` (HTTP + PostgreSQL; con T2 la integración incluye ya
+> auditoría) acreditan que tras el logout aparece **un solo** `SESION_CERRADA` en
+> `/auth/me/actividad` y que el repetido no lo duplica. Local: 790 pruebas, 21 fallos —
+> todos la falta de Docker/Testcontainers, comprobado idéntico con la rama sin cambios
+> (`git stash`); las PostgreSQL/HTTP corren en el CI. **Pendiente:** captura de la
+> actividad en el despliegue (credenciales por canal seguro; si no, junto con
+> FEAT-12-T5 en S3) → todavía no **Verificada**. Evidencia: `docs/evidencia/h4/FEAT-12.md`
+> del backend (sección T2).
 
 ### FEAT-12-T1 — Configuración por entorno del emisor
 - **Resultado (backend):** `issuer`, `/.well-known/openid-configuration` y `jwks_uri` absolutos a partir de la URL pública del entorno (variable), no de `localhost`.
