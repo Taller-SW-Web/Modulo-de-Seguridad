@@ -236,8 +236,18 @@ develop ──► (jue 5-nov) PR release H4 → main → despliegue automático
   las aplica Christian en Supabase en su ventana, con aviso al grupo.
 - Nunca en git: contraseñas, `client_secret`, claves, JWT completos ni datos de Supabase.
 - La rama de una FEAT no se reutiliza para otra: al terminar se borra.
+- **Entregas parciales por FEAT, acordado el 23-oct (David/Sergio).** Si una tarea de la
+  FEAT desbloquea a otro dueño (p. ej. un puerto exportado) o conviene acotar el corte,
+  se fusiona en un PR propio siempre que: compile, tenga pruebas en verde y el CI aprobado;
+  deje explícito en el cuerpo del PR y en el tablero qué tareas quedan pendientes; y no se
+  declare la FEAT completa hasta que lo esté. Mismo criterio para todos (incluida Eva): un
+  merge parcial no se confunde con «FEAT terminada». Precedentes: backend #68 (Valery,
+  FEAT-04-T1/T2) y backend #69 (Sergio, FEAT-06-T1).
 
 ## 7. Definición de terminado de una FEAT
+
+Aplica a la **FEAT completa**; un corte parcial fusionado (ver regla anterior) no la
+marca como terminada por sí solo.
 
 - [ ] Endpoints del contrato implementados, con errores `problem+json` y sin enumeración de cuentas.
 - [ ] Pantallas FRONT de la spec conectadas al backend real.
