@@ -67,6 +67,21 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 > con la receta, que también servirá a FEAT-12-T4. Evidencia:
 > `docs/evidencia/h4/FEAT-12.md` del frontend.
 
+> **24-oct-2026 · FEAT-12-T3 (aceptación local en verde):** la ejecución contra el stack
+> de pruebas ya no está pendiente: se hizo en local **sin Docker** con binarios
+> desechables (PostgreSQL 16.15 portable con esquema + `V101`–`V106`/`V108` y catálogos
+> `R__`, Mailpit v1.32, backend `bootRun` con secretos generados en el momento y solo
+> por variables de entorno; ninguno en el repo). **6/6 casos en verde en dos corridas
+> consecutivas** (informe HTML en `playwright-report/`, gitignored); `typecheck`,
+> `lint`, `build` y 98 pruebas Vitest en verde. Correcciones aplicadas al ejecutar:
+> selectores del login por rol de accesibilidad (ambigüedad con «Mostrar contraseña»
+> y el `*` de Mantine), navegación en la SPA (la sesión vive solo en memoria:
+> `page.goto` la perdía) y aserción del modal por heading. Acreditado de paso: el
+> reenvío del cambio de segundo factor renueva el token antes de enviar
+> (`POST /auth/refresh` observado). Sigue sin **Verificada** hasta la comprobación en
+> el despliegue (S3, junto con T1/T2). Evidencia: `docs/evidencia/h4/FEAT-12.md`
+> del frontend.
+
 ### FEAT-12-T1 — Configuración por entorno del emisor
 - **Resultado (backend):** `issuer`, `/.well-known/openid-configuration` y `jwks_uri` absolutos a partir de la URL pública del entorno (variable), no de `localhost`.
 - **Aceptación:** en el despliegue, el `iss` del token coincide con el discovery y el `jwks_uri` responde.
