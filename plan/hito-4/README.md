@@ -249,6 +249,6 @@ develop ──► (jue 5-nov) PR release H4 → main → despliegue automático
 
 | Tema | Situación | Quién | Cuándo |
 |---|---|---|---|
-| «Crear roles» | Las specs definen un [catálogo cerrado de seis roles](../../specs/funcionales/SPEC-11-roles-permisos.md) (RF-11.1). Asignar y retirar roles ya funciona. Crear roles nuevos cambiaría el alcance de SPEC-11 y el contrato | Sergio consulta al profesor | S1; si se pide, entra como FEAT nueva en S2, sin tocar las demás |
+| «Crear roles» | **Resuelto (23-oct, Sergio):** el pedido es la alta administrativa de un trabajador nuevo (usuario, contraseña y correo proporcionados por el admin) con uno de los seis roles ya definidos — no la creación de tipos de rol nuevos. No cambia el alcance de SPEC-11 ni el contrato; corresponde al alta administrativa de cuentas ya implementada (EP-01). No se requiere consulta al profesor ni FEAT nueva | Sergio | Cerrado |
 | Scopes de `modulo-marketplace` en `api-productos` | G6 debe confirmarlos por cliente | Sergio con G6 | S1 |
 | Fusión del backend #55 (bloqueo en el detalle) | Pendiente de comprobar; FEAT-08 se apoya en él. Fusión, despliegue y comprobación son estados distintos | Equipo | Inicio de S1 |

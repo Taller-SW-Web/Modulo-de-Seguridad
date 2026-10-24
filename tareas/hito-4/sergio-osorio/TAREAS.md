@@ -14,14 +14,14 @@ Cada tarea es un commit `FEAT-0x-Tn: …` en su rama.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| PO-T1 | Respuesta a G1 y consulta «crear roles» al profesor | P1 · mar 20-oct | — | Pendiente |
-| PO-T2 | Publicar cambios del OpenAPI por FEAT | P1 · continuo | Pedido del dueño | Pendiente |
-| FEAT-05-T1 | Registro de clientes y scopes | P1 | Christian V108+ si hay migración | Pendiente |
-| FEAT-05-T2 | `POST /auth/token` (`client_credentials`) | P1 · lun 26-oct | T1 | Pendiente |
-| FEAT-05-T3 | `POST /auth/introspeccion` | P1 | T2 | Pendiente |
-| FEAT-05-T4 | Rotación de clave con dos `kid` | P1 | — | Pendiente |
-| FEAT-05-T5 | `GET /roles` y `GET /permisos` | P1 | — | Pendiente |
-| FEAT-06-T1 | `GET /usuarios/{id}` con token de servicio | P1 | FEAT-05-T2 | Pendiente |
+| PO-T1 | Respuesta a G1 y consulta «crear roles» al profesor | P1 · mar 20-oct | — | «Crear roles» cerrado (ver plan §8); falta confirmar reparto a G1 y scopes con G6 |
+| PO-T2 | Publicar cambios del OpenAPI por FEAT | P1 · continuo | Pedido del dueño | Atrasado — pendiente publicar FEAT-05 (#59) |
+| FEAT-05-T1 | Registro de clientes y scopes | P1 | Christian V108+ si hay migración | Hecho (#59) |
+| FEAT-05-T2 | `POST /auth/token` (`client_credentials`) | P1 · lun 26-oct | T1 | Hecho (#59) |
+| FEAT-05-T3 | `POST /auth/introspeccion` | P1 | T2 | Hecho (#59) |
+| FEAT-05-T4 | Rotación de clave con dos `kid` | P1 | — | Hecho (#59) |
+| FEAT-05-T5 | `GET /roles` y `GET /permisos` | P1 | — | Hecho (#59) |
+| FEAT-06-T1 | `GET /usuarios/{id}` con token de servicio | P1 | FEAT-05-T2 | En curso |
 | FEAT-06-T2 | `POST /usuarios/lote` | P1 | T1 | Pendiente |
 | FEAT-06-T3 | `direcciones:leer` | P1 | Valery FEAT-04-T1/T2 fusionadas por corte temprano; FEAT-05-T2 | Pendiente |
 | FEAT-06-T4 | Evidencia desplegada con G1 y G5 | P1 | T1–T3 | Pendiente |
@@ -29,9 +29,9 @@ Cada tarea es un commit `FEAT-0x-Tn: …` en su rama.
 ## Como PO
 
 ### PO-T1 — Respuesta a G1 y alcance
-- Confirmar a G1 el reparto (David es su contacto técnico) y preguntar al profesor si «crear roles» significa
-  roles nuevos (cambia SPEC-11 RF-11.1) o asignar los seis existentes (ya hecho). Registrar la respuesta en el plan §8.
-- Pedir a G6 los scopes de `modulo-marketplace` en `api-productos`.
+- «Crear roles» resuelto el 23-oct: es alta administrativa de un trabajador nuevo con un rol existente (usuario, contraseña y correo los da el admin); no cambia SPEC-11 ni el contrato. Registrado en plan §8.
+- Falta: confirmar a G1 el reparto (David es su contacto técnico).
+- Falta: pedir a G6 los scopes de `modulo-marketplace` en `api-productos`.
 
 ### PO-T2 — Contrato
 - Publicar en `specs/contrato-api/` lo que pidan los dueños antes de fusionar su FEAT; cambios incompatibles → v2.
