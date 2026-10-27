@@ -71,11 +71,40 @@ La variable `AUTH_SOLICITUD_LIMITADA_HMAC_KEY` fue cargada por David en Render c
 actual ya la tenga activa. Confirmarla en el siguiente despliegue de registro/recuperación.
 Una versión de develop actual no sustituye el SHA del servicio desplegado.
 
+**Captura Render aportada por David el 26-oct:** el despliegue de backend #64 figura
+`Deploy succeeded | Live`, Source `7142a03`, fecha 23-oct, 20:24:08 GMT-5 y disparo
+manual. El SHA completo del merge es `7142a03f0aee70f1d969cb572b74e5b546b80e35`.
+Esto acredita ese despliegue, no la prueba funcional de recuperación ni el SHA
+de todas las solicitudes de G1. Contradice el reporte documental de `c90037b`
+como desplegado: conservar ambas fuentes y confirmar el último despliegue activo
+en el listado de Render antes de anunciar FEAT-06-T3 o registro como disponibles.
+No se cambió el servicio para resolver esta discrepancia.
+
 ## Incidencia de disponibilidad
 
 G1 reporta un login posterior de B con 503 y un timeout del JWKS público desde su
 equipo el **25-oct, 12:28–12:29 de Lima (17:28–17:29 UTC)**. No está establecida
 la relación causal entre ambos hechos, ni si el 503 lo generó G1 o G7.
+
+**Logs Render del 25-oct aportados por David en captura (GMT-5):**
+
+| Hora de Lima | Registro visible |
+|---|---|
+| 12:29:32,854 | `Starting AuthServiceApplication`, instancia `[474tn]` |
+| 12:30:30,355 | Hikari inicia el pool; advertencia de `idleTimeout` frente a `maxLifetime` |
+| 12:30:37,555–556 | Conexión de base añadida; `Start completed` del pool |
+| 12:32:03,259 | Tomcat iniciado en puerto 10000 |
+| 12:32:03,658 | Aplicación iniciada en `161.004 seconds` |
+| 12:32:06,953 | Conexión RabbitMQ creada |
+
+Se confirma un arranque de la aplicación cercano al incidente, con unos 2 min 41 s
+de inicialización. Es compatible con que las consultas de G1 agotaran su espera
+mientras el servicio iniciaba. La captura no demuestra qué provocó el arranque
+(reactivación por inactividad, reinicio u otro evento) ni vincula una petición 503
+específica con G7. El aviso de Render sobre suspensión por inactividad apoya una
+hipótesis, no la confirma. La advertencia de Hikari no es por sí sola un fallo de
+conexión: después se observa el pool iniciado. Falta revisar Events y correlacionar
+el error de G1; no se modifica configuración ni código a partir de esta hipótesis.
 
 Comprobación de lectura desde esta sesión el 26-oct, iniciada aproximadamente a las
 20:46 de Lima, con límite de 20 segundos por ruta:
@@ -93,11 +122,12 @@ Estos resultados solo describen esta ruta de acceso y no prueban una caída gene
 Una comprobación actual no reconstruye el estado del 25-oct. No se hicieron intentos
 de login ni se usaron secretos.
 
-Para investigar: eventos de despliegue/reinicio y logs Render G7 entre 12:25 y 12:35
+Para completar la investigación: eventos de despliegue/reinicio y líneas anteriores
+al arranque de Render G7 entre 12:25 y 12:35
 de Lima del 25-oct, y de G1 ruta, hora exacta, duración, identificador de correlación
-y respuesta 503 sanitizada. Sin esos registros no atribuir el fallo a arranque en frío,
-base de datos, red o validación de claves. No hay acceso a logs históricos de Render
-desde los conectores disponibles en esta sesión.
+y respuesta 503 sanitizada. Sin esos registros no dar por confirmada la causa.
+Los logs históricos aquí registrados proceden de la captura de David; no de acceso
+directo a Render desde los conectores de esta sesión.
 
 ## Entregas pendientes y responsables
 

@@ -22,7 +22,10 @@ actualizada y el seguimiento de un 503/timeout del 25-oct, aún sin causa confir
 Registro/verificación backend #61 ya está fusionado; frontend #16 sigue abierto.
 Recuperación backend #64 y frontend #13 están fusionados. **Ninguno de esos merges
 acredita por sí solo su disponibilidad desplegada para G1.** El registro de Sergio
-del 25-oct reporta G7 `c90037b`, anterior a #61; el SHA efectivo actual debe confirmarse.
+del 25-oct reporta G7 `c90037b`, anterior a #61. Una captura Render aportada el 26-oct
+muestra el despliegue #64 `7142a03` como Live: hay una discrepancia que resolver con
+el listado de despliegues activos. Los logs aportados muestran arranque de G7 el
+25-oct de 12:29:32 a 12:32:03 (Lima), cercano al incidente; su causa sigue sin confirmar.
 
 Las referencias de código y la matriz inicial de §1–§2 siguientes se conservan
 como **antecedente del 20-oct**, no como inventario actual de disponibilidad.
