@@ -82,6 +82,19 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 > el despliegue (S3, junto con T1/T2). Evidencia: `docs/evidencia/h4/FEAT-12.md`
 > del frontend.
 
+> **26-oct-2026 · FEAT-12-T3 (re-ejecución con versiones, para la revisión del PR #17):**
+> de nuevo el stack real (PostgreSQL 16.15 + Mailpit v1.32 + backend `bootRun` @ `76e248f`,
+> sin Docker) y **6/6 en verde** (14.9 s; confirmación final 6.8 s), con Node v24.21.0,
+> npm 11.19.0, Playwright 1.64.1 y Chromium «Chrome for Testing» 156.0.8078.4
+> (`chromium-1248`); `typecheck`, `lint`, `build` y 98 pruebas Vitest en verde. Una
+> corrida intermedia falló 1/6 por la **cuota de OTP** (3 solicitudes/15 min por cuenta:
+> `cliente.a` con 3 `CAMBIO_MFA` en la ventana, aviso «Espera el tiempo indicado antes de
+> pedir otro código.»), ya prevista en `e2e/README.md`; reiniciada la cuota local, volvió
+> a 6/6 — no es un defecto de la SPA. El resumen con versiones y comando quedó en la
+> evidencia del frontend (commit `75b5b85`); el informe HTML sigue en `playwright-report/`
+> (gitignored). **Sigue sin Verificada**: la acreditación en CI corresponde a FEAT-12-T4
+> y la del despliegue a S3.
+
 ### FEAT-12-T1 — Configuración por entorno del emisor
 - **Resultado (backend):** `issuer`, `/.well-known/openid-configuration` y `jwks_uri` absolutos a partir de la URL pública del entorno (variable), no de `localhost`.
 - **Aceptación:** en el despliegue, el `iss` del token coincide con el discovery y el `jwks_uri` responde.
