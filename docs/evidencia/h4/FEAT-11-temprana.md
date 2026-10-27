@@ -76,9 +76,15 @@ Una versión de develop actual no sustituye el SHA del servicio desplegado.
 manual. El SHA completo del merge es `7142a03f0aee70f1d969cb572b74e5b546b80e35`.
 Esto acredita ese despliegue, no la prueba funcional de recuperación ni el SHA
 de todas las solicitudes de G1. Contradice el reporte documental de `c90037b`
-como desplegado: conservar ambas fuentes y confirmar el último despliegue activo
-en el listado de Render antes de anunciar FEAT-06-T3 o registro como disponibles.
-No se cambió el servicio para resolver esta discrepancia.
+como desplegado. Una segunda captura de Events del 26-oct confirma en la cabecera
+del servicio `develop · 7142a03 · Live` y **Auto-Deploy desactivado por despliegue
+de un commit específico**. El último despliegue visible es #64 del 23-oct, iniciado
+a las 20:24 y Live a las 20:27; debajo figuran #65 y #57 anteriores. No hay un deploy
+del 25-oct en el tramo visible. Se toma `7142a03` como versión activa observada el
+26-oct; el reporte de `c90037b` no queda corroborado por Render. Registro #61 no
+se desplegó automáticamente con su merge. No se cambió el servicio, su rama ni
+Auto-Deploy durante esta comprobación. FEAT-06-T1/T3 posteriores a #64 no se anuncian
+como disponibles en esta versión.
 
 ## Incidencia de disponibilidad
 
@@ -103,8 +109,11 @@ mientras el servicio iniciaba. La captura no demuestra qué provocó el arranque
 (reactivación por inactividad, reinicio u otro evento) ni vincula una petición 503
 específica con G7. El aviso de Render sobre suspensión por inactividad apoya una
 hipótesis, no la confirma. La advertencia de Hikari no es por sí sola un fallo de
-conexión: después se observa el pool iniciado. Falta revisar Events y correlacionar
-el error de G1; no se modifica configuración ni código a partir de esta hipótesis.
+conexión: después se observa el pool iniciado. La segunda captura de Logs, ampliada
+a 12:24–12:38, comienza con opciones de Java a las 12:28:11 y el banner de Spring
+a las 12:29:31; no muestra una causa de terminación anterior. Events solo muestra
+los despliegues del 23-oct en su tramo visible. Falta correlacionar el error de G1;
+no se modifica configuración ni código a partir de esta hipótesis.
 
 Comprobación de lectura desde esta sesión el 26-oct, iniciada aproximadamente a las
 20:46 de Lima, con límite de 20 segundos por ruta:

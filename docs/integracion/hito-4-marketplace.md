@@ -23,8 +23,9 @@ Registro/verificación backend #61 ya está fusionado; frontend #16 sigue abiert
 Recuperación backend #64 y frontend #13 están fusionados. **Ninguno de esos merges
 acredita por sí solo su disponibilidad desplegada para G1.** El registro de Sergio
 del 25-oct reporta G7 `c90037b`, anterior a #61. Una captura Render aportada el 26-oct
-muestra el despliegue #64 `7142a03` como Live: hay una discrepancia que resolver con
-el listado de despliegues activos. Los logs aportados muestran arranque de G7 el
+muestra el despliegue #64 `7142a03` como Live. La cabecera de Events confirma esa
+versión activa y Auto-Deploy desactivado por commit específico: el reporte de
+`c90037b` no queda corroborado y #61 no se publicó automáticamente. Los logs muestran arranque de G7 el
 25-oct de 12:29:32 a 12:32:03 (Lima), cercano al incidente; su causa sigue sin confirmar.
 
 Las referencias de código y la matriz inicial de §1–§2 siguientes se conservan
