@@ -1,0 +1,117 @@
+# FEAT-11 — Prueba temprana G1–G7
+
+Responsable G7: Luis David Morales Brenis. Corte: 26-oct-2026, America/Lima.
+Estado: **T1/T2/T3/T4 En curso; T5 pendiente**. No se declara cerrada FEAT-11.
+
+## Fuentes y procedencia
+
+- [Plan H4](../../../plan/hito-4/README.md), [tablero de David](../../../tareas/hito-4/luis-morales/TAREAS.md)
+  y [paquete G1–G7](../../integracion/hito-4-marketplace.md).
+- Base documental `6409c22732633a8fefbdb9daf183b5d5e67c59b2` de main.
+- Mensaje de G1 aportado por David en esta conversación el 26-oct: pruebas con
+  cuentas CLIENTE A/B desde sus servicios desplegados e incidente del 25-oct.
+  No se aportaron aquí capturas, identificadores de ejecución ni SHAs de esas pruebas.
+- Estado de PRs consultado en GitHub el 26-oct. El merge acredita código integrado,
+  no identifica por sí solo el código ejecutado en Render/Vercel.
+
+Los resultados siguientes son **reportados por G1**, no una ejecución independiente
+de David ni una prueba conjunta presenciada desde esta sesión. No se incluyen
+contraseñas, códigos, tokens, cookies ni enlaces de verificación.
+
+## Entornos y cuentas
+
+| Componente | URL | Versión efectiva |
+|---|---|---|
+| Frontend G1 | https://g1-marketplace-frontend.vercel.app/ | G1 informa autodespliegue desde develop; falta SHA de la ejecución |
+| BFF G1 | https://g1-marketplace-backend.onrender.com/ | G1 informa autodespliegue desde develop; falta SHA de la ejecución |
+| API G7 v1 | https://g7-auth-service.onrender.com/api/v1 | Falta confirmar SHA efectivo durante las pruebas de G1 y actual |
+| SPA G7 | https://g7-seguridad-spa.onrender.com | Falta confirmar SHA efectivo actual |
+
+A/B son las cuentas CLIENTE de prueba dedicadas a Marketplace coordinadas previamente
+por David; G1 confirma su uso. No son la cuenta administrativa de Jim ni las fixtures
+de Ventas/Postventas. A usa segundo factor por correo; B no lo usa, según su prueba.
+No se volvió a consultar ni modificar su estado en esta sesión.
+
+El BFF ya tiene URL pública y hay resultados funcionales reportados. Eso no acredita
+todos los detalles de la propuesta del 20-oct: faltan confirmación del almacenamiento
+de tokens en servidor, cookie opaca HttpOnly/Secure/SameSite=Lax, protección CSRF,
+persistencia de sesión y coordinación de renovaciones. No se cambia CORS sin confirmar
+si existe alguna llamada directa del navegador a G7. El tráfico BFF→G7 no requiere CORS.
+El retorno `/login` de G1 continúa propuesto, pendiente de confirmación exacta por entorno.
+
+## Casos reportados y aceptación pendiente
+
+| Caso | Resultado aportado por G1 | Límite de la conclusión |
+|---|---|---|
+| B: login sin MFA, sesión y cierre | Correcto | Falta fecha de ejecución, SHAs y evidencia sanitizada |
+| A: login, envío/verificación OTP por correo y sesión | Correcto | Igual; no acredita otros estados o errores del desafío |
+| A: renovación y cierre | Correcto; después anónima | No demuestra rechazo del refresco revocado ni reutilización del rotado |
+| Favoritos sin sesión | 401 | Solo este caso de denegación |
+| Favoritos con B | 200 | Acceso autenticado; no demuestra aislamiento entre usuarios |
+| Favoritos A/B con datos propios | No ejecutado completamente | G1 necesita productos para crear los datos de prueba |
+
+Antes de cerrar T2: A y B crean/consultan datos propios y no pueden leer ni modificar
+los del otro manipulando IDs; firma alterada → 401; registrar recarga, renovación
+concurrente y rechazo del refresco después del cierre. Los demás casos del
+[guion acordado](../../integracion/hito-4-marketplace.md#4-guion-de-prueba-y-aceptación)
+conservan su estado pendiente hasta ejecutarse. No se promete revocación instantánea
+del token de acceso validado localmente (ADR-002).
+
+## Seguimiento de disponibilidad G7 (T4)
+
+| Bloque | Código integrado comprobado | Despliegue y prueba con G1 |
+|---|---|---|
+| Registro/verificación/reenvío | Backend [#61](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/61), merge `d60befab174e7ce7c717b88947456f8dcbd65b9d`; frontend [#16](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/16) abierto y en borrador, head `242accfcf38827a585c691db8cfaf4d8c1bbc8f3` | No confirmados; no anunciar el bloque desplegado por el merge |
+| Recuperación/restablecimiento | Backend [#64](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/64), merge `7142a03f0aee70f1d969cb572b74e5b546b80e35`; frontend [#13](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/13), merge `e9cd51dbf25a72ace05570c460d32ee34e08578b` | Falta confirmar versión/configuración activa y ejecutar recorrido desplegado |
+| Login/MFA/sesión/renovación/cierre v1 | Capacidades H3 reutilizadas; no reimplementadas | Resultados de G1 en la tabla anterior, aún sin SHA efectivo |
+| Identidad técnica y direcciones | [Registro de Sergio del 25-oct](FEAT-05-06.md): reporta despliegue G7 `c90037b3d2c098aeef10e80676737d9024f39696`, anterior al merge #61 | Registro histórico atribuido a esa fuente; falta cliente de servicio/grant G1 provisionado y prueba positiva. Lote pendiente según la fuente |
+
+La variable `AUTH_SOLICITUD_LIMITADA_HMAC_KEY` fue cargada por David en Render con
+«Save only» durante la preparación. No se expone su valor ni se afirma que el proceso
+actual ya la tenga activa. Confirmarla en el siguiente despliegue de registro/recuperación.
+Una versión de develop actual no sustituye el SHA del servicio desplegado.
+
+## Incidencia de disponibilidad
+
+G1 reporta un login posterior de B con 503 y un timeout del JWKS público desde su
+equipo el **25-oct, 12:28–12:29 de Lima (17:28–17:29 UTC)**. No está establecida
+la relación causal entre ambos hechos, ni si el 503 lo generó G1 o G7.
+
+Comprobación de lectura desde esta sesión el 26-oct, iniciada aproximadamente a las
+20:46 de Lima, con límite de 20 segundos por ruta:
+
+| GET público | Resultado observado |
+|---|---|
+| `/actuator/health` | Timeout, 20,009 s, 0 bytes; sin respuesta HTTP |
+| `/api/v1/auth/.well-known/openid-configuration` | Timeout, 20,002 s, 0 bytes; sin respuesta HTTP |
+| `/api/v1/auth/.well-known/jwks.json` | Timeout, 20,006 s, 0 bytes; sin respuesta HTTP |
+
+`curl` terminó con código 28; `HTTP 000` es ausencia de respuesta, no un estado
+HTTP del servicio. El primer intento en el entorno de ejecución restringido falló
+en DNS; los tiempos de esta tabla proceden de la repetición con acceso de red.
+Estos resultados solo describen esta ruta de acceso y no prueban una caída general.
+Una comprobación actual no reconstruye el estado del 25-oct. No se hicieron intentos
+de login ni se usaron secretos.
+
+Para investigar: eventos de despliegue/reinicio y logs Render G7 entre 12:25 y 12:35
+de Lima del 25-oct, y de G1 ruta, hora exacta, duración, identificador de correlación
+y respuesta 503 sanitizada. Sin esos registros no atribuir el fallo a arranque en frío,
+base de datos, red o validación de claves. No hay acceso a logs históricos de Render
+desde los conectores disponibles en esta sesión.
+
+## Entregas pendientes y responsables
+
+- **G1:** SHAs efectivos FE/BFF y referencia de despliegue de las pruebas; fecha,
+  ejecutores y evidencia por caso; confirmar sesión implementada y retorno exacto;
+  preparar productos y datos para aislamiento A/B; aportar detalle sanitizado del 503.
+- **David/Christian:** confirmar SHA G7 actual y durante las pruebas, configuración
+  activa y logs históricos; coordinar y registrar la repetición de los casos pendientes.
+- **Eva:** frontend de registro/verificación y retorno por entorno; **Juan José/David**:
+  comprobación desplegada de recuperación/restablecimiento. No dependen de productos
+  de G1 para probar primero su recorrido G7.
+- **Sergio/Christian:** aprobación de scopes y provisión segura del cliente técnico
+  de G1 conforme al runbook; David registra la prueba conjunta cuando esté disponible.
+
+No se envió ningún mensaje a otros equipos desde esta sesión, no se cambió OpenAPI,
+no se aplicó SQL remoto y no se implementó código de Marketplace. Este corte permite
+continuar T1–T4; no cierra T2 ni la prueba conjunta final T5.

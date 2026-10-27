@@ -1,10 +1,32 @@
 # H4 — paquete inicial de integración G1–G7
 
-**Corte:** 20-oct-2026. **Responsable técnico G7:** Luis David Morales Brenis (FEAT-11).
+**Corte:** 26-oct-2026. **Responsable técnico G7:** Luis David Morales Brenis (FEAT-11).
 **Contrato y scopes:** Sergio Osorio (PO). Jose Luis conserva FEAT-12 (E2E y G5).
-Este documento continúa FEAT-11-T3 con la respuesta recibida de G1; no acredita
-cuentas entregadas, propuestas implementadas, mensajes enviados desde esta sesión
-ni integración probada. Estado de T3: **En curso**.
+Este documento reutiliza el paquete publicado en los PR documentales #64/#65 e
+incorpora los resultados que G1 comunicó a David. No declara cerrada la integración.
+Estado de T3: **En curso**. No se enviaron mensajes desde esta sesión.
+
+## 0. Actualización del 26-oct: primera prueba reportada por G1
+
+G1 confirma frontend https://g1-marketplace-frontend.vercel.app/ y BFF
+https://g1-marketplace-backend.onrender.com/, ambos con autodespliegue desde develop.
+Reporta login/sesión/cierre con B sin MFA; login con OTP EMAIL, sesión, renovación y
+cierre con A, que después queda anónima; favoritos sin sesión → 401 y con B → 200.
+**Aislamiento de favoritos A/B pendiente**: necesita productos para crear datos.
+El mensaje no incluye SHAs efectivos, evidencia por caso ni confirmación de todos
+los detalles de la sesión propuesta. No se sustituye esa información por HEAD de develop.
+
+La [evidencia temprana](../evidencia/h4/FEAT-11-temprana.md) distingue lo reportado,
+lo comprobado en GitHub y lo no ejecutado; contiene la matriz de disponibilidad
+actualizada y el seguimiento de un 503/timeout del 25-oct, aún sin causa confirmada.
+Registro/verificación backend #61 ya está fusionado; frontend #16 sigue abierto.
+Recuperación backend #64 y frontend #13 están fusionados. **Ninguno de esos merges
+acredita por sí solo su disponibilidad desplegada para G1.** El registro de Sergio
+del 25-oct reporta G7 `c90037b`, anterior a #61; el SHA efectivo actual debe confirmarse.
+
+Las referencias de código y la matriz inicial de §1–§2 siguientes se conservan
+como **antecedente del 20-oct**, no como inventario actual de disponibilidad.
+Para comunicar el estado vigente usar esta actualización y la evidencia enlazada.
 
 ## 1. Fuentes y alcance
 
@@ -18,8 +40,8 @@ G1 acepta comenzar F-002/F-003 con login, MFA EMAIL cuando aplique, perfil,
 refresh/logout y favoritos con usuarios A/B. Su documento aún nombra a Jose Luis:
 el contacto vigente es **David**, conforme al reparto H4; Sergio conserva contrato/scopes.
 
-PR documental #64 fusionado; `main` sigue en `029171b61335ec0412af777c2d8a0559d8dadb16`,
-sin commits posteriores al comprobarlo el 20-oct. H3 está publicado en `main`
+Al corte histórico del 20-oct, PR documental #64 fusionado y `main` en
+`029171b61335ec0412af777c2d8a0559d8dadb16`. H3 está publicado en `main`
 de backend (#47) y frontend (#10); esto no certifica los SHAs desplegados.
 
 Revisiones fuente comprobadas con referencias remotas (no SHAs certificados de despliegue):
@@ -35,7 +57,7 @@ Revisiones fuente comprobadas con referencias remotas (no SHAs certificados de d
 La inspección previa de G1 main encontró login simulado y un guard RS256/JWKS.
 Sus referencias develop se registran como dato, sin acreditar aquí su contenido ni ejecución.
 
-## 2. Entorno y matriz inicial por operación
+## 2. Entorno y matriz inicial por operación (histórico del 20-oct)
 
 | Dato | Valor de referencia | Comprobación pendiente |
 |---|---|---|
@@ -77,17 +99,17 @@ está por confirmar en todas las filas**. v2 es parcial y no reemplaza estos flu
 Actualizar por fila **fuente fusionada → SHA/URL desplegados → caso ejecutado y
 resultado → evidencia y aviso**. No comunicar disponibilidad basándose solo en un merge.
 
-## 3. Datos necesarios antes de la primera prueba
+## 3. Datos recibidos y pendientes para completar la prueba
 
 | Información/entrega | Responsable | Estado |
 |---|---|---|
-| Frontend/BFF G1: URLs, SHAs y operación propia protegida elegida | Jim/Andres/Leonidas | Frontend recibido; favoritos elegidos (`GET /api/v1/wishlist`). Faltan BFF/readiness, SHAs desplegados y run |
-| Sesión navegador/Next/BFF: almacenamiento, recarga, refresh y logout | G1; David revisa compatibilidad | Propuesta recibida compatible; implementación, despliegue y pruebas pendientes |
+| Frontend/BFF G1: URLs, SHAs y operación propia protegida elegida | Jim/Andres/Leonidas | URLs recibidas; favoritos elegidos (`GET /api/v1/wishlist`) y casos iniciales reportados. Faltan SHAs efectivos y referencia del despliegue probado |
+| Sesión navegador/Next/BFF: almacenamiento, recarga, refresh y logout | G1; David revisa compatibilidad | Login, sesión, refresh y logout reportados. Falta confirmar el diseño implementado, recarga/concurrencia y rechazo del refresco cerrado |
 | Origen web y URL exacta de login/retorno por entorno | G1; David coordina y Christian configura | Origen recibido y retorno propuesto; falta confirmación/lista permitida. No modificar CORS todavía |
-| Confirmación del SHA G7 realmente desplegado y salud/JWKS/login | Christian con David | Pendiente |
-| Cuentas A/B y disponibilidad de datos propios en G1 | David + G1 | Pendiente de confirmar/coordinar |
+| Confirmación del SHA G7 realmente desplegado y salud/JWKS/login | Christian con David | Registro de Sergio del 25-oct reporta c90037b. Falta SHA efectivo de las pruebas y actual; incidencia de disponibilidad abierta |
+| Cuentas A/B y disponibilidad de datos propios en G1 | David + G1 | G1 confirma uso de ambas cuentas CLIENTE dedicadas. Faltan productos/datos para aislamiento de favoritos |
 | Casos pendiente de verificar, bloqueado y MFA, con correo observable | Dueños G7 con David/Christian | Pendiente según capacidad disponible |
-| Horario y ejecutores de prueba conjunta | David + Jim/Andres | Pendiente de acuerdo |
+| Horario y ejecutores de prueba conjunta | David + Jim/Andres | Faltan fecha/ejecutores del recorrido reportado y ventana para completar los casos |
 
 Credenciales por canal privado; el documento registra solo referencia de entrega,
 no contraseñas, OTP, JWT, refresh ni enlaces sensibles. Una fixture creada manualmente
@@ -97,13 +119,14 @@ CORS aplica a peticiones directas del navegador; servidor a servidor desde BFF n
 requiere CORS. Si G1 utiliza cookies, debe definir atributos de seguridad y defensa
 CSRF según su diseño. No imponerle la sesión en memoria de la SPA G7.
 
-### Propuesta de sesión recibida de G1, pendiente de implementación y prueba
+### Propuesta inicial de sesión: detalles implementados por confirmar
 
 Navegador → Next en el mismo origen G1; cookie de identificador opaco HttpOnly,
 Secure y SameSite=Lax. Next/BFF custodiarán los tokens G7 en servidor, con
 almacenamiento compartido y caducidad, y refresh cifrado. No memoria de proceso
 como única persistencia en Vercel ni JWT/refresh en localStorage. El diseño es
-compatible con G7; no acredita que G1 lo tenga implementado o desplegado.
+compatible con G7. Los resultados funcionales del nuevo mensaje no acreditan por
+sí solos estos detalles de almacenamiento, cookie o protección CSRF.
 
 G1 propone resolver perfil/sesión al recargar, coordinar renovaciones concurrentes
 y reemplazar el refresh rotado; ante rechazo, caducidad o revocación limpiará
@@ -144,15 +167,13 @@ la conclusión a autenticación y aislamiento G1–G7, sin declarar integración
 Solo `/auth/me` correcto acredita conectividad; la integración de dominio necesita
 la operación de G1 y sus denegaciones. No marcar como pasados casos sin ejecutar.
 
-## 5. Mensaje de seguimiento propuesto (pendiente de envío)
+## 5. Seguimiento que debe coordinar David
 
-> Gracias por la respuesta. David es ahora el contacto técnico G7; Sergio conserva
-> contrato/scopes y Jose Luis E2E/G5. Tomamos favoritos y usuarios A/B como primer
-> recorrido. La propuesta de sesión es compatible, pendiente de implementar y probar.
-> Para cerrar la preparación, necesitamos URL pública/readiness del BFF, SHA
-> efectivamente desplegado de frontend/backend y run, confirmación del retorno
-> propuesto y del transporte implementado, datos/ejecutores y ventana en hora de Lima.
-> Coordinaremos cuentas A/B por privado y ratificaremos también el SHA desplegado G7.
-> Registro, recuperación, direcciones y cliente técnico conservan sus entregas propias.
+Pedir a G1 los SHAs efectivos FE/BFF de la ejecución y evidencia sanitizada por caso;
+confirmación del retorno exacto y de la sesión implementada; productos/datos y horario
+para completar aislamiento A/B y denegaciones; y el detalle sanitizado del 503 del
+25-oct (hora, ruta, duración y correlación). David/Christian revisan logs y SHA de G7.
+No volver a pedir la URL del BFF ni nuevas cuentas: ambas entregas ya están reportadas.
+Comunicar registro y recuperación solo tras confirmar su despliegue y comprobación.
 
-No enviar automáticamente este borrador ni crear un issue externo con él sin instrucción humana.
+No enviar mensajes ni crear un issue externo sin instrucción humana.
