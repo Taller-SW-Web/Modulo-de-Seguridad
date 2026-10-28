@@ -64,12 +64,10 @@ no haya redirección abierta.
 | Canal | Destino del botón «Iniciar sesión» | Configuración por entorno (SPA) |
 |---|---|---|
 | `WEB`, `CHATBOT` | FRONT-01 | — |
-| `MARKETPLACE` | Login de Marketplace (G1) | `VITE_RETORNO_MARKETPLACE` |
-| `RETAIL` | Login configurado para Retail* | `VITE_RETORNO_RETAIL` |
+| `MARKETPLACE`, `RETAIL` | Login de Marketplace (G1) | `VITE_RETORNO_MARKETPLACE` |
 
-\* SPEC-02 RF-02.8 lo envía al login de Marketplace; la descripción de
-`/auth/registro` en el OpenAPI, al de Retail (A1). Pendiente de que el PO lo
-unifique; la variable propia sirve para cualquiera de los dos.
+`RETAIL` vuelve al mismo login que `MARKETPLACE`, como manda SPEC-02 RF-02.8
+(decisión del PO, 26-oct-2026).
 
 - La SPA solo usa una URL de esa lista: absoluta, `https` (o `http://localhost`
   en desarrollo) y sin parámetros. Canal desconocido o manipulado, variable vacía
@@ -81,7 +79,10 @@ unifique; la variable propia sirve para cualquiera de los dos.
 - El retorno no es automático: lo inicia el usuario con el botón, para que vea
   antes el resultado.
 - `CHATBOT` usa por ahora nuestra pantalla; su pantalla propia (RF-02.8) queda
-  pendiente de su URL. Los valores de cada entorno los coordina David (FEAT-11-T1).
+  pendiente de su URL.
+- Esta spec no fija URL reales: el valor de `VITE_RETORNO_MARKETPLACE` es
+  configuración de cada entorno (desarrollo, integración, producción) y lo
+  coordina David con G1 (FEAT-11-T1).
 
 ---
 
