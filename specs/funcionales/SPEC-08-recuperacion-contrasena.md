@@ -53,6 +53,7 @@ El resultado observable es una contraseña nueva que cumple la política de SPEC
 | RF-08.6 | El sistema debe notificar al usuario por correo después de un restablecimiento exitoso. |
 | RF-08.7 | La solicitud y el restablecimiento deben registrarse mediante SPEC-12 (`RECUPERACION_SOLICITADA`, `CONTRASENA_RESTABLECIDA`). |
 | RF-08.8 | El sistema debe admitir como máximo **3 solicitudes de recuperación por hora y por dirección de correo**; a la cuarta responde `429 DEMASIADAS_SOLICITUDES`. El límite se cuenta por correo, exista o no la cuenta, igual que el reenvío de verificación (RF-02.4), para que ni la respuesta ni el límite revelen qué cuentas existen. |
+| RF-08.9 | La solicitud acepta un `canalOrigen` opcional (`WEB`, `CHATBOT`, `RETAIL`, `MARKETPLACE`; por defecto `WEB`), igual que el registro (RF-02.8). El enlace del correo lo conserva hasta el restablecimiento, para que la pantalla pueda devolver al usuario al login de su canal. No acepta una URL: el destino sale de una lista fija por canal, resuelta del lado del servidor. |
 
 ---
 
@@ -103,6 +104,13 @@ condiciones límite, de error o de seguridad.
 **Cuando** se pide la cuarta,
 **Entonces** el sistema responde `429 DEMASIADAS_SOLICITUDES` sin enviar correo, **igual si la cuenta existe que si no**.
 
+### ESC-08.8 Recuperación iniciada desde otro canal
+
+**Dado** que la solicitud llega con `canalOrigen: MARKETPLACE`,
+**Cuando** el usuario restablece su contraseña con el token de ese enlace,
+**Entonces** el sistema conservó el canal hasta el restablecimiento, para que
+la pantalla ofrezca volver al login de Marketplace en vez del propio.
+
 ---
 
 ## Requisitos no funcionales — ¿con qué condiciones?
@@ -127,7 +135,7 @@ condiciones límite, de error o de seguridad.
 
 | Endpoint / evento | Añade, modifica o elimina | Acordado con el PO |
 |---|---|---|
-| `POST /api/v1/password/recuperar` | Utiliza contrato existente · el `429` aplica el límite de RF-08.8 | ⬜ |
+| `POST /api/v1/password/recuperar` | Utiliza contrato existente · el `429` aplica el límite de RF-08.8 · añade `canalOrigen` opcional (RF-08.9, 26-oct) | ✅ |
 | `POST /api/v1/password/restablecer` | Utiliza contrato existente | ⬜ |
 | `RECUPERACION_SOLICITADA` · `CONTRASENA_RESTABLECIDA` | Acciones del catálogo de auditoría de SPEC-12 | ⬜ |
 

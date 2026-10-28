@@ -1434,6 +1434,11 @@ paths:
         —o más rápida— permitiría averiguar qué correos están registrados.
 
         Una solicitud nueva invalida el token de la anterior.
+
+        Con `canalOrigen` el enlace del correo lleva `&canal=<CANAL>`, igual
+        que en el registro (RF-02.8): la pantalla de restablecer (5b) lo usa
+        tras el `204` para volver al login del canal que pidió la recuperación,
+        con la misma lista de URL por entorno. No cambia si el correo existe o no.
       security: []
       requestBody:
         required: true
@@ -1447,6 +1452,15 @@ paths:
                   type: string
                   format: email
                   examples: ["maria@ejemplo.com"]
+                canalOrigen:
+                  type: string
+                  enum: [WEB, CHATBOT, RETAIL, MARKETPLACE]
+                  default: WEB
+                  description: |
+                    Canal donde se originó la solicitud de recuperación
+                    (SPEC-08, RF-08.9). Mismo mecanismo que `canalOrigen` del
+                    registro: opcional, decide el enlace del correo y el
+                    retorno tras restablecer. No acepta una URL.
       responses:
         '202':
           description: |

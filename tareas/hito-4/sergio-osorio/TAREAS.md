@@ -14,8 +14,9 @@ Cada tarea es un commit `FEAT-0x-Tn: …` en su rama.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| PO-T1 | Respuesta a G1 y consulta «crear roles» al profesor | P1 · mar 20-oct | — | «Crear roles» cerrado (ver plan §8); falta confirmar reparto a G1 y scopes con G6 |
+| PO-T1 | Respuesta a G1 y consulta «crear roles» al profesor | P1 · mar 20-oct | — | «Crear roles» cerrado (ver plan §8). Scopes de `modulo-marketplace` con G6: **confirmado 26-oct** (`catalogo:leer`/`api-productos`, relevo de David); registrado en `matriz-scopes.md` y `concesiones-servicio.sql`, falta que Christian aprovisione. Reparto a G1: confirmado por David como contacto técnico |
 | PO-T2 | Publicar cambios del OpenAPI por FEAT | P1 · continuo | Pedido del dueño | Al día — FEAT-05/06 no requirió cambio de contrato (confirmado en #59); se publica antes de fusionar cada FEAT siguiente |
+| PO-T3 | `canalOrigen` en recuperación (retorno con G1) | P1 · 26-oct | David/G1 confirmaron su login de retorno | Publicado 26-oct: OpenAPI (`/password/recuperar`), SPEC-08 (RF-08.9, ESC-08.8) y FRONT-05 («Retorno por canal», UI-05.8/9) con el mismo mecanismo de FRONT-03. Pendiente: Juan José implementa en FEAT-03-T4/T5 (ya cerradas, reabren con este alcance) |
 | FEAT-05-T1 | Registro de clientes y scopes | P1 | Christian V108+ si hay migración | Hecho (#59) |
 | FEAT-05-T2 | `POST /auth/token` (`client_credentials`) | P1 · lun 26-oct | T1 | Hecho (#59) |
 | FEAT-05-T3 | `POST /auth/introspeccion` | P1 | T2 | Hecho (#59) |

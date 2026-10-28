@@ -30,7 +30,7 @@ Son dos pasos con la misma spec, igual que en el wireframe:
 
 | Momento | Endpoint | Spec de backend |
 |---|---|---|
-| 5a, al enviar el correo | `POST /api/v1/password/recuperar` | SPEC-08 |
+| 5a, al enviar el correo | `POST /api/v1/password/recuperar` con `canalOrigen` si 5a se abrió con uno en la URL (ver «Retorno por canal») | SPEC-08 |
 | 5b, al abrir la pantalla, para el medidor | `GET /api/v1/password/politica` | SPEC-07 |
 | 5b, al guardar | `POST /api/v1/password/restablecer` con `token` y `nuevaContrasena` | SPEC-08 |
 
@@ -58,7 +58,23 @@ Son dos pasos con la misma spec, igual que en el wireframe:
 | Cargando | Tras guardar | Botón deshabilitado con «Guardando…» |
 | Enlace no válido | `401 TOKEN_RECUPERACION_INVALIDO` | Mensaje, sin formulario, y botón «Pedir un enlace nuevo» |
 | Enlace vencido | `410 TOKEN_RECUPERACION_EXPIRADO` | Mensaje, sin formulario, y botón «Pedir un enlace nuevo» |
-| Éxito | `204` | Se borra cualquier sesión local de ese navegador (el backend revocó todas) y se navega a FRONT-01 con el aviso «Tu contraseña se actualizó. Ya puedes iniciar sesión.» |
+| Éxito | `204` | Se borra cualquier sesión local de ese navegador (el backend revocó todas) y «Iniciar sesión» lleva al login del canal si el enlace trae uno con URL permitida (ver «Retorno por canal»); si no, a FRONT-01 con el aviso «Tu contraseña se actualizó. Ya puedes iniciar sesión.» |
+
+---
+
+## Retorno por canal (RF-08.9, FEAT-03-T4)
+
+Mismo mecanismo que FRONT-03 §«Retorno por canal»: la solicitud de 5a puede
+llevar `canalOrigen`, y el enlace del correo añade entonces `&canal=<CANAL>`
+(`MARKETPLACE`, `RETAIL`, `CHATBOT`; sin parámetro vale `WEB`). **El enlace
+nunca trae una URL**: 5b traduce el canal a la URL de login con la misma lista
+por entorno de FRONT-03 (`VITE_RETORNO_MARKETPLACE`, `VITE_RETORNO_RETAIL`).
+
+- Igual que en FRONT-03: solo URLs absolutas `https` de la lista, sin
+  parámetros; canal desconocido, variable vacía o URL inválida → FRONT-01.
+- Al cargar 5b, la SPA quita el token **y** el canal de la barra de direcciones.
+- El retorno lo inicia el usuario con el botón «Iniciar sesión», nunca automático.
+- `MARKETPLACE` confirmado con G1 el 26-oct: `https://g1-marketplace-frontend.vercel.app/login`.
 
 ---
 
@@ -130,6 +146,16 @@ Son dos pasos con la misma spec, igual que en el wireframe:
 - **Dado** un `ADMIN_VENTAS` que vio «Tu contraseña caducó» en FRONT-01
 - **Cuando** pulsa «Restablecer mi contraseña»
 - **Entonces** llega a 5a con su correo escrito y el foco en «Enviar enlace».
+
+### UI-05.8 Recuperación desde Marketplace
+- **Dado** una solicitud con `canalOrigen: MARKETPLACE` y `VITE_RETORNO_MARKETPLACE` configurada
+- **Cuando** el usuario restablece con ese enlace y la respuesta es `204`
+- **Entonces** el token y el canal desaparecen de la barra de direcciones, y «Iniciar sesión» lleva al login de Marketplace sin token ni correo en la URL.
+
+### UI-05.9 Canal manipulado en el enlace *(caso borde de seguridad)*
+- **Dado** un enlace con `canal=https://otro-sitio.example` o un canal fuera de la lista
+- **Cuando** la respuesta es `204`
+- **Entonces** «Iniciar sesión» lleva a FRONT-01: la SPA nunca navega a una URL recibida en el enlace.
 
 ---
 
