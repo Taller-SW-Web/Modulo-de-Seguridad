@@ -16,10 +16,10 @@ Cada tarea es un commit `FEAT-xx-Tn: …` en su rama.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-11-T1 | Origen y URL de retorno de G1 por entorno | P1 | T3: URLs y transporte confirmados por G1 | Pendiente |
-| FEAT-11-T2 | **Prueba temprana con G1** | P1 · **dom 25-oct** | T3; T1 según transporte; despliegue revalidado y G1 disponible | Pendiente |
+| FEAT-11-T1 | Origen y URL de retorno de G1 por entorno | P1 | T3: URLs y transporte confirmados por G1 | En curso; URLs recibidas, retorno y sesión implementada por confirmar |
+| FEAT-11-T2 | **Prueba temprana con G1** | P1 · **dom 25-oct** | T3; T1 según transporte; despliegue revalidado y G1 disponible | En curso; casos iniciales reportados por G1, aislamiento A/B pendiente |
 | FEAT-11-T3 | Paquete para G1 (primero) | P1 | —; datos de entorno por confirmar con G1 | En curso |
-| FEAT-11-T4 | Seguimiento por operación | P1 | FEAT-01/03/04/05/06 por fusión, despliegue y comprobación | Pendiente |
+| FEAT-11-T4 | Seguimiento por operación | P1 | FEAT-01/03/04/05/06 por fusión, despliegue y comprobación | En curso; matriz actualizada, versiones efectivas y pruebas conjuntas pendientes |
 | FEAT-11-T5 | Prueba conjunta final con G1 | P1 · S3 | T4 | Pendiente |
 | FEAT-07-T1 | `POST /auth/mfa/cambios` (v2) | P2 | — | Implementada y fusionada (#57) |
 | FEAT-07-T2 | Reenviar y confirmar (v2) | P2 | T1 | Implementada y fusionada (#57) |
@@ -46,12 +46,20 @@ David es el contacto técnico con G1. Cambios de alcance o del contrato pasan po
 - **Resultado:** antes de T1/T2, preparar la [matriz por operación y solicitud de datos](../../../docs/integracion/hito-4-marketplace.md): versión, estado, SHA de código/despliegue y URL; acordar transporte, origen/retorno y operación G1. Coordinar cuentas A/B y escenarios pendiente, bloqueado y MFA según disponibilidad por canal seguro. No crear cuentas ni afirmar su entrega solo por escribir este documento.
 - **Evidencia:** paquete inicial publicado; completar respuestas y referencia de entrega privada sin secretos. T3 permanece En curso hasta confirmar datos y cuentas; redactar el mensaje no acredita envío ni acuerdo.
 
-**Avance 20-oct:** este ajuste incorpora la respuesta de G1 al paquete de #64.
-Frontend recibido y favoritos A/B elegidos; retorno propuesto y sesión opaca
-compatible, aún sin implementar ni probar. T3 sigue **En curso**: faltan URL/readiness
-BFF, SHAs desplegados G1/G7 y run, retorno/transporte confirmados, referencia privada
-de cuentas A/B y datos, ejecutores y horario de Lima. Retomar cuando lleguen estos
-insumos; no se ejecutó integración conjunta ni se enviaron mensajes desde esta sesión.
+**Avance 26-oct:** se reutiliza el paquete publicado en #64/#65 y se incorpora el
+mensaje nuevo de G1. Frontend y BFF recibidos; G1 confirma uso de las cuentas CLIENTE
+A/B dedicadas y reporta login, MFA EMAIL para A, sesión, renovación/cierre y favoritos
+sin sesión → 401/con B → 200. **No acredita aislamiento A/B**: faltan productos/datos.
+T3 sigue **En curso**: faltan SHAs efectivos de las pruebas G1/G7 y referencia de
+despliegue, retorno exacto y detalles de sesión implementada, evidencia, ejecutores
+y horario para los casos restantes. No se declara pendiente la implementación de
+toda la sesión: su detalle técnico sigue por confirmar. No se enviaron mensajes.
+
+[Evidencia temprana y límites](../../../docs/evidencia/h4/FEAT-11-temprana.md):
+backend #61 fusionado; frontend #16 abierto; recuperación #64/#13 fusionada sin
+confirmación actual de despliegue en este corte. Registro de Sergio del 25-oct
+reporta G7 c90037b, anterior a #61. Se registra además el 503/timeout reportado por G1
+del 25-oct, 12:28–12:29 de Lima, sin causa confirmada. Continúan T1–T4; T5 pendiente.
 
 ### FEAT-11-T4 — Seguimiento por operación
 - **Resultado:** registrar por operación código fusionado, SHA desplegado, resultado comprobado y aviso a G1. Una fusión no acredita disponibilidad. Coordinar credenciales de `modulo-marketplace` solo después de aprobación de scopes, provisión segura y comprobación del servicio; nunca publicar secretos ni afirmar que el grant existe por estar planificado.
