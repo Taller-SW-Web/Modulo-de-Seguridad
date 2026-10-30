@@ -22,6 +22,31 @@ PATHS = [CONTRACTS / 'historico/openapi-1.0.0.yaml',
 ANNOTATIONS = {'description', 'title', 'examples', 'example', 'deprecated',
                'externalDocs', 'readOnly', 'writeOnly'}
 
+# Campos opcionales añadidos a peticiones v1 ya existentes en la base histórica
+# 1.0.0, aprobados por el PO como evolución aditiva: no quitan ni cambian nada
+# existente, no son `required`, y un consumidor de 1.0.0 que no los envíe sigue
+# funcionando igual. Cada entrada se registra aquí con acuerdo del PO, igual que
+# el catálogo de AccionAuditable o el de scopes.
+PETICIONES_ADITIVAS_V1 = {
+    ('/password/recuperar', 'post'): {'canalOrigen'},  # PO-T3, 26-oct-2026
+}
+
+
+def sin_campos_aditivos(valor, campos):
+    """Quita de un requestBody ya resuelto las propiedades opcionales
+    aprobadas como aditivas, para comparar lo demás contra la base histórica."""
+    if not campos:
+        return valor
+    if isinstance(valor, list):
+        return [sin_campos_aditivos(v, campos) for v in valor]
+    if not isinstance(valor, dict):
+        return valor
+    resultado = {k: sin_campos_aditivos(v, campos) for k, v in valor.items()}
+    props = resultado.get('properties')
+    if isinstance(props, dict):
+        resultado['properties'] = {k: v for k, v in props.items() if k not in campos}
+    return resultado
+
 
 class UniqueLoader(yaml.SafeLoader):
     pass
@@ -113,7 +138,10 @@ def main():
                 continue
             current = v1['paths'][route][method]
             for field in ['operationId', 'requestBody', 'parameters', 'security']:
-                assert resolve(op.get(field), old) == resolve(current.get(field), v1), (route, method, field)
+                actual = resolve(current.get(field), v1)
+                if field == 'requestBody':
+                    actual = sin_campos_aditivos(actual, PETICIONES_ADITIVAS_V1.get((route, method), set()))
+                assert resolve(op.get(field), old) == actual, (route, method, field)
             assert set(op['responses']) <= set(current['responses']), (route, 'respuesta retirada')
             operations += 1
     assert old.get('security') == v1.get('security')
