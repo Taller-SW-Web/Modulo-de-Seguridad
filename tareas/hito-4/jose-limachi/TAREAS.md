@@ -93,7 +93,23 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 > a 6/6 — no es un defecto de la SPA. El resumen con versiones y comando quedó en la
 > evidencia del frontend (commit `75b5b85`); el informe HTML sigue en `playwright-report/`
 > (gitignored). **Sigue sin Verificada**: la acreditación en CI corresponde a FEAT-12-T4
-> y la del despliegue a S3.
+> y la del despliegue a S3. **T1 y T2: código y pruebas locales verdes, pendiente
+> comprobación en despliegue S3** (ya Christian tiene FEAT-09-T1/T2 merged en `main`).
+
+> **31-oct-2026 · FEAT-12-T3 (corrida para avanzar T4):** stack real levantado
+> (PostgreSQL + Mailpit + backend `bootRun` @ `76e248f`, sin Docker) y **6/6 en verde**
+> (16.5 s), con Node v24.21.0, npm 11.19.0, Playwright 1.64.1 y Chromium
+> «Chrome for Testing» 156.0.8078.4 (`chromium-1248`); `typecheck`, `lint`, `build`
+> y 98 pruebas Vitest en verde. Sin Docker, binarios locales desechables; la cuota OTP
+> fue reiniciada antes de la corrida. La acreditación en CI corresponde a FEAT-12-T4
+> (job E2E); el stack local permanecerá encendido para los próximos pasos del hito.
+> **T1 y T2: código y pruebas locales verdes, pendiente comprobación en despliegue S3**
+> (ya Christian tiene FEAT-09-T1/T2 merged en `main`).
+
+### FEAT-12-T1 — Configuración por entorno del emisor
+- **Resultado (backend):** `issuer`, `/.well-known/openid-configuration` y `jwks_uri` absolutos a partir de la URL pública del entorno (variable), no de `localhost`.
+- **Aceptación:** en el despliegue, el `iss` del token coincide con el discovery y el `jwks_uri` responde.
+- **Aceptación:** en el despliegue, el `iss` del token coincide con el discovery y el `jwks_uri` responde.
 
 ### FEAT-12-T1 — Configuración por entorno del emisor
 - **Resultado (backend):** `issuer`, `/.well-known/openid-configuration` y `jwks_uri` absolutos a partir de la URL pública del entorno (variable), no de `localhost`.
