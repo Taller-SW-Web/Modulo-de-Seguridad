@@ -1,5 +1,12 @@
 # H4 — paquete inicial de integración G1–G7
 
+> **Actualización 6-nov:** FEAT-11 se cierra para H4 con alcance ajustado por
+> David, autorizado por Sergio. Los recorridos de identidad y recuperación se
+> registran en la [evidencia final](../evidencia/h4/FEAT-11.md). La prueba
+> desplegada de aislamiento de favoritos A/B pasa a H5; G1 reporta 30/30 tests
+> automatizados, que no equivalen a esa prueba. El contenido inferior conserva
+> el paquete y guion históricos del 26-oct, no el estado actual.
+
 **Corte:** 26-oct-2026. **Responsable técnico G7:** Luis David Morales Brenis (FEAT-11).
 **Contrato y scopes:** Sergio Osorio (PO). Jose Luis conserva FEAT-12 (E2E y G5).
 Este documento reutiliza el paquete publicado en los PR documentales #64/#65 e
