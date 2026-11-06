@@ -58,6 +58,7 @@ externos. Los pedidos nuevos siguen por issues de integración.
 | Productos | inventario:consumir | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Productos | inventario:liberar | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Productos | inventario:reintegrar | api-productos | modulo-postventa | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Productos | inventario:disponibilidad:leer | api-productos | modulo-postventa | Aprobada por G6 para `GET /api/v1/inventario/disponibilidad` en el flujo de CAMBIO | Confirmación de G6 comunicada por canal privado, 5-nov-2026 | Grant comprobado en Supabase; emisión de token HTTP 200 con el scope. Llamada a G6 y pruebas de autorización pendientes |
 | Productos | catalogo:leer | api-productos | modulo-productos | Aprobada; G6 es dueño de `api-productos` y se autoaprueba para su uso interno Catálogo → Pricing. Solicitado 3-nov | [#78](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/78) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Productos | precios:leer | api-productos | modulo-productos | Aprobada; G6 es dueño de `api-productos` y se autoaprueba para su uso interno Catálogo → Pricing. Solicitado 3-nov | [#78](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/78) | Pendiente; ninguna credencial/provisión acreditada aquí |
 | Ventas | ventas:pedidos:consultar | api-ventas | modulo-postventa | Aprobada; definido por el dueño de api-ventas, solo `GET /api/v1/pedidos/{id}` | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51) | Pendiente; ninguna credencial/provisión acreditada aquí |
@@ -83,8 +84,12 @@ no necesitarlo; no se añade esa concesión.
 Las cuatro filas de inventario de #51 (15-oct) siguen el contrato de
 Productos: `inventario:reservar`, `inventario:consumir` e `inventario:liberar`
 solo para modulo-ventas, e `inventario:reintegrar` solo para modulo-postventa.
-Productos no aprobó reservar/consumir para modulo-postventa ni
-`inventario:disponibilidad:leer` para modulo-postventa; no se registran.
+Productos no aprobó reservar/consumir para modulo-postventa. El 5-nov, G6
+confirmó por canal privado `inventario:disponibilidad:leer` para modulo-postventa
+únicamente en `GET /api/v1/inventario/disponibilidad` durante CAMBIO. La consulta
+es informativa y no reserva ni garantiza existencias. No autoriza operaciones
+administrativas. El grant se comprobó en Supabase y G7 emitió un token HTTP 200
+con el scope; la llamada a G6 y los casos positivos y negativos siguen pendientes.
 
 `ventas:pedidos:consultar` (16-oct, pedido original de #51) lo define el dueño
 de api-ventas para modulo-postventa: consulta módulo a módulo de un `pedidoId`
@@ -147,3 +152,4 @@ G6 respondió en [#87, punto A2](https://github.com/Taller-SW-Web/G6-Productos-O
 (incluida `productos:fisicos:leer` para `modulo-despacho`) siguen sin confirmar
 por cliente. Conservar audiencia `api-productos` y no convertir el catálogo en
 concesiones efectivas.
+
