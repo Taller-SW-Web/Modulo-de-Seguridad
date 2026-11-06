@@ -14,13 +14,13 @@
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-01-T1 | `POST /auth/registro` | P1 | — | Pendiente |
-| FEAT-01-T2 | Token de verificación y correo | P1 | Juan José FEAT-03-T1 (jue 22; reutilizar lo existente sin esperar una reimplementación) | Pendiente |
-| FEAT-01-T3 | Verificar y reenviar | P1 | T2 | Pendiente |
-| FEAT-01-T4 | Retorno por canal | P1 | T3; David FEAT-11-T1 (URL de G1) | Pendiente |
-| FEAT-01-T5 | Pantallas FRONT-02 y FRONT-03 | P1 | T1, T3 | Pendiente |
-| FEAT-01-T6 | Pruebas y evidencia desplegada | P1 | T1–T5; Christian V108+ si hay migración | Pendiente |
-| FEAT-02-T1 | Baja y reactivación | P2 | FEAT-01 fusionada | Pendiente |
+| FEAT-01-T1 | `POST /auth/registro` | P1 | — | Completado — backend [#61](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/61) |
+| FEAT-01-T2 | Token de verificación y correo | P1 | Juan José FEAT-03-T1 (jue 22; reutilizar lo existente sin esperar una reimplementación) | Completado — backend #61 |
+| FEAT-01-T3 | Verificar y reenviar | P1 | T2 | Completado — backend #61 |
+| FEAT-01-T4 | Retorno por canal | P1 | T3; David FEAT-11-T1 (URL de G1) | Completado — backend #61, frontend [#16](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/16), FRONT-03 #71; retorno a G1 comprobado por David (FEAT-11) |
+| FEAT-01-T5 | Pantallas FRONT-02 y FRONT-03 | P1 | T1, T3 | Completado — frontend #16 |
+| FEAT-01-T6 | Pruebas y evidencia desplegada | P1 | T1–T5; Christian V108+ si hay migración | Completado — [evidencia](../../../docs/evidencia/h4/FEAT-01.md) |
+| FEAT-02-T1 | Baja y reactivación | P2 | FEAT-01 fusionada | Pasa a H5 (P2, no se inició en H4) |
 
 ## FEAT-01 — Registro y verificación de correo (G1 F-001)
 
@@ -60,6 +60,7 @@
 ## FEAT-02 — Baja y reactivación (P2)
 
 ### FEAT-02-T1 — `DELETE /usuarios/{id}` y `POST /usuarios/{id}/reactivar`
+- **Estado H4 (6-nov):** no iniciada; P2, no compromete el 75 %. Se traslada a H5.
 - **Fuentes:** SPEC-04; FRONT-08 (acciones del detalle).
 - **Resultado:** baja lógica que revoca sesiones y audita; reactivación por ADMIN; botones con confirmación en FRONT-08; eventos del catálogo.
 - **Aceptación:** sin permiso → 403; cuenta dada de baja no inicia sesión; reactivada sí.
