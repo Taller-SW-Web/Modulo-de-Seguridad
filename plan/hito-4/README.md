@@ -108,11 +108,16 @@ la rama de su FEAT (ver §6).
 ### Luis David — integración G1, EP-04 Segundo factor y EP-07 Bloqueo
 
 **FEAT-11 `feat/INT-G1-marketplace` (P1, G1 y rúbrica de seguridad)** — David la pidió el 19-oct. Va primero.
+**Ajuste de alcance del 6-nov:** Sergio autorizó a David a resolver el cambio de alcance.
+El corte H4 se cierra con la integración de identidad y recuperación comprobada
+con G1; el aislamiento A/B de favoritos en el entorno desplegado pasa a H5. Los
+tests automatizados reportados por G1 son evidencia complementaria, no una prueba
+desplegada. Detalle y pendientes: [cierre FEAT-11](../../docs/evidencia/h4/FEAT-11.md).
 - T1 Alta del origen y las URL de retorno de G1 por entorno (`G7_CORS_ORIGENES` y lista de retorno).
-- T2 **Prueba temprana con G1 (S1, hasta el dom 25-oct):** comprobar login y `/auth/me` de G7; después ejecutar desde la web y API de G1 una operación protegida de su dominio, con usuarios A/B y denegaciones. Refresh y logout forman parte de F-002/F-003.
+- T2 **Prueba temprana con G1 (S1):** login, sesión, renovación y cierre. Favoritos con datos A/B y denegaciones en el entorno desplegado quedan para H5.
 - T3 **Antes de T2:** [paquete para G1](../../docs/integracion/hito-4-marketplace.md), matriz por operación (versión, estado, SHA, URL), acuerdo navegador/BFF y cuentas A/B por canal seguro. Los escenarios pendiente, bloqueado y MFA se preparan según disponibilidad; no se declaran provisionados sin comprobación.
 - T4 Registrar por separado cada fusión, despliegue y comprobación de FEAT-01, 03, 04, 05 y 06; comunicar a G1 el estado real y el SHA del entorno, no solo el merge.
-- T5 Prueba conjunta final con dos usuarios (F-001 a F-005 y cliente técnico) con evidencia sanitizada.
+- T5 Cierre H4: recorridos de identidad y recuperación con evidencia sanitizada; cliente técnico emitido y probado en G7. La validación conjunta de favoritos A/B queda para H5.
 
 **FEAT-07 `feat/EP-04-mfa-v2` (P2)** — SPEC-10, FRONT-09: `POST /auth/mfa/cambios`, `/reenviar` y `/confirmar` (v2); adaptador SMS simulado de SPEC-09.
 

@@ -1,5 +1,9 @@
 # FEAT-11 — Prueba temprana G1–G7
 
+> **Corte histórico del 26-oct.** El estado y los pendientes de este documento
+> fueron actualizados en el [cierre H4](FEAT-11.md); se conservan aquí los
+> resultados y las limitaciones conocidas en aquella fecha.
+
 Responsable G7: Luis David Morales Brenis. Corte: 26-oct-2026, America/Lima.
 Estado: **T1/T2/T3/T4 En curso; T5 pendiente**. No se declara cerrada FEAT-11.
 
