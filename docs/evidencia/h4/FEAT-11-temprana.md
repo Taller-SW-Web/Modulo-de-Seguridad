@@ -7,6 +7,43 @@
 Responsable G7: Luis David Morales Brenis. Corte: 26-oct-2026, America/Lima.
 Estado: **T1/T2/T3/T4 En curso; T5 pendiente**. No se declara cerrada FEAT-11.
 
+## Actualización de pruebas desplegadas — 3 y 4 de noviembre
+
+Los apartados posteriores conservan su corte histórico del 26-oct; las siguientes
+observaciones actualizan ese corte. David aportó capturas y resultados en la
+conversación, sin adjuntar credenciales ni tokens a esta evidencia.
+
+| Componente | Versión o referencia comunicada |
+|---|---|
+| Backend G7 | `255092e52dd269577e0a3511e949d832363f99ef`, Live según captura Render del 2-nov; no se acredita aquí que no haya cambiado después |
+| Frontend G7 | `cbe2f00`, merge de frontend #20, Live según captura Render del 3-nov |
+| BFF G1 | `cae04f78f40fd10fa3106aca38d25488d8181497`, despliegue `dep-dbl3li0m7kps739boodg` Live, comunicado por G1 |
+| Frontend G1 | `5f33e457bb3e2a8c9750783f16c81f5fc7ba0ddc`, comunicado por G1 para el ajuste de recuperación; confirmar si seguía activo en cada prueba |
+
+- David registró una cuenta de prueba propia desde G1, recibió el correo,
+  verificó la cuenta en G7 y volvió al login de G1. Después inició sesión sin
+  MFA y cerró sesión: la interfaz mostró cierre y dejó de mostrar su nombre.
+- David activó MFA para esa cuenta y confirmó ingreso desde G1 con código por
+  correo. Estos recorridos no sustituyen las pruebas negativas ni el aislamiento A/B.
+- Tras desplegar frontend G7 #20, David solicitó recuperación desde G1 y
+  comprobó que el enlace de la confirmación inicial volvía al login de G1.
+  También cambió la contraseña mediante el correo, volvió al login de G1 e
+  ingresó con la nueva. No se acredita con esta prueba el rechazo de la
+  contraseña anterior ni la reutilización del enlace en la interfaz.
+- En pruebas anteriores G1 reportó recuperación 202, restablecimiento 204,
+  ingreso con contraseña nueva 200, anterior 401 y reutilización del token en
+  la API G1 401; esa evidencia corresponde a otra ejecución, no acredita el
+  mensaje visual en la SPA. Los SHA exactos de esa ejecución quedan por confirmar.
+- G1 reportó favoritos sin sesión 401 y con B 200. La separación A/B con datos
+  propios sigue pendiente, así como firma alterada, recarga/rotación según el
+  guion, y los recorridos finales de ambas cuentas.
+
+**Pendiente:** evidencia sanitizada y versiones efectivas de cada ejecución;
+confirmar el transporte y sus protecciones con G1; provisionar y probar por
+separado `modulo-marketplace` para `api-productos`, incluido el 403 fuera de
+scope. El cliente `modulo-productos` de G6 es distinto y no sustituye esa prueba.
+FEAT-11 permanece En curso; no se declara cerrada la integración conjunta.
+
 ## Fuentes y procedencia
 
 - [Plan H4](../../../plan/hito-4/README.md), [tablero de David](../../../tareas/hito-4/luis-morales/TAREAS.md)
