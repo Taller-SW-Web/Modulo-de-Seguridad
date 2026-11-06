@@ -850,9 +850,11 @@ paths:
         Con `canalOrigen` el enlace del correo lleva a la pantalla del canal que
         originó el registro; la URL de cada canal la resolvemos nosotros.
         `CHATBOT` tiene su propia pantalla; `WEB`, `MARKETPLACE` y `RETAIL` usan
-        la nuestra. Al terminar, cada canal vuelve a su propio login configurado
-        por entorno: MARKETPLACE al de Marketplace y RETAIL al de Retail (A1).
-        No se recibe una URL de retorno arbitraria ni se entrega token en la URL.
+        la nuestra. Fuera de `WEB`, el enlace lleva `&canal=<CANAL>` (nunca una
+        URL). Al terminar, `MARKETPLACE` y `RETAIL` vuelven al login de
+        Marketplace configurado por entorno, y `WEB` al nuestro (SPEC-02
+        RF-02.8, A1). No se recibe una URL de retorno arbitraria ni se entrega
+        token en la URL.
 
         **El mensaje de error no permite deducir si el correo ya existe.** Un
         correo repetido responde `409` con un texto que no confirma ni niega la
