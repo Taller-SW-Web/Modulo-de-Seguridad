@@ -59,5 +59,7 @@ login de G1** ([FEAT-11](FEAT-11.md), «Registro y verificación»): acredita el
   Retail. `CHATBOT` usa nuestra pantalla: su pantalla propia (RF-02.8) queda pendiente.
 - La versión de los términos guardada es la de `G7_REGISTRO_VERSION_TERMINOS`; el texto vigente de
   los términos sigue sin URL (H-12).
-- FEAT-02 (baja y reactivación, P2) no se inició en H4 y pasa a H5.
+- FEAT-02 (baja y reactivación, P2) no es parte de esta evidencia: está en revisión en backend
+  [#84](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/84) y frontend
+  [#21](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/21); su evidencia irá aparte.
 - No se incluyen contraseñas, tokens, enlaces de correo ni datos personales completos.

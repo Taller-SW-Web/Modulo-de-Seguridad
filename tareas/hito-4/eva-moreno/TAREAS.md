@@ -20,7 +20,7 @@
 | FEAT-01-T4 | Retorno por canal | P1 | T3; David FEAT-11-T1 (URL de G1) | Completado — backend #61, frontend [#16](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/16), FRONT-03 #71; retorno a G1 comprobado por David (FEAT-11) |
 | FEAT-01-T5 | Pantallas FRONT-02 y FRONT-03 | P1 | T1, T3 | Completado — frontend #16 |
 | FEAT-01-T6 | Pruebas y evidencia desplegada | P1 | T1–T5; Christian V108+ si hay migración | Completado — [evidencia](../../../docs/evidencia/h4/FEAT-01.md) |
-| FEAT-02-T1 | Baja y reactivación | P2 | FEAT-01 fusionada | Pasa a H5 (P2, no se inició en H4) |
+| FEAT-02-T1 | Baja y reactivación | P2 | FEAT-01 fusionada | En revisión — backend [#84](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/84), frontend [#21](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/21) |
 
 ## FEAT-01 — Registro y verificación de correo (G1 F-001)
 
@@ -60,7 +60,7 @@
 ## FEAT-02 — Baja y reactivación (P2)
 
 ### FEAT-02-T1 — `DELETE /usuarios/{id}` y `POST /usuarios/{id}/reactivar`
-- **Estado H4 (6-nov):** no iniciada; P2, no compromete el 75 %. Se traslada a H5.
+- **Estado H4 (6-nov):** implementada después del congelamiento, con autorización del equipo: backend #84 y frontend #21 en revisión (1073/1073 y 176/176 pruebas). Falta fusionar, desplegar y registrar su evidencia; P2, no compromete el 75 %.
 - **Fuentes:** SPEC-04; FRONT-08 (acciones del detalle).
 - **Resultado:** baja lógica que revoca sesiones y audita; reactivación por ADMIN; botones con confirmación en FRONT-08; eventos del catálogo.
 - **Aceptación:** sin permiso → 403; cuenta dada de baja no inicia sesión; reactivada sí.
