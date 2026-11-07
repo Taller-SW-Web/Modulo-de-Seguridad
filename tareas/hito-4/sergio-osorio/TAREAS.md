@@ -15,7 +15,7 @@ Cada tarea es un commit `FEAT-0x-Tn: …` en su rama.
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
 | PO-T1 | Respuesta a G1 y consulta «crear roles» al profesor | P1 · mar 20-oct | — | «Crear roles» cerrado (ver plan §8). Scopes de `modulo-marketplace` con G6: **confirmado 26-oct** (`catalogo:leer`/`api-productos`, relevo de David); registrado en `matriz-scopes.md` y `concesiones-servicio.sql`, falta que Christian aprovisione. Reparto a G1: confirmado por David como contacto técnico |
-| PO-T2 | Publicar cambios del OpenAPI por FEAT | P1 · continuo | Pedido del dueño | Al día — FEAT-05/06 no requirió cambio de contrato (confirmado en #59); se publica antes de fusionar cada FEAT siguiente |
+| PO-T2 | Publicar cambios del OpenAPI por FEAT | P1 · continuo | Pedido del dueño | Al día — re-verificado 6-nov con `scripts/verificar-contratos.py`: los tres OpenAPI válidos, base histórica v1 intacta; `canalOrigen` en `/password/recuperar` publicado como excepción aditiva (29-oct) |
 | PO-T3 | `canalOrigen` en recuperación (retorno con G1) | P1 · 26-oct | David/G1 confirmaron su login de retorno | Publicado 26-oct: OpenAPI (`/password/recuperar`), SPEC-08 (RF-08.9, ESC-08.8) y FRONT-05 («Retorno por canal», UI-05.8/9) con el mismo mecanismo de FRONT-03. Pendiente: Juan José implementa en FEAT-03-T4/T5 (ya cerradas, reabren con este alcance) |
 | FEAT-05-T1 | Registro de clientes y scopes | P1 | Christian V108+ si hay migración | Hecho (#59) |
 | FEAT-05-T2 | `POST /auth/token` (`client_credentials`) | P1 · lun 26-oct | T1 | Hecho (#59) |
@@ -23,9 +23,9 @@ Cada tarea es un commit `FEAT-0x-Tn: …` en su rama.
 | FEAT-05-T4 | Rotación de clave con dos `kid` | P1 | — | Hecho (#59) |
 | FEAT-05-T5 | `GET /roles` y `GET /permisos` | P1 | — | Hecho (#59) |
 | FEAT-06-T1 | `GET /usuarios/{id}` con token de servicio | P1 | FEAT-05-T2 | Hecho (#69); desplegado, comprobado 401 sin token |
-| FEAT-06-T2 | `POST /usuarios/lote` | P1 | T1 | Bloqueado — método de lote pendiente en `CuentasPort` de Eva; propuesta de firma enviada (25-oct) |
+| FEAT-06-T2 | `POST /usuarios/lote` | P1 | T1 | Hecho (#78, 4-nov) — reutiliza `CuentasPort.leerLote` de Eva (#74) |
 | FEAT-06-T3 | `direcciones:leer` | P1 | Valery FEAT-04-T1/T2 fusionadas por corte temprano; FEAT-05-T2 | Hecho (#71); desplegado, comprobado 401 sin token |
-| FEAT-06-T4 | Evidencia desplegada con G1 y G5 | P1 | T1–T3 | En curso — verificación sin credenciales hecha (`docs/evidencia/h4/FEAT-05-06.md`); falta que Christian provisione un `cliente_servicio` de prueba y la aprobación del grant de G1 |
+| FEAT-06-T4 | Evidencia desplegada con G1 y G5 | P1 | T1–T3 | En curso — re-verificado 6-nov sin credenciales (`docs/evidencia/h4/FEAT-05-06.md`); JWKS sigue con una sola clave (sin rotación); falta que Christian provisione un `cliente_servicio` de prueba, rote la clave y confirme el grant de G1; falta confirmación de G1 de que el fix de retorno (#20) ya está desplegado y probado |
 
 ## Como PO
 
