@@ -13,10 +13,10 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-12-T1 | `issuer`, discovery y `jwks_uri` por entorno | P1 | — | En curso |
-| FEAT-12-T2 | Auditoría `SESION_CERRADA` en el logout | P1 | — | En curso |
-| FEAT-12-T3 | Suite E2E Playwright | P1 | — | En curso |
-| FEAT-12-T4 | Job E2E en el CI contra el despliegue | P1 | T3; Christian FEAT-09-T1/T2 | Pendiente |
+| FEAT-12-T1 | `issuer`, discovery y `jwks_uri` por entorno | P1 | — | Verificada | Smoke test CI ejecutado contra despliegue Render: health UP, JWKS válido, login real exitoso. Evidencia: `docs/evidencia/h4/FEAT-12.md`.
+| FEAT-12-T2 | Auditoría `SESION_CERRADA` en el logout | P1 | — | Verificada | Smoke test CI ejecutado contra despliegue Render: flujo de login/logout real verificado. CI pass (FEAT-12-T4).
+| FEAT-12-T3 | Suite E2E Playwright | P1 | — | Verificada | Suite E2E CI pass contra `https://g7-seguridad-spa.onrender.com` (6/6 tests, 16.5s). PR #17 merged.
+| FEAT-12-T4 | Job E2E en el CI contra el despliegue | P1 | T3; Christian FEAT-09-T1/T2 | Verificada | PR #80 merged en `develop`. CI pass: job `e2e-playwright` + `e2e-aislado` contra Render y entorno aislado con Mailpit. Artefact HTML generado.
 | FEAT-12-T5 | Prueba conjunta con G5 | P1 | T4 | Pendiente |
 
 > **22-oct-2026 · FEAT-12-T1 (En curso):** commit local en `feat/EP-02-seguridad-e2e`
