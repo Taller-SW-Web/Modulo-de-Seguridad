@@ -93,7 +93,7 @@ la rama de su FEAT (ver §6).
 - T1 Configuración por entorno: `issuer`, discovery y `jwks_uri` absolutos según la URL pública.
 - T2 Auditoría `SESION_CERRADA` en el logout (pendiente de H3).
 - T3 Pruebas E2E automatizadas del frontend (Playwright): login, OTP, refresh, logout y guards por permiso.
-- T4 Job E2E en el CI contra el despliegue, después del smoke test de Christian.
+- T4 Job E2E en CI con entorno aislado (6/6 para H4); smoke contra Render por separado. La suite E2E completa contra Render se difiere a H5.
 - T5 Prueba conjunta con G5 (`/pedidos/me`) con evidencia sanitizada.
 
 ### Juan José — EP-03 Credenciales
@@ -108,11 +108,16 @@ la rama de su FEAT (ver §6).
 ### Luis David — integración G1, EP-04 Segundo factor y EP-07 Bloqueo
 
 **FEAT-11 `feat/INT-G1-marketplace` (P1, G1 y rúbrica de seguridad)** — David la pidió el 19-oct. Va primero.
+**Ajuste de alcance del 6-nov:** Sergio autorizó a David a resolver el cambio de alcance.
+El corte H4 se cierra con la integración de identidad y recuperación comprobada
+con G1; el aislamiento A/B de favoritos en el entorno desplegado pasa a H5. Los
+tests automatizados reportados por G1 son evidencia complementaria, no una prueba
+desplegada. Detalle y pendientes: [cierre FEAT-11](../../docs/evidencia/h4/FEAT-11.md).
 - T1 Alta del origen y las URL de retorno de G1 por entorno (`G7_CORS_ORIGENES` y lista de retorno).
-- T2 **Prueba temprana con G1 (S1, hasta el dom 25-oct):** comprobar login y `/auth/me` de G7; después ejecutar desde la web y API de G1 una operación protegida de su dominio, con usuarios A/B y denegaciones. Refresh y logout forman parte de F-002/F-003.
+- T2 **Prueba temprana con G1 (S1):** login, sesión, renovación y cierre. Favoritos con datos A/B y denegaciones en el entorno desplegado quedan para H5.
 - T3 **Antes de T2:** [paquete para G1](../../docs/integracion/hito-4-marketplace.md), matriz por operación (versión, estado, SHA, URL), acuerdo navegador/BFF y cuentas A/B por canal seguro. Los escenarios pendiente, bloqueado y MFA se preparan según disponibilidad; no se declaran provisionados sin comprobación.
 - T4 Registrar por separado cada fusión, despliegue y comprobación de FEAT-01, 03, 04, 05 y 06; comunicar a G1 el estado real y el SHA del entorno, no solo el merge.
-- T5 Prueba conjunta final con dos usuarios (F-001 a F-005 y cliente técnico) con evidencia sanitizada.
+- T5 Cierre H4: recorridos de identidad y recuperación con evidencia sanitizada; cliente técnico emitido y probado en G7. La validación conjunta de favoritos A/B queda para H5.
 
 **FEAT-07 `feat/EP-04-mfa-v2` (P2)** — SPEC-10, FRONT-09: `POST /auth/mfa/cambios`, `/reenviar` y `/confirmar` (v2); adaptador SMS simulado de SPEC-09.
 
@@ -223,7 +228,8 @@ develop ──► (jue 5-nov) PR release H4 → main → despliegue automático
 5. Fusionar con el CI en verde. No se exige aprobación, pero conviene pedir que alguien la mire.
    Después, borrar la rama.
 6. Durante S1/S2, `develop` alimenta el entorno de integración; Christian configura el pipeline
-   con CI verde, espera de versión y smoke/E2E. El jueves 5-nov se promueve `develop → main`
+   con CI verde, espera de versión y smoke. Para FEAT-12-T4, H4 acredita E2E en CI aislado;
+   la ejecución E2E completa contra Render queda para H5. El jueves 5-nov se promueve `develop → main`
    para la entrega final y se comprueba el despliegue de ese SHA. No cambiar la rama del
    servicio ni sus orígenes sin registrar entorno, aviso a consumidores y comprobación.
 
@@ -236,8 +242,18 @@ develop ──► (jue 5-nov) PR release H4 → main → despliegue automático
   las aplica Christian en Supabase en su ventana, con aviso al grupo.
 - Nunca en git: contraseñas, `client_secret`, claves, JWT completos ni datos de Supabase.
 - La rama de una FEAT no se reutiliza para otra: al terminar se borra.
+- **Entregas parciales por FEAT, acordado el 23-oct (David/Sergio).** Si una tarea de la
+  FEAT desbloquea a otro dueño (p. ej. un puerto exportado) o conviene acotar el corte,
+  se fusiona en un PR propio siempre que: compile, tenga pruebas en verde y el CI aprobado;
+  deje explícito en el cuerpo del PR y en el tablero qué tareas quedan pendientes; y no se
+  declare la FEAT completa hasta que lo esté. Mismo criterio para todos (incluida Eva): un
+  merge parcial no se confunde con «FEAT terminada». Precedentes: backend #68 (Valery,
+  FEAT-04-T1/T2) y backend #69 (Sergio, FEAT-06-T1).
 
 ## 7. Definición de terminado de una FEAT
+
+Aplica a la **FEAT completa**; un corte parcial fusionado (ver regla anterior) no la
+marca como terminada por sí solo.
 
 - [ ] Endpoints del contrato implementados, con errores `problem+json` y sin enumeración de cuentas.
 - [ ] Pantallas FRONT de la spec conectadas al backend real.
@@ -249,6 +265,6 @@ develop ──► (jue 5-nov) PR release H4 → main → despliegue automático
 
 | Tema | Situación | Quién | Cuándo |
 |---|---|---|---|
-| «Crear roles» | Las specs definen un [catálogo cerrado de seis roles](../../specs/funcionales/SPEC-11-roles-permisos.md) (RF-11.1). Asignar y retirar roles ya funciona. Crear roles nuevos cambiaría el alcance de SPEC-11 y el contrato | Sergio consulta al profesor | S1; si se pide, entra como FEAT nueva en S2, sin tocar las demás |
+| «Crear roles» | **Resuelto (23-oct, Sergio):** el pedido es la alta administrativa de un trabajador nuevo (usuario, contraseña y correo proporcionados por el admin) con uno de los seis roles ya definidos — no la creación de tipos de rol nuevos. No cambia el alcance de SPEC-11 ni el contrato; corresponde al alta administrativa de cuentas ya implementada (EP-01). No se requiere consulta al profesor ni FEAT nueva | Sergio | Cerrado |
 | Scopes de `modulo-marketplace` en `api-productos` | G6 debe confirmarlos por cliente | Sergio con G6 | S1 |
 | Fusión del backend #55 (bloqueo en el detalle) | Pendiente de comprobar; FEAT-08 se apoya en él. Fusión, despliegue y comprobación son estados distintos | Equipo | Inicio de S1 |

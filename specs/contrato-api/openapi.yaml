@@ -850,9 +850,11 @@ paths:
         Con `canalOrigen` el enlace del correo lleva a la pantalla del canal que
         originó el registro; la URL de cada canal la resolvemos nosotros.
         `CHATBOT` tiene su propia pantalla; `WEB`, `MARKETPLACE` y `RETAIL` usan
-        la nuestra. Al terminar, cada canal vuelve a su propio login configurado
-        por entorno: MARKETPLACE al de Marketplace y RETAIL al de Retail (A1).
-        No se recibe una URL de retorno arbitraria ni se entrega token en la URL.
+        la nuestra. Fuera de `WEB`, el enlace lleva `&canal=<CANAL>` (nunca una
+        URL). Al terminar, `MARKETPLACE` y `RETAIL` vuelven al login de
+        Marketplace configurado por entorno, y `WEB` al nuestro (SPEC-02
+        RF-02.8, A1). No se recibe una URL de retorno arbitraria ni se entrega
+        token en la URL.
 
         **El mensaje de error no permite deducir si el correo ya existe.** Un
         correo repetido responde `409` con un texto que no confirma ni niega la
@@ -1434,6 +1436,11 @@ paths:
         —o más rápida— permitiría averiguar qué correos están registrados.
 
         Una solicitud nueva invalida el token de la anterior.
+
+        Con `canalOrigen` el enlace del correo lleva `&canal=<CANAL>`, igual
+        que en el registro (RF-02.8): la pantalla de restablecer (5b) lo usa
+        tras el `204` para volver al login del canal que pidió la recuperación,
+        con la misma lista de URL por entorno. No cambia si el correo existe o no.
       security: []
       requestBody:
         required: true
@@ -1447,6 +1454,15 @@ paths:
                   type: string
                   format: email
                   examples: ["maria@ejemplo.com"]
+                canalOrigen:
+                  type: string
+                  enum: [WEB, CHATBOT, RETAIL, MARKETPLACE]
+                  default: WEB
+                  description: |
+                    Canal donde se originó la solicitud de recuperación
+                    (SPEC-08, RF-08.9). Mismo mecanismo que `canalOrigen` del
+                    registro: opcional, decide el enlace del correo y el
+                    retorno tras restablecer. No acepta una URL.
       responses:
         '202':
           description: |

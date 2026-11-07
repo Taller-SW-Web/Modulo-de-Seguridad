@@ -74,8 +74,8 @@ hechos, dependencias y servicios reales.
 | TEC-INFRA-T002 | Revisar DB, coordinar migraciones y privilegios | P0 | TEC-INFRA-T001; migraciones de cada dueño al aplicar | En curso (B#35, B#44) |
 | TEC-INFRA-T003 | MensajeriaPort y outbox con reclamo durable | P0 | Revisión DB; V106 conjunta con EP-06-T001 | Fusionada (B#41) |
 | TEC-INFRA-T004 | Correo y eventos con reintentos/confirmación | P0 | TEC-INFRA-T003; SMTP/broker y ports de validez reales | En revisión (B#41, B#46) |
-| TEC-INFRA-T005 | Desplegar y verificar backend/SPA en nube | P0 | Build de dueños; DB/grants/transporte/claves revisados | En curso (B#36) |
-| TEC-INFRA-T006 | Comprobar entorno en prueba conjunta G5 | P0 | TEC-INFRA-T005; login/JWKS G7 y servicio Michael | Pendiente (prueba conjunta G5) |
+| TEC-INFRA-T005 | Desplegar y verificar backend/SPA en nube | P0 | Build de dueños; DB/grants/transporte/claves revisados | En curso (desplegado en Render; faltan reinicio y reversión) |
+| TEC-INFRA-T006 | Comprobar entorno en prueba conjunta G5 | P0 | TEC-INFRA-T005; login/JWKS G7 y servicio Michael | En revisión (prueba conjunta 16-oct ejecutada) |
 
 Revisión inicial y aplicación de TEC-INFRA-T002 son pasos sucesivos, no una
 dependencia circular. EP-01/02/03/04/05/07 identifican tareas de sus dueños.
@@ -313,3 +313,5 @@ puede aportar a varios cierres sin duplicar su tarea de implementación.
 | 16-oct-2026 | TEC-INFRA-T003 | Fusionada (B#41). Outbox con reclamo SKIP LOCKED y correo cifrado; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
 | 16-oct-2026 | TEC-INFRA-T004 | En revisión (B#41, B#46). Worker SMTP + publicador RabbitMQ con confirmaciones; falta broker y SMTP reales | CI en verde (merge propio, 15-oct) | En revisión |
 | 16-oct-2026 | TEC-INFRA-T005 | En curso (B#36). Imagen Docker, CORS, salud y guía; falta plataforma | CI en verde (merge propio, 15-oct) | En curso |
+| 16-oct-2026 | TEC-INFRA-T005 | Desplegado en Render: SPA Static Site, backend Web Service, PostgreSQL Supabase, SMTP Brevo. Backend reportado `4bd7b61` (`develop`). Comprobación pública 17-oct 04:45–04:51 UTC: salud UP, issuer exacto, JWKS RS256 sin `d`, CORS solo para la SPA, SPA idéntica al build de `82c9414`. **Pendiente:** SHA del panel de Render, persistencia de clave/sesiones tras reinicio y reversión. [Evidencia](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/blob/develop/docs/evidencia/TEC-INFRA-T005.md) (B#56) | Sin revisor; comprobación pública independiente | En curso |
+| 16-oct-2026 | TEC-INFRA-T006 | Prueba conjunta G7→G5 en nube con tokens de usuario: sin token 401, A 200 con dos pedidos, B 200 vacío, V 403, firma alterada 401 (original 200 antes y después), token vencido 401 en el reintento, B con `clienteId` de A 200 y su lista vacía. G5 `03c7fda` (`main`) reportado. **17-oct 04:54 UTC:** G5 redesplegado responde 200 sin token y con token inválido; repetir negativos antes de presentarla como vigente. [Ficha G5](../../../docs/integracion/hito-3-ventas.md#prueba-conjunta-en-nube--16-oct-2026) y PDF de integración | Falta revisión de otro integrante | En revisión |

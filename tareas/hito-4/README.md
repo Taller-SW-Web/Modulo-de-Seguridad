@@ -26,7 +26,7 @@ y contrato estable; no cierran su FEAT completa ni todos sus RF.
 ```text
 S1 (20–26 oct)
   Juan José FEAT-03-T1 (tokens de un uso, jue 22) ──► Eva FEAT-01-T2 · Valery FEAT-04-T3
-  David FEAT-11-T3 (paquete) → T1 (configuración) → T2 (G1 con operación propia y A/B, dom 25)
+  David FEAT-11-T3 (paquete) → T1 (configuración) → T2 (identidad y sesión con G1); aislamiento A/B desplegado pasa a H5 ([cierre H4](../../docs/evidencia/h4/FEAT-11.md))
     ◄── despliegue de integración develop revalidado + disponibilidad de G1
   Christian FEAT-09-T1/T2 (deploy + smoke en el pipeline) ──► Jose Luis FEAT-12-T4
   Sergio FEAT-05-T1/T2 (clientes, scopes, /auth/token)

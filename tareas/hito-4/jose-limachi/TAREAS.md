@@ -13,10 +13,7 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-12-T1 | `issuer`, discovery y `jwks_uri` por entorno | P1 | — | Verificada | Smoke test CI ejecutado contra despliegue Render: health UP, JWKS válido, login real exitoso. Evidencia: `docs/evidencia/h4/FEAT-12.md`.
-| FEAT-12-T2 | Auditoría `SESION_CERRADA` en el logout | P1 | — | Verificada | Smoke test CI ejecutado contra despliegue Render: flujo de login/logout real verificado. CI pass (FEAT-12-T4).
-| FEAT-12-T3 | Suite E2E Playwright | P1 | — | Verificada | Suite E2E CI pass contra `https://g7-seguridad-spa.onrender.com` (6/6 tests, 16.5s). PR #17 merged.
-| FEAT-12-T4 | Job E2E en el CI contra el despliegue | P1 | T3; Christian FEAT-09-T1/T2 | Verificada | PR #80 merged en `develop`. CI pass: job `e2e-playwright` + `e2e-aislado` contra Render y entorno aislado con Mailpit. Artefact HTML generado.
+
 | FEAT-12-T5 | Prueba conjunta con G5 | P1 | T4 | Pendiente |
 
 > **22-oct-2026 · FEAT-12-T1 (En curso):** commit local en `feat/EP-02-seguridad-e2e`
@@ -127,9 +124,10 @@ de la rúbrica: autenticación en pantallas y APIs, probada automáticamente.
 - **Evidencia:** reporte HTML de Playwright.
 
 ### FEAT-12-T4 — Job E2E en el CI
-- **Resultado:** job que corre T3 contra el despliegue después del smoke test de Christian; reporte subido como artefacto.
-- **Aceptación:** si falla un caso, el pipeline queda en rojo.
-- **Evidencia:** enlace al run en verde.
+- **Alcance acordado para H4:** el job ejecuta T3 en GitHub Actions con frontend, backend, PostgreSQL y Mailpit aislados y temporales. El smoke posterior al despliegue sigue comprobando Render por separado.
+- **Aceptación:** los seis casos pasan y el informe HTML queda disponible como artefacto; si un caso falla, falla el job.
+- **Evidencia:** [CI Backend](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/actions), ejecución manual **#329** de la rama `feat/EP-02-seguridad-e2e`, commit `2ee895f`: 6/6 en verde en entorno aislado; workflow integrado mediante [backend #80](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/80).
+- **Diferido a H5:** ejecutar la suite completa contra el entorno desplegado en Render, después del smoke, con cuentas de prueba y un receptor OTP seguro accesible desde CI. La ejecución aislada no demuestra esos seis recorridos en Render.
 
 ### FEAT-12-T5 — Prueba conjunta con G5
 - **Resultado:** token de usuario G7 aceptado por G5 en `/pedidos/me`; sin token, vencido, firma alterada, emisor incorrecto o `tipo` distinto de `acceso` → 401; usuario sin rol CLIENTE → 403. A solo ve sus pedidos y B no accede a los de A al manipular identificadores. No exigir `aud` adicional a tokens humanos (OpenAPI/kit vigente); esa validación corresponde al perfil de servicio.

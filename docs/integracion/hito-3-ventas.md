@@ -10,10 +10,11 @@ Seguridad en esta conversación. [Acuse de G7 publicado por Luis](https://github
 Marketplace y los otros cinco consumidores conservan su alcance general;
 Marketplace ya no es el recorrido de salida de Hito 3.
 
-Este documento prepara la coordinación; no acredita endpoints implementados,
-credenciales entregadas ni despliegue. La aceptación del recorrido tiene
-evidencia externa; configuración, implementación y prueba conjunta siguen
-pendientes. El plan de nueve
+**Actualización 16-oct-2026:** ambos servicios están en nube y la prueba
+conjunta por API se ejecutó con tokens de usuario; resultados en
+[Prueba conjunta en nube](#prueba-conjunta-en-nube--16-oct-2026). No acredita
+el frontend de G5, una pantalla de pedidos en la SPA de G7, los tokens de
+servicio de A10 ni el cierre de H3. El plan de nueve
 puntos sigue vigente en [plan](../../plan/README.md).
 
 El [plan técnico del recorrido](../../plan/PLAN-IMPLEMENTACION.md) organiza
@@ -42,21 +43,21 @@ se registra por separado como A11, sin alterar A10.
 
 | Dato | Estado / responsable |
 |---|---|
-| Aceptación del recorrido H3 | Ventas confirmó en G5 Backend #2; Luis publicó el acuse de G7. Configuración y ejecución aún pendientes |
-| Disponibilidad de Ventas | Comprometida por Joseph: como máximo jueves 15/10/2026 |
-| Objetivo de disponibilidad de Seguridad | Jueves 15/10/2026, indicado por Luis; capacidad lista y comprobada todavía pendientes |
+| Aceptación del recorrido H3 | Ventas confirmó en G5 Backend #2; Luis publicó el acuse de G7. Prueba por API ejecutada el 16-oct |
+| Disponibilidad de Ventas | Comprometida por Joseph: como máximo jueves 15/10/2026; backend en nube el 16-oct |
+| Objetivo de disponibilidad de Seguridad | Jueves 15/10/2026, indicado por Luis; desplegado y usado el 16-oct |
 | Responsable de F1 de Ventas | Michael, disponibilidad confirmada en #2; incluye el recorrido de pedidos |
 | Responsable del validador JWT de Ventas | Michael, confirmado en #2 |
-| Rama/ubicación de /pedidos/me | Ventas la añadirá en #2 cuando esté lista; todavía pendiente |
-| URL HTTPS de Seguridad y issuer exacto | Pendiente del despliegue; Jose Luis/Sergio/Christian |
-| URL de descubrimiento y JWKS | Derivadas del entorno real, no del mock |
-| URL HTTPS de Ventas y origen del frontend | Pendientes de Ventas |
-| Orígenes CORS autorizados | Los orígenes concretos acordados, sin inventar URLs |
+| Rama/ubicación de /pedidos/me | `main` de G5 Backend, revisión comunicada `03c7fda` (PR #35) |
+| URL HTTPS de Seguridad y issuer exacto | https://g7-auth-service.onrender.com; issuer `https://g7-auth-service.onrender.com/api/v1/auth` (publicado así en el descubrimiento, comprobado 17-oct UTC) |
+| URL de descubrimiento y JWKS | `…/api/v1/auth/.well-known/openid-configuration` y `…/api/v1/auth/.well-known/jwks.json` del entorno real |
+| URL HTTPS de Ventas y origen del frontend | Backend https://g5-servicio-ventas.onrender.com; frontend de G5 pendiente según su equipo |
+| Orígenes CORS autorizados | G7: `https://g7-seguridad-spa.onrender.com`. Las llamadas G5→G7 de servidor no usan CORS |
 | Revisión de contrato/kit consumida | Publicado main 5796622f7c039021e03dd25b2338c6a208320e05, v1 1.1.0/v2 parcial; G5 confirma revisión efectivamente consumida |
-| UUID de clientes A/B y vendedor de prueba | Identificadores de fixture, por confirmar con Eva; no crear cuentas reales aquí |
-| Pedidos de A, ningún pedido de B | Preparación de Ventas; misma identidad UUID |
-| Sesión | Memoria en esta versión; recargar exige login. G7 lo define, Ventas confirma consumo |
-| Prueba conjunta en nube | Objetivo jueves 15; falta hora concreta y evidencia de ambos servicios disponibles |
+| UUID de clientes A/B y vendedor de prueba | A `…f00a`, B `…f00b` (CLIENTE), V `…f00c` (VENDEDOR), prefijo `00000000-0000-4000-8000-00000000`; activos según consulta de solo lectura |
+| Pedidos de A, ningún pedido de B | A con dos pedidos (`PED_2026-00012`, `PED_2026-00013`), B sin pedidos |
+| Sesión | Memoria en esta versión; recargar exige login. Iniciar sesión en G7 no transfiere el token a G5 |
+| Prueba conjunta en nube | Ejecutada el 16-oct-2026 (Lima) por API; ver sección siguiente |
 | Presentación | Sábado 17/10/2026 según la aclaración de Luis; hora no indicada |
 | Margen de correcciones | Objetivo aproximado de dos días, o día y medio según las horas; no afirmar 48 horas exactas sin fijarlas |
 
@@ -109,9 +110,50 @@ requiriendo su información concreta.
 
 Las [pruebas locales del kit con tokens firmados](validacion-hito-3.md)
 pasaron en el punto 9. No ejecutan este recorrido ni prueban el filtrado de
-pedidos: las llamadas en nube y los casos anteriores siguen pendientes.
-El recorrido está confirmado; completar esta ficha y comprobar disponibilidad
-de ambos servicios antes de acreditar integración.
+pedidos; las llamadas en nube se registran en la sección siguiente.
+
+## Prueba conjunta en nube — 16-oct-2026
+
+Ejecución manual del equipo, documentada en `G7_G5_Integracion_API_H3.pdf`
+(6 páginas, adjunto por el equipo; sin contraseñas, tokens ni claves).
+
+| Componente | URL | Revisión |
+|---|---|---|
+| SPA G7 | https://g7-seguridad-spa.onrender.com | Contenido igual al árbol de `82c9414`; SHA del panel no obtenido |
+| Backend G7 | https://g7-auth-service.onrender.com | Reportada `4bd7b61` (`develop`); el PR #55 no forma parte |
+| Backend G5 | https://g5-servicio-ventas.onrender.com | Comunicada `03c7fda` (`main`) |
+
+**Recorrido:** login real en la SPA de G7 → `accessToken` de la respuesta de
+login → introducido de forma oculta en PowerShell → `GET /api/v1/pedidos/me`
+en G5 con `Authorization: Bearer`. El token nunca fue en la URL. No había
+pantalla de pedidos integrada en la SPA de G7. Se usaron **tokens de usuario**:
+es independiente de los tokens de servicio y de los scopes pendientes de #51.
+
+| Caso | Esperado | Observado | Evidencia |
+|---|---|---|---|
+| Sin token | 401 | 401 | E01 |
+| Cliente A autenticado | 200; solo pedidos de A | 200; dos pedidos de A | E02 |
+| Cliente B sin pedidos | 200; `items: []`, `total: 0` | 200; `items: []`, `total: 0`, `page: 1`, `pageSize: 10` | E03 |
+| Usuario válido sin rol CLIENTE (V) | 403 | 403 | E04 |
+| Firma alterada | 401 | 401; el token original dio 200 antes y después | E05 |
+| Token vencido de B | 401 | 401 en el reintento; el primer intento tuvo un fallo de transporte y fue **no concluyente** | E06–E07 |
+| B enviando `clienteId` de A | No cambia el titular | 200 con la lista vacía de B | E08 |
+| Recarga de página | Nuevo login | No ejecutado en esta ronda | — |
+
+**Alcance.** El caso E08 acredita ese parámetro en `/pedidos/me`; no demuestra
+todas las rutas posibles de acceso a pedidos ajenos. La captura E07 no
+conserva el claim `exp` ni el cuerpo del error; la atribución al vencimiento se
+apoya en la secuencia. Las capturas prueban la ejecución del 16-oct, no
+disponibilidad continua.
+
+**Observación posterior (17-oct-2026, 04:48 y 04:54 UTC).** El backend G5
+desplegado respondió `GET /api/v1/pedidos/me` con **200** y lista vacía tanto
+**sin token** como con un token inválido (`Bearer abc.def.ghi`), en lugar del
+401 de E01. Para entonces `main` de G5 ya había avanzado sobre `03c7fda`
+(PRs #36–#38, fusionados entre 04:14 y 04:38 UTC). Los resultados de la tabla
+corresponden a la revisión probada el 16-oct, no a la desplegada después. Se
+debe avisar a G5 en G5 Backend #2 y repetir al menos los casos negativos antes
+de presentar la integración como vigente.
 
 ## Evidencia revisada
 
@@ -122,6 +164,8 @@ de ambos servicios antes de acreditar integración.
 - [Acuerdo de G5 con Seguridad](https://github.com/Taller-SW-Web/G5-Ventas-Postventas/blob/73e44a22f4ce0ba265b308c318ad01bfa3e9298f/integraciones/ACUERDO_G7_SEGURIDAD.md).
 - [Confirmación H3 de Joseph, Michael y fecha objetivo](https://github.com/Taller-SW-Web/G5-Ventas-Postventas-Backend/issues/2), consultada 12-oct; acuse de Luis enlazado en esta ficha.
 - Aclaración de Luis en esta conversación: presentación el sábado y objetivo de disponibilidad el jueves para dejar margen de corrección.
+- [Ficha del entorno G7](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/blob/develop/docs/despliegue/DESPLIEGUE-T005.md#entorno-real-h3) y [evidencia TEC-INFRA-T005](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/blob/develop/docs/evidencia/TEC-INFRA-T005.md) (B#56).
+- `G7_G5_Integracion_API_H3.pdf` y `G7_Evidencias_Pruebas_H3.pdf`, ejecución manual del 16-oct-2026, adjuntos por el equipo.
 
 
 ## Revisión interna posterior — interfaces del recorrido conservadas
