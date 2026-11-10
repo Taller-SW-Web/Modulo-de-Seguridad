@@ -14,9 +14,9 @@ Los niveles de una integración se mantienen separados:
 |---|---|---|
 | `modulo-marketplace` emitió token HTTP 200 con `catalogo:leer` y luego con permisos de Despacho | [FEAT-11](../evidencia/h4/FEAT-11.md) | 4, emisión. El grant se infiere |
 | `modulo-postventa` tiene `inventario:disponibilidad:leer` y emitió token HTTP 200 | [matriz de scopes](matriz-scopes.md) | 3 y 4 |
-| El 6-nov se registró que no existía ningún cliente técnico de prueba provisionado | [FEAT-05 y FEAT-06](../evidencia/h4/FEAT-05-06.md) | Contradice las dos filas anteriores; se resuelve con Q1 |
+| El 6-nov se registró que no existía ningún cliente técnico de prueba provisionado | [FEAT-05 y FEAT-06](../evidencia/h4/FEAT-05-06.md) | Superado: Q1 del 10-nov muestra ocho clientes activos |
 | El catálogo de scopes aprobados está en `R__catalogo_scopes.sql` | Repo backend, `develop` | 2 como archivo; no consta que esté aplicado |
-| Se configuraron clientes para Marketplace, Productos, Ventas, Postventa, Retail, Chatbot y Despacho | Indicado por David | Sin registro en los repositorios; se confirma con Q1 y Q2 |
+| Se configuraron clientes para Marketplace, Productos, Ventas, Postventa, Retail, Chatbot y Despacho | Indicado por David | Confirmado por Q1 y Q2 el 10-nov (nivel 3) |
 
 ## 2. Por verificar: consultas de solo lectura
 
@@ -87,34 +87,74 @@ ORDER BY rol_codigo;
 
 David comparte solo cliente, scopes, audiencias, estados y conteos.
 
-**Resultado:** pendiente de ejecución.
+### Resultado del 10-nov-2026 (ejecutado por David en Supabase)
+
+- **Q0:** las cinco tablas existen con las columnas del esquema documentado.
+- **Q1:** ocho clientes, todos activos: `modulo-chatbot`, `modulo-despacho`, `modulo-marketplace`, `modulo-postventa`, `modulo-productos`, `modulo-retail`, `modulo-ventas` y `simulador-pasarela`. Esto resuelve la contradicción con la evidencia del 6-nov: los clientes existen.
+- **Q5:** ninguna concesión apunta a un scope fuera del catálogo.
+- **Q6:** CLIENTE 32, VENDEDOR 3, ADMIN_VENTAS 5, GESTOR_DESPACHO 1, GESTOR_COMERCIAL 1, ADMIN_SISTEMA 3.
+
+**Q2 — concesiones por cliente** (nivel 3; no acredita emisión ni operación real):
+
+| Cliente | Scopes concedidos |
+|---|---|
+| `modulo-chatbot` | `tokens:introspeccion` · `cotizaciones:calcular`, `seguimientos:leer` · `catalogo:leer`, `precios:leer`, `promociones:leer`, `promociones:evaluar`, `cupones:validar`, `recomendaciones:leer`, `inventario:disponibilidad:leer` |
+| `modulo-despacho` | `usuarios:leer`, `direcciones:leer` · `ventas:pedidos:estado` · `productos:fisicos:leer` |
+| `modulo-marketplace` | `cotizaciones:calcular`, `seguimientos:leer` · `catalogo:leer`, `precios:leer`, `inventario:disponibilidad:leer` · `ventas:pedidos:crear` |
+| `modulo-postventa` | `usuarios:leer` · `inventario:disponibilidad:leer`, `inventario:reintegrar` · `ventas:pedidos:consultar`, `ventas:pedidos:reemplazar` |
+| `modulo-productos` | `tokens:introspeccion`, `roles:leer` · `catalogo:leer`, `precios:leer` |
+| `modulo-retail` | `ventas:pedidos:crear`, `ventas:pedidos:consultar`, `ventas:pedidos:estado` |
+| `modulo-ventas` | `usuarios:leer` · `despachos:crear`, `despachos:cancelar` · `postventa:reembolsos:procesar` · `inventario:reservar`, `inventario:consumir`, `inventario:liberar`, `inventario:operaciones:leer` |
+| `simulador-pasarela` | `ventas:pagos:webhook` |
+
+**Q3:** todo lo esperado para H5 está concedido, salvo **`modulo-chatbot` · `ventas:pedidos:crear` → FALTA CONCEDER**.
+
+**Q4 frente a `R__catalogo_scopes.sql`:**
+
+| Audiencia | Base | Repo | Diferencia deducida |
+|---|---:|---:|---|
+| `api-seguridad` | 4 | 5 | Falta `usuarios:leer:documento` |
+| `api-despacho` | 4 | 4 | — |
+| `api-ventas` | 5 | 5 | La base tiene `ventas:pedidos:reemplazar` y no `ventas:pedidos:anular` |
+| `api-postventa` | 1 | 3 | Faltan `postventa:devoluciones:escribir` y `postventa:reclamos:escribir` |
+| `api-productos` | 13 | 11 | La base tiene además `productos:fisicos:leer` e `inventario:operaciones:leer` |
+
+**Confirmado con Q7 el 10-nov:** la base tiene 27 scopes y la diferencia con el repositorio es exactamente la de la tabla.
+
+```sql
+-- Q7. Códigos del catálogo, para confirmar la diferencia con el repositorio
+SELECT audiencia, codigo FROM scope ORDER BY audiencia, codigo;
+```
+
+**Hallazgos para PO-T2 (Sergio):**
+- `ventas:pedidos:reemplazar`, `inventario:operaciones:leer` y `productos:fisicos:leer` están en la base y concedidos, pero no en el catálogo del repositorio. David informó el 10-nov que los acordó por chat con los módulos dueños y los concedió él mismo durante la semana del 2 al 6-nov, sin documentarlo; no se conserva la fecha exacta ni quién aprobó cada uno. Se registran en la matriz como «concedido; aprobación por chat, fuente no conservada» y se añaden a `R__catalogo_scopes.sql` y a `concesiones-servicio.sql`. La matriz todavía dice que `productos:fisicos:leer` no está confirmado por G6: conviene pedir a G6 una confirmación escrita.
+- **Desde H5, toda concesión nueva se hace desde el módulo de configuración (FEAT-14),** que la audita con autor y fecha. Así no se repite este hueco.
+- La matriz registra muchos más grants de los que dice «Pendiente»: se actualiza con este resultado.
+- Los scopes de Postventa para los canales (`postventa:devoluciones:escribir`, `postventa:reclamos:escribir`), `ventas:pedidos:anular` y `usuarios:leer` para los canales están aprobados en la matriz, pero no concedidos. **H5 no los necesita** para la compra por canal; se conceden solo si un módulo los pide.
 
 ## 3. Grants que H5 puede requerir
 
-Se ejecutan **solo** para las filas que Q3 devuelva como `FALTA CONCEDER`. Cada una tiene respaldo en la matriz.
+Según Q3 del 10-nov, H5 requiere **un solo grant nuevo**. **Concedido el 10-nov** por David; la comprobación devolvió la fila esperada. Falta comprobar la emisión del token (nivel 4).
 
 | Cliente | Scope | Respaldo | Para |
 |---|---|---|---|
-| `modulo-marketplace`, `modulo-retail`, `modulo-chatbot` | `ventas:pedidos:crear` | Aprobado en el acuerdo A10, según la [matriz de scopes](matriz-scopes.md); incluido en `concesiones-servicio.sql` | FEAT-20 compra por canal |
-| `modulo-productos` | `catalogo:leer`, `precios:leer` | Aprobado por G6 en el issue #78, según la matriz; **no** está en `concesiones-servicio.sql` | Integración interna de G6 |
-| `modulo-postventa` | `inventario:disponibilidad:leer` | Aprobado por G6 el 5-nov, según la matriz; **no** está en `concesiones-servicio.sql` | Flujo de cambio de Postventa |
+| `modulo-chatbot` | `ventas:pedidos:crear` | Aprobado en el acuerdo A10 (issue #42), según la [matriz de scopes](matriz-scopes.md); incluido en `concesiones-servicio.sql` | FEAT-20, compra desde Chatbot |
 
 ```sql
--- Idempotente: solo concede a clientes y scopes que ya existen y no duplica filas.
--- Dejar en VALUES únicamente las filas que Q3 marcó como FALTA CONCEDER.
+-- Idempotente: solo concede si el cliente y el scope existen; no duplica.
 INSERT INTO cliente_servicio_scope (client_id, scope)
 SELECT v.client_id, v.scope
-FROM (VALUES
-  ('modulo-marketplace','ventas:pedidos:crear'),
-  ('modulo-retail','ventas:pedidos:crear'),
-  ('modulo-chatbot','ventas:pedidos:crear'),
-  ('modulo-productos','catalogo:leer'),
-  ('modulo-productos','precios:leer')
-) AS v(client_id, scope)
+FROM (VALUES ('modulo-chatbot','ventas:pedidos:crear')) AS v(client_id, scope)
 JOIN cliente_servicio c ON c.client_id = v.client_id
 JOIN scope s ON s.codigo = v.scope
 ON CONFLICT (client_id, scope) DO NOTHING;
+
+-- Comprobación (solo lectura)
+SELECT client_id, scope FROM cliente_servicio_scope
+WHERE client_id = 'modulo-chatbot' AND scope = 'ventas:pedidos:crear';
 ```
+
+`modulo-productos` (`catalogo:leer`, `precios:leer`) y `modulo-postventa` (`inventario:disponibilidad:leer`) ya están concedidos; solo falta añadirlos a `concesiones-servicio.sql` para que el repositorio refleje la base.
 
 Reglas:
 - Si Q3 devuelve `CLIENTE NO EXISTE`, primero se crea el cliente con el runbook del repo backend. Este SQL no crea clientes.
