@@ -21,10 +21,10 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | OPS-T1 | Consultas de solo lectura en Supabase | P1 · mar 10-nov | — | Pendiente |
 | OPS-T2 | Cuentas de prueba y cliente técnico de prueba | P1 · mié 11-nov | OPS-T1; aprobación de Sergio para el cliente nuevo | Pendiente |
 | OPS-T3 | Ajustes de repositorio y Render | P1 · mié 11-nov | — | Pendiente |
-| FEAT-16-T1 | Decisión y propuesta de contrato del token cifrado | P1 · mié 11-nov | — | En PR (ADR-009, contrato 1.2.0) |
-| FEAT-16-T2 | Backend emite el formato cifrado y acepta ambos | P1 | T1 como propuesta | En PR |
-| FEAT-16-T3 | SPA sin leer el contenido del token | P1 | T2 | En PR |
-| FEAT-16-T4 | Evidencia desplegada y kit actualizado | P1 | T2, T3 | Pendiente |
+| FEAT-16-T1 | Decisión y propuesta de contrato del token cifrado | P1 · mié 11-nov | — | Hecho |
+| FEAT-16-T2 | Backend emite el formato cifrado y acepta ambos | P1 | T1 como propuesta | Hecho |
+| FEAT-16-T3 | SPA sin leer el contenido del token | P1 | T2 | Hecho |
+| FEAT-16-T4 | Evidencia desplegada y kit actualizado | P1 | T2, T3 | Hecho ([evidencia](../../../docs/evidencia/h5/FEAT-16.md)) |
 | FEAT-14-T1 | Spec, spec de pantalla y propuesta de contrato | P1 · mié 11-nov | — | Pendiente |
 | FEAT-14-T2 | Backend de gestión de clientes técnicos | P1 | T1 como propuesta | Pendiente |
 | FEAT-14-T3 | Pantalla «Configuración → Clientes técnicos» | P1 | T2 | Pendiente |
