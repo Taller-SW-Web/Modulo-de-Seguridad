@@ -29,6 +29,9 @@ ANNOTATIONS = {'description', 'title', 'examples', 'example', 'deprecated',
 # el catálogo de AccionAuditable o el de scopes.
 PETICIONES_ADITIVAS_V1 = {
     ('/password/recuperar', 'post'): {'canalOrigen'},  # PO-T3, 26-oct-2026
+    ('/auth/login', 'post'): {'formatoAcceso'},  # FEAT-16, ADR-009, 10-nov-2026
+    ('/auth/otp/verificar', 'post'): {'formatoAcceso'},  # FEAT-16, ADR-009
+    ('/auth/refresh', 'post'): {'formatoAcceso'},  # FEAT-16, ADR-009
 }
 
 
@@ -118,7 +121,7 @@ def main():
     assert digest == '4E4420FD1395DBF2A3A0B19F6BB7C8DCAE9091547B0D77C16EA17E7AF2C946E7'
     old, v1, v2 = [DOCS[p.as_uri()] for p in PATHS]
     assert old['info']['version'] == '1.0.0'
-    assert v1['info']['version'] == '1.1.0'
+    assert v1['info']['version'] == '1.2.0'
     assert v2['info']['version'] == '2.0.0'
     total = 0
     for path in PATHS:

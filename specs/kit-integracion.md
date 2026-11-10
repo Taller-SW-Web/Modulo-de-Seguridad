@@ -82,6 +82,9 @@ ni aceptar el issuer que elija el token entrante.
 
 **Usuario:** RS256, firma válida, issuer exacto, vencimiento vigente, `sub` UUID
 y `tipo: "acceso"`. No hay `aud` definido para usuario; no inventarlo.
+El access cifrado opcional ([ADR-009](../docs/arquitectura/adr/009-acceso-cifrado-opcional.md))
+lo usa solo la SPA de Seguridad: un módulo que valida en local no pide
+`formatoAcceso` y sigue recibiendo el JWS.
 **Servicio:** `tipo: "servicio"`, audiencia de la API receptora y scopes
 concedidos (SPEC-17). Estos ejemplos aceptan solo usuarios. Cada endpoint
 autoriza después por roles y por los datos del titular.

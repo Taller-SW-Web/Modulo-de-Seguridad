@@ -21,15 +21,15 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | OPS-T1 | Consultas de solo lectura en Supabase | P1 · mar 10-nov | — | Pendiente |
 | OPS-T2 | Cuentas de prueba y cliente técnico de prueba | P1 · mié 11-nov | OPS-T1; aprobación de Sergio para el cliente nuevo | Pendiente |
 | OPS-T3 | Ajustes de repositorio y Render | P1 · mié 11-nov | — | Pendiente |
-| FEAT-16-T1 | Decisión y propuesta de contrato del token cifrado | P1 · mié 11-nov | — | Pendiente |
-| FEAT-16-T2 | Backend emite el formato cifrado y acepta ambos | P1 | T1 como propuesta | Pendiente |
-| FEAT-16-T3 | SPA sin leer el contenido del token | P1 | T2 | Pendiente |
+| FEAT-16-T1 | Decisión y propuesta de contrato del token cifrado | P1 · mié 11-nov | — | En PR (ADR-009, contrato 1.2.0) |
+| FEAT-16-T2 | Backend emite el formato cifrado y acepta ambos | P1 | T1 como propuesta | En PR |
+| FEAT-16-T3 | SPA sin leer el contenido del token | P1 | T2 | En PR |
 | FEAT-16-T4 | Evidencia desplegada y kit actualizado | P1 | T2, T3 | Pendiente |
 | FEAT-14-T1 | Spec, spec de pantalla y propuesta de contrato | P1 · mié 11-nov | — | Pendiente |
 | FEAT-14-T2 | Backend de gestión de clientes técnicos | P1 | T1 como propuesta | Pendiente |
 | FEAT-14-T3 | Pantalla «Configuración → Clientes técnicos» | P1 | T2 | Pendiente |
 | FEAT-14-T4 | Recorrido desplegado y evidencia | P1 | T2, T3 | Pendiente |
-| FEAT-20-T1 | Acuerdo con G5 sobre la identidad del comprador | P1 | G5 (externo) | Pendiente |
+| FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | En curso |
 | FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Pendiente |
 | FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4 | Pendiente |
 | FEAT-20-T4 | Compra desde Chatbot (G3) | P1 | T1; G3 | Pendiente |
@@ -59,7 +59,7 @@ También en estos dos días: mensajes a G5, G1, G2 (issue #80) y G6 (issue #78),
 
 **Situación:** el token de acceso lleva en claro `email`, `roles` y `permisos`. La SPA lee `permisos` del token. Los otros módulos lo validan con JWKS y leen `roles`.
 
-**Propuesta:** el token se sigue firmando igual y, cuando el cliente lo pide, además se cifra. Sin esa petición, la respuesta es idéntica a la actual. La forma exacta la publica Sergio.
+**Decisión (10-nov, David por delegación del equipo):** [ADR-009](../../../docs/arquitectura/adr/009-acceso-cifrado-opcional.md). El token se sigue firmando igual y, cuando el cliente pide `formatoAcceso: CIFRADO`, se envuelve en JWE (`dir`/`A256GCM`). Sin esa petición, la respuesta es idéntica a la actual. Contrato v1 1.2.0, aditivo.
 
 ### FEAT-16-T1 — Decisión y propuesta
 - **Resultado:** ADR nuevo y propuesta de contrato en `specs/contrato-api/propuestas/`: opción de formato en ingreso, verificación de OTP y renovación; `permisos` en el objeto `usuario` de la respuesta.
@@ -105,9 +105,10 @@ También en estos dos días: mensajes a G5, G1, G2 (issue #80) y G6 (issue #78),
 
 **Objetivo:** una cuenta de G7 compra desde Marketplace, Retail y Chatbot y ve sus pedidos en Ventas. Una cuenta común no es inicio de sesión único.
 
-### FEAT-20-T1 — Acuerdo con G5
-- **Primer paso:** preguntar a G5 cómo recibe `api-ventas` la identidad del comprador al crear un pedido.
-- **Aceptación:** respuesta registrada; si exige un cambio de contrato, pasa a Sergio.
+### FEAT-20-T1 — Confirmar la prueba conjunta con G5
+- **Situación:** el mecanismo ya está definido por G5 (`G5-Ventas-Postventas`, `specs/api/api-ventas.md` y `integraciones/ACUERDO_G7_SEGURIDAD.md`): el canal crea el pedido con su token de servicio (`ventas:pedidos:crear`) y `contacto.clienteId` = `sub` de G7; el cliente lo ve en `GET /pedidos/me` con su propio token. `ventas:pedidos:crear` está concedido a los tres canales (10-nov).
+- **Pendiente de G5:** URL, SHA, issuer y JWKS desplegados; fecha de prueba. Se les sugieren tres mejoras: validar que `clienteId` exista, atar `canal` al `client_id` y registrar ese `client_id` (su RNF-03).
+- **Aceptación:** fecha y versiones confirmadas por G5.
 
 ### FEAT-20-T2 a T4 — Un canal por tarea
 - **Resultado por canal:** pedido creado desde el canal y visible en Ventas para el mismo `sub`; otra cuenta no lo ve.
