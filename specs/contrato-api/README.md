@@ -2,7 +2,7 @@
 
 | Documento | Versión | Uso |
 |---|---|---|
-| [openapi.yaml](openapi.yaml) | 1.1.0 publicada | Evolución aditiva de v1; login/JWKS mantienen la interfaz publicada |
+| [openapi.yaml](openapi.yaml) | 1.2.0 publicada | Evolución aditiva de v1; login/JWKS mantienen la interfaz publicada. 1.2.0 añade `formatoAcceso` opcional y `usuario.permisos` ([ADR-009](../../docs/arquitectura/adr/009-acceso-cifrado-opcional.md)) |
 | [openapi-v2.yaml](openapi-v2.yaml) | 2.0.0 publicada, parcial | Configuración MFA segura y alta administrativa estricta |
 | [Base histórica](historico/openapi-1.0.0.yaml) | 1.0.0 congelada | Referencia exacta del contrato público fijado, no MFA a desplegar |
 
