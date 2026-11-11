@@ -242,7 +242,7 @@ condiciones límite, de error o de seguridad.
 - **La pasarela de API centralizada** del marketplace y la infraestructura de red compartida.
 - **La limitación de tasa por módulo consumidor.**
 - **La federación de identidad** con proveedores externos.
-- **El aprovisionamiento de los clientes de servicio**: cómo se crean, se entregan y se rotan los `client_secret` es trabajo de operaciones (Christian).
+- **El aprovisionamiento de los clientes de servicio**: crearlos, rotar su secreto y conceder scopes pasa a [SPEC-19](SPEC-19-clientes-tecnicos.md) (H5, FEAT-14). Entregar el secreto al equipo dueño sigue siendo una tarea manual por canal privado.
 
 ---
 

@@ -45,6 +45,7 @@ cliente— van aparte, en [`front/`](front/), y las mantiene el dueño de la ép
 | 16 | Gestión de atributos de usuarios | Valery | 5 | [`funcionales/SPEC-16-atributos.md`](funcionales/SPEC-16-atributos.md) | ✅ Aprobada |
 | 17 | Claves públicas, tokens de servicio e introspección | Sergio | 1 · 4 | [`funcionales/SPEC-17-tokens-servicio.md`](funcionales/SPEC-17-tokens-servicio.md) | ✅ Aprobada · contrato publicado |
 | 18 | Consulta de identidad para los demás módulos | Sergio | 1 · 4 | [`funcionales/SPEC-18-consulta-identidad.md`](funcionales/SPEC-18-consulta-identidad.md) | ✅ Aprobada · contrato publicado |
+| 19 | Gestión de clientes técnicos (FEAT-14) | Luis David | 5 | [`funcionales/SPEC-19-clientes-tecnicos.md`](funcionales/SPEC-19-clientes-tecnicos.md) | ✅ Aprobada · contrato v2 2.1.0 publicado (lote H5, 10-nov) |
 
 Además, [`funcionales/SPEC-17-18-api-identidad.plan.md`](funcionales/SPEC-17-18-api-identidad.plan.md) es el **plan de
 implementación** de SPEC-17 y SPEC-18, no una spec: por eso no lleva número propio.

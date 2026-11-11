@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Seguridad — evolución parcial v2
   version: 2.1.0
-  x-estado: revision-local-no-publicada
+  x-estado: publicada-parcial
   description: |-
     Edición local delegada por Sergio según autorización comunicada por Luis David.
     Solo configuración MFA segura y alta administrativa estricta. Login, OTP de
