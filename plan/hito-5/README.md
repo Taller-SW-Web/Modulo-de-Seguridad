@@ -1,6 +1,6 @@
 # Hito 5 — repartición por FEAT
 
-**Corte:** 10-nov-2026. **Fecha límite:** lunes 23-nov-2026 (indicada por David). **Estado:** propuesta v1.0, pendiente de aprobación del PO (Sergio) y del equipo.
+**Corte:** 10-nov-2026. **Fecha límite:** lunes 23-nov-2026 (indicada por David). **Estado:** v1.0 aprobada por el PO (Sergio) el 10-nov-2026; ver [decisiones del PO](DECISIONES-PO.md).
 Continúa el [plan H4 v1.2](../hito-4/README.md). Tareas detalladas en los [tableros H5](../../tareas/hito-5/README.md).
 
 **Fuentes:** documentación `main` `37c6e`; backend `develop` `2d7f385`; frontend `develop` `7fc2dbe`; PR, issues y ejecuciones de GitHub Actions al 9-nov. La rúbrica de H5 y las observaciones del profesor las comunicó David; no hay otro documento oficial en el repositorio.
@@ -146,11 +146,11 @@ Detalle de clientes técnicos, consultas y grants: [verificación de clientes t�
 
 | Tema | Situación | Quién |
 |---|---|---|
-| Forma exacta del formato cifrado del token (FEAT-16) | Propuesta en el tablero de David | Sergio, jue 12-nov |
-| Permiso y rutas del módulo de configuración (FEAT-14) | Propuesta en el tablero de David | Sergio, jue 12-nov |
-| Alcance de SPEC-03 para FEAT-13 | Issues #36 y #37 abiertos | Sergio con Eva |
-| Plataforma de API Management | Por elegir entre las que el equipo pueda usar sin costo | Sergio, jue 12-nov |
-| G3 y G4 en la compra por canal | Sin evidencia de integración en H4 | Sergio y David |
-| Consumidor de eventos si G2 no llega a tiempo | Sin alternativa acordada | Christian y Sergio |
-| Persistencia de la sesión al recargar | Decisión vigente (FRONT-00, H-11); no está en la rúbrica | Sergio |
-| Términos de servicio (H-12) y contacto de soporte (H-14) | Abiertas | Sergio |
+| Forma exacta del formato cifrado del token (FEAT-16) | **Decidido 10-nov:** ratificado ADR-009 y contrato v1 1.2.0 | Sergio |
+| Permiso y rutas del módulo de configuración (FEAT-14) | **Decidido 10-nov:** OpenAPI v2 2.1.0 y permiso `integracion.gestionar` | Sergio |
+| Alcance de SPEC-03 para FEAT-13 | **Decidido 10-nov:** alta y activación entran; registro en tienda, búsqueda por documento y eliminación a 30 días no | Sergio con Eva |
+| Plataforma de API Management | **Decidido 10-nov:** Azure API Management, plan Consumption ([ADR-010](../../docs/arquitectura/adr/010-plataforma-api-management.md)) | Sergio |
+| G3 y G4 en la compra por canal | **Decidido 10-nov:** G1 obligatorio; G3 y G4 entran si confirman hasta el vie 13-nov | Sergio y David |
+| Consumidor de eventos si G2 no llega a tiempo | **Decidido 10-nov:** G2 hasta el vie 13-nov; después G5; último recurso, consumidor propio de demostración | Christian y Sergio |
+| Persistencia de la sesión al recargar | **Decidido 10-nov:** sin cambios en H5 | Sergio |
+| Términos de servicio (H-12) y contacto de soporte (H-14) | **Decidido 10-nov:** términos `2026-11-v1`; soporte por el buzón remitente, que David debe comprobar | Sergio |
