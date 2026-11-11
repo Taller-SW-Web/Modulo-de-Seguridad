@@ -55,7 +55,7 @@ validación de contrato lo comprueba (ver *Impacto en el contrato*).
 
 | Código | Requisito |
 |---|---|
-| RF-19.1 | Todas las operaciones de esta spec exigen un token de usuario con el permiso `integracion.gestionar`, que solo tiene `ADMIN_SISTEMA`. Sin token válido, `401 TOKEN_INVALIDO`; con token sin el permiso, o con token de servicio, `403 SCOPE_INSUFICIENTE`. La autorización se decide antes de comprobar si el cliente existe. |
+| RF-19.1 | Todas las operaciones de esta spec exigen un token de usuario con el permiso `integracion.gestionar`, que solo tiene `ADMIN_SISTEMA`. Sin token válido, `401 TOKEN_INVALIDO`; con token de usuario sin el permiso, `403 SCOPE_INSUFICIENTE`; con token de servicio, `403 TOKEN_NO_APLICABLE` (la cadena de seguridad lo rechaza antes, como en ESC-17.4). La autorización se decide antes de comprobar si el cliente existe. |
 | RF-19.2 | `GET /clientes-servicio` debe devolver todos los clientes con `clientId`, `nombre`, `activo` y `scopes` (código y audiencia), ordenados por `clientId`. **Ninguna respuesta de esta spec devuelve el hash del secreto**, y solo las de RF-19.4 y RF-19.6 devuelven el secreto. |
 | RF-19.3 | `GET /scopes` debe devolver el catálogo de la tabla `scope` (`codigo`, `audiencia`, `descripcion`), ordenado por audiencia y código. Esta spec no crea ni edita scopes del catálogo. |
 | RF-19.4 | `POST /clientes-servicio` crea un cliente activo a partir de `clientId`, `nombre` y `scopes` (opcional, puede ir vacío). El servidor genera el secreto con 256 bits aleatorios, en base64url sin relleno; guarda solo su hash SHA-256 en hex, el mismo formato que verifica `POST /auth/token`; y responde `201` con el cliente y `clientSecret`. |
@@ -110,9 +110,9 @@ validación de contrato lo comprueba (ver *Impacto en el contrato*).
 - **Entonces** una nueva emisión responde `401 CLIENTE_INVALIDO`, el token ya emitido sigue validando hasta su `exp` (límite declarado de SPEC-17) y al reactivar el cliente vuelve a emitir con los mismos scopes.
 
 ### ESC-19.8 Sin permiso o con token de servicio *(caso borde)*
-- **Dado** un usuario `CLIENTE`, o un módulo con token de servicio,
+- **Dado** un usuario `CLIENTE` con su token, o un módulo con su token de servicio,
 - **Cuando** llama a cualquier ruta de esta spec, con un `clientId` que exista o no,
-- **Entonces** responde `403 SCOPE_INSUFICIENTE` con el mismo cuerpo en ambos casos, no ejecuta nada y registra `ACCESO_DENEGADO`.
+- **Entonces** al usuario le responde `403 SCOPE_INSUFICIENTE` y al módulo `403 TOKEN_NO_APLICABLE`; en cada caso el cuerpo es el mismo exista o no el `clientId`, no ejecuta nada y registra `ACCESO_DENEGADO`.
 
 ### ESC-19.9 Ninguna lectura expone el secreto *(caso borde)*
 - **Dado** varios clientes creados y rotados,
