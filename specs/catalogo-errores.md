@@ -84,9 +84,10 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 | `CLIENTE_INVALIDO` ✅ | 401 | 17 | El `client_id` o el `client_secret` del módulo consumidor no son válidos |
 | `CUENTA_NO_DISPONIBLE` ✅ | 403 | 15 | Un administrador intenta bloquear una cuenta `INACTIVO` o `PENDIENTE_VERIFICACION`. **Ya no lo devuelve el login**, que responde `401` |
 | `TOKEN_NO_APLICABLE` ✅ | 403 | 17, 19 | Un token de servicio intenta una operación que actúa en nombre de una persona |
-| `SCOPE_INSUFICIENTE` ✅ | 403 | 03, 04, 11, 13, 15, 16, 17, 18 | El token es válido pero le falta el scope (a un módulo) o el permiso (a una persona) necesario. **No se revela cuál haría falta**. El nombre dice *scope* por razones históricas: ya está publicado y no se renombra |
-| `NO_ENCONTRADO` ✅ | 404 | 03, 04, 11, 15, 16, 18 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
+| `SCOPE_INSUFICIENTE` ✅ | 403 | 03, 04, 11, 13, 15, 16, 17, 18, 19 | El token es válido pero le falta el scope (a un módulo) o el permiso (a una persona) necesario. **No se revela cuál haría falta**. El nombre dice *scope* por razones históricas: ya está publicado y no se renombra |
+| `NO_ENCONTRADO` ✅ | 404 | 03, 04, 11, 15, 16, 18, 19 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
 | `CORREO_NO_DISPONIBLE` ✅ | 409 | 01, 03 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
+| `CLIENTE_SERVICIO_EXISTENTE` | 409 | 19 | En el alta de un cliente técnico, el `clientId` ya existe, activo o no. Solo lo ve un `ADMIN_SISTEMA`; no afecta a los módulos consumidores |
 | `DOCUMENTO_NO_DISPONIBLE` | 409 | 03 | En el registro asistido, el documento ya pertenece a una cuenta: el vendedor debe buscarlo (A6, A7) |
 | `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 03, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, más de 3 recuperaciones en una hora para el mismo correo, o más de 60 búsquedas por documento en una hora por vendedor |
 | `NO_DISPONIBLE` ✅ | 503 | Todas | Dependencia caída: base de datos, cola de correo o auditoría crítica |
@@ -174,12 +175,6 @@ Si una spec necesita uno nuevo, se añade aquí y al contrato en el mismo cambio
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `ATRIBUTO_NO_APLICABLE` | 422 | Se intenta asignar un atributo de vendedor a un cliente, o al revés |
-
-### SPEC-19 — Clientes técnicos *(propuesta H5, se publica en el lote PO-T1)*
-
-| Código | HTTP | Cuándo |
-|---|---|---|
-| `CLIENTE_SERVICIO_EXISTENTE` | 409 | Un administrador intenta crear un cliente técnico con un `clientId` que ya existe, activo o no. Solo lo ve un `ADMIN_SISTEMA`, así que no permite enumerar cuentas |
 
 ---
 

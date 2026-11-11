@@ -45,7 +45,7 @@ cliente— van aparte, en [`front/`](front/), y las mantiene el dueño de la ép
 | 16 | Gestión de atributos de usuarios | Valery | 5 | [`funcionales/SPEC-16-atributos.md`](funcionales/SPEC-16-atributos.md) | ✅ Aprobada |
 | 17 | Claves públicas, tokens de servicio e introspección | Sergio | 1 · 4 | [`funcionales/SPEC-17-tokens-servicio.md`](funcionales/SPEC-17-tokens-servicio.md) | ✅ Aprobada · contrato publicado |
 | 18 | Consulta de identidad para los demás módulos | Sergio | 1 · 4 | [`funcionales/SPEC-18-consulta-identidad.md`](funcionales/SPEC-18-consulta-identidad.md) | ✅ Aprobada · contrato publicado |
-| 19 | Gestión de clientes técnicos (FEAT-14) | Luis David | 5 | [`funcionales/SPEC-19-clientes-tecnicos.md`](funcionales/SPEC-19-clientes-tecnicos.md) | 🔶 En revisión · contrato v2 propuesto |
+| 19 | Gestión de clientes técnicos (FEAT-14) | Luis David | 5 | [`funcionales/SPEC-19-clientes-tecnicos.md`](funcionales/SPEC-19-clientes-tecnicos.md) | ✅ Aprobada · contrato v2 2.1.0 publicado (lote H5, 10-nov) |
 
 Además, [`funcionales/SPEC-17-18-api-identidad.plan.md`](funcionales/SPEC-17-18-api-identidad.plan.md) es el **plan de
 implementación** de SPEC-17 y SPEC-18, no una spec: por eso no lleva número propio.
@@ -134,6 +134,11 @@ Definición publicada v1 1.1.0 / v2 2.0.0 parcial en main 5796622f7c039021e03dd2
 | `POST /api/v2/auth/mfa/cambios/reenviar` | 10 | Publicado 2.0.0 parcial; implementación pendiente |
 | `POST /api/v2/auth/mfa/cambios/confirmar` | 10 | Publicado 2.0.0 parcial; implementación pendiente |
 | `POST /api/v2/usuarios` | 03 | Publicado 2.0.0 parcial; alta estricta |
+| `GET` · `POST /api/v2/clientes-servicio` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
+| `POST /api/v2/clientes-servicio/{clientId}/secreto` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
+| `POST /api/v2/clientes-servicio/{clientId}/desactivar` · `/reactivar` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
+| `POST /api/v2/clientes-servicio/{clientId}/scopes` · `DELETE …/scopes/{scope}` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
+| `GET /api/v2/scopes` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
 | `POST /usuarios/{id}/roles` | 11 | ✅ |
 | `DELETE /usuarios/{id}/roles/{rol}` | 11 | ✅ |
 | `GET /auditoria` | 13 | ✅ |
