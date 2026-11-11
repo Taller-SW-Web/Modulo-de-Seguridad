@@ -118,6 +118,9 @@ operación si no se pudieron auditar (RF-12.6).
 | `ACCESO_DENEGADO` | SPEC-17 y cualquier endpoint protegido | No |
 | `AUDITORIA_CONSULTADA` / `AUDITORIA_EXPORTADA` | SPEC-13 | No |
 | `AUDITORIA_PURGADA` | SPEC-12 | No |
+| `CLIENTE_SERVICIO_CREADO` / `CLIENTE_SERVICIO_DESACTIVADO` / `CLIENTE_SERVICIO_REACTIVADO` | SPEC-19 (propuesta H5) | Sí |
+| `SECRETO_SERVICIO_ROTADO` | SPEC-19 (propuesta H5) | Sí |
+| `SCOPE_CONCEDIDO` / `SCOPE_REVOCADO` | SPEC-19 (propuesta H5) | Sí |
 
 ---
 

@@ -83,6 +83,7 @@ nunca.
 | `atributos.editar` | Editar los atributos de cualquier cuenta | SPEC-16 | `ADMIN_SISTEMA` |
 | `cliente.registrar` | Registrar a un cliente en tienda (A6) | SPEC-03 | `VENDEDOR` |
 | `cliente.buscar` | Encontrar a un cliente por su documento (A7) | SPEC-03 | `VENDEDOR` |
+| `integracion.gestionar` | Gestionar clientes técnicos y sus scopes (propuesta H5) | SPEC-19 | `ADMIN_SISTEMA` |
 
 ---
 
@@ -121,7 +122,7 @@ condiciones límite, de error o de seguridad.
 
 ### ESC-11.4 Cálculo de permisos efectivos en la emisión del token
 
-**Dado** un usuario que posee los roles `ADMIN_SISTEMA` (ocho permisos) y `VENDEDOR` (`cliente.registrar` y `cliente.buscar`).
+**Dado** un usuario que posee los roles `ADMIN_SISTEMA` (nueve permisos desde SPEC-19) y `VENDEDOR` (`cliente.registrar` y `cliente.buscar`).
 
 **Cuando** se emite o renueva su `accessToken`.
 
@@ -149,7 +150,7 @@ condiciones límite, de error o de seguridad.
 
 **Cuando** inicia sesión y recibe su `accessToken`.
 
-**Entonces** el claim `permisos` contiene los ocho permisos del catálogo de este módulo (`usuario.ver`, `usuario.crear`… `atributos.editar`), sin duplicados y con punto.
+**Entonces** el claim `permisos` contiene los nueve permisos del catálogo de este módulo (`usuario.ver`, `usuario.crear`… `atributos.editar` e `integracion.gestionar`; ocho hasta SPEC-19), sin duplicados y con punto.
 
 ---
 

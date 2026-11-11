@@ -25,10 +25,10 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | FEAT-16-T2 | Backend emite el formato cifrado y acepta ambos | P1 | T1 como propuesta | Hecho |
 | FEAT-16-T3 | SPA sin leer el contenido del token | P1 | T2 | Hecho |
 | FEAT-16-T4 | Evidencia desplegada y kit actualizado | P1 | T2, T3 | Hecho ([evidencia](../../../docs/evidencia/h5/FEAT-16.md)) |
-| FEAT-14-T1 | Spec, spec de pantalla y propuesta de contrato | P1 · mié 11-nov | — | Pendiente |
-| FEAT-14-T2 | Backend de gestión de clientes técnicos | P1 | T1 como propuesta | Pendiente |
-| FEAT-14-T3 | Pantalla «Configuración → Clientes técnicos» | P1 | T2 | Pendiente |
-| FEAT-14-T4 | Recorrido desplegado y evidencia | P1 | T2, T3 | Pendiente |
+| FEAT-14-T1 | Spec, spec de pantalla y propuesta de contrato | P1 · mié 11-nov | — | Hecho |
+| FEAT-14-T2 | Backend de gestión de clientes técnicos | P1 | T1 como propuesta | Hecho |
+| FEAT-14-T3 | Pantalla «Configuración → Clientes técnicos» | P1 | T2 | Hecho |
+| FEAT-14-T4 | Recorrido desplegado y evidencia | P1 | T2, T3 | Hecho ([evidencia](../../../docs/evidencia/h5/FEAT-14.md)) |
 | FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | En curso |
 | FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Pendiente |
 | FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4 | Pendiente |
