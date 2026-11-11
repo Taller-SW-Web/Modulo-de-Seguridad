@@ -4,8 +4,8 @@
 |---|---|
 | **Responsable** | Luis David Morales Brenis |
 | **Hito objetivo** | Hito 5 (FEAT-14) |
-| **Estado** | En revisión |
-| **Aprobada por** | Pendiente. Decide David por delegación del equipo, 10-nov-2026; el contrato lo publica Sergio en el lote H5 (PO-T1) |
+| **Estado** | Aprobada |
+| **Aprobada por** | Sergio Osorio (PO), 10-nov-2026, con el lote de contrato H5 (PO-T1): [OpenAPI v2 2.1.0](../contrato-api/openapi-v2.yaml) |
 
 ---
 
@@ -55,7 +55,7 @@ validación de contrato lo comprueba (ver *Impacto en el contrato*).
 
 | Código | Requisito |
 |---|---|
-| RF-19.1 | Todas las operaciones de esta spec exigen un token de usuario con el permiso `integracion.gestionar`, que solo tiene `ADMIN_SISTEMA`. Sin token válido, `401 TOKEN_INVALIDO`; con token sin el permiso, o con token de servicio, `403 SCOPE_INSUFICIENTE`. La autorización se decide antes de comprobar si el cliente existe. |
+| RF-19.1 | Todas las operaciones de esta spec exigen un token de usuario con el permiso `integracion.gestionar`, que solo tiene `ADMIN_SISTEMA`. Sin token válido, `401 TOKEN_INVALIDO`; con token de usuario sin el permiso, `403 SCOPE_INSUFICIENTE`; con token de servicio, `403 TOKEN_NO_APLICABLE`, igual que en las demás rutas de persona. La autorización se decide antes de comprobar si el cliente existe. |
 | RF-19.2 | `GET /clientes-servicio` debe devolver todos los clientes con `clientId`, `nombre`, `activo` y `scopes` (código y audiencia), ordenados por `clientId`. **Ninguna respuesta de esta spec devuelve el hash del secreto**, y solo las de RF-19.4 y RF-19.6 devuelven el secreto. |
 | RF-19.3 | `GET /scopes` debe devolver el catálogo de la tabla `scope` (`codigo`, `audiencia`, `descripcion`), ordenado por audiencia y código. Esta spec no crea ni edita scopes del catálogo. |
 | RF-19.4 | `POST /clientes-servicio` crea un cliente activo a partir de `clientId`, `nombre` y `scopes` (opcional, puede ir vacío). El servidor genera el secreto con 256 bits aleatorios, en base64url sin relleno; guarda solo su hash SHA-256 en hex, el mismo formato que verifica `POST /auth/token`; y responde `201` con el cliente y `clientSecret`. |
@@ -112,7 +112,7 @@ validación de contrato lo comprueba (ver *Impacto en el contrato*).
 ### ESC-19.8 Sin permiso o con token de servicio *(caso borde)*
 - **Dado** un usuario `CLIENTE`, o un módulo con token de servicio,
 - **Cuando** llama a cualquier ruta de esta spec, con un `clientId` que exista o no,
-- **Entonces** responde `403 SCOPE_INSUFICIENTE` con el mismo cuerpo en ambos casos, no ejecuta nada y registra `ACCESO_DENEGADO`.
+- **Entonces** responde `403` (`SCOPE_INSUFICIENTE` al usuario, `TOKEN_NO_APLICABLE` al módulo) con el mismo cuerpo exista o no el `clientId`, no ejecuta nada y registra `ACCESO_DENEGADO`.
 
 ### ESC-19.9 Ninguna lectura expone el secreto *(caso borde)*
 - **Dado** varios clientes creados y rotados,
@@ -151,21 +151,21 @@ validación de contrato lo comprueba (ver *Impacto en el contrato*).
 ## Impacto en el contrato
 
 Rutas nuevas en `openapi-v2.yaml`, con base `/api/v2`. No cambian ninguna ruta
-de v1 ni el token de usuario más allá del permiso nuevo. El fragmento propuesto
-está en [`propuestas/feat-14-clientes-tecnicos.md`](../contrato-api/propuestas/feat-14-clientes-tecnicos.md).
+de v1 ni el token de usuario más allá del permiso nuevo. Publicadas por el PO en
+[`openapi-v2.yaml`](../contrato-api/openapi-v2.yaml) 2.1.0, a partir de la implementación ya fusionada en el backend.
 
 | Endpoint / catálogo | Añade, modifica o elimina | Acordado con el PO |
 |---|---|---|
-| `GET /api/v2/clientes-servicio` | Añade | ⬜ Lote H5 (PO-T1) |
-| `POST /api/v2/clientes-servicio` | Añade | ⬜ |
-| `POST /api/v2/clientes-servicio/{clientId}/secreto` | Añade | ⬜ |
-| `POST /api/v2/clientes-servicio/{clientId}/desactivar` y `/reactivar` | Añade | ⬜ |
-| `POST /api/v2/clientes-servicio/{clientId}/scopes` | Añade | ⬜ |
-| `DELETE /api/v2/clientes-servicio/{clientId}/scopes/{scope}` | Añade | ⬜ |
-| `GET /api/v2/scopes` | Añade | ⬜ |
-| Permiso `integracion.gestionar` para `ADMIN_SISTEMA` (SPEC-11) | Añade: el claim `permisos` del administrador pasa de 8 a 9 valores | ⬜ |
-| Código `CLIENTE_SERVICIO_EXISTENTE` (409) | Añade | ⬜ |
-| Seis acciones auditables de RF-19.13 (SPEC-12) | Añade | ⬜ |
+| `GET /api/v2/clientes-servicio` | Añade | ✅ Lote H5, 10-nov |
+| `POST /api/v2/clientes-servicio` | Añade | ✅ Lote H5, 10-nov |
+| `POST /api/v2/clientes-servicio/{clientId}/secreto` | Añade | ✅ Lote H5, 10-nov |
+| `POST /api/v2/clientes-servicio/{clientId}/desactivar` y `/reactivar` | Añade | ✅ Lote H5, 10-nov |
+| `POST /api/v2/clientes-servicio/{clientId}/scopes` | Añade | ✅ Lote H5, 10-nov |
+| `DELETE /api/v2/clientes-servicio/{clientId}/scopes/{scope}` | Añade | ✅ Lote H5, 10-nov |
+| `GET /api/v2/scopes` | Añade | ✅ Lote H5, 10-nov |
+| Permiso `integracion.gestionar` para `ADMIN_SISTEMA` (SPEC-11) | Añade: el claim `permisos` del administrador pasa de 8 a 9 valores | ✅ Lote H5, 10-nov (SPEC-11) |
+| Código `CLIENTE_SERVICIO_EXISTENTE` (409) | Añade | ✅ Lote H5, 10-nov (catálogo de errores) |
+| Seis acciones auditables de RF-19.13 (SPEC-12) | Añade | ✅ Lote H5, 10-nov (SPEC-12) |
 | Eventos | Ninguno | — |
 
 ---

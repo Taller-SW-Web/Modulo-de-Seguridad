@@ -133,6 +133,11 @@ Definición publicada v1 1.1.0 / v2 2.0.0 parcial en main 5796622f7c039021e03dd2
 | `POST /api/v2/auth/mfa/cambios/reenviar` | 10 | Publicado 2.0.0 parcial; implementación pendiente |
 | `POST /api/v2/auth/mfa/cambios/confirmar` | 10 | Publicado 2.0.0 parcial; implementación pendiente |
 | `POST /api/v2/usuarios` | 03 | Publicado 2.0.0 parcial; alta estricta |
+| `GET` · `POST /api/v2/clientes-servicio` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
+| `POST /api/v2/clientes-servicio/{clientId}/secreto` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
+| `POST /api/v2/clientes-servicio/{clientId}/desactivar` · `/reactivar` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
+| `POST /api/v2/clientes-servicio/{clientId}/scopes` · `DELETE …/scopes/{scope}` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
+| `GET /api/v2/scopes` | 19 | Publicado 2.1.0 (lote H5); backend fusionado en `develop` |
 | `POST /usuarios/{id}/roles` | 11 | ✅ |
 | `DELETE /usuarios/{id}/roles/{rol}` | 11 | ✅ |
 | `GET /auditoria` | 13 | ✅ |

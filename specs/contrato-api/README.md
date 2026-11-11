@@ -3,7 +3,7 @@
 | Documento | Versión | Uso |
 |---|---|---|
 | [openapi.yaml](openapi.yaml) | 1.2.0 publicada | Evolución aditiva de v1; login/JWKS mantienen la interfaz publicada. 1.2.0 añade `formatoAcceso` opcional y `usuario.permisos` ([ADR-009](../../docs/arquitectura/adr/009-acceso-cifrado-opcional.md)) |
-| [openapi-v2.yaml](openapi-v2.yaml) | 2.0.0 publicada, parcial | Configuración MFA segura y alta administrativa estricta |
+| [openapi-v2.yaml](openapi-v2.yaml) | 2.1.0 publicada, parcial | Configuración MFA segura, alta administrativa estricta y, desde 2.1.0, gestión de clientes técnicos ([SPEC-19](../funcionales/SPEC-19-clientes-tecnicos.md)) |
 | [Base histórica](historico/openapi-1.0.0.yaml) | 1.0.0 congelada | Referencia exacta del contrato público fijado, no MFA a desplegar |
 
 Definiciones publicadas por [PR #45/#46](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/pull/46),
@@ -13,6 +13,18 @@ Sergio conserva
 propiedad contractual; edición de esta revisión delegada según autorización
 comunicada por Luis. [ADR-008](../../docs/arquitectura/adr/008-evolucion-mfa-y-alta-administrativa.md)
 registra compatibilidad, límites de publicación y transición.
+
+## Lote de contrato H5 (10-nov-2026)
+
+Publicado por Sergio (PO-T1). Todo es aditivo: nada de lo que ya consumen los
+otros módulos cambia.
+
+| Cambio | Documento | Afecta a los módulos consumidores |
+|---|---|---|
+| `formatoAcceso` opcional y `usuario.permisos` (FEAT-16, [ADR-009](../../docs/arquitectura/adr/009-acceso-cifrado-opcional.md)) | v1 1.2.0 | No, salvo que pidan `formatoAcceso: CIFRADO`. Sin ese campo la respuesta es la de siempre |
+| Gestión de clientes técnicos en `/clientes-servicio` y `/scopes` (FEAT-14, SPEC-19) | v2 2.1.0 | No. Son rutas de administración para `ADMIN_SISTEMA` |
+| Permiso `integracion.gestionar` en el claim `permisos` de `ADMIN_SISTEMA` | SPEC-11 | No. `permisos` solo lleva permisos de este módulo |
+| Alta administrativa de personal `POST /api/v2/usuarios` (FEAT-13) | v2, sin cambios desde 2.0.0 | No. El alcance está en [decisiones del PO para H5](../../plan/hito-5/DECISIONES-PO.md) |
 
 ## Verificar
 
