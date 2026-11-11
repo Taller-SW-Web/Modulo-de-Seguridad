@@ -14,14 +14,14 @@ Sus PR los revisa Juan José; él revisa los de David, que trabaja en el paquete
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| PO-T1 | Lote único de contrato H5 | P1 · jue 12-nov | Propuestas de David (mié 11-nov) | En PR (10-nov). Falta el aviso a los seis módulos |
-| PO-T2 | Matriz de scopes y concesiones al día | P1 | David OPS-T1 | En PR (10-nov): documentación #90 y backend #88 |
-| PO-T3 | Decisiones abiertas | P1 | — | En PR (10-nov): [decisiones del PO](../../../plan/hito-5/DECISIONES-PO.md) |
-| FEAT-19-T1 | Plataforma de API Management elegida | P1 · jue 12-nov | — | En PR (10-nov): [ADR-010](../../../docs/arquitectura/adr/010-plataforma-api-management.md) |
+| PO-T1 | Lote único de contrato H5 | P1 · jue 12-nov | Propuestas de David (mié 11-nov) | Fusionado (#91). Falta el aviso a los seis módulos |
+| PO-T2 | Matriz de scopes y concesiones al día | P1 | David OPS-T1 | Backend #88 fusionado y catálogo de 31 scopes aplicado en Supabase; matriz en documentación #90 |
+| PO-T3 | Decisiones abiertas | P1 | — | Fusionado (#91): [decisiones del PO](../../../plan/hito-5/DECISIONES-PO.md) |
+| FEAT-19-T1 | Plataforma de API Management elegida | P1 · jue 12-nov | — | Fusionado (#91): [ADR-010](../../../docs/arquitectura/adr/010-plataforma-api-management.md) |
 | FEAT-19-T2 | API de G7 publicada en la plataforma | P1 | T1 | Bloqueada: falta la cuenta de Azure for Students. Plantilla y guiones listos en el repo backend |
 | FEAT-19-T3 | Seguridad, límite de uso y monitoreo, con evidencia | P1 | T2 | Pendiente |
-| FEAT-05-T4 | Rotación de clave con dos `kid` | P2 | David ejecuta en Render | Pendiente. El 10-nov el JWKS desplegado publica una sola clave; pasos y guion de comprobación listos |
-| FEAT-06-T4 | Consulta de identidad con 200 y 403 | P2 | David OPS-T2 | En curso. Cliente `modulo-prueba-h5` aprobado; guion de comprobación listo |
+| FEAT-05-T4 | Rotación de clave con dos `kid` | P2 | David ejecuta en Render | Programada para el jue 12-nov; guion corregido para el acceso cifrado |
+| FEAT-06-T4 | Consulta de identidad con 200 y 403 | P2 | David OPS-T2 | Verificada (10-nov): [evidencia](../../../docs/evidencia/h5/FEAT-05-06.md) |
 
 ## PO — contrato y decisiones (P1)
 
