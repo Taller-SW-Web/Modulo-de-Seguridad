@@ -18,8 +18,8 @@ Sus PR los revisa Juan José; él revisa los de David, que trabaja en el paquete
 | PO-T2 | Matriz de scopes y concesiones al día | P1 | David OPS-T1 | Backend #88 fusionado y catálogo de 31 scopes aplicado en Supabase; matriz en documentación #90 |
 | PO-T3 | Decisiones abiertas | P1 | — | Fusionado (#91): [decisiones del PO](../../../plan/hito-5/DECISIONES-PO.md) |
 | FEAT-19-T1 | Plataforma de API Management elegida | P1 · jue 12-nov | — | Fusionado (#91): [ADR-010](../../../docs/arquitectura/adr/010-plataforma-api-management.md) |
-| FEAT-19-T2 | API de G7 publicada en la plataforma | P1 | T1 | Bloqueada: falta la cuenta de Azure for Students. Plantilla y guiones listos en el repo backend |
-| FEAT-19-T3 | Seguridad, límite de uso y monitoreo, con evidencia | P1 | T2 | Pendiente |
+| FEAT-19-T2 | API de G7 publicada en la plataforma | P1 | T1 | Desplegada y comprobada (10-nov): [evidencia](../../../docs/evidencia/h5/FEAT-19.md). Plantilla en backend #89 |
+| FEAT-19-T3 | Seguridad, límite de uso y monitoreo, con evidencia | P1 | T2 | Verificada (10-nov): 401 sin clave, 429 sobre el límite, métricas en Azure Monitor. Falta la captura del panel |
 | FEAT-05-T4 | Rotación de clave con dos `kid` | P2 | David ejecuta en Render | Programada para el jue 12-nov; guion corregido para el acceso cifrado |
 | FEAT-06-T4 | Consulta de identidad con 200 y 403 | P2 | David OPS-T2 | Verificada (10-nov): [evidencia](../../../docs/evidencia/h5/FEAT-05-06.md) |
 
@@ -53,11 +53,13 @@ API Management es gestionar la API de forma centralizada: publicarla, asegurarla
 ### FEAT-19-T2 — Publicación
 - **Resultado:** la API de G7 importada desde el OpenAPI y accesible por la plataforma.
 - **Aceptación:** las rutas responden igual por la plataforma que de forma directa. La URL directa sigue funcionando: ningún módulo está obligado a cambiar.
+- **Estado (10-nov):** pasarela `g7-seguridad-apim` desplegada en South Central US; cuatro rutas responden igual por la pasarela y directo.
 
 ### FEAT-19-T3 — Seguridad, límite y monitoreo
 - **Resultado:** una política de acceso, un límite de peticiones demostrable y el panel de uso de la plataforma.
 - **Aceptación:** una petición por encima del límite se rechaza; el panel muestra el tráfico de la prueba.
-- **Evidencia:** `docs/evidencia/h5/FEAT-19.md`, sin claves.
+- **Evidencia:** [`docs/evidencia/h5/FEAT-19.md`](../../../docs/evidencia/h5/FEAT-19.md), sin claves.
+- **Estado (10-nov):** sin clave → 401; ráfaga de 40 → 27 con 200 y 13 con 429; Azure Monitor separa el tráfico por código. Falta adjuntar la captura del panel de métricas.
 
 ## FEAT-05-T4 y FEAT-06-T4 (P2)
 
