@@ -1,8 +1,17 @@
 # Matriz de scopes y concesiones
 
-**Corte:** 16-oct-2026. Registro documental, no aprovisionamiento realizado.
+**Corte:** 10-nov-2026. Las aprobaciones son las del corte del 16-oct más las
+registradas después; la última columna viene de la consulta de solo lectura que
+David ejecutó en Supabase el 10-nov ([resultado](hito-5-clientes-tecnicos.md)).
 Cada fila identifica dueño de API, scope, audiencia, consumidor y evidencia.
 Un scope solicitado/provisional/condicionado no se emite como aprobado.
+
+Una integración pasa por seis niveles y esta matriz no los mezcla:
+1. scope aprobado por su API dueña; 2. scope registrado en el catálogo;
+3. concesión al cliente en la base; 4. token emitido; 5. operación real contra la
+API receptora; 6. prueba conjunta desplegada con evidencia. La columna «Estado de
+aprobación» cubre el nivel 1 y la última columna los niveles 3 y 4. Los niveles
+5 y 6 se registran en la evidencia de cada FEAT.
 
 [Acuerdos](acuerdos.md) gobierna decisiones y [kit](../../specs/kit-integracion.md)
 resume el consumo. El mecanismo sigue siendo genérico: registrar scope con
@@ -11,62 +20,95 @@ externos. Los pedidos nuevos siguen por issues de integración.
 
 ## Concesiones por consumidor
 
-| API dueña | Scope | Audiencia de servicio | Consumidor | Estado de aprobación | Acuerdo / issue | Aprovisionamiento |
+| API dueña | Scope | Audiencia de servicio | Consumidor | Estado de aprobación | Acuerdo / issue | Concesión y emisión al 10-nov |
 |---|---|---|---|---|---|---|
-| Seguridad | usuarios:leer | api-seguridad | modulo-marketplace | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | usuarios:leer | api-seguridad | modulo-chatbot | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | tokens:introspeccion | api-seguridad | modulo-chatbot | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | usuarios:leer | api-seguridad | modulo-retail | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | roles:leer | api-seguridad | modulo-retail | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | usuarios:leer | api-seguridad | modulo-ventas | Aprobada | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | usuarios:leer | api-seguridad | modulo-postventa | Aprobada | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | usuarios:leer | api-seguridad | modulo-despacho | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | direcciones:leer | api-seguridad | modulo-despacho | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | tokens:introspeccion | api-seguridad | modulo-productos | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Seguridad | roles:leer | api-seguridad | modulo-productos | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Despacho | cotizaciones:calcular | api-despacho | modulo-marketplace | Aprobada; aud/401/403 confirmados en #18 | [A4 / #18](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/18) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Despacho | seguimientos:leer | api-despacho | modulo-marketplace | Aprobada; aud/401/403 confirmados en #18 | [A4 / #18](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/18) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Despacho | cotizaciones:calcular | api-despacho | modulo-chatbot | Aprobada; contrato A8 documentado | [A8](acuerdos.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Despacho | seguimientos:leer | api-despacho | modulo-chatbot | Aprobada; contrato A8 documentado | [A8](acuerdos.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Despacho | despachos:crear | api-despacho | modulo-ventas | Aprobada en A10; dueño contrastado en contrato Despacho §3.4 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) / [evidencia G2](correcciones-modulos.md#g2--despacho) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Despacho | despachos:cancelar | api-despacho | modulo-ventas | Aprobada en A10; dueño contrastado en contrato Despacho §3.4 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) / [evidencia G2](correcciones-modulos.md#g2--despacho) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pedidos:crear | api-ventas | modulo-marketplace | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pedidos:anular | api-ventas | modulo-marketplace | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Postventa | postventa:devoluciones:escribir | api-postventa | modulo-marketplace | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Postventa | postventa:reclamos:escribir | api-postventa | modulo-marketplace | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pedidos:crear | api-ventas | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pedidos:anular | api-ventas | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Postventa | postventa:devoluciones:escribir | api-postventa | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Postventa | postventa:reclamos:escribir | api-postventa | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pagos:webhook | api-ventas | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pedidos:crear | api-ventas | modulo-retail | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pedidos:anular | api-ventas | modulo-retail | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Postventa | postventa:devoluciones:escribir | api-postventa | modulo-retail | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Postventa | postventa:reclamos:escribir | api-postventa | modulo-retail | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pedidos:estado | api-ventas | modulo-despacho | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pagos:webhook | api-ventas | simulador-pasarela | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Postventa | postventa:reembolsos:procesar | api-postventa | modulo-ventas | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | catalogo:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H3 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | catalogo:leer | api-productos | modulo-marketplace | Aprobada; G6 aprobó `client_credentials` para `modulo-marketplace` con audiencia `api-productos` y scope `catalogo:leer`, comunicado por G1 (David, 26-oct) para H4. Uso pedido: H4 | David Brenis, grupo de trabajo 26-oct (relevo de G1↔G6) | Pendiente; Christian aprovisiona cliente/grant según `docs/runbooks/clientes-servicio.md` |
-| Productos | precios:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H3 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | promociones:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | promociones:evaluar | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | cupones:validar | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | recomendaciones:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | inventario:disponibilidad:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H3 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | inventario:reservar | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | inventario:consumir | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | inventario:liberar | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | inventario:reintegrar | api-productos | modulo-postventa | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | inventario:disponibilidad:leer | api-productos | modulo-postventa | Aprobada por G6 para `GET /api/v1/inventario/disponibilidad` en el flujo de CAMBIO | Confirmación de G6 comunicada por canal privado, 5-nov-2026 | Grant comprobado en Supabase; emisión de token HTTP 200 con el scope. Llamada a G6 y pruebas de autorización pendientes |
-| Productos | catalogo:leer | api-productos | modulo-productos | Aprobada; G6 es dueño de `api-productos` y se autoaprueba para su uso interno Catálogo → Pricing. Solicitado 3-nov | [#78](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/78) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Productos | precios:leer | api-productos | modulo-productos | Aprobada; G6 es dueño de `api-productos` y se autoaprueba para su uso interno Catálogo → Pricing. Solicitado 3-nov | [#78](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/78) | Pendiente; ninguna credencial/provisión acreditada aquí |
-| Ventas | ventas:pedidos:consultar | api-ventas | modulo-postventa | Aprobada; definido por el dueño de api-ventas, solo `GET /api/v1/pedidos/{id}` | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51) | Pendiente; ninguna credencial/provisión acreditada aquí |
+| Seguridad | usuarios:leer | api-seguridad | modulo-marketplace | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Seguridad | usuarios:leer | api-seguridad | modulo-chatbot | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Seguridad | tokens:introspeccion | api-seguridad | modulo-chatbot | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Seguridad | usuarios:leer | api-seguridad | modulo-retail | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Seguridad | roles:leer | api-seguridad | modulo-retail | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Seguridad | usuarios:leer | api-seguridad | modulo-ventas | Aprobada | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Seguridad | usuarios:leer | api-seguridad | modulo-postventa | Aprobada | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Seguridad | usuarios:leer | api-seguridad | modulo-despacho | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Seguridad | direcciones:leer | api-seguridad | modulo-despacho | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Seguridad | tokens:introspeccion | api-seguridad | modulo-productos | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Seguridad | roles:leer | api-seguridad | modulo-productos | Aprobada | [Kit base](../../specs/kit-integracion.md#5-qué-scope-pide-cada-módulo) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Despacho | cotizaciones:calcular | api-despacho | modulo-marketplace | Aprobada; aud/401/403 confirmados en #18 | [A4 / #18](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/18) | Concedida y token emitido (HTTP 200, [FEAT-11](../evidencia/h4/FEAT-11.md)). Llamada real a G2 pendiente |
+| Despacho | seguimientos:leer | api-despacho | modulo-marketplace | Aprobada; aud/401/403 confirmados en #18 | [A4 / #18](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/18) | Concedida y token emitido (HTTP 200, [FEAT-11](../evidencia/h4/FEAT-11.md)). Llamada real a G2 pendiente |
+| Despacho | cotizaciones:calcular | api-despacho | modulo-chatbot | Aprobada; contrato A8 documentado | [A8](acuerdos.md) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Despacho | seguimientos:leer | api-despacho | modulo-chatbot | Aprobada; contrato A8 documentado | [A8](acuerdos.md) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Despacho | despachos:crear | api-despacho | modulo-ventas | Aprobada en A10; dueño contrastado en contrato Despacho §3.4 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) / [evidencia G2](correcciones-modulos.md#g2--despacho) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Despacho | despachos:cancelar | api-despacho | modulo-ventas | Aprobada en A10; dueño contrastado en contrato Despacho §3.4 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) / [evidencia G2](correcciones-modulos.md#g2--despacho) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Ventas | ventas:pedidos:crear | api-ventas | modulo-marketplace | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Ventas | ventas:pedidos:anular | api-ventas | modulo-marketplace | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Postventa | postventa:devoluciones:escribir | api-postventa | modulo-marketplace | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Postventa | postventa:reclamos:escribir | api-postventa | modulo-marketplace | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Ventas | ventas:pedidos:crear | api-ventas | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Ventas | ventas:pedidos:anular | api-ventas | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Postventa | postventa:devoluciones:escribir | api-postventa | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Postventa | postventa:reclamos:escribir | api-postventa | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Ventas | ventas:pagos:webhook | api-ventas | modulo-chatbot | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Ventas | ventas:pedidos:crear | api-ventas | modulo-retail | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Ventas | ventas:pedidos:anular | api-ventas | modulo-retail | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Postventa | postventa:devoluciones:escribir | api-postventa | modulo-retail | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Postventa | postventa:reclamos:escribir | api-postventa | modulo-retail | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | No concedida al 10-nov; ningún módulo la ha pedido |
+| Ventas | ventas:pedidos:estado | api-ventas | modulo-despacho | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Ventas | ventas:pagos:webhook | api-ventas | simulador-pasarela | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Postventa | postventa:reembolsos:procesar | api-postventa | modulo-ventas | Aprobada en A10 | [A10](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/42#issuecomment-6116353534) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | catalogo:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H3 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | catalogo:leer | api-productos | modulo-marketplace | Aprobada; G6 aprobó `client_credentials` para `modulo-marketplace` con audiencia `api-productos` y scope `catalogo:leer`, comunicado por G1 (David, 26-oct) para H4. Uso pedido: H4 | David Brenis, grupo de trabajo 26-oct (relevo de G1↔G6); [OpenAPI de G6 0.6.0-rc.3](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/bd5f2ef/contratos/http/openapi.yaml) | Concedida y token emitido (HTTP 200, [FEAT-11](../evidencia/h4/FEAT-11.md)). Llamada real a G6 pendiente (FEAT-11-T7) |
+| Productos | precios:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H3 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | promociones:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | promociones:evaluar | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | cupones:validar | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | recomendaciones:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H4 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | inventario:disponibilidad:leer | api-productos | modulo-chatbot | Aprobada; G6 ratificó la lista el 16-oct (A2). Uso pedido: H3 | [A9 / #33](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/33#issuecomment-6228773554) / [G6 #87 A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | inventario:reservar | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | inventario:consumir | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | inventario:liberar | api-productos | modulo-ventas | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | inventario:reintegrar | api-productos | modulo-postventa | Aprobada; scope y cliente fijados por el dueño en su contrato §13 | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51#issuecomment-6157683747) / [contrato G6 §13](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/671f2aa03baaf0d7930e9efce4db126d6fbcc58e/contratos/http/Contrato_Api.md) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | inventario:disponibilidad:leer | api-productos | modulo-postventa | Aprobada por G6 para `GET /api/v1/inventario/disponibilidad` en el flujo de CAMBIO | Confirmación de G6 comunicada por canal privado, 5-nov-2026 | Concedida y token emitido (HTTP 200). Llamada a G6 y pruebas de autorización pendientes |
+| Productos | catalogo:leer | api-productos | modulo-productos | Aprobada; G6 es dueño de `api-productos` y se autoaprueba para su uso interno Catálogo → Pricing. Solicitado 3-nov | [#78](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/78) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | precios:leer | api-productos | modulo-productos | Aprobada; G6 es dueño de `api-productos` y se autoaprueba para su uso interno Catálogo → Pricing. Solicitado 3-nov | [#78](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/78) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Ventas | ventas:pedidos:consultar | api-ventas | modulo-postventa | Aprobada; definido por el dueño de api-ventas, solo `GET /api/v1/pedidos/{id}` | [#51](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/51) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | precios:leer | api-productos | modulo-marketplace | Aprobada; el dueño incluye a `modulo-marketplace` en la lista de clientes permitidos de `precios:leer`. Registrada por el PO el 10-nov | [OpenAPI de G6 0.6.0-rc.3](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/bd5f2ef/contratos/http/openapi.yaml) / [G1 #213](https://github.com/Taller-SW-Web/G1-Marketplace-Backend/issues/213) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | inventario:disponibilidad:leer | api-productos | modulo-marketplace | Aprobada; el dueño incluye a `modulo-marketplace` en la lista de clientes permitidos. Registrada por el PO el 10-nov | [OpenAPI de G6 0.6.0-rc.3](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/bd5f2ef/contratos/http/openapi.yaml) / [G1 #213](https://github.com/Taller-SW-Web/G1-Marketplace-Backend/issues/213) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | productos:fisicos:leer | api-productos | modulo-despacho | Aprobada; el dueño lo define solo para `modulo-despacho` en `POST /productos/datos-fisicos/consulta`. Concedida por David entre el 2 y el 6-nov tras acuerdo por chat, sin registro; falta la confirmación escrita de G6 | [OpenAPI de G6 0.6.0-rc.3](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/bd5f2ef/contratos/http/openapi.yaml) / [#80](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/80) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Productos | inventario:operaciones:leer | api-productos | modulo-ventas | Aprobada; el dueño lo define solo para `modulo-ventas` en `GET /inventario/operaciones/{operationId}`. Concedida por David entre el 2 y el 6-nov tras acuerdo por chat, sin registro | [OpenAPI de G6 0.6.0-rc.3](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/blob/bd5f2ef/contratos/http/openapi.yaml) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+| Ventas | ventas:pedidos:reemplazar | api-ventas | modulo-postventa | Aprobada; el dueño lo define para `modulo-postventa` en `POST /api/v1/pedidos/reemplazos`. Concedida por David entre el 2 y el 6-nov tras acuerdo por chat, sin registro | [`api-ventas.md` de G5 §1.11](https://github.com/Taller-SW-Web/G5-Ventas-Postventas/blob/e36ac3c/specs/api/api-ventas.md) | Concedida (Q2, 10-nov). Emisión sin comprobar |
+
+## Hallazgos de la consulta del 10-nov
+
+- **Los ocho clientes existen y están activos:** `modulo-chatbot`, `modulo-despacho`,
+  `modulo-marketplace`, `modulo-postventa`, `modulo-productos`, `modulo-retail`,
+  `modulo-ventas` y `simulador-pasarela`. La evidencia del 6-nov que decía que no
+  había ningún cliente provisionado queda superada.
+- **Dos concesiones no tienen respaldo:** `modulo-retail` tiene `ventas:pedidos:consultar`
+  y `ventas:pedidos:estado`. El contrato de G5 reserva el primero a `modulo-postventa`
+  y el segundo a `modulo-despacho`, y ningún acuerdo los aprueba para Retail. No se
+  registran como aprobados. Se pide a G5 y G4 que los confirmen; si no lo hacen
+  antes del congelamiento del 20-nov, se revocan desde el módulo de configuración.
+- **Tres scopes se concedieron sin registro** (`ventas:pedidos:reemplazar`,
+  `inventario:operaciones:leer` y `productos:fisicos:leer`). David los acordó por
+  chat con los módulos dueños entre el 2 y el 6-nov; no se conserva la fecha exacta
+  ni quién aprobó. Los tres coinciden con el contrato publicado de su API dueña,
+  que es la fuente que esta matriz cita. Entran al catálogo del repositorio
+  (`R__catalogo_scopes.sql`, 31 scopes) y a `concesiones-servicio.sql`.
+- **El catálogo de la base tiene 27 scopes y el del repositorio 31.** A la base le
+  faltan `usuarios:leer:documento`, `ventas:pedidos:anular`,
+  `postventa:devoluciones:escribir` y `postventa:reclamos:escribir`; los recibe
+  cuando se aplique la migración repetible.
+- **Catorce concesiones aprobadas no están en la base.** Son las filas «No concedida
+  al 10-nov». H5 no las necesita para la compra por canal; se conceden cuando el
+  módulo las pida.
+- **Regla desde H5:** toda concesión nueva se hace desde el módulo de configuración
+  (SPEC-19, FEAT-14), que la audita con autor y fecha, y después se refleja en esta
+  matriz y en `concesiones-servicio.sql`.
 
 ## Clientes y límites
 
 Se mantienen los seis client_id originales; A10 añade modulo-postventa y
-simulador-pasarela: ocho clientes **previstos**, no ocho credenciales ya creadas.
+simulador-pasarela: ocho clientes, todos creados y activos al 10-nov.
 Un client_secret pertenece al backend; nunca a la SPA ni al repositorio.
 Entrega general según acuerdo Hito 4. La demo login/mis pedidos de H3 usa
 identidad de persona, no necesita adelantar estos secretos.
@@ -77,7 +119,7 @@ concesiones adicionales de APIs ajenas. El informe inicial hablaba de doce;
 la fuente operativa es la lista final, no ese recuento. api-postventa es singular.
 Los dos scopes de Despacho se contrastaron con su contrato §3.4, que identifica
 Ventas como consumidor. [Evidencia](correcciones-modulos.md#g2--despacho);
-A10 respalda las concesiones y la provisión sigue pendiente. Despacho también
+A10 respalda las concesiones, ya concedidas al 10-nov. Despacho también
 enumera Ventas como consumidor previsto de seguimientos:leer, pero G5 declaró
 no necesitarlo; no se añade esa concesión.
 
@@ -103,8 +145,8 @@ Los siete scopes de Productos para modulo-chatbot (A9) quedan aprobados con la
 `inventario:disponibilidad:leer`) y H4 (el resto). G6 precisa que para Chatbot
 la disponibilidad es la ruta comercial `GET /api/v1/inventario/disponibilidad/comercial`
 (`canal=CHATBOT`); la ruta detallada no está autorizada para ese cliente. La
-aprobación es documental: la emisión de tokens de servicio y las credenciales
-siguen el plan de Hito 4.
+concesión de los siete consta en la base al 10-nov; la emisión y la llamada
+real a G6 siguen sin comprobar.
 
 ## Retirados o no concedidos
 
@@ -148,8 +190,15 @@ API sirve como propuesta; no prueba aprobación del PO requerida por A9.
 [Mensaje G6 y evidencia](correcciones-modulos.md#g6--productos-y-ofertas).
 
 G6 respondió en [#87, punto A2](https://github.com/Taller-SW-Web/G6-Productos-Ofertas-docs/issues/87#issuecomment-6207787656) (16-oct): confirma los siete de
-`modulo-chatbot`, ya aprobados arriba. Las concesiones de los demás consumidores
-(incluida `productos:fisicos:leer` para `modulo-despacho`) siguen sin confirmar
-por cliente. Conservar audiencia `api-productos` y no convertir el catálogo en
-concesiones efectivas.
+`modulo-chatbot`, ya aprobados arriba. El 10-nov el PO registró además las
+concesiones que el OpenAPI 0.6.0-rc.3 de G6 permite por cliente y que ya estaban
+en la base: `precios:leer` e `inventario:disponibilidad:leer` para
+`modulo-marketplace`, `productos:fisicos:leer` para `modulo-despacho` e
+`inventario:operaciones:leer` para `modulo-ventas`. En ese OpenAPI los cuatro
+siguen como `pending-security-registration`: se pide a G6 la confirmación escrita
+en [#78](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/78). Los demás
+scopes del catálogo de G6 (`cupones:validar`, `promociones:*` y `recomendaciones:leer`
+para Marketplace y Retail, e incidencias de inventario para Retail) no están
+concedidos ni aprobados aquí. Conservar audiencia `api-productos` y no convertir
+el catálogo en concesiones efectivas.
 
