@@ -20,7 +20,7 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 |---|---|---|---|---|
 | OPS-T1 | Consultas de solo lectura en Supabase | P1 · mar 10-nov | — | Hecho (Q0 a Q7 en la [verificación](../../../docs/integracion/hito-5-clientes-tecnicos.md)) |
 | OPS-T2 | Cuentas de prueba y cliente técnico de prueba | P1 · mié 11-nov | OPS-T1; aprobación de Sergio para el cliente nuevo | En curso: cliente `modulo-prueba-h5` y cuenta del E2E listos; faltan las cuentas de carga de Valery |
-| OPS-T3 | Ajustes de repositorio y Render | P1 · mié 11-nov | — | En curso: E2E contra Render activo y en verde ([evidencia](../../../docs/evidencia/h5/FEAT-12.md)); faltan el enlace de despliegue del frontend y el análisis de código |
+| OPS-T3 | Ajustes de repositorio y Render | P1 · mié 11-nov | — | Hecho (12-nov): E2E contra Render activo y en verde ([evidencia](../../../docs/evidencia/h5/FEAT-12.md)); secreto `RENDER_DEPLOY_HOOK_FRONTEND` en el frontend para Christian. El análisis de código lo configura Juan José en su workflow (FEAT-15-T1), sin la configuración por defecto de GitHub, que lo impediría |
 | FEAT-16-T1 | Decisión y propuesta de contrato del token cifrado | P1 · mié 11-nov | — | Hecho |
 | FEAT-16-T2 | Backend emite el formato cifrado y acepta ambos | P1 | T1 como propuesta | Hecho |
 | FEAT-16-T3 | SPA sin leer el contenido del token | P1 | T2 | Hecho |
