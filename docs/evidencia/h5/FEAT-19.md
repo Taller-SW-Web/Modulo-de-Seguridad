@@ -100,11 +100,12 @@ in 25 seconds.»).
 ### Monitoreo
 
 Métrica *Requests* de Azure Monitor para `g7-seguridad-apim`, separada por
-`GatewayResponseCode`, en la hora de la prueba:
+`GatewayResponseCode`, entre las 04:27 y las 04:30 UTC del 11-nov (de 23:27 a 23:30 del 10-nov en Lima).
+Se volvió a consultar el 12-nov minuto a minuto, tras la revisión de David:
 
 | Código | Peticiones | De dónde salen |
 |---|---:|---|
-| `200` | 29 | 2 de la equivalencia y 27 de la ráfaga |
+| `200` | 30 | 2 de la equivalencia (04:27), 27 de la ráfaga (04:28–04:29) y 1 con la clave de demostración de «Acceso» (04:30) |
 | `429` | 15 | 13 de la ráfaga y 2 reintentos manuales antes de que venciera la ventana |
 | `401` | 4 | 2 de la equivalencia (decididos por el backend), 1 sin clave y 1 con clave inventada |
 | `404` | 3 | 1 de la prueba de ruta no publicada; las otras 2 no son de la prueba (posiblemente tráfico externo a una URL pública) |
@@ -112,7 +113,7 @@ Métrica *Requests* de Azure Monitor para `g7-seguridad-apim`, separada por
 Consulta usada, sin captura del portal:
 
 ```bash
-az monitor metrics list --resource <id de g7-seguridad-apim> --metric Requests   --interval PT5M --offset 2h --dimension GatewayResponseCode --aggregation Total
+az monitor metrics list --resource <id de g7-seguridad-apim> --metric Requests \n  --interval PT1M --start-time 2026-11-11T04:00:00Z --end-time 2026-11-11T05:30:00Z \n  --dimension GatewayResponseCode --aggregation Total
 ```
 
 En el portal se ve en el recurso, sección **Métricas**, métrica **Requests**,
