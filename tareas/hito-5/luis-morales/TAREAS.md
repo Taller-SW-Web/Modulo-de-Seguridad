@@ -35,7 +35,7 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | FEAT-20-T4 | Compra desde Chatbot (G3) | P1 | T1; G3 | Pendiente |
 | FEAT-11-T6 | Favoritos A/B en despliegue | P1 | G1 (externo) | Pendiente |
 | FEAT-11-T7 | Llamada real de `modulo-marketplace` a G6 | P1 | G1 y G6 (externo) | Pendiente |
-| FEAT-07-T5 | Casos negativos de MFA en despliegue | P2 | — | Pendiente |
+| FEAT-07-T5 | Casos negativos de MFA en despliegue | P2 | — | Hecho (12-nov): [evidencia](../../../docs/evidencia/h5/FEAT-07.md) |
 | FEAT-08-T3 | Revocación en nube y contacto de soporte | P2 | Sergio (H-14) | Pendiente |
 
 ## OPS — desbloqueos (P1, 10 y 11-nov)
