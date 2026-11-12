@@ -14,7 +14,7 @@ Cada tarea es un commit `FEAT-xx-Tn: …` en su rama. Revisión cruzada con Chri
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-12-T4 | Suite E2E contra Render dentro del pipeline | P1 | David OPS-T2 y OPS-T3 (mié 11-nov) | Pendiente |
+| FEAT-12-T4 | Suite E2E contra Render dentro del pipeline | P1 | David OPS-T2 y OPS-T3 (mié 11-nov) | Hecho (11-nov, cerrada por David): [evidencia](../../../docs/evidencia/h5/FEAT-12.md) |
 | FEAT-12-T5 | Prueba conjunta con G5 | P1 | Versión desplegada de G5 (externo) | Pendiente |
 | — | Reparar el tablero H4 (filas T1–T4) | P1 | — | Pendiente |
 
