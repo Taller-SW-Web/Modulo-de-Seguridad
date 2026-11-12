@@ -1,8 +1,8 @@
 # FEAT-08 — Revocación de la sesión al bloquear, en el despliegue
 
 Responsable: Luis David Morales Brenis. Corte: 12-nov-2026, America/Lima.
-Estado: **FEAT-08-T3: revocación comprobada en el despliegue. Falta confirmar
-el canal de soporte (H-14).**
+Estado: **FEAT-08-T3 cumplida: revocación comprobada en el despliegue y
+contacto de soporte resuelto (H-14).**
 
 Continúa la [evidencia H4](../h4/FEAT-08.md). Ahí quedó un límite: la revocación
 de las sesiones al bloquear solo se había probado en PostgreSQL local, y recargar
@@ -76,7 +76,13 @@ El aviso de bloqueo y la pantalla de desbloqueo ya usan esa segunda forma.
 - Pantalla, en `DesbloqueoPage` del frontend: «Si no puedes entrar, solicita al
   administrador de la plataforma que revise tu cuenta.»
 
-**Pendiente:** David comprueba si el buzón remitente recibe las respuestas.
+**Comprobación del buzón, 12-nov-2026:** David respondió al aviso de bloqueo y
+la respuesta llegó a las 15:45 a la bandeja del buzón remitente. Pero nadie lo
+va a revisar de forma activa. Si se invitara a responder, el titular esperaría
+una respuesta que no va a llegar. Por eso, según H-14, **se mantiene el texto
+actual**, que solo remite al administrador de la plataforma, sin cambios de
+código. Si el equipo asigna a alguien que lea el buzón, se puede añadir «responde
+al correo de aviso» en los dos textos.
 
 ## Límites
 
