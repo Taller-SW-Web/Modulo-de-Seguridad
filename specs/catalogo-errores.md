@@ -142,7 +142,7 @@ Si una spec necesita uno nuevo, se añade aquí y al contrato en el mismo cambio
 
 | Código | HTTP | Cuándo |
 |---|---|---|
-| `OTP_EXPIRADO` | 410 | El código tiene más de 5 minutos |
+| `OTP_EXPIRADO` | 410 | El código tiene más de 5 minutos y su desafío o cambio sigue vigente. En el inicio de sesión no se alcanza: el desafío vence antes y la respuesta es `401 TOKEN_INVALIDO` (ESC-09.6). En el cambio del segundo factor sí se alcanza (ESC-10.15) |
 | `OTP_INTENTOS_AGOTADOS` | 401 | Se agotaron los 3 intentos; el OTP queda invalidado |
 
 ### SPEC-10 — Activación del segundo factor
