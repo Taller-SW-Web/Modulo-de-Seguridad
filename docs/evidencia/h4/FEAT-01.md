@@ -60,7 +60,7 @@ login de G1** ([FEAT-11](FEAT-11.md), «Registro y verificación»): acredita el
 - La versión de los términos guardada es la de `G7_REGISTRO_VERSION_TERMINOS`; el texto vigente de
   los términos sigue sin URL (H-12).
 - FEAT-02 (baja y reactivación, P2) no es parte de esta evidencia: el backend
-  [#84](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/84) se fusionó el 7-nov y el
+  [#84](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/84) se fusionó el 7-nov (`4ca6cf1`) y el
   frontend [#21](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/21) sigue en
   revisión; su evidencia irá en `docs/evidencia/h5/FEAT-02.md`.
 - No se incluyen contraseñas, tokens, enlaces de correo ni datos personales completos.

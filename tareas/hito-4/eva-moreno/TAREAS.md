@@ -20,7 +20,7 @@
 | FEAT-01-T4 | Retorno por canal | P1 | T3; David FEAT-11-T1 (URL de G1) | Completado — backend #61, frontend [#16](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/16), FRONT-03 #71; retorno a G1 comprobado por David (FEAT-11) |
 | FEAT-01-T5 | Pantallas FRONT-02 y FRONT-03 | P1 | T1, T3 | Completado — frontend #16 |
 | FEAT-01-T6 | Pruebas y evidencia desplegada | P1 | T1–T5; Christian V108+ si hay migración | Completado — [evidencia](../../../docs/evidencia/h4/FEAT-01.md) |
-| FEAT-02-T1 | Baja y reactivación | P2 | FEAT-01 fusionada | Parcial — backend fusionado ([#84](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/84), 7-nov); frontend [#21](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/21) en revisión. Cierre en H5 |
+| FEAT-02-T1 | Baja y reactivación | P2 | FEAT-01 fusionada | Parcial — backend fusionado ([#84](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/84), 7-nov, `4ca6cf1`); frontend [#21](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/21) en revisión. Cierre en H5 |
 
 ## FEAT-01 — Registro y verificación de correo (G1 F-001)
 

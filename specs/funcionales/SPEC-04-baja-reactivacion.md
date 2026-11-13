@@ -9,6 +9,7 @@
 | **Hito objetivo** | Hito 3 (Sem. 8) |
 | **Estado** | ✅ Aprobada |
 | **Aprobada por** | Sergio Alejandro Osorio Montenegro (Product Owner), 2 de octubre de 2026 |
+| **Actualizada** | 11-nov-2026: RF-04.3 y ESC-04.5, reactivar una cuenta sin correo verificado la deja `PENDIENTE_VERIFICACION` (FEAT-02); aprobada por el PO |
 
 > **Origen histórico (20-sep; no gobierna el reparto vigente).** Sale de dividir la antigua SPEC-01 «Registro y gestión de usuarios» el 20 de septiembre, por indicación del profesor: una spec por función. La equivalencia de números está en [`../trazabilidad.md`](../trazabilidad.md) §1.
 
@@ -46,7 +47,7 @@ El resultado observable es el paso de la cuenta a `INACTIVO` con sus sesiones ce
 |---|---|
 | RF-04.1 | Un `ADMIN_SISTEMA` debe poder dar de baja una cuenta (`DELETE /api/v1/usuarios/{id}`): pasa a `INACTIVO` sin borrarse, se revocan todos sus tokens de refresco y se publica `usuario.desactivado`. Desde ese momento el login responde `401 CREDENCIALES_INVALIDAS`, igual que ante una contraseña incorrecta. |
 | RF-04.2 | Nadie puede darse de baja a sí mismo por esta vía, ni dar de baja al último `ADMIN_SISTEMA` activo: responde `422 ADMINISTRADOR_PROTEGIDO`, la misma regla que aplican SPEC-11 al revocar el rol y SPEC-15 al bloquear. |
-| RF-04.3 | Un `ADMIN_SISTEMA` debe poder reactivar una cuenta `INACTIVO` (`POST /api/v1/usuarios/{id}/reactivar`): vuelve a `ACTIVO` con la misma identidad, el mismo correo y los mismos roles, sin repetir la verificación y sin sesiones abiertas, y se publica `usuario.reactivado`. Si la cuenta se dio de baja **sin haber verificado su correo**, vuelve a `PENDIENTE_VERIFICACION`: reactivarla no puede saltarse la verificación de SPEC-02 (acuerdo de FEAT-02, 7-nov-2026, pendiente de aprobación del PO). |
+| RF-04.3 | Un `ADMIN_SISTEMA` debe poder reactivar una cuenta `INACTIVO` (`POST /api/v1/usuarios/{id}/reactivar`): vuelve a `ACTIVO` con la misma identidad, el mismo correo y los mismos roles, sin repetir la verificación y sin sesiones abiertas, y se publica `usuario.reactivado`. Si la cuenta se dio de baja **sin haber verificado su correo**, vuelve a `PENDIENTE_VERIFICACION`: reactivarla no puede saltarse la verificación de SPEC-02 (acuerdo de FEAT-02, 7-nov-2026; aprobado por el PO el 11-nov-2026). |
 | RF-04.4 | La baja y la reactivación deben registrarse mediante SPEC-12 (`USUARIO_DESACTIVADO`, `USUARIO_REACTIVADO`). Ambas son acciones **críticas**: si no se pueden auditar, la operación se revierte. |
 | RF-04.5 | Reactivar una cuenta que no está `INACTIVO` no hace nada: no cambia su estado, no publica evento y responde `204`, igual que una reactivación real. |
 
