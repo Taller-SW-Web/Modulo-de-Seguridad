@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Seguridad — evolución parcial v2
-  version: 2.0.0
-  x-estado: revision-local-no-publicada
+  version: 2.1.0
+  x-estado: publicada-parcial
   description: |-
     Edición local delegada por Sergio según autorización comunicada por Luis David.
     Solo configuración MFA segura y alta administrativa estricta. Login, OTP de
@@ -10,6 +10,9 @@ info:
     No hay issuer ni audiencia de usuario nuevos. Publicación sujeta a ADR-003;
     no se presume aceptación de consumidores ni disponibilidad en nube.
     Las rutas MFA v1 incompletas no se despliegan; base 1.0.0 en historico/.
+    2.1.0 (lote de contrato H5, 10-nov-2026): añade la gestión de clientes técnicos
+    de SPEC-19 en /clientes-servicio y /scopes. Es aditivo: ninguna ruta anterior
+    cambia y los módulos consumidores no usan estas rutas, que son de administración.
 servers:
 - url: http://localhost:8080/api/v2
   description: Implementación futura local; no confirma despliegue
@@ -505,6 +508,286 @@ paths:
                     title: No disponible
                     status: 503
                     code: NO_DISPONIBLE
+  /clientes-servicio:
+    get:
+      tags:
+      - Configuración
+      operationId: listarClientesServicio
+      summary: Lista los clientes técnicos con su estado y sus scopes
+      description: |-
+        SPEC-19, RF-19.2. Token de usuario con el permiso `integracion.gestionar`,
+        que solo tiene `ADMIN_SISTEMA`. Devuelve todos los clientes ordenados por
+        `clientId`. **Ninguna lectura devuelve el secreto ni su hash.**
+        Un token de servicio recibe `403 TOKEN_NO_APLICABLE`; un usuario sin el
+        permiso, `403 SCOPE_INSUFICIENTE`.
+      responses:
+        '200':
+          description: Clientes técnicos registrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClienteServicio'
+              examples:
+                lista:
+                  value:
+                  - clientId: modulo-despacho
+                    nombre: G2 Despacho y entrega
+                    activo: true
+                    scopes:
+                    - codigo: direcciones:leer
+                      audiencia: api-seguridad
+                    - codigo: usuarios:leer
+                      audiencia: api-seguridad
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '503':
+          $ref: '#/components/responses/NoDisponible'
+    post:
+      tags:
+      - Configuración
+      operationId: crearClienteServicio
+      summary: Da de alta un cliente técnico y entrega su secreto una sola vez
+      description: |-
+        SPEC-19, RF-19.4 y RF-19.5. El servidor genera el secreto (256 bits,
+        base64url sin relleno) y guarda solo su hash. **`clientSecret` aparece
+        únicamente en esta respuesta**, que lleva `Cache-Control: no-store`; no se
+        puede volver a consultar. `scopes` es opcional y solo admite códigos del
+        catálogo, sin repetir: si uno no existe, no se crea nada.
+        El alta se audita como `CLIENTE_SERVICIO_CREADO`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrearClienteServicioRequest'
+            examples:
+              conUnScope:
+                value:
+                  clientId: modulo-prueba-h5
+                  nombre: Cliente de prueba H5
+                  scopes:
+                  - usuarios:leer
+      responses:
+        '201':
+          description: Cliente creado y activo; el secreto solo se entrega aquí
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/SinAlmacenar'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClienteServicioConSecreto'
+              examples:
+                creado:
+                  value:
+                    clientId: modulo-prueba-h5
+                    nombre: Cliente de prueba H5
+                    activo: true
+                    scopes:
+                    - codigo: usuarios:leer
+                      audiencia: api-seguridad
+                    clientSecret: EJEMPLO-no-es-un-secreto-real-0000000000000
+        '400':
+          $ref: '#/components/responses/ValidacionCliente'
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '409':
+          description: Ya existe un cliente con ese `clientId`, activo o no
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+              examples:
+                clienteExistente:
+                  value:
+                    type: https://g7.unmsm.pe/errores/cliente-servicio-existente
+                    title: Ya existe un cliente con ese identificador
+                    status: 409
+                    code: CLIENTE_SERVICIO_EXISTENTE
+        '503':
+          $ref: '#/components/responses/NoDisponible'
+  /clientes-servicio/{clientId}/secreto:
+    post:
+      tags:
+      - Configuración
+      operationId: rotarSecretoClienteServicio
+      summary: Reemplaza el secreto de un cliente técnico
+      description: |-
+        SPEC-19, RF-19.6 y RF-19.7. Sin cuerpo. El secreto anterior deja de servir
+        para emitir tokens en ese momento; los tokens ya emitidos mueren en su
+        `exp`, como mucho una hora después. No hay periodo de convivencia de dos
+        secretos. Se audita como `SECRETO_SERVICIO_ROTADO`, sin el secreto ni su hash.
+      parameters:
+      - $ref: '#/components/parameters/ClientId'
+      responses:
+        '200':
+          description: Secreto reemplazado; el nuevo solo se entrega aquí
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/SinAlmacenar'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClienteServicioConSecreto'
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '404':
+          $ref: '#/components/responses/ClienteNoEncontrado'
+        '503':
+          $ref: '#/components/responses/NoDisponible'
+  /clientes-servicio/{clientId}/desactivar:
+    post:
+      tags:
+      - Configuración
+      operationId: desactivarClienteServicio
+      summary: Desactiva un cliente técnico
+      description: |-
+        SPEC-19, RF-19.8. Sin cuerpo. Un cliente inactivo no obtiene token:
+        `POST /api/v1/auth/token` responde `401 CLIENTE_INVALIDO`. Los tokens ya
+        emitidos siguen validando hasta su `exp`. Idempotente: si ya estaba
+        inactivo responde `204` sin cambios ni auditoría.
+      parameters:
+      - $ref: '#/components/parameters/ClientId'
+      responses:
+        '204':
+          description: Cliente inactivo
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '404':
+          $ref: '#/components/responses/ClienteNoEncontrado'
+        '503':
+          $ref: '#/components/responses/NoDisponible'
+  /clientes-servicio/{clientId}/reactivar:
+    post:
+      tags:
+      - Configuración
+      operationId: reactivarClienteServicio
+      summary: Reactiva un cliente técnico
+      description: |-
+        SPEC-19, RF-19.8. Sin cuerpo. El cliente vuelve a emitir con el mismo
+        secreto y los mismos scopes. Idempotente: si ya estaba activo responde
+        `204` sin cambios ni auditoría.
+      parameters:
+      - $ref: '#/components/parameters/ClientId'
+      responses:
+        '204':
+          description: Cliente activo
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '404':
+          $ref: '#/components/responses/ClienteNoEncontrado'
+        '503':
+          $ref: '#/components/responses/NoDisponible'
+  /clientes-servicio/{clientId}/scopes:
+    post:
+      tags:
+      - Configuración
+      operationId: concederScopeClienteServicio
+      summary: Concede un scope del catálogo a un cliente técnico
+      description: |-
+        SPEC-19, RF-19.9 y RF-19.10. Solo se conceden scopes que existen en el
+        catálogo (`GET /scopes`). La siguiente emisión de `POST /api/v1/auth/token`
+        ya lo incluye. Idempotente: si el cliente ya lo tenía responde `204` sin
+        auditar. Se audita como `SCOPE_CONCEDIDO`.
+      parameters:
+      - $ref: '#/components/parameters/ClientId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConcederScopeRequest'
+            examples:
+              rolesLeer:
+                value:
+                  scope: roles:leer
+      responses:
+        '204':
+          description: Scope concedido
+        '400':
+          $ref: '#/components/responses/ValidacionCliente'
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '404':
+          $ref: '#/components/responses/ClienteNoEncontrado'
+        '503':
+          $ref: '#/components/responses/NoDisponible'
+  /clientes-servicio/{clientId}/scopes/{scope}:
+    delete:
+      tags:
+      - Configuración
+      operationId: revocarScopeClienteServicio
+      summary: Revoca un scope concedido a un cliente técnico
+      description: |-
+        SPEC-19, RF-19.9. La siguiente emisión ya no incluye el scope; los tokens
+        ya emitidos lo conservan hasta su `exp`. Idempotente: si el cliente no lo
+        tenía responde `204` sin auditar. Se audita como `SCOPE_REVOCADO`.
+      parameters:
+      - $ref: '#/components/parameters/ClientId'
+      - name: scope
+        in: path
+        required: true
+        description: Código del scope, por ejemplo `roles:leer`.
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 100
+      responses:
+        '204':
+          description: Scope revocado
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '404':
+          $ref: '#/components/responses/ClienteNoEncontrado'
+        '503':
+          $ref: '#/components/responses/NoDisponible'
+  /scopes:
+    get:
+      tags:
+      - Configuración
+      operationId: listarCatalogoScopes
+      summary: Catálogo de scopes que se pueden conceder
+      description: |-
+        SPEC-19, RF-19.3. Devuelve la tabla `scope` ordenada por audiencia y
+        código. Esta API no crea ni edita scopes: uno nuevo lo define el dueño de
+        su API, se aprueba en la matriz y entra por la migración del catálogo.
+      responses:
+        '200':
+          description: Scopes registrados, con la API dueña de cada uno
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScopeCatalogo'
+              examples:
+                catalogo:
+                  value:
+                  - codigo: usuarios:leer
+                    audiencia: api-seguridad
+                    descripcion: Datos básicos de usuario, individuales y por lote
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '503':
+          $ref: '#/components/responses/NoDisponible'
 components:
   securitySchemes:
     tokenUsuario:
@@ -600,3 +883,193 @@ components:
           - ADMIN_SISTEMA
           description: Opcional; ausente crea cuenta sin rol. CLIENTE usa registro público o asistido.
       additionalProperties: false
+    ScopeConcedido:
+      type: object
+      description: Scope concedido a un cliente, con la API dueña que irá en `aud`.
+      required:
+      - codigo
+      - audiencia
+      properties:
+        codigo:
+          type: string
+        audiencia:
+          type: string
+    ScopeCatalogo:
+      type: object
+      required:
+      - codigo
+      - audiencia
+      - descripcion
+      properties:
+        codigo:
+          type: string
+        audiencia:
+          type: string
+        descripcion:
+          type: string
+    ClienteServicio:
+      type: object
+      description: Cliente técnico tal como lo ve la administración. Nunca lleva el secreto ni su hash.
+      required:
+      - clientId
+      - nombre
+      - activo
+      - scopes
+      properties:
+        clientId:
+          type: string
+          pattern: ^[a-z0-9][a-z0-9-]{2,49}$
+        nombre:
+          type: string
+          minLength: 1
+          maxLength: 100
+        activo:
+          type: boolean
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScopeConcedido'
+    ClienteServicioConSecreto:
+      type: object
+      description: |
+        Cliente junto con el secreto recién generado. Es la única respuesta que
+        contiene `clientSecret`; el servidor no lo guarda en claro.
+      required:
+      - clientId
+      - nombre
+      - activo
+      - scopes
+      - clientSecret
+      properties:
+        clientId:
+          type: string
+          pattern: ^[a-z0-9][a-z0-9-]{2,49}$
+        nombre:
+          type: string
+          minLength: 1
+          maxLength: 100
+        activo:
+          type: boolean
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScopeConcedido'
+        clientSecret:
+          type: string
+          minLength: 43
+    CrearClienteServicioRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - clientId
+      - nombre
+      properties:
+        clientId:
+          type: string
+          pattern: ^[a-z0-9][a-z0-9-]{2,49}$
+        nombre:
+          type: string
+          minLength: 1
+          maxLength: 100
+        scopes:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
+          description: Opcional. Solo códigos del catálogo, sin repetir.
+    ConcederScopeRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - scope
+      properties:
+        scope:
+          type: string
+          minLength: 1
+  parameters:
+    ClientId:
+      name: clientId
+      in: path
+      required: true
+      description: Identificador del cliente técnico, por ejemplo `modulo-despacho`.
+      schema:
+        type: string
+        maxLength: 50
+  headers:
+    SinAlmacenar:
+      description: Siempre `no-store`, para que ningún intermediario guarde el secreto.
+      schema:
+        type: string
+        const: no-store
+  responses:
+    SinPermisoDeConfiguracion:
+      description: |
+        `SCOPE_INSUFICIENTE` si el usuario no tiene el permiso `integracion.gestionar`;
+        `TOKEN_NO_APLICABLE` si la petición llega con un token de servicio. La
+        autorización se decide antes de comprobar si el cliente existe, así que el
+        cuerpo es el mismo exista o no el `clientId`.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./openapi.yaml#/components/schemas/Problem
+          examples:
+            sinPermiso:
+              value:
+                type: https://g7.unmsm.pe/errores/scope-insuficiente
+                title: Permisos insuficientes
+                status: 403
+                code: SCOPE_INSUFICIENTE
+            tokenDeServicio:
+              value:
+                type: https://g7.unmsm.pe/errores/token-no-aplicable
+                title: Token no aplicable
+                status: 403
+                code: TOKEN_NO_APLICABLE
+    ClienteNoEncontrado:
+      description: No existe un cliente técnico con ese `clientId`. Solo se llega aquí con el permiso.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./openapi.yaml#/components/schemas/Problem
+          examples:
+            noEncontrado:
+              value:
+                type: https://g7.unmsm.pe/errores/no-encontrado
+                title: Recurso no encontrado
+                status: 404
+                code: NO_ENCONTRADO
+    ValidacionCliente:
+      description: |
+        El cuerpo no cumple el esquema, trae una clave desconocida o pide un scope
+        que no está en el catálogo. `errores` indica el campo: `clientId`, `nombre`,
+        `scopes` o `scope`.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./openapi.yaml#/components/schemas/Problem
+          examples:
+            scopeFueraDelCatalogo:
+              value:
+                type: https://g7.unmsm.pe/errores/validacion
+                title: Datos de entrada inválidos
+                status: 400
+                code: VALIDACION
+                errores:
+                - campo: scopes
+                  mensaje: Solo scopes del catálogo, sin repetir.
+    NoDisponible:
+      description: |
+        Fallo interno o de la auditoría. Las escrituras de esta API son críticas:
+        si no se pueden auditar, se revierten y no cambia nada.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./openapi.yaml#/components/schemas/Problem
+          examples:
+            noDisponible:
+              value:
+                type: https://g7.unmsm.pe/errores/no-disponible
+                title: Servicio no disponible
+                status: 503
+                code: NO_DISPONIBLE

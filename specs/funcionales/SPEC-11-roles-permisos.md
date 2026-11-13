@@ -81,6 +81,7 @@ nunca.
 | `auditoria.ver` | Consultar y exportar la auditoría | SPEC-13 | `ADMIN_SISTEMA` |
 | `cuenta.bloquear` | Bloquear y desbloquear cuentas | SPEC-15 | `ADMIN_SISTEMA` |
 | `atributos.editar` | Editar los atributos de cualquier cuenta | SPEC-16 | `ADMIN_SISTEMA` |
+| `integracion.gestionar` | Gestionar los clientes técnicos y sus scopes (desde H5) | SPEC-19 | `ADMIN_SISTEMA` |
 | `cliente.registrar` | Registrar a un cliente en tienda (A6) | SPEC-03 | `VENDEDOR` |
 | `cliente.buscar` | Encontrar a un cliente por su documento (A7) | SPEC-03 | `VENDEDOR` |
 
@@ -121,11 +122,11 @@ condiciones límite, de error o de seguridad.
 
 ### ESC-11.4 Cálculo de permisos efectivos en la emisión del token
 
-**Dado** un usuario que posee los roles `ADMIN_SISTEMA` (ocho permisos) y `VENDEDOR` (`cliente.registrar` y `cliente.buscar`).
+**Dado** un usuario que posee los roles `ADMIN_SISTEMA` (nueve permisos) y `VENDEDOR` (`cliente.registrar` y `cliente.buscar`).
 
 **Cuando** se emite o renueva su `accessToken`.
 
-**Entonces** el array de permisos efectivos en las claims del JWT debe contener exactamente los diez permisos del catálogo, sin duplicados, y `roles` debe llevar `["ADMIN_SISTEMA", "VENDEDOR"]`.
+**Entonces** el array de permisos efectivos en las claims del JWT debe contener exactamente los once permisos del catálogo, sin duplicados, y `roles` debe llevar `["ADMIN_SISTEMA", "VENDEDOR"]`.
 
 ### ESC-11.5 Prevención de eliminación del último administrador *(caso borde)*
 
@@ -149,7 +150,7 @@ condiciones límite, de error o de seguridad.
 
 **Cuando** inicia sesión y recibe su `accessToken`.
 
-**Entonces** el claim `permisos` contiene los ocho permisos del catálogo de este módulo (`usuario.ver`, `usuario.crear`… `atributos.editar`), sin duplicados y con punto.
+**Entonces** el claim `permisos` contiene los nueve permisos de `ADMIN_SISTEMA` en el catálogo de este módulo (`usuario.ver`, `usuario.crear`… `integracion.gestionar`), sin duplicados y con punto.
 
 ---
 

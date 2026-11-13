@@ -93,7 +93,7 @@ la rama de su FEAT (ver §6).
 - T1 Configuración por entorno: `issuer`, discovery y `jwks_uri` absolutos según la URL pública.
 - T2 Auditoría `SESION_CERRADA` en el logout (pendiente de H3).
 - T3 Pruebas E2E automatizadas del frontend (Playwright): login, OTP, refresh, logout y guards por permiso.
-- T4 Job E2E en el CI contra el despliegue, después del smoke test de Christian.
+- T4 Job E2E en CI con entorno aislado (6/6 para H4); smoke contra Render por separado. La suite E2E completa contra Render se difiere a H5.
 - T5 Prueba conjunta con G5 (`/pedidos/me`) con evidencia sanitizada.
 
 ### Juan José — EP-03 Credenciales
@@ -228,7 +228,8 @@ develop ──► (jue 5-nov) PR release H4 → main → despliegue automático
 5. Fusionar con el CI en verde. No se exige aprobación, pero conviene pedir que alguien la mire.
    Después, borrar la rama.
 6. Durante S1/S2, `develop` alimenta el entorno de integración; Christian configura el pipeline
-   con CI verde, espera de versión y smoke/E2E. El jueves 5-nov se promueve `develop → main`
+   con CI verde, espera de versión y smoke. Para FEAT-12-T4, H4 acredita E2E en CI aislado;
+   la ejecución E2E completa contra Render queda para H5. El jueves 5-nov se promueve `develop → main`
    para la entrega final y se comprueba el despliegue de ese SHA. No cambiar la rama del
    servicio ni sus orígenes sin registrar entorno, aviso a consumidores y comprobación.
 
