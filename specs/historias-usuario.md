@@ -41,7 +41,7 @@ escenarios.
 
 | HU | Historia | Requisitos | Escenarios |
 |---|---|---|---|
-| HU-04.1 | Como **administrador del sistema**, quiero dar de baja una cuenta y reactivarla después, para controlar quién opera sin perder su historial | RF-04.1 · 04.3 · 04.4 | ESC-04.1 · 04.3 |
+| HU-04.1 | Como **administrador del sistema**, quiero dar de baja una cuenta y reactivarla después, para controlar quién opera sin perder su historial | RF-04.1 · 04.3 · 04.4 | ESC-04.1 · 04.3 · 04.5 |
 | HU-04.2 | Como **responsable de seguridad**, quiero que nadie pueda dar de baja al último administrador ni a sí mismo, para no quedar sin control del módulo | RF-04.2 | ESC-04.2 |
 
 ## SPEC-05 — Inicio de sesión
