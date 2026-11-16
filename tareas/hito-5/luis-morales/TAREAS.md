@@ -29,10 +29,10 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | FEAT-14-T2 | Backend de gestión de clientes técnicos | P1 | T1 como propuesta | Hecho |
 | FEAT-14-T3 | Pantalla «Configuración → Clientes técnicos» | P1 | T2 | Hecho |
 | FEAT-14-T4 | Recorrido desplegado y evidencia | P1 | T2, T3 | Hecho ([evidencia](../../../docs/evidencia/h5/FEAT-14.md)) |
-| FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | En curso |
-| FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Pendiente |
-| FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4 | Pendiente |
-| FEAT-20-T4 | Compra desde Chatbot (G3) | P1 | T1; G3 | Pendiente |
+| FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | En curso: pedido el 16-nov en [#100](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/100); confirmación hasta el mié 18-nov, prueba jue 19 o vie 20 |
+| FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Pendiente: pedido el 16-nov en [#101](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/101) |
+| FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4 | Pendiente: pedido el 16-nov en [#103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103); sin confirmación el mié 18-nov, «no probado» |
+| FEAT-20-T4 | Compra desde Chatbot (G3) | P1 | T1; G3 | Pendiente: pedido el 16-nov en [#102](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/102); sin confirmación el mié 18-nov, «no probado» |
 | FEAT-11-T6 | Favoritos A/B en despliegue | P1 | G1 (externo) | Pendiente |
 | FEAT-11-T7 | Llamada real de `modulo-marketplace` a G6 | P1 | G1 y G6 (externo) | Pendiente |
 | FEAT-07-T5 | Casos negativos de MFA en despliegue | P2 | — | Hecho (12-nov): [evidencia](../../../docs/evidencia/h5/FEAT-07.md) |
