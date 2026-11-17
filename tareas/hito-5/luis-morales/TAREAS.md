@@ -29,8 +29,8 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | FEAT-14-T2 | Backend de gestión de clientes técnicos | P1 | T1 como propuesta | Hecho |
 | FEAT-14-T3 | Pantalla «Configuración → Clientes técnicos» | P1 | T2 | Hecho |
 | FEAT-14-T4 | Recorrido desplegado y evidencia | P1 | T2, T3 | Hecho ([evidencia](../../../docs/evidencia/h5/FEAT-14.md)) |
-| FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | En curso: pedido el 16-nov en [#100](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/100); confirmación hasta el mié 18-nov, prueba jue 19 o vie 20 |
-| FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Pendiente: pedido el 16-nov en [#101](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/101) |
+| FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | En curso: G5 reportó URL, SHA, issuer y JWKS el 17-nov. Falta acordar fecha y hora con G1 en [#100](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/100). |
+| FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Pendiente: [prueba preparada](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t2--prueba-desplegada-con-marketplace-g1); G1 debe confirmar versión y disponibilidad en [#101](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/101). |
 | FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4 | Pendiente: pedido el 16-nov en [#103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103); sin confirmación el mié 18-nov, «no probado» |
 | FEAT-20-T4 | Compra desde Chatbot (G3) | P1 | T1; G3 | Pendiente: pedido el 16-nov en [#102](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/102); sin confirmación el mié 18-nov, «no probado» |
 | FEAT-11-T6 | Favoritos A/B en despliegue | P1 | G1 (externo) | Pendiente |
@@ -107,7 +107,7 @@ También en estos dos días: mensajes a G5, G1, G2 (issue #80) y G6 (issue #78),
 
 ### FEAT-20-T1 — Confirmar la prueba conjunta con G5
 - **Situación:** el mecanismo ya está definido por G5 (`G5-Ventas-Postventas`, `specs/api/api-ventas.md` y `integraciones/ACUERDO_G7_SEGURIDAD.md`): el canal crea el pedido con su token de servicio (`ventas:pedidos:crear`) y `contacto.clienteId` = `sub` de G7; el cliente lo ve en `GET /pedidos/me` con su propio token. `ventas:pedidos:crear` está concedido a los tres canales (10-nov).
-- **Pendiente de G5:** URL, SHA, issuer y JWKS desplegados; fecha de prueba. Se les sugieren tres mejoras: validar que `clienteId` exista, atar `canal` al `client_id` y registrar ese `client_id` (su RNF-03).
+- **Avance del 17-nov:** G5 reportó URL, SHA, issuer y JWKS, además de los `401` sin token. Reportó que valida el canal contra el `client_id` y registra ese `client_id` (RNF-03). La validación de `clienteId` contra Seguridad sigue en evaluación. Falta fijar fecha y hora de prueba con G5 y G1.
 - **Aceptación:** fecha y versiones confirmadas por G5.
 
 ### FEAT-20-T2 a T4 — Un canal por tarea
