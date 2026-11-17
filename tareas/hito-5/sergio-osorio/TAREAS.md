@@ -20,7 +20,7 @@ Sus PR los revisa Juan José; él revisa los de David, que trabaja en el paquete
 | FEAT-19-T1 | Plataforma de API Management elegida | P1 · jue 12-nov | — | Fusionado (#91): [ADR-010](../../../docs/arquitectura/adr/010-plataforma-api-management.md) |
 | FEAT-19-T2 | API de G7 publicada en la plataforma | P1 | T1 | Desplegada y comprobada (10-nov): [evidencia](../../../docs/evidencia/h5/FEAT-19.md). Plantilla en backend #89 |
 | FEAT-19-T3 | Seguridad, límite de uso y monitoreo, con evidencia | P1 | T2 | Verificada (10-nov): 401 sin clave, 429 sobre el límite, métricas en Azure Monitor. Falta la captura del panel |
-| FEAT-05-T4 | Rotación de clave con dos `kid` | P2 | David ejecuta en Render | Programada para el jue 12-nov; guion corregido para el acceso cifrado |
+| FEAT-05-T4 | Rotación de clave con dos `kid` | P2 | David ejecuta en Render | Verificada (16-nov): dos claves y el token anterior con 200 ([evidencia](../../../docs/evidencia/h5/FEAT-05-06.md)). Falta retirar la clave anterior desde el 17-nov, 22:30 |
 | FEAT-06-T4 | Consulta de identidad con 200 y 403 | P2 | David OPS-T2 | Verificada (10-nov): [evidencia](../../../docs/evidencia/h5/FEAT-05-06.md) |
 
 ## PO — contrato y decisiones (P1)
