@@ -17,7 +17,7 @@ de direcciones y puerto con pruebas para desbloquear a Sergio, sin esperar al co
 | FEAT-04-T1 | `GET` y `POST /usuarios/{id}/direcciones` | P1 | — (tabla `direccion` ya existe) | Fusionada (B#68) |
 | FEAT-04-T2 | Puerto exportado de lectura de direcciones | P1 · **lun 26-oct** | T1 | Fusionada (B#68) |
 | FEAT-04-T3 | `POST /usuarios/{id}/correo` | P1 | Juan José FEAT-03-T1; Eva FEAT-01-T3 | Fusionada (B#70, B#82) |
-| FEAT-04-T4 | Mi cuenta (FRONT-06) con direcciones y correo | P1 | T1, T3 | En curso (direcciones fusionada en F#15; falta correo) |
+| FEAT-04-T4 | Mi cuenta (FRONT-06) con direcciones y correo | P1 | T1, T3 | Fusionada (F#15) |
 | FEAT-04-T5 | Pruebas y evidencia desplegada | P1 | T1–T4 | Pendiente |
 | FEAT-04-T6 | Edición administrativa de atributos | P2 | T5 | Fusionada (B#83, F#22) |
 
