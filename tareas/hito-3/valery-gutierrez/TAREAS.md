@@ -65,7 +65,7 @@ T006 compone enlaces reales; T007–T008 comprueban efectos y recorrido desplega
 | EP-08-T004 | PATCH propio con campos presentes | P1 | T002; EP-01-T002; EP-06-T003; TEC-INFRA-T003 | Fusionada (B#32) |
 | EP-08-T005 | MiCuentaPage y edición propia React | P1 | T003–T004; EP-02-T001/T008 | Fusionada (F#6, F#9) |
 | EP-08-T006 | Componer acciones de seguridad disponibles | P1 | T005; EP-03-T007; EP-06-T005; EP-02-T008 | Fusionada (F#8) |
-| EP-08-T007 | Verificar privacidad, autorización y efectos | P1 | T003–T004; providers/transporte reales | Pendiente |
+| EP-08-T007 | Verificar privacidad, autorización y efectos | P1 | T003–T004; providers/transporte reales | En PR (B#62) |
 | EP-08-T008 | Defender perfil propio desplegado | P1 | T005–T007; login/MFA y TEC-INFRA-T005 | Pendiente (despliegue) |
 
 Txxx pertenece a EP-08 salvo prefijo explícito. Los otros IDs apuntan a sus
