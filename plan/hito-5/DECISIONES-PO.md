@@ -127,3 +127,30 @@ Dos concesiones de `modulo-retail` no tienen respaldo (`ventas:pedidos:consultar
 y `ventas:pedidos:estado`). Se pide confirmación a G5 y G4; si no llega antes
 del congelamiento del vie 20-nov, se revocan desde el módulo de configuración.
 El detalle está en la [matriz](../../docs/integracion/matriz-scopes.md).
+
+## 8. Ajuste del 19-nov para Retail
+
+**Decide:** Luis David Morales Brenis, por delegación del PO para esta
+coordinación. G4 confirmó que necesita buscar y registrar clientes de G7 en
+el POS para enviar el UUID de G7 en `contacto.clienteId`.
+
+- Se retoman RF-03.6, RF-03.7 y RF-03.8 de [SPEC-03](../../specs/funcionales/SPEC-03-alta-consulta-cuentas.md)
+  en el [issue #37](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/37). G7 implementa
+  las dos rutas v1 publicadas. G4 adapta el POS y G5 comprueba que el pedido
+  queda asociado al mismo cliente de G7. RF-03.9 se mantiene fuera de este
+  ajuste. La prueba conjunta de Marketplace conserva su fecha de coordinación.
+  El OpenAPI publicado exige eliminar las cuentas sin activar a los 30 días.
+  Hasta cubrir ese requisito, el alta asistida se prueba con cuentas sintéticas
+  en un entorno de prueba.
+- Se suspende la revocación prevista en §7. G4 reportó que el historial, la
+  bandeja de pickup y la entrega en tienda usan `ventas:pedidos:consultar` y
+  `ventas:pedidos:estado`. Queda confirmar con G4 y G5 el método, la ruta y el
+  scope de cada operación antes de actualizar la matriz.
+- El pedido `RETAIL` ya creado en Ventas se registra como reportado por G4.
+  El flujo con identidad G7 se acredita cuando el vendedor obtiene el UUID
+  desde G7 y el comprador ve el pedido en `/pedidos/me` con su token. La
+  implementación y el despliegue quedan pendientes de la verificación.
+  Antes de probar con G4, comprobar coincidencia exacta por HMAC, permiso del
+  vendedor, respuesta mínima, auditoría y cuota de 60 búsquedas por hora.
+  En el alta, comprobar UUID inmediato, rol `CLIENTE`, origen `RETAIL`, enlace
+  de activación y rechazo de documento duplicado sin creación parcial.
