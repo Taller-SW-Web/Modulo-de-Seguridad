@@ -142,10 +142,14 @@ el POS para enviar el UUID de G7 en `contacto.clienteId`.
   El OpenAPI publicado exige eliminar las cuentas sin activar a los 30 días.
   Hasta cubrir ese requisito, el alta asistida se prueba con cuentas sintéticas
   en un entorno de prueba.
-- Se suspende la revocación prevista en §7. G4 reportó que el historial, la
-  bandeja de pickup y la entrega en tienda usan `ventas:pedidos:consultar` y
-  `ventas:pedidos:estado`. Queda confirmar con G4 y G5 el método, la ruta y el
-  scope de cada operación antes de actualizar la matriz.
+- Se mantienen las concesiones de Retail para pickup. El
+  [contrato de Ventas §§1.15 y 1.16](https://github.com/Taller-SW-Web/G5-Ventas-Postventas/blob/main/specs/api/api-ventas.md)
+  confirma `ventas:pedidos:consultar` para `GET /api/v1/pedidos/pickup` y
+  `ventas:pedidos:estado` para `POST /api/v1/pedidos/{pedidoId}/entrega-pickup`.
+  G4 también reporta usar el token de Retail en
+  `GET /api/v1/pedidos/{pedidoId}`. La §1.3 del mismo contrato excluye los
+  tokens de servicio de canal de esa ruta. Queda pedir a G5 que aclare la
+  autorización del historial antes de actualizar la matriz.
 - El pedido `RETAIL` ya creado en Ventas se registra como reportado por G4.
   El flujo con identidad G7 se acredita cuando el vendedor obtiene el UUID
   desde G7 y el comprador ve el pedido en `/pedidos/me` con su token. La

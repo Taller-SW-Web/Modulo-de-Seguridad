@@ -62,13 +62,22 @@ debe ver el pedido en `/api/v1/pedidos/me` con su token de usuario G7 y una
 segunda cuenta debe quedar sin acceso a ese pedido. Registrar los HTTP, las
 versiones Live y el canal, sin adjuntar documentos, tokens ni datos personales.
 
-**Prueba por API disponible para coordinar:** usar una cuenta `CLIENTE` de
-prueba de G7 que ya exista. Con el UUID de esa cuenta acordado previamente,
-G4 crea un pedido de prueba en G5 con su cliente técnico. G5 verifica
-`canal: RETAIL` y el vínculo con el UUID. G7 comprueba que el titular vea ese
-pedido y la segunda cuenta quede sin acceso. Registrar el resultado como
-prueba por API con un UUID preparado. El flujo del POS de búsqueda y alta
-asistida se verifica por separado cuando estén disponibles las dos rutas.
+**Prueba por API acordada con G4:** se propone el viernes 20 de noviembre,
+en forma asíncrona. Falta fijar con G5 la hora de Lima. G4 confirmó que ya
+registró y verificó en G7 la cuenta `CLIENTE` compradora (A). G7 aporta una
+segunda cuenta `CLIENTE` de prueba (B).
+
+1. G4 crea el pedido por `POST /api/v1/retail/ventas` de su backend desplegado.
+   Su backend llama a G5 con `modulo-retail`, `canal: RETAIL` y el UUID de A
+   como `contacto.clienteId`.
+2. G4 comparte por coordinación privada el `pedidoId`, la hora de Lima y la
+   `Idempotency-Key`. G5 verifica el canal y el vínculo con el UUID de A.
+3. G4 consulta `GET /api/v1/pedidos/me` con la cuenta A y confirma que aparece el
+   pedido. G7 consulta con B y comprueba que el mismo pedido queda fuera.
+
+Registrar los HTTP y el resultado por cuenta, con los datos del pedido
+sanitizados. La ejecución sigue pendiente. El flujo del POS de búsqueda y alta
+asistida se verifica cuando estén disponibles las dos rutas.
 
 **Seguimiento:** [docs #103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103)
 y [ajuste de alcance para Retail](../../../plan/hito-5/DECISIONES-PO.md#8-ajuste-del-19-nov-para-retail).
