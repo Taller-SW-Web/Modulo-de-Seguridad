@@ -31,7 +31,7 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | FEAT-14-T4 | Recorrido desplegado y evidencia | P1 | T2, T3 | Hecho ([evidencia](../../../docs/evidencia/h5/FEAT-14.md)) |
 | FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | En curso: G5 reportó URL, SHA, issuer y JWKS el 17-nov. Falta acordar fecha y hora con G1 en [#100](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/100). |
 | FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Pendiente: [prueba preparada](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t2--prueba-desplegada-con-marketplace-g1); G1 debe confirmar versión y disponibilidad en [#101](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/101). |
-| FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4 | Pendiente: pedido el 16-nov en [#103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103); sin confirmación el mié 18-nov, «no probado» |
+| FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4; SPEC-03 | En curso: G4 reportó despliegue y creación de pedidos `RETAIL` en G5 el 19-nov. Falta usar el UUID de G7 en la compra, con alta asistida o búsqueda por documento. [Evidencia](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t3--retail-g4) · [#103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103) |
 | FEAT-20-T4 | Compra desde Chatbot (G3) | P1 | T1; G3 | Pendiente: pedido el 16-nov en [#102](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/102); sin confirmación el mié 18-nov, «no probado» |
 | FEAT-11-T6 | Favoritos A/B en despliegue | P1 | G1 (externo) | Pendiente |
 | FEAT-11-T7 | Llamada real de `modulo-marketplace` a G6 | P1 | G1 y G6 (externo) | Pendiente |
