@@ -1,6 +1,6 @@
 # FEAT-20 — Compra por canal con la misma identidad de G7
 
-**Responsable:** Luis David Morales Brenis. **Corte:** 19-nov-2026, hora de Lima.
+**Responsable:** Luis David Morales Brenis. **Corte:** 21-nov-2026, hora de Lima.
 **Estado:** G5 reportó sus versiones y la configuración. La fecha y la prueba
 con Marketplace (G1) siguen pendientes.
 
@@ -62,10 +62,9 @@ debe ver el pedido en `/api/v1/pedidos/me` con su token de usuario G7 y una
 segunda cuenta debe quedar sin acceso a ese pedido. Registrar los HTTP, las
 versiones Live y el canal, sin adjuntar documentos, tokens ni datos personales.
 
-**Prueba por API acordada con G4:** se propone el viernes 20 de noviembre,
-en forma asíncrona. Falta fijar con G5 la hora de Lima. G4 confirmó que ya
-registró y verificó en G7 la cuenta `CLIENTE` compradora (A). G7 aporta una
-segunda cuenta `CLIENTE` de prueba (B).
+**Prueba por API asíncrona:** G4 registró y verificó en G7 la cuenta
+`CLIENTE` compradora (A). G7 aporta la cuenta de control (B). G4 informó que
+creó `PED-2026-00081` el 20-nov a las 00:38:22, hora de Lima.
 
 1. G4 crea el pedido por `POST /api/v1/retail/ventas` de su backend desplegado.
    Su backend llama a G5 con `modulo-retail`, `canal: RETAIL` y el UUID de A
@@ -75,9 +74,15 @@ segunda cuenta `CLIENTE` de prueba (B).
 3. G4 consulta `GET /api/v1/pedidos/me` con la cuenta A y confirma que aparece el
    pedido. G7 consulta con B y comprueba que el mismo pedido queda fuera.
 
-Registrar los HTTP y el resultado por cuenta, con los datos del pedido
-sanitizados. La ejecución sigue pendiente. El flujo del POS de búsqueda y alta
-asistida se verifica cuando estén disponibles las dos rutas.
+| Comprobación | Resultado | Procedencia |
+|---|---|---|
+| Pedido nuevo por el backend desplegado de G4 | `201`, canal `RETAIL`, estado `ENTREGADO` y `contacto.clienteId` igual al `sub` de A. | Reportado por G4. |
+| Consulta de pedidos con A | `200`, incluye `PED-2026-00081`. | Reportado por G4. |
+| Consulta de pedidos con B | `200`, `PED-2026-00081` no aparece en ninguna página del 20-nov. | Luis David, G7, consulta desplegada en Ventas desde PowerShell el 21-nov. |
+| Confirmación del canal y del titular en Ventas | Pendiente. G4 remitió a G5 los datos de la operación. | G5. |
+
+El flujo del POS de búsqueda y alta asistida se verifica cuando estén
+disponibles las dos rutas.
 
 **Seguimiento:** [docs #103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103)
 y [ajuste de alcance para Retail](../../../plan/hito-5/DECISIONES-PO.md#8-ajuste-del-19-nov-para-retail).
