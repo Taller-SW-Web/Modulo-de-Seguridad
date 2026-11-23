@@ -24,8 +24,9 @@ SPEC-16, FRONT-06 (Mi cuenta), FRONT-08 (detalle administrativo), OpenAPI v1
 | T6 Edición administrativa (API) | Backend | [#83](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/83) | `2d7f3850f9529caf554a78bf0bc9d0c173cbc266` | 7-nov |
 | T6 Atributos de vendedor en FRONT-08 | Frontend | [#22](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/22) | `7fc2dbe80ebbf8e93defadcf59c159874ffaae6d` | 7-nov |
 
-Versiones Live en Render el día del recorrido: backend `_(sha, pedido a David)_`, frontend `_(sha)_`.
-Comprobar con `git merge-base --is-ancestor <merge> <sha-live>` que contienen los merges de arriba.
+Versión del backend en Render el día del recorrido: `05ad567d16d1323c1b13711aeb83f6ee5f041254` (último
+confirmado por David, 23-nov). Contiene los merges de backend de arriba (#68, #70, #82, #83); comprobado
+con `git merge-base --is-ancestor`. La versión exacta del frontend no se registró.
 El recorrido muestra en funcionamiento las pantallas y respuestas de #15, #70 y #82.
 
 Relacionado: el PR de duplicado de la confirmación de correo
@@ -86,5 +87,5 @@ No ejecutado: requiere una cuenta ADMIN_SISTEMA (con MFA por rol de gestión), s
 - No se recorrieron en el despliegue: dirección de otra cuenta (403/404), correo ya usado (respuesta
   neutra), enlace vencido o ya usado. Quedan cubiertos por las pruebas automatizadas.
 - No se probó el ingreso con el correo anterior después de confirmar el cambio.
-- La versión desplegada exacta se completa con el SHA que muestra Render (pendiente).
+- No se registró el SHA desplegado del frontend; el recorrido muestra en funcionamiento las pantallas de #15.
 - El documento de identidad no se edita: falla cerrado mientras no exista la clave AES (Christian).
