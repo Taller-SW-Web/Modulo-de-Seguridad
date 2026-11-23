@@ -89,11 +89,12 @@ tienen wireframe. `FRONT-00` no es una pantalla: recoge lo que comparten todas.
 | [08](FRONT-08-admin-detalle-usuario.md) | Panel admin: detalle de usuario | 11, 13, 15 (03, 04, 16) | Pantalla 8 | 🔶 Borrador |
 | [09](FRONT-09-segundo-factor.md) | Segundo factor: activar y desactivar | 10 | ⬜ Falta | Definida local; publicación/implementación pendientes |
 | [10](FRONT-10-cambio-contrasena.md) | Cambiar contraseña | 07 | ⬜ Falta | 🔶 Borrador |
-| [11](FRONT-11-admin-alta-usuario.md) | Panel admin: alta de cuenta | 03, 07 | ⬜ Falta | 🔶 Borrador |
+| [11](FRONT-11-admin-alta-usuario.md) | Panel admin: alta de cuenta | 03, 07 | ⬜ Falta | 🔶 En revisión (FEAT-13) |
 | [12](FRONT-12-desbloqueo-con-enlace.md) | Desbloqueo con el enlace del correo | 14 | ⬜ Falta | 🔶 Borrador |
 | [13](FRONT-13-actividad-propia.md) | Actividad reciente de mi cuenta | 13 | ⬜ Falta | 🔶 Borrador |
 | [14](FRONT-14-admin-auditoria.md) | Panel admin: auditoría | 13 | ⬜ Falta | 🔶 Borrador |
 | [15](FRONT-15-admin-clientes-tecnicos.md) | Configuración: clientes técnicos (FEAT-14) | 19 | ⬜ Falta | 🔶 En revisión |
+| [16](FRONT-16-activacion-cuenta.md) | Activación de una cuenta creada por otra persona (FEAT-13) | 03, 07 | ⬜ Falta | 🔶 En revisión |
 
 Los wireframes 1 a 8 son los artboards de Stitch (proyecto
 `889177073946089595`), todavía con la numeración antigua de specs; el paso a

@@ -6,7 +6,7 @@
 | **Épica principal** | [EP-01](../epicas/EP-01-registro-gestion-usuarios.md) |
 | **Specs de backend que consume** | SPEC-03 (alta y activación) |
 | **Wireframe** | Sin wireframe — el listado (pantalla 7) tiene el botón que lleva aquí |
-| **Estado** | Borrador |
+| **Estado** | En revisión (FEAT-13, H5): implementada en frontend #28 y recorrida en el despliegue el 23-nov |
 | **Aprobada por** | Pendiente |
 
 
@@ -18,6 +18,12 @@
 > **Corte 11-oct:** alta administrativa estricta en [v2 local](../contrato-api/openapi-v2.yaml).
 > Las consultas, alta asistida de clientes y activación de cuenta siguen en v1.
 > Publicación pendiente; términos/pantalla de activación A6 todavía requieren H-12.
+
+> **Corte 23-nov (FEAT-13):** v2 publicada (`crearUsuarioV2`) y servidor en backend #93. Esta
+> pantalla vive en `/admin/usuarios/nuevo` (frontend #28) y el listado la ofrece con «Nueva
+> cuenta». H-12 quedó resuelto por el PO (términos `2026-11-v1`) y la activación tiene su spec
+> propia, [FRONT-16](FRONT-16-activacion-cuenta.md). Recorrido desplegado en
+> [FEAT-13](../../docs/evidencia/h5/FEAT-13.md).
 
 ## Objetivo — ¿para qué sirve esta pantalla?
 
@@ -103,20 +109,19 @@ Errores asociados a campos; avisos anunciados; no autocompletar datos del admin.
 ## Fuera de alcance — ¿qué NO hará?
 
 Crear clientes; perfiles de negocio; asignar varios roles; pedir contraseña.
-La **pantalla de activación A6** exige spec propia antes de implementarse:
-recibe enlace, contraseña/política de SPEC-07 y aceptación H-12, con
-`POST /auth/activar-cuenta` de SPEC-03. FRONT-03 de verificación simple no
-la sustituye. Es pendiente de EP-01 y queda fuera de la demo mínima con Ventas.
+La **pantalla de activación A6** tiene spec propia: [FRONT-16](FRONT-16-activacion-cuenta.md)
+(enlace, contraseña con la política de SPEC-07, aceptación de los términos y
+`POST /auth/activar-cuenta` de SPEC-03). FRONT-03 de verificación simple no la sustituye.
 
 ## Huecos y cierre
 
-H-10: schema de rol de alta definido localmente en v2, sin publicar.
-H-12: texto, versión y fuente de términos todavía pendientes.
-La pantalla de activación no se considera especificada por este formulario.
+H-10: schema de rol de alta publicado en v2 (`CrearUsuarioRequest`, cinco roles, sin CLIENTE) y servidor en backend #93.
+H-12: el PO fijó los términos `2026-11-v1` (10-nov); la SPA los muestra en `/terminos`.
+La pantalla de activación está especificada en [FRONT-16](FRONT-16-activacion-cuenta.md).
 
-- [ ] UI-01 alineada con A6 y revisión humana aprobada
-- [ ] Rol opcional, sin CLIENTE ni contraseña en petición
-- [ ] Estado pendiente y enlace de 72 horas explicados
-- [ ] Detalle solo con usuario.ver
-- [ ] Pantalla de activación especificada antes de implementarla
-- [ ] Escenarios y accesibilidad verificados con evidencia
+- [ ] UI-01 alineada con A6 y revisión humana aprobada (pendiente de aprobación del PO)
+- [x] Rol opcional, sin CLIENTE ni contraseña en petición
+- [x] Estado pendiente y enlace de 72 horas explicados
+- [x] Detalle solo con usuario.ver
+- [x] Pantalla de activación especificada (FRONT-16, escrita tras implementarla en FEAT-13)
+- [x] Escenarios verificados: UI-11.1 a UI-11.6 automatizados (`AdminAltaPage.test.tsx`); UI-11.1 y UI-11.2 recorridos en el despliegue ([FEAT-13](../../docs/evidencia/h5/FEAT-13.md))
