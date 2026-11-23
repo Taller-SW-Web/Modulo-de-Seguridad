@@ -1,6 +1,6 @@
 # FEAT-20 — Compra por canal con la misma identidad de G7
 
-**Responsable:** Luis David Morales Brenis. **Corte:** 21-nov-2026, hora de Lima.
+**Responsable:** Luis David Morales Brenis. **Corte:** 22-nov-2026, hora de Lima.
 **Estado:** G5 reportó sus versiones y la configuración. La fecha y la prueba
 con Marketplace (G1) siguen pendientes.
 
@@ -79,10 +79,12 @@ creó `PED-2026-00081` el 20-nov a las 00:38:22, hora de Lima.
 | Pedido nuevo por el backend desplegado de G4 | `201`, canal `RETAIL`, estado `ENTREGADO` y `contacto.clienteId` igual al `sub` de A. | Reportado por G4. |
 | Consulta de pedidos con A | `200`, incluye `PED-2026-00081`. | Reportado por G4. |
 | Consulta de pedidos con B | `200`, `PED-2026-00081` no aparece en ninguna página del 20-nov. | Luis David, G7, consulta desplegada en Ventas desde PowerShell el 21-nov. |
-| Confirmación del canal y del titular en Ventas | Pendiente. G4 remitió a G5 los datos de la operación. | G5. |
+| Canal, titular e historial en Ventas | `GET /api/v1/pedidos/PED-2026-00081` en el gateway con el token de `modulo-retail` devolvió `200`, canal `RETAIL`, estado `ENTREGADO` y `contacto.clienteId` igual al `sub` de A. El historial muestra `PAGADO → ENTREGADO`, actor `CLIENTE` y motivo `ENTREGA_INMEDIATA_EN_TIENDA`. | Consulta desplegada reportada por G4 el 22-nov a las 21:53, hora de Lima. |
 
-El flujo del POS de búsqueda y alta asistida se verifica cuando estén
-disponibles las dos rutas.
+**Resultado:** compra por API y visibilidad A/B acreditadas para este pedido.
+G5 debe aclarar la autorización del detalle con el token técnico de Retail,
+que difiere de lo descrito en §1.3 de su contrato. El flujo del POS de
+búsqueda y alta asistida se verifica cuando estén disponibles las dos rutas.
 
 **Seguimiento:** [docs #103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103)
 y [ajuste de alcance para Retail](../../../plan/hito-5/DECISIONES-PO.md#8-ajuste-del-19-nov-para-retail).
