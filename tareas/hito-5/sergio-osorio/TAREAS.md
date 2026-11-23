@@ -20,7 +20,7 @@ Sus PR los revisa Juan José; él revisa los de David, que trabaja en el paquete
 | FEAT-19-T1 | Plataforma de API Management elegida | P1 · jue 12-nov | — | En PR (10-nov): [ADR-010](../../../docs/arquitectura/adr/010-plataforma-api-management.md) |
 | FEAT-19-T2 | API de G7 publicada en la plataforma | P1 | T1 | Bloqueada: falta la cuenta de Azure for Students. Plantilla y guiones listos en el repo backend |
 | FEAT-19-T3 | Seguridad, límite de uso y monitoreo, con evidencia | P1 | T2 | Pendiente |
-| FEAT-05-T4 | Rotación de clave con dos `kid` | P2 | David ejecuta en Render | Pendiente. El 10-nov el JWKS desplegado publica una sola clave; pasos y guion de comprobación listos |
+| FEAT-05-T4 | Rotación de clave con dos `kid` | P2 | David ejecuta en Render | Rotación verificada en Render por David y Sergio: dos claves durante el solapamiento, token anterior con `200` y token nuevo emitido con la nueva firma. Retiro de la clave anterior confirmado el 17-nov |
 | FEAT-06-T4 | Consulta de identidad con 200 y 403 | P2 | David OPS-T2 | En curso. Cliente `modulo-prueba-h5` aprobado; guion de comprobación listo |
 
 ## PO — contrato y decisiones (P1)
@@ -65,6 +65,8 @@ API Management es gestionar la API de forma centralizada: publicarla, asegurarla
 - **Primer paso:** pasar a David los pasos del runbook para que los ejecute en Render.
 - **Comprobación:** `infra/verificacion/comprobar_rotacion.py` del repo backend, antes y después de la rotación.
 - **Aceptación:** el JWKS publica dos claves y un token anterior sigue validando.
+- **Resultado de la prueba:** durante el solapamiento, el JWKS publicó las dos claves. El token anterior devolvió `200` en `/auth/me` antes de su vencimiento. Un inicio de sesión nuevo emitió un token con el `kid` nuevo y también devolvió `200` en `/auth/me`.
+- **Retiro:** el 17-nov, tras el despliegue de las 23:36 de Lima, el JWKS quedó con una clave RS256 y se comprobó el inicio de sesión. Backend Render `05ad567d16d1323c1b13711aeb83f6ee5f041254`. Resultados de la comprobación coordinada por Sergio y David.
 
 ### FEAT-06-T4 — Consulta de identidad
 - **Aceptación:** con token de servicio, 200 con el scope y 403 sin él, en el despliegue.

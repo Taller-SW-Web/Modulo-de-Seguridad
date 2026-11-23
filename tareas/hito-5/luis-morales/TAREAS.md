@@ -19,7 +19,7 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
 | OPS-T1 | Consultas de solo lectura en Supabase | P1 · mar 10-nov | — | Hecho (Q0 a Q7 en la [verificación](../../../docs/integracion/hito-5-clientes-tecnicos.md)) |
-| OPS-T2 | Cuentas de prueba y cliente técnico de prueba | P1 · mié 11-nov | OPS-T1; aprobación de Sergio para el cliente nuevo | En curso: cliente `modulo-prueba-h5` y cuenta del E2E listos; faltan las cuentas de carga de Valery |
+| OPS-T2 | Cuentas de prueba y cliente técnico de prueba | P1 · mié 11-nov | OPS-T1; aprobación de Sergio para el cliente nuevo | Avance verificado: cliente `modulo-prueba-h5` y cuenta E2E listos. Valery creó y usó 5 cuentas en la ronda corta. Quedan las cuentas de la ronda ampliada y confirmar `tokens:introspeccion` para el cliente de prueba ([backend #95](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/95)) |
 | OPS-T3 | Ajustes de repositorio y Render | P1 · mié 11-nov | — | Hecho (12-nov): E2E contra Render activo y en verde ([evidencia](../../../docs/evidencia/h5/FEAT-12.md)); secreto `RENDER_DEPLOY_HOOK_FRONTEND` en el frontend para Christian. El análisis de código lo configura Juan José en su workflow (FEAT-15-T1), sin la configuración por defecto de GitHub, que lo impediría |
 | FEAT-16-T1 | Decisión y propuesta de contrato del token cifrado | P1 · mié 11-nov | — | Hecho |
 | FEAT-16-T2 | Backend emite el formato cifrado y acepta ambos | P1 | T1 como propuesta | Hecho |
@@ -29,12 +29,12 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | FEAT-14-T2 | Backend de gestión de clientes técnicos | P1 | T1 como propuesta | Hecho |
 | FEAT-14-T3 | Pantalla «Configuración → Clientes técnicos» | P1 | T2 | Hecho |
 | FEAT-14-T4 | Recorrido desplegado y evidencia | P1 | T2, T3 | Hecho ([evidencia](../../../docs/evidencia/h5/FEAT-14.md)) |
-| FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | En curso: G5 reportó URL, SHA, issuer y JWKS el 17-nov. Falta acordar fecha y hora con G1 en [#100](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/100). |
-| FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Pendiente: [prueba preparada](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t2--prueba-desplegada-con-marketplace-g1); G1 debe confirmar versión y disponibilidad en [#101](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/101). |
-| FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4; SPEC-03 | Prueba por API verificada: pedido `RETAIL` vinculado al UUID de G7, visible para A y ausente para B. Pendiente el flujo del POS con alta asistida y búsqueda por documento. [Evidencia](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t3--retail-g4) · [#103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103) |
+| FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | Configuración de G5 confirmada (17-nov) y participación de Ventas acreditada en la prueba Retail por API. Queda coordinar la prueba de compra de Marketplace en [#100](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/100). |
+| FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Pendiente: [prueba preparada](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t2--prueba-desplegada-con-marketplace-g1); falta crear un pedido de Marketplace y comprobar su visibilidad A/B en Ventas. La ronda funcional de identidad del 23-nov está [registrada aparte](../../../docs/evidencia/h5/FEAT-11.md). Coordinación en [#101](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/101). |
+| FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4 | Cerrada para H5 por API: `PED-2026-00081` quedó en Ventas como `RETAIL`, visible para A y ausente para B. El flujo de POS con alta asistida y búsqueda queda en [#37](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/37). [Evidencia](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t3--retail-g4) · [#103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103) |
 | FEAT-20-T4 | Compra desde Chatbot (G3) | P1 | T1; G3 | Pendiente: pedido el 16-nov en [#102](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/102); sin confirmación el mié 18-nov, «no probado» |
 | FEAT-11-T6 | Favoritos A/B en despliegue | P1 | G1 (externo) | Pendiente |
-| FEAT-11-T7 | Llamada real de `modulo-marketplace` a G6 | P1 | G1 y G6 (externo) | Pendiente |
+| FEAT-11-T7 | Llamada real de `modulo-marketplace` a G6 | P1 | G1 y G6 (externo) | `catalogo:leer` ya concedido con `api-productos`. Pendiente acreditar la llamada real a G6 ([FEAT-11](../../../docs/evidencia/h5/FEAT-11.md)) |
 | FEAT-07-T5 | Casos negativos de MFA en despliegue | P2 | — | Hecho (12-nov): [evidencia](../../../docs/evidencia/h5/FEAT-07.md) |
 | FEAT-08-T3 | Revocación en nube y contacto de soporte | P2 | Sergio (H-14) | Hecho (12-nov): [evidencia](../../../docs/evidencia/h5/FEAT-08.md). Soporte: se mantiene «pide al administrador de la plataforma» |
 
@@ -46,7 +46,7 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 
 ### OPS-T2 — Cuentas y cliente de prueba
 - **Resultado:** cuentas dedicadas para el E2E contra Render y para la carga; un cliente técnico de prueba si Sergio lo aprueba.
-- **Primer paso:** pedir a Jose Luis y a Valery la lista exacta de cuentas que necesitan.
+- **Avance al 23-nov:** la cuenta del E2E y `modulo-prueba-h5` están disponibles. Valery ejecutó login y refresco con 5 cuentas `CLIENTE` verificadas y sin MFA, con cero errores reportados. Faltan las cuentas para la ronda ampliada y confirmar el scope técnico de introspección ([backend #95](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/95)).
 - **Aceptación:** cuentas entregadas por canal privado; las cuentas de carga no son las de la demo, porque el bloqueo automático puede bloquearlas.
 
 ### OPS-T3 — Ajustes de repositorio y Render
@@ -107,7 +107,7 @@ También en estos dos días: mensajes a G5, G1, G2 (issue #80) y G6 (issue #78),
 
 ### FEAT-20-T1 — Confirmar la prueba conjunta con G5
 - **Situación:** el mecanismo ya está definido por G5 (`G5-Ventas-Postventas`, `specs/api/api-ventas.md` y `integraciones/ACUERDO_G7_SEGURIDAD.md`): el canal crea el pedido con su token de servicio (`ventas:pedidos:crear`) y `contacto.clienteId` = `sub` de G7; el cliente lo ve en `GET /pedidos/me` con su propio token. `ventas:pedidos:crear` está concedido a los tres canales (10-nov).
-- **Avance del 17-nov:** G5 reportó URL, SHA, issuer y JWKS, además de los `401` sin token. Reportó que valida el canal contra el `client_id` y registra ese `client_id` (RNF-03). La validación de `clienteId` contra Seguridad sigue en evaluación. Falta fijar fecha y hora de prueba con G5 y G1.
+- **Avance del 17-nov:** G5 reportó URL, SHA, issuer y JWKS, además de los `401` sin token. Reportó que valida el canal contra el `client_id` y registra ese `client_id` (RNF-03). La validación de `clienteId` contra Seguridad sigue en evaluación. La consulta del pedido Retail en el gateway de Ventas del 22-nov quedó registrada en FEAT-20-T3. La fecha y versiones del recorrido de compra de G1 siguen pendientes.
 - **Aceptación:** fecha y versiones confirmadas por G5.
 
 ### FEAT-20-T2 a T4 — Un canal por tarea
@@ -123,7 +123,14 @@ También en estos dos días: mensajes a G5, G1, G2 (issue #80) y G6 (issue #78),
 
 ### FEAT-11-T7 — Llamada real a G6
 - **Aceptación:** `modulo-marketplace` obtiene 200 con `catalogo:leer` y 403 fuera de scope, con fecha y versiones.
-- **Evidencia de ambas:** `docs/evidencia/h5/FEAT-11.md`.
+- **Evidencia:** [FEAT-11 H5](../../../docs/evidencia/h5/FEAT-11.md) registra la ronda funcional de identidad y el estado de T6 y T7.
+
+## Coordinación de clientes técnicos con otros módulos
+
+- **G5 Ventas → G2 Despacho:** G5 confirmó que su token ya funciona con Despacho. El resultado corresponde a ese flujo.
+- **G3 Chatbot → G5 Ventas:** `modulo-chatbot` tiene concedidos `ventas:pagos:webhook` y `ventas:pedidos:anular` en `api-ventas`. G7 ya lo confirmó en [#108](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/108). Queda que G3 confirme un token fresco y que G3/G5 registren las llamadas protegidas.
+- **G5 Ventas y Postventa → G6 Productos:** en `modulo-ventas` ya aparecen `inventario:disponibilidad:leer`, `cupones:consumir`, `cupones:restaurar`, `cupones:operaciones:leer` e `inventario:reservas:estado:leer` con `api-productos`. G5 confirmó los dos scopes de inventario de `modulo-postventa` en un token fresco. La sincronización de los cuatro scopes nuevos con el catálogo versionado sigue en [backend #96](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/96).
+- **G6 `promotions-svc`:** cliente creado con `inventario:reservas:estado:leer` y `api-productos`. Queda confirmar la entrega privada y la emisión. `ventas:pedidos:evidencia-cupon:leer` sigue pendiente porque G5 indicó que la ruta aún no existe en su servicio ni en el contrato. Seguimiento en [#107](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/107).
 
 ## FEAT-07 y FEAT-08 — Cierre (P2)
 
