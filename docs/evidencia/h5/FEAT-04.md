@@ -1,9 +1,9 @@
 # FEAT-04 — Direcciones, cambio de correo y edición administrativa (cierre H5)
 
 Responsable: Valery Cristin Gutierrez Bendezu. Corte: 23-nov-2026, America/Lima.
-Estado: **T1–T6 implementadas y fusionadas en `develop`; recorrido desplegado propio comprobado para
-direcciones y cambio de correo (T1–T4). Edición administrativa (T6) pendiente de recorrido** por falta de
-acceso a una cuenta ADMIN_SISTEMA (ver «Límites»).
+Estado: **T1–T4 y T6 fusionadas como código en `develop`; T5 es la evidencia desplegada que trae este
+documento**: recorrido comprobado para direcciones y cambio de correo. La edición administrativa (T6)
+queda pendiente de recorrido en Render por falta de acceso a una cuenta ADMIN_SISTEMA (ver «Límites»).
 Nivel de evidencia: **propia desplegada** + CI.
 
 Capturas recortadas, sin barra de direcciones, con los correos y el enlace de verificación tapados.
@@ -66,12 +66,13 @@ otro alias del mismo buzón, así llegan los dos mensajes: el enlace al correo n
 ### Edición administrativa (T6) — pendiente
 
 No ejecutado: requiere una cuenta ADMIN_SISTEMA (con MFA por rol de gestión), solicitada al equipo.
+Guion pendiente:
 
-| # | Paso | Resultado esperado | Resultado | Captura |
-|---|---|---|---|---|
-| 11 | Admin → detalle de `vendedor.v` | Sección de atributos de vendedor visible | | ![](img/FEAT-04-11-detalle-vendedor.png) |
-| 12 | Cambiar la tienda y guardar | 200; el valor nuevo queda al recargar | | ![](img/FEAT-04-12-atributo-guardado.png) |
-| 13 | Actividad / auditoría de la cuenta | `ATRIBUTOS_ACTUALIZADOS` con nombres de campo, sin valores | | ![](img/FEAT-04-13-auditoria.png) |
+| # | Paso | Resultado esperado |
+|---|---|---|
+| 11 | Admin → detalle de `vendedor.v` | Sección de atributos de vendedor visible |
+| 12 | Cambiar la tienda y guardar | 200; el valor nuevo queda al recargar |
+| 13 | Actividad / auditoría de la cuenta | `ATRIBUTOS_ACTUALIZADOS` con nombres de campo, sin valores |
 
 ## Pruebas automatizadas
 
