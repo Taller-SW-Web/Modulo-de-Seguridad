@@ -2,7 +2,7 @@ openapi: 3.1.0
 
 info:
   title: Módulo de Seguridad y Autenticación — API de identidad
-  version: 1.1.0
+  version: 1.2.0
   x-estado: revision-local-no-publicada
   summary: Proveedor de identidad del Marketplace Multicanal de Productos Deportivos
   description: |
@@ -969,6 +969,8 @@ paths:
                 contrasena:
                   type: string
                   format: password
+                formatoAcceso:
+                  $ref: '#/components/schemas/FormatoAcceso'
             examples:
               credenciales:
                 value:
@@ -1066,6 +1068,8 @@ paths:
               properties:
                 refreshToken:
                   type: string
+                formatoAcceso:
+                  $ref: '#/components/schemas/FormatoAcceso'
       responses:
         '200':
           description: Nuevo par de tokens, de la misma familia
@@ -1315,6 +1319,8 @@ paths:
                   type: string
                   pattern: '^[0-9]{6}$'
                   examples: ["483920"]
+                formatoAcceso:
+                  $ref: '#/components/schemas/FormatoAcceso'
       responses:
         '200':
           description: Código correcto, sesión iniciada
@@ -2959,7 +2965,11 @@ components:
       properties:
         accessToken:
           type: string
-          description: JWT firmado con RS256. Dura 15 minutos.
+          description: |
+            JWT firmado con RS256. Dura 15 minutos. Si la petición llevó
+            `formatoAcceso: CIFRADO`, el mismo JWT va envuelto en un JWE
+            (`alg: dir`, `enc: A256GCM`, `cty: JWT`) que solo esta API sabe
+            descifrar: sirve para la SPA de Seguridad, no para validar en local.
         refreshToken:
           type: string
           description: Se rota en cada uso. Dura 7 días.
@@ -2975,6 +2985,23 @@ components:
             roles:
               type: array
               items: { $ref: '#/components/schemas/CodigoRol' }
+            permisos:
+              type: array
+              description: |
+                Permisos efectivos de este módulo (SPEC-11), los mismos del
+                claim `permisos`. Permiten no leer el token, que puede ir cifrado.
+              items: { type: string }
+              examples: [["usuario.ver", "rol.asignar"]]
+
+    FormatoAcceso:
+      type: string
+      enum: [JWS, CIFRADO]
+      default: JWS
+      description: |
+        Formato del `accessToken` entregado (ADR-009). Opcional: sin el campo, o
+        con `JWS`, la respuesta es la de siempre. `CIFRADO` envuelve el JWS en un
+        JWE para que sus claims no se lean en el navegador; esta API acepta ambos
+        formatos. Los módulos que validan en local con el JWKS no deben pedirlo.
 
     DesafioMfa:
       type: object

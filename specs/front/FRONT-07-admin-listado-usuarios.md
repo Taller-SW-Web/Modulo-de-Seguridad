@@ -125,11 +125,11 @@ Diálogos de confirmación:
 | Bloquear | «Bloquear la cuenta de {correo}» | «Se cerrarán todas sus sesiones y no podrá entrar hasta que un administrador la desbloquee. Le avisaremos por correo, sin incluir el motivo.» + campo «Motivo (obligatorio)» | «Bloquear» |
 | Desbloquear | «Desbloquear la cuenta de {correo}» | «Podrá volver a iniciar sesión. Le avisaremos por correo.» | «Desbloquear» |
 | Dar de baja | «Dar de baja la cuenta de {correo}» | «La cuenta quedará inactiva y se cerrarán sus sesiones. No se borra nada: puedes reactivarla después.» | «Dar de baja» |
-| Reactivar | «Reactivar la cuenta de {correo}» | «Volverá a estar activa con los mismos datos y roles. Tendrá que iniciar sesión de nuevo.» | «Reactivar» |
+| Reactivar | «Reactivar la cuenta de {correo}» | «Volverá a estar activa con los mismos datos y roles. Tendrá que iniciar sesión de nuevo.» Si la cuenta no tiene el correo verificado: «Volverá a quedar pendiente de verificar su correo, con los mismos datos y roles. Tendrá que verificarlo antes de iniciar sesión.» (SPEC-04 ESC-04.5) | «Reactivar» |
 
 | Código del backend | Mensaje en pantalla |
 |---|---|
-| `204` | «Cuenta bloqueada.» / «Cuenta desbloqueada.» / «Cuenta dada de baja.» / «Cuenta reactivada.» |
+| `204` | «Cuenta bloqueada.» / «Cuenta desbloqueada.» / «Cuenta dada de baja.» / «Cuenta reactivada.» (sin correo verificado: «Cuenta reactivada; queda pendiente de verificar su correo.») |
 | `ADMINISTRADOR_PROTEGIDO` | «No puedes hacer esto con tu propia cuenta ni con el último administrador del sistema activo.» |
 | `CUENTA_NO_DISPONIBLE` | «Esta cuenta no se puede bloquear en su estado actual.» |
 | `NO_ENCONTRADO` | «Esa cuenta ya no existe.» y se recarga el listado |

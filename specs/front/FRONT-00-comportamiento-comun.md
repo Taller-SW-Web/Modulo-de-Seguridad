@@ -47,7 +47,7 @@ fuerza de contraseña. Si una spec de pantalla no dice otra cosa, se aplica esto
 | `accessToken` | `SesionIniciada` | **Solo en memoria.** Nunca en `localStorage`, en la URL ni en registros de consola |
 | `refreshToken` | `SesionIniciada` | Solo en memoria para esta versión (H-11); recargar obliga a iniciar sesión. Aceptación bilateral de Ventas pendiente |
 | `usuario` (`id`, `nombreCompleto`, `correo`, `roles`) | `SesionIniciada` | En memoria, junto a la sesión |
-| `permisos` | Claim `permisos` del `accessToken` | Se lee decodificando la carga útil del token, **sin** verificar la firma: solo sirve para mostrar u ocultar opciones. Quien decide es el backend |
+| `permisos` | `usuario.permisos` de `SesionIniciada` | La SPA pide el access cifrado (`formatoAcceso: CIFRADO`, [ADR-009](../../docs/arquitectura/adr/009-acceso-cifrado-opcional.md)) y no puede leer el token. Si una respuesta antigua no trae `usuario.permisos`, se leen del claim sin verificar la firma. Solo sirven para mostrar u ocultar opciones; quien decide es el backend |
 | `challengeToken` | `DesafioMfa` | Solo en memoria, mientras dura el desafío (FRONT-04) |
 
 ### 1.2 Renovación (SPEC-06)

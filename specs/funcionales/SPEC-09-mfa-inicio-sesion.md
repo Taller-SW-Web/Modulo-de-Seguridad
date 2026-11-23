@@ -17,6 +17,13 @@
 > distingue definición local de publicación/implementación. La aprobación del
 > 2-oct corresponde a la base histórica.
 
+> **Corrección H5, 12-nov-2026 (FEAT-07-T5).** ESC-09.6 y ESC-09.10 se alinean
+> con lo que hace el backend desplegado, comprobado en
+> [la evidencia](../../docs/evidencia/h5/FEAT-07.md). El desafío vence 300 s
+> después del login y cada código 300 s después de pedirlo, así que el desafío
+> siempre vence primero. Y un código correcto consume también el desafío. En los
+> dos casos la respuesta es `401 TOKEN_INVALIDO`, sin emitir tokens.
+
 ---
 
 ## Contexto — ¿por qué?
@@ -106,7 +113,13 @@ condiciones límite, de error o de seguridad.
 
 - **Dado** un código generado hace más de 5 minutos,
 - **Cuando** el usuario envía el código correcto junto con su desafío,
-- **Entonces** el sistema lo rechaza, responde `410 OTP_EXPIRADO`, no emite tokens y no modifica el contador de la cuenta.
+- **Entonces** el sistema lo rechaza, responde `401 TOKEN_INVALIDO`, no emite tokens y no modifica el contador de la cuenta.
+
+En el inicio de sesión el código nunca vence antes que su desafío (RF-09.2 y
+RF-09.9): los dos duran 300 s, y el desafío empieza a contar antes, en el login.
+Por eso el rechazo es el de un desafío vencido (ESC-09.11). El backend conserva
+`410 OTP_EXPIRADO` para un código vencido con su desafío todavía vigente, algo
+que en este flujo no ocurre. Ese caso sí existe en el cambio del segundo factor (ESC-10.15).
 
 ### ESC-09.7 Exceso de solicitudes *(caso borde)*
 
@@ -130,7 +143,7 @@ condiciones límite, de error o de seguridad.
 
 - **Dado** un código que ya fue verificado correctamente,
 - **Cuando** se presenta nuevamente con el mismo desafío,
-- **Entonces** el sistema responde `401 CODIGO_INVALIDO` y no emite una segunda sesión.
+- **Entonces** el sistema responde `401 TOKEN_INVALIDO` y no emite una segunda sesión: la verificación correcta consumió también el desafío (RF-09.7).
 
 ### ESC-09.11 Desafío inexistente o manipulado *(caso borde de seguridad)*
 

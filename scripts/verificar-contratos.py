@@ -29,6 +29,9 @@ ANNOTATIONS = {'description', 'title', 'examples', 'example', 'deprecated',
 # el catálogo de AccionAuditable o el de scopes.
 PETICIONES_ADITIVAS_V1 = {
     ('/password/recuperar', 'post'): {'canalOrigen'},  # PO-T3, 26-oct-2026
+    ('/auth/login', 'post'): {'formatoAcceso'},  # FEAT-16, ADR-009, 10-nov-2026
+    ('/auth/otp/verificar', 'post'): {'formatoAcceso'},  # FEAT-16, ADR-009
+    ('/auth/refresh', 'post'): {'formatoAcceso'},  # FEAT-16, ADR-009
 }
 
 
@@ -118,8 +121,8 @@ def main():
     assert digest == '4E4420FD1395DBF2A3A0B19F6BB7C8DCAE9091547B0D77C16EA17E7AF2C946E7'
     old, v1, v2 = [DOCS[p.as_uri()] for p in PATHS]
     assert old['info']['version'] == '1.0.0'
-    assert v1['info']['version'] == '1.1.0'
-    assert v2['info']['version'] == '2.0.0'
+    assert v1['info']['version'] == '1.2.0'
+    assert v2['info']['version'] == '2.1.0'
     total = 0
     for path in PATHS:
         uri = path.as_uri()
@@ -169,6 +172,13 @@ def main():
         ('CrearUsuarioRequest', {'correo': 'demo@ejemplo.com', 'nombres': 'Demo', 'apellidos': 'Prueba'}, True),
         ('CrearUsuarioRequest', {'correo': 'demo@ejemplo.com', 'nombres': 'Demo', 'apellidos': 'Prueba', 'rol': 'CLIENTE'}, False),
         ('CrearUsuarioRequest', {'correo': 'demo@ejemplo.com', 'nombres': 'Demo', 'apellidos': 'Prueba', 'contrasena': 'inicial'}, False),
+        ('CrearClienteServicioRequest', {'clientId': 'modulo-prueba-h5', 'nombre': 'Cliente de prueba H5'}, True),
+        ('CrearClienteServicioRequest', {'clientId': 'modulo-prueba-h5', 'nombre': 'Cliente de prueba H5', 'scopes': ['usuarios:leer']}, True),
+        ('CrearClienteServicioRequest', {'clientId': 'Modulo_Prueba', 'nombre': 'Cliente de prueba H5'}, False),
+        ('CrearClienteServicioRequest', {'clientId': 'modulo-prueba-h5', 'nombre': 'Cliente', 'scopes': ['usuarios:leer', 'usuarios:leer']}, False),
+        ('CrearClienteServicioRequest', {'clientId': 'modulo-prueba-h5', 'nombre': 'Cliente', 'clientSecret': 'elegido-por-el-cliente'}, False),
+        ('ConcederScopeRequest', {'scope': 'roles:leer'}, True),
+        ('ConcederScopeRequest', {'scope': 'roles:leer', 'audiencia': 'api-seguridad'}, False),
     ]
     for schema, instance, valid in cases:
         actual = validator({'$ref': '#/components/schemas/' + schema}, uri).is_valid(instance)
@@ -188,6 +198,15 @@ def main():
         elif isinstance(node, list):
             for value in node:
                 yield from codes(value)
+    # Rutas de v2 fijadas por el PO; una ruta nueva exige actualizar esta lista.
+    assert set(v2['paths']) == {
+        '/auth/mfa/cambios', '/auth/mfa/cambios/reenviar', '/auth/mfa/cambios/confirmar', '/usuarios',
+        '/clientes-servicio', '/clientes-servicio/{clientId}/secreto',
+        '/clientes-servicio/{clientId}/desactivar', '/clientes-servicio/{clientId}/reactivar',
+        '/clientes-servicio/{clientId}/scopes', '/clientes-servicio/{clientId}/scopes/{scope}', '/scopes',
+    }, 'Rutas v2 modificadas'
+    lectura = v2['components']['schemas']['ClienteServicio']['properties']
+    assert 'clientSecret' not in lectura and 'clientSecretHash' not in lectura, 'Una lectura expone el secreto'
     for code in set(codes(v2)):
         assert re.search(r'\b' + re.escape(code) + r'\b', catalog), code
     print(f'Base histórica intacta; {operations} operaciones v1 mantienen peticiones/seguridad; {total} ejemplos; {len(cases) + 2} casos de schema')

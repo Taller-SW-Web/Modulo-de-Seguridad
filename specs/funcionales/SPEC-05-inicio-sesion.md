@@ -51,7 +51,7 @@ El resultado observable es un par de tokens —`accessToken` de 15 minutos y `re
 | RF-05.3 | Cuando se produzca un intento de inicio de sesión con credenciales incorrectas, el sistema debe registrarlo como intento fallido según SPEC-14, que es la dueña del contador y del bloqueo. |
 | RF-05.4 | El sistema debe rechazar el inicio de sesión cuando la cuenta se encuentre bloqueada, inactiva o pendiente de verificación, no debe emitir tokens y debe responder `401 CREDENCIALES_INVALIDAS`, igual que ante una contraseña incorrecta. |
 | RF-05.5 | Al completar la autenticación, el sistema debe aplicar la comprobación de caducidad de contraseña de SPEC-07: si caducó, responde `403 PASSWORD_CADUCADA` en vez de emitir tokens. SPEC-05 no reimplementa la regla: la invoca. |
-| RF-05.6 | Un inicio de sesión correcto sin segundo factor debe emitir un `accessToken` de 15 minutos, firmado con RS256 y con los claims `roles` y `permisos` que calcula SPEC-11, y un `refreshToken` de 7 días que abre una familia de sesión nueva (SPEC-06). |
+| RF-05.6 | Un inicio de sesión correcto sin segundo factor debe emitir un `accessToken` de 15 minutos, firmado con RS256 y con los claims `roles` y `permisos` que calcula SPEC-11, y un `refreshToken` de 7 días que abre una familia de sesión nueva (SPEC-06). Si la petición lleva `formatoAcceso: CIFRADO`, el mismo `accessToken` se entrega envuelto en JWE y `usuario.permisos` repite los permisos efectivos ([ADR-009](../../docs/arquitectura/adr/009-acceso-cifrado-opcional.md)). |
 | RF-05.7 | Cada inicio de sesión, correcto o fallido, debe registrarse mediante SPEC-12 (`SESION_INICIADA`, `SESION_FALLIDA`). |
 
 ---

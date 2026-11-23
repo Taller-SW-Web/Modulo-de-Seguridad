@@ -46,6 +46,7 @@ Reparto vigente del 11-oct-2026; no implica aprobación de pantallas. [Dueños c
 | 12 | Luis David |
 | 13 | Christian |
 | 14 | Christian |
+| 15 | Luis David |
 
 FRONT-00 integra sesión (Jose Luis), política (Juan José) y autorización (Sergio). FRONT-07/08 integra cuentas (Eva), roles (Sergio), bloqueo (Luis David), atributos (Valery) y auditoría (Christian); cada dueño desarrolla su bloque de punta a punta. Lotes y revisión UX no dividen el trabajo por capas.
 
@@ -92,6 +93,7 @@ tienen wireframe. `FRONT-00` no es una pantalla: recoge lo que comparten todas.
 | [12](FRONT-12-desbloqueo-con-enlace.md) | Desbloqueo con el enlace del correo | 14 | ⬜ Falta | 🔶 Borrador |
 | [13](FRONT-13-actividad-propia.md) | Actividad reciente de mi cuenta | 13 | ⬜ Falta | 🔶 Borrador |
 | [14](FRONT-14-admin-auditoria.md) | Panel admin: auditoría | 13 | ⬜ Falta | 🔶 Borrador |
+| [15](FRONT-15-admin-clientes-tecnicos.md) | Configuración: clientes técnicos (FEAT-14) | 19 | ⬜ Falta | 🔶 En revisión |
 
 Los wireframes 1 a 8 son los artboards de Stitch (proyecto
 `889177073946089595`), todavía con la numeración antigua de specs; el paso a

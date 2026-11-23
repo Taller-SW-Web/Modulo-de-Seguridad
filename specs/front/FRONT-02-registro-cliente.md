@@ -94,7 +94,7 @@ enlaces abren el texto en una ventana nueva sin perder el formulario (ver H-12).
 
 ### UI-02.2 Medidor de fuerza en vivo
 - **Dado** el formulario abierto y la política cargada
-- **Cuando** el visitante escribe `marketplace`
+- **Cuando** el visitante escribe `mercado`
 - **Entonces** el medidor marca como cumplida la regla de minúscula y como no
   cumplidas longitud, mayúscula, número y carácter especial, y deja «que no sea
   común» como «Se comprueba al guardar».
