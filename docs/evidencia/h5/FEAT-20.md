@@ -1,6 +1,6 @@
 # FEAT-20 — Compra por canal con la misma identidad de G7
 
-**Responsable:** Luis David Morales Brenis. **Corte:** 17-nov-2026, hora de Lima.
+**Responsable:** Luis David Morales Brenis. **Corte:** 22-nov-2026, hora de Lima.
 **Estado:** G5 reportó sus versiones y la configuración. La fecha y la prueba
 con Marketplace (G1) siguen pendientes.
 
@@ -47,8 +47,47 @@ de error y la ruta para que G5 revise esa llamada antes de repetir la compra.
 
 ## FEAT-20-T3 — Retail (G4)
 
-**No probado al corte.** No consta confirmación de URL y ventana de prueba en
-[docs #103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103).
+**Reportado por G4 el 19-nov:** [POS](https://g4-retail-frontend-gamma.vercel.app)
+en `e59e039` y [API](https://g4-retail-backend-production.up.railway.app) en
+`cae1c8a`. G4 informó que su backend usa `client_credentials` con
+`modulo-retail` y que la creación en G5 con `canal: RETAIL` e
+`Idempotency-Key` funcionó con pedidos reales. Los SHA Live y el resultado
+provienen del reporte de G4.
+
+**Identidad G7 pendiente.** El POS usa un identificador de su padrón de
+mostrador como `contacto.clienteId`. Para la prueba conjunta, G4 obtendrá el
+UUID desde la búsqueda por documento o el alta asistida de G7 con el token
+del vendedor. G4 enviará ese UUID al crear el pedido. La cuenta compradora
+debe ver el pedido en `/api/v1/pedidos/me` con su token de usuario G7 y una
+segunda cuenta debe quedar sin acceso a ese pedido. Registrar los HTTP, las
+versiones Live y el canal, sin adjuntar documentos, tokens ni datos personales.
+
+**Prueba por API asíncrona:** G4 registró y verificó en G7 la cuenta
+`CLIENTE` compradora (A). G7 aporta la cuenta de control (B). G4 informó que
+creó `PED-2026-00081` el 20-nov a las 00:38:22, hora de Lima.
+
+1. G4 crea el pedido por `POST /api/v1/retail/ventas` de su backend desplegado.
+   Su backend llama a G5 con `modulo-retail`, `canal: RETAIL` y el UUID de A
+   como `contacto.clienteId`.
+2. G4 comparte por coordinación privada el `pedidoId`, la hora de Lima y la
+   `Idempotency-Key`. G5 verifica el canal y el vínculo con el UUID de A.
+3. G4 consulta `GET /api/v1/pedidos/me` con la cuenta A y confirma que aparece el
+   pedido. G7 consulta con B y comprueba que el mismo pedido queda fuera.
+
+| Comprobación | Resultado | Procedencia |
+|---|---|---|
+| Pedido nuevo por el backend desplegado de G4 | `201`, canal `RETAIL`, estado `ENTREGADO` y `contacto.clienteId` igual al `sub` de A. | Reportado por G4. |
+| Consulta de pedidos con A | `200`, incluye `PED-2026-00081`. | Reportado por G4. |
+| Consulta de pedidos con B | `200`, `PED-2026-00081` no aparece en ninguna página del 20-nov. | Luis David, G7, consulta desplegada en Ventas desde PowerShell el 21-nov. |
+| Canal, titular e historial en Ventas | `GET /api/v1/pedidos/PED-2026-00081` en el gateway con el token de `modulo-retail` devolvió `200`, canal `RETAIL`, estado `ENTREGADO` y `contacto.clienteId` igual al `sub` de A. El historial muestra `PAGADO → ENTREGADO`, actor `CLIENTE` y motivo `ENTREGA_INMEDIATA_EN_TIENDA`. | Consulta desplegada reportada por G4 el 22-nov a las 21:53, hora de Lima. |
+
+**Resultado:** compra por API y visibilidad A/B acreditadas para este pedido.
+G5 debe aclarar la autorización del detalle con el token técnico de Retail,
+que difiere de lo descrito en §1.3 de su contrato. El flujo del POS de
+búsqueda y alta asistida se verifica cuando estén disponibles las dos rutas.
+
+**Seguimiento:** [docs #103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103)
+y [ajuste de alcance para Retail](../../../plan/hito-5/DECISIONES-PO.md#8-ajuste-del-19-nov-para-retail).
 
 ## FEAT-20-T4 — Chatbot (G3)
 
@@ -56,5 +95,5 @@ de error y la ruta para que G5 revise esa llamada antes de repetir la compra.
 [docs #102](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/102).
 
 La [decisión del PO](../../../plan/hito-5/DECISIONES-PO.md#g3-y-g4-en-la-compra-por-canal-feat-20)
-fija Marketplace como canal obligatorio. Para G3 y G4 queda confirmar alcance y
-disponibilidad con el PO y cada equipo.
+fija Marketplace como canal obligatorio. G3 queda pendiente de confirmar
+disponibilidad. El ajuste de G4 se registra en la sección de Retail.
