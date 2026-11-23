@@ -28,6 +28,11 @@ America/Lima. **Ejecutó:** Eva.
   guion esperaba.
 - **Qué se muestra:** el guion lee la contraseña con `Read-Host -AsSecureString` y solo imprime
   estados HTTP y códigos de error. No hay contraseñas ni tokens en esta evidencia.
+- **Control previo del guion:** tras la revisión de Luis en #112, el guion se detiene si la
+  renovación previa a la baja no responde `200` con un refresco nuevo; así un `401` posterior no se
+  puede atribuir a un token que ya era inválido. Ese control se añadió **después** de esta ejecución,
+  que corrió con la versión anterior del guion. El resultado no cambia, porque en ella la renovación
+  previa respondió `200` (09:39:42).
 
 | Hora | Paso | Esperado | Obtenido |
 |---|---|---|---|

@@ -60,5 +60,5 @@ Verificar alta sin rol, petición sin contraseña y ausencia de consulta sin per
 
 Sin alta CLIENTE, perfiles de negocio ni contraseña inicial.
 La activación A6 está especificada en [FRONT-16](../front/FRONT-16-activacion-cuenta.md) e implementada
-en `src/pantallas/activacion/ActivacionCuentaPage.tsx` (FEAT-13); H-12 lo resolvió el PO con los
-términos `2026-11-v1`, que la SPA muestra en `/terminos`.
+en `src/pantallas/activacion/ActivacionCuentaPage.tsx` (FEAT-13); el PO definió los términos de H-12
+(`2026-11-v1`), que la SPA muestra en `/terminos`; falta comprobar qué versión guarda el backend en Render.

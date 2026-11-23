@@ -21,7 +21,7 @@
 
 > **Corte 23-nov (FEAT-13):** v2 publicada (`crearUsuarioV2`) y servidor en backend #93. Esta
 > pantalla vive en `/admin/usuarios/nuevo` (frontend #28) y el listado la ofrece con «Nueva
-> cuenta». H-12 quedó resuelto por el PO (términos `2026-11-v1`) y la activación tiene su spec
+> cuenta». El PO definió los términos de H-12 (`2026-11-v1`) y la activación tiene su spec
 > propia, [FRONT-16](FRONT-16-activacion-cuenta.md). Recorrido desplegado en
 > [FEAT-13](../../docs/evidencia/h5/FEAT-13.md).
 
@@ -116,7 +116,7 @@ La **pantalla de activación A6** tiene spec propia: [FRONT-16](FRONT-16-activac
 ## Huecos y cierre
 
 H-10: schema de rol de alta publicado en v2 (`CrearUsuarioRequest`, cinco roles, sin CLIENTE) y servidor en backend #93.
-H-12: el PO fijó los términos `2026-11-v1` (10-nov); la SPA los muestra en `/terminos`.
+H-12: el PO fijó los términos `2026-11-v1` (10-nov); la SPA los muestra en `/terminos`. Falta comprobar qué versión guarda el backend en Render (ver el registro).
 La pantalla de activación está especificada en [FRONT-16](FRONT-16-activacion-cuenta.md).
 
 - [ ] UI-01 alineada con A6 y revisión humana aprobada (pendiente de aprobación del PO)

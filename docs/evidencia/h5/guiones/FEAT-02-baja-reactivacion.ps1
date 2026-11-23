@@ -50,7 +50,13 @@ $refresco = $login.Cuerpo.refreshToken; $acceso = $login.Cuerpo.accessToken
 
 $r = Llamar 'POST' '/auth/refresh' @{ refreshToken = $refresco }
 Write-Host (Mostrar 'renovar antes de la baja' '200' $r)
-if ($r.Estado -eq 200) { $refresco = $r.Cuerpo.refreshToken; $acceso = $r.Cuerpo.accessToken }
+# Control previo: si la sesión ya no renueva antes de la baja, el 401 de después no probaría nada.
+if ($r.Estado -ne 200 -or -not $r.Cuerpo.refreshToken) {
+    Write-Host 'La sesión no renovó antes de la baja: se detiene el guion sin pedir la baja.'
+    $clave = $null; $refresco = $null; $acceso = $null
+    exit 1
+}
+$refresco = $r.Cuerpo.refreshToken; $acceso = $r.Cuerpo.accessToken
 Write-Host (Mostrar 'GET /auth/me antes de la baja' '200' (Llamar 'GET' '/auth/me' $null $acceso))
 
 Write-Host "`n>>> Ahora, en la SPA con tu ADMIN_SISTEMA, abre el detalle de esta cuenta y DALA DE BAJA."

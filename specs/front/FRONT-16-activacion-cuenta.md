@@ -59,7 +59,7 @@ recuperación).
 
 | Campo | Regla | Mensaje | Origen |
 |---|---|---|---|
-| Contraseña | Obligatoria. La política la valida el backend (por eso una contraseña vacía o débil llega como `422`) | «Escribe tu contraseña.» | RF-03.3 |
+| Contraseña | Obligatoria: con el campo vacío no se envía nada. Las reglas de la política las valida el backend, así que una contraseña débil sí se envía y vuelve como `422 POLITICA_INCUMPLIDA` | «Escribe tu contraseña.» | RF-03.3 |
 | Repite la contraseña | Igual a la contraseña | «Las contraseñas no coinciden.» | FRONT-00 |
 | Términos | Casilla marcada; enlaza a `/terminos` (texto `2026-11-v1`) en otra pestaña | «Debes aceptar los términos y el tratamiento de tus datos personales para activar tu cuenta.» | RF-03.5; H-12 |
 

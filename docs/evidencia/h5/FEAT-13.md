@@ -96,6 +96,19 @@ Sergio dijo en #93 que responderá aparte y lo registrará en `DECISIONES-PO.md`
 - **Cuentas antiguas sin términos:** Sergio y Luis pidieron en #93 contar las cuentas
   `PENDIENTE_VERIFICACION` con `acepta_terminos = false` antes de desplegar, porque desde #93 ya no
   pueden verificar su correo. Esta evidencia no registra el resultado de esa consulta.
+- **Versión de términos guardada: `1.0`, no `2026-11-v1`.** La pantalla muestra y enlaza
+  `2026-11-v1`, pero el backend guarda la versión que indica `G7_REGISTRO_VERSION_TERMINOS`. Esa
+  variable no está configurada en Render, así que usa su valor por defecto, `1.0`. Eva lo comprobó el
+  23-nov con una consulta de solo lectura en Supabase:
+
+  | Cuenta | `version_terminos` | `fecha_aceptacion` (UTC) | `acepta_terminos` |
+  |---|---|---|---|
+  | Gestor (FEAT-13) | `1.0` | 2026-11-23 14:28:28 (09:28 en Lima, la activación del paso 5) | `true` |
+  | Cliente de FEAT-02 | `1.0` | 2026-11-23 14:37:52 (09:37 en Lima, su registro) | `true` |
+
+  La aceptación y la fecha se guardan bien; lo que falla es la versión. Se corrige configurando
+  `G7_REGISTRO_VERSION_TERMINOS=2026-11-v1` en Render, sin cambiar código. Las cuentas ya creadas
+  conservan `1.0` hasta que el PO decida si se corrigen (H-12).
 - **RF-03.9:** la eliminación a los 30 días de las cuentas sin activar no entra en H5 (issue #37).
   La cuenta del gestor de esta prueba queda activa con dos roles.
 - La sección «Atributos de vendedor» que aparece en el detalle tras asignar `VENDEDOR` (captura 9)
