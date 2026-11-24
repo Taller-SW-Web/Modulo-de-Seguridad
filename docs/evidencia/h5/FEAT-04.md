@@ -2,8 +2,8 @@
 
 Responsable: Valery Cristin Gutierrez Bendezu. Corte: 23-nov-2026, America/Lima.
 Estado: **T1–T4 y T6 fusionadas como código en `develop`; T5 es la evidencia desplegada que trae este
-documento**: recorrido comprobado para direcciones y cambio de correo. La edición administrativa (T6)
-queda pendiente de recorrido en Render por falta de acceso a una cuenta ADMIN_SISTEMA (ver «Límites»).
+documento**: recorrido comprobado para direcciones, cambio de correo y edición administrativa de
+atributos de vendedor. La auditoría del cambio administrativo no se puede ver desde la SPA (ver «Límites»).
 Nivel de evidencia: **propia desplegada** + CI.
 
 Capturas recortadas, sin barra de direcciones, con los correos y el enlace de verificación tapados.
@@ -63,16 +63,18 @@ otro alias del mismo buzón, así llegan los dos mensajes: el enlace al correo n
 | 9 | Abrir el enlace | Correo confirmado | «Correo verificado. Tu correo quedó verificado.» | ![](img/FEAT-04-09-confirmado.png) |
 | 10 | Iniciar sesión con el correo nuevo | Entra; Mi cuenta muestra el correo nuevo | Entra; Correo = el nuevo, Verificado; nombres y celular sin cambios | ![](img/FEAT-04-10-login-nuevo.png) |
 
-### Edición administrativa (T6) — pendiente
+### Edición administrativa (T6)
 
-No ejecutado: requiere una cuenta ADMIN_SISTEMA (con MFA por rol de gestión), solicitada al equipo.
-Guion pendiente:
+Ejecutado el 23-nov-2026 a las 20:03 (America/Lima) con la cuenta de administración del grupo, iniciada por
+Valery con el código de un solo uso que le pasó David. Por indicación de David no se tocó `vendedor.v`
+(cuenta de la demo): se usó la cuenta del recorrido anterior, a la que primero se le asignó el rol VENDEDOR
+desde «Usuarios» (queda con CLIENTE y VENDEDOR).
 
-| # | Paso | Resultado esperado |
-|---|---|---|
-| 11 | Admin → detalle de `vendedor.v` | Sección de atributos de vendedor visible |
-| 12 | Cambiar la tienda y guardar | 200; el valor nuevo queda al recargar |
-| 13 | Actividad / auditoría de la cuenta | `ATRIBUTOS_ACTUALIZADOS` con nombres de campo, sin valores |
+| # | Paso | Resultado esperado | Resultado | Captura |
+|---|---|---|---|---|
+| 11 | Admin → Usuarios → detalle de la cuenta de prueba, tras asignarle VENDEDOR | Sección de atributos de vendedor visible | Aparece «Atributos de vendedor» con «Editar atributos». Los valores salen «No disponible»: la consulta de la cuenta todavía no incluye estos atributos y la pantalla lo advierte | ![](img/FEAT-04-11-detalle-vendedor.png) |
+| 12 | Editar atributos → Tienda = «Tienda Prueba H5» → Guardar | 200; la sección muestra el valor guardado | «Guardamos los atributos de vendedor.»; Tienda = Tienda Prueba H5 (los campos no enviados quedan en «—»); roles CLIENTE y VENDEDOR | ![](img/FEAT-04-12-atributo-guardado.png) |
+| 13 | Auditoría del cambio | `ATRIBUTOS_ACTUALIZADOS` con nombres de campo, sin valores | No verificable desde la SPA: no hay pantalla de administración para la actividad de otra cuenta. Cubierto por las pruebas de #83 | — |
 
 ## Pruebas automatizadas
 
@@ -83,8 +85,10 @@ Guion pendiente:
 
 ## Límites
 
-- **Edición administrativa (T6) sin recorrido desplegado:** sin acceso a una cuenta ADMIN_SISTEMA el
-  23-nov. Queda acreditada por CI (#83, #22); se agrega aquí si se consigue el acceso.
+- **Persistencia del atributo tras recargar:** no se puede comprobar en la SPA, porque la consulta de la
+  cuenta aún no devuelve los atributos de vendedor («No disponible»). La pantalla muestra el valor que
+  devuelve el guardado; la persistencia queda cubierta por las pruebas PostgreSQL de #83.
+- **Auditoría de la edición administrativa:** sin pantalla de administración para verla; cubierta por #83.
 - No se recorrieron en el despliegue: dirección de otra cuenta (403/404), correo ya usado (respuesta
   neutra), enlace vencido o ya usado. Quedan cubiertos por las pruebas automatizadas.
 - No se probó el ingreso con el correo anterior después de confirmar el cambio.
