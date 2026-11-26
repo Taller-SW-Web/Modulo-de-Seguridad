@@ -22,7 +22,7 @@ recorrido completo **build → compile → test → deploy** en el pipeline.
 | FEAT-09-T3 | Frontend desplegado desde el pipeline | P1 | — | Bloqueada |
 | FEAT-09-T4 | Ventana de migraciones V108+ | P1 · continuo | PR de cada FEAT | En curso |
 | FEAT-09-T5 | CloudAMQP y SMTP real | P1 | — | Verificada |
-| FEAT-09-T6 | Evidencia del recorrido CI/CD | P1 · S3 | T1–T5 | En curso |
+| FEAT-09-T6 | Evidencia del recorrido CI/CD | P1 · S3 | T1–T5 | Verificada |
 | FEAT-10-T1 | `GET /auditoria` con filtros | P2 | — | Pendiente |
 | FEAT-10-T2 | `GET /auditoria/exportar` | P2 | T1 | Pendiente |
 | FEAT-10-T3 | Pantalla FRONT-14 | P2 | T1 | Pendiente |
@@ -40,10 +40,10 @@ recorrido completo **build → compile → test → deploy** en el pipeline.
 - **T4 — en curso.** Esquema en `V108`; no hay migraciones nuevas pendientes al
   cierre. Queda la prueba funcional con el rol `g7_runtime` (el pooler de
   administración no permite `SET ROLE`).
-- **T6 — en curso.** El recorrido completo ya existe: run `45327859496` (`develop`
-  `27e5d19`, 24-nov) con build, pruebas, imagen, despliegue verificado por SHA,
-  smoke y **E2E contra Render** en verde. Falta añadir ese enlace a
-  `docs/evidencia/h4/FEAT-09.md`, que hoy cita runs anteriores al E2E.
+- **T6 — verificada.** Recorrido completo en el run `45327859496` (`develop`
+  `27e5d19`, 24-nov): build, pruebas, imagen, despliegue verificado por SHA, smoke y
+  **E2E contra Render** en verde. Evidencia:
+  [`docs/evidencia/h4/FEAT-09.md`](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/blob/develop/docs/evidencia/h4/FEAT-09.md).
 - **T3 — bloqueada.** El workflow del repo frontend no tiene job de deploy y el
   usuario de trabajo no tiene permiso de escritura en ese repositorio. Requiere
   acceso delegado o que el dueño del repo aplique el cambio.
