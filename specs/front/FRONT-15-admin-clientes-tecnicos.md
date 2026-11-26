@@ -37,6 +37,15 @@ Permiso necesario: `integracion.gestionar`. Todas las rutas son de `/api/v2` (SP
 
 ## Contenido
 
+**Propuesta — Crear scope.** En «Configuración → Clientes técnicos», el
+administrador abre «Crear scope», completa el código y la descripción, y
+selecciona la API dueña en el campo Audiencia. La pantalla recuerda que el
+dueño de la API debe aprobar el scope. Al guardar, llama al alta propuesta en
+SPEC-19 y actualiza el catálogo de la pantalla. La asignación al cliente se
+hace después desde sus acciones. Durante el envío se deshabilita Guardar.
+Si el código existe o hay un error de validación, conserva los datos del
+formulario y muestra el problema. La acción usa `integracion.gestionar`.
+
 **Tabla de clientes:** `clientId`, nombre, estado («Activo» o «Inactivo»), scopes
 como etiquetas agrupadas por API dueña, y un menú de acciones por fila: «Gestionar
 scopes», «Rotar secreto», «Desactivar» o «Reactivar». Botón «Nuevo cliente» encima de la tabla.
@@ -99,6 +108,12 @@ del estado de la pantalla; no se guarda en `localStorage`, en la URL ni en logs.
 ---
 
 ## Escenarios de interfaz — ¿cómo verificamos?
+
+### UI-15.7 Crear un scope (propuesta)
+- **Dado** un administrador con permiso,
+- **Cuando** guarda un scope aprobado,
+- **Entonces** la pantalla confirma el alta y el nuevo código aparece en el selector de scopes.
+- **Si** el código ya existe, el formulario conserva los campos y muestra el error de duplicado.
 
 ### UI-15.1 Alta de un cliente
 - **Dado** un administrador en la pantalla,
