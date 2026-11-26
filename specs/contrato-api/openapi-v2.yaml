@@ -806,7 +806,7 @@ paths:
                 codigo:
                   type: string
                   maxLength: 50
-                  pattern: '^[a-z_]+(:[a-z_]+)+$'
+                  pattern: '^[a-z_]+(-[a-z_]+)*(:[a-z_]+(-[a-z_]+)*)+$'
                 audiencia:
                   type: string
                   enum: [api-seguridad, api-ventas, api-postventa, api-productos, api-despacho]
