@@ -17,15 +17,41 @@ recorrido completo **build → compile → test → deploy** en el pipeline.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-09-T1 | Job de despliegue en GitHub Actions | P1 · lun 26-oct | — | Pendiente |
-| FEAT-09-T2 | Smoke test en el pipeline | P1 · lun 26-oct | T1 | Pendiente |
-| FEAT-09-T3 | Frontend desplegado desde el pipeline | P1 | — | Pendiente |
-| FEAT-09-T4 | Ventana de migraciones V108+ | P1 · continuo | PR de cada FEAT | Pendiente |
-| FEAT-09-T5 | CloudAMQP y SMTP real | P1 | — | Pendiente |
-| FEAT-09-T6 | Evidencia del recorrido CI/CD | P1 · S3 | T1–T5 | Pendiente |
+| FEAT-09-T1 | Job de despliegue en GitHub Actions | P1 · lun 26-oct | — | Verificada |
+| FEAT-09-T2 | Smoke test en el pipeline | P1 · lun 26-oct | T1 | Verificada |
+| FEAT-09-T3 | Frontend desplegado desde el pipeline | P1 | — | Bloqueada |
+| FEAT-09-T4 | Ventana de migraciones V108+ | P1 · continuo | PR de cada FEAT | En curso |
+| FEAT-09-T5 | CloudAMQP y SMTP real | P1 | — | Verificada |
+| FEAT-09-T6 | Evidencia del recorrido CI/CD | P1 · S3 | T1–T5 | En curso |
 | FEAT-10-T1 | `GET /auditoria` con filtros | P2 | — | Pendiente |
 | FEAT-10-T2 | `GET /auditoria/exportar` | P2 | T1 | Pendiente |
 | FEAT-10-T3 | Pantalla FRONT-14 | P2 | T1 | Pendiente |
+
+## Estado al cierre (26-nov-2026)
+
+- **T1 y T2 — verificadas.** El pipeline despliega `develop` tras el CI verde,
+  comprueba que Render quede `live` con el mismo SHA y ejecuta el smoke
+  (`/actuator/health`, JWKS y login real). Evidencia: runs `41167699740` y
+  `42337883111`, con verificación de SHA y smoke en verde.
+- **T5 — verificada.** Evento `usuario.creado` publicado en CloudAMQP, correo real
+  entregado por Brevo (puerto 2525) y OTP de 6 dígitos recibido; `G7_SALUD_BROKER` y
+  `G7_SALUD_CORREO` activos con `/actuator/health` en `UP`. Detalle en
+  `docs/evidencia/h4/FEAT-09.md`.
+- **T4 — en curso.** Esquema en `V108`; no hay migraciones nuevas pendientes al
+  cierre. Queda la prueba funcional con el rol `g7_runtime` (el pooler de
+  administración no permite `SET ROLE`).
+- **T6 — en curso.** El recorrido completo ya existe: run `45327859496` (`develop`
+  `27e5d19`, 24-nov) con build, pruebas, imagen, despliegue verificado por SHA,
+  smoke y **E2E contra Render** en verde. Falta añadir ese enlace a
+  `docs/evidencia/h4/FEAT-09.md`, que hoy cita runs anteriores al E2E.
+- **T3 — bloqueada.** El workflow del repo frontend no tiene job de deploy y el
+  usuario de trabajo no tiene permiso de escritura en ese repositorio. Requiere
+  acceso delegado o que el dueño del repo aplique el cambio.
+- **FEAT-10 — pendiente (P2).** `GET /api/v1/auditoria` y `/auditoria/exportar` no
+  están implementados en `develop`; T3 depende además del acceso al frontend y del
+  wireframe de FRONT-14.
+- **Entrega:** el entorno de integración y entrega se sirve desde `develop`; `main`
+  no se promueve en este hito.
 
 ## FEAT-09 — CI/CD (rúbrica)
 
