@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Seguridad — evolución parcial v2
-  version: 2.1.0
+  version: 2.2.0
   x-estado: publicada-parcial
   description: |-
     Edición local delegada por Sergio según autorización comunicada por Luis David.
@@ -13,6 +13,7 @@ info:
     2.1.0 (lote de contrato H5, 10-nov-2026): añade la gestión de clientes técnicos
     de SPEC-19 en /clientes-servicio y /scopes. Es aditivo: ninguna ruta anterior
     cambia y los módulos consumidores no usan estas rutas, que son de administración.
+    2.2.0 añade POST /scopes para registrar scopes aprobados en el catálogo.
 servers:
 - url: http://localhost:8080/api/v2
   description: Implementación futura local; no confirma despliegue
@@ -765,8 +766,7 @@ paths:
       summary: Catálogo de scopes que se pueden conceder
       description: |-
         SPEC-19, RF-19.3. Devuelve la tabla `scope` ordenada por audiencia y
-        código. Esta API no crea ni edita scopes: uno nuevo lo define el dueño de
-        su API, se aprueba en la matriz y entra por la migración del catálogo.
+        código. El dueño de la API define los scopes y su aprobación queda en la matriz.
       responses:
         '200':
           description: Scopes registrados, con la API dueña de cada uno
@@ -786,6 +786,57 @@ paths:
           $ref: ./openapi.yaml#/components/responses/NoAutenticado
         '403':
           $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '503':
+          $ref: '#/components/responses/NoDisponible'
+    post:
+      tags:
+      - Configuración
+      operationId: crearScopeCatalogo
+      summary: Registrar un scope aprobado en el catálogo
+      description: Requiere integracion.gestionar. Audita el alta y deja las concesiones a clientes para una operación posterior.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [codigo, audiencia, descripcion]
+              properties:
+                codigo:
+                  type: string
+                  maxLength: 50
+                  pattern: '^[a-z_]+(:[a-z_]+)+$'
+                audiencia:
+                  type: string
+                  enum: [api-seguridad, api-ventas, api-postventa, api-productos, api-despacho]
+                descripcion:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+      responses:
+        '201':
+          description: Scope registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScopeCatalogo'
+        '400':
+          description: Datos inválidos (VALIDACION)
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
+        '401':
+          $ref: ./openapi.yaml#/components/responses/NoAutenticado
+        '403':
+          $ref: '#/components/responses/SinPermisoDeConfiguracion'
+        '409':
+          description: El código ya existe (SCOPE_CATALOGO_EXISTENTE)
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./openapi.yaml#/components/schemas/Problem
         '503':
           $ref: '#/components/responses/NoDisponible'
 components:

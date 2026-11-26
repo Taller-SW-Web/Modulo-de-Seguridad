@@ -88,6 +88,7 @@ No se renombran: hay seis equipos que van a ramificar por ellos.
 | `NO_ENCONTRADO` ✅ | 404 | 03, 04, 11, 15, 16, 18, 19 | No existe el recurso. Solo se llega aquí con token y permiso válidos |
 | `CORREO_NO_DISPONIBLE` ✅ | 409 | 01, 03 | El correo ya está registrado. El texto no confirma ni niega la existencia de la cuenta |
 | `CLIENTE_SERVICIO_EXISTENTE` | 409 | 19 | En el alta de un cliente técnico, el `clientId` ya existe, activo o no. Solo lo ve un `ADMIN_SISTEMA`; no afecta a los módulos consumidores |
+| `SCOPE_CATALOGO_EXISTENTE` | 409 | 19 | Ya existe el código solicitado al registrar un scope. La entrada del catálogo conserva sus datos. |
 | `DOCUMENTO_NO_DISPONIBLE` | 409 | 03 | En el registro asistido, el documento ya pertenece a una cuenta: el vendedor debe buscarlo (A6, A7) |
 | `DEMASIADAS_SOLICITUDES` ✅ | 429 | 02, 03, 08, 09 | Se superó el límite de solicitudes: más de 3 OTP en 15 min, más de 3 reenvíos de verificación en una hora, más de 3 recuperaciones en una hora para el mismo correo, o más de 60 búsquedas por documento en una hora por vendedor |
 | `NO_DISPONIBLE` ✅ | 503 | Todas | Dependencia caída: base de datos, cola de correo o auditoría crítica |

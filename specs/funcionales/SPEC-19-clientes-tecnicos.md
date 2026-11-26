@@ -58,9 +58,9 @@ validación de contrato lo comprueba (ver *Impacto en el contrato*).
 | RF-19.1 | Todas las operaciones de esta spec exigen un token de usuario con el permiso `integracion.gestionar`, que solo tiene `ADMIN_SISTEMA`. Sin token válido, `401 TOKEN_INVALIDO`; con token de usuario sin el permiso, `403 SCOPE_INSUFICIENTE`; con token de servicio, `403 TOKEN_NO_APLICABLE`, igual que en las demás rutas de persona. La autorización se decide antes de comprobar si el cliente existe. |
 | RF-19.2 | `GET /clientes-servicio` debe devolver todos los clientes con `clientId`, `nombre`, `activo` y `scopes` (código y audiencia), ordenados por `clientId`. **Ninguna respuesta de esta spec devuelve el hash del secreto**, y solo las de RF-19.4 y RF-19.6 devuelven el secreto. |
 | RF-19.3 | `GET /scopes` debe devolver el catálogo de la tabla `scope` (`codigo`, `audiencia`, `descripcion`), ordenado por audiencia y código. Esta operación es de solo lectura. |
-| RF-19.15 (propuesta) | `POST /scopes` registra en el catálogo un scope aprobado por el dueño de la API. Recibe `codigo`, `audiencia` y `descripcion`, exige la autorización de RF-19.1 y responde `201` con la entrada. El alta no concede el scope a ningún cliente. |
-| RF-19.16 (propuesta) | El código debe cumplir el formato de `scope` y la audiencia debe pertenecer a una API acordada. Los datos inválidos responden `400 VALIDACION`. Un código duplicado, incluso ante dos altas simultáneas, responde `409` con el código de error que apruebe el PO y conserva la definición existente. |
-| RF-19.17 (propuesta) | El alta y su auditoría crítica se confirman en una sola transacción. La auditoría identifica al administrador y registra el código y la audiencia del scope. Si falla la auditoría, el alta se revierte. Se mantiene la aprobación del dueño de la API y su referencia en la matriz. |
+| RF-19.15 | `POST /scopes` registra en el catálogo un scope aprobado por el dueño de la API. Recibe `codigo`, `audiencia` y `descripcion`, exige la autorización de RF-19.1 y responde `201` con la entrada. El alta no concede el scope a ningún cliente. |
+| RF-19.16 | El código tiene hasta 50 caracteres y cumple `^[a-z_]+(:[a-z_]+)+$`. La audiencia es `api-seguridad`, `api-ventas`, `api-postventa`, `api-productos` o `api-despacho`. La descripción tiene entre 1 y 255 caracteres tras quitar espacios de los extremos. Los datos inválidos responden `400 VALIDACION`. Un código duplicado, incluso ante dos altas simultáneas, responde `409` con el código `SCOPE_CATALOGO_EXISTENTE` y conserva la definición existente. |
+| RF-19.17 | El alta y la auditoría crítica `SCOPE_CATALOGO_CREADO` se confirman en una sola transacción. La auditoría identifica al administrador y registra el código y la audiencia del scope. Si falla la auditoría, el alta se revierte. Se mantiene la aprobación del dueño de la API y su referencia en la matriz. |
 | RF-19.4 | `POST /clientes-servicio` crea un cliente activo a partir de `clientId`, `nombre` y `scopes` (opcional, puede ir vacío). El servidor genera el secreto con 256 bits aleatorios, en base64url sin relleno; guarda solo su hash SHA-256 en hex, el mismo formato que verifica `POST /auth/token`; y responde `201` con el cliente y `clientSecret`. |
 | RF-19.5 | `clientId` debe cumplir `^[a-z0-9][a-z0-9-]{2,49}$`, y `nombre` tener entre 1 y 100 caracteres. Si no, `400 VALIDACION`. Si el `clientId` ya existe, activo o no, `409 CLIENTE_SERVICIO_EXISTENTE`. |
 | RF-19.6 | `POST /clientes-servicio/{clientId}/secreto` reemplaza el hash por el de un secreto nuevo, generado igual que en RF-19.4, y responde `200` con `clientSecret`. El secreto anterior deja de servir para emitir tokens en ese momento; los tokens ya emitidos mueren en su `exp`, como mucho una hora después. |
@@ -77,12 +77,12 @@ validación de contrato lo comprueba (ver *Impacto en el contrato*).
 
 ## Escenarios — ¿cómo verificamos?
 
-### ESC-19.11 Registrar un scope aprobado (propuesta)
+### ESC-19.11 Registrar un scope aprobado
 - **Dado** un administrador con `integracion.gestionar` y un código nuevo aprobado por el dueño de la API,
 - **Cuando** envía `POST /api/v2/scopes` con los datos acordados,
 - **Entonces** recibe `201`, el scope aparece en `GET /api/v2/scopes` y hay un registro de auditoría. Los tokens de servicio siguen sin incluir el scope hasta que se conceda.
 
-### ESC-19.12 Proteger el catálogo (propuesta)
+### ESC-19.12 Proteger el catálogo
 - **Dado** un código existente y un administrador autorizado,
 - **Cuando** intenta registrar el mismo código con otra audiencia o descripción,
 - **Entonces** recibe `409` y la entrada original queda intacta.
@@ -153,7 +153,7 @@ validación de contrato lo comprueba (ver *Impacto en el contrato*).
 ## Fuera de alcance — ¿qué NO hará?
 
 - **Borrar clientes.** Se desactivan, para conservar la auditoría que los referencia.
-- **Editar o eliminar scopes existentes.** Un scope nuevo sigue el acuerdo A4: lo define el dueño de la API y se aprueba en la matriz. En la versión vigente se registra por `R__catalogo_scopes.sql`. RF-19.15 propone añadir el alta administrativa.
+- **Editar o eliminar scopes existentes.** Un scope nuevo sigue el acuerdo A4: lo define el dueño de la API y se aprueba en la matriz. El alta se rige por RF-19.15. El catálogo versionado conserva las entradas necesarias para reconstruir otros entornos.
 - **Periodo de convivencia de dos secretos** al rotar. El anterior deja de servir al instante; el equipo dueño recibe el nuevo antes de la rotación planificada.
 - **Revocar tokens de servicio ya emitidos.** Mueren en su `exp`, igual que en SPEC-17.
 - **Entregar el secreto al equipo dueño.** Lo hace el administrador por canal privado; esta API solo lo muestra una vez.
@@ -177,7 +177,7 @@ de v1 ni el token de usuario más allá del permiso nuevo. Publicadas por el PO 
 | `POST /api/v2/clientes-servicio/{clientId}/scopes` | Añade | ✅ Lote H5, 10-nov |
 | `DELETE /api/v2/clientes-servicio/{clientId}/scopes/{scope}` | Añade | ✅ Lote H5, 10-nov |
 | `GET /api/v2/scopes` | Añade | ✅ Lote H5, 10-nov |
-| `POST /api/v2/scopes`, error de duplicado y acción de auditoría para alta de scope | Añade | Propuesta para revisión del PO |
+| `POST /api/v2/scopes`, error de duplicado y acción de auditoría para alta de scope | Añade | Autorizado por Sergio para incluir en Docs #117 |
 | Permiso `integracion.gestionar` para `ADMIN_SISTEMA` (SPEC-11) | Añade: el claim `permisos` del administrador pasa de 8 a 9 valores | ✅ Lote H5, 10-nov (SPEC-11) |
 | Código `CLIENTE_SERVICIO_EXISTENTE` (409) | Añade | ✅ Lote H5, 10-nov (catálogo de errores) |
 | Seis acciones auditables de RF-19.13 (SPEC-12) | Añade | ✅ Lote H5, 10-nov (SPEC-12) |
