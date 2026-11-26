@@ -3,7 +3,7 @@
 | Documento | Versión | Uso |
 |---|---|---|
 | [openapi.yaml](openapi.yaml) | 1.2.0 publicada | Evolución aditiva de v1; login/JWKS mantienen la interfaz publicada. 1.2.0 añade `formatoAcceso` opcional y `usuario.permisos` ([ADR-009](../../docs/arquitectura/adr/009-acceso-cifrado-opcional.md)) |
-| [openapi-v2.yaml](openapi-v2.yaml) | 2.1.0 publicada, parcial | Configuración MFA segura, alta administrativa estricta y, desde 2.1.0, gestión de clientes técnicos ([SPEC-19](../funcionales/SPEC-19-clientes-tecnicos.md)) |
+| [openapi-v2.yaml](openapi-v2.yaml) | 2.2.0, parcial | Configuración MFA, alta administrativa, gestión de clientes técnicos y alta de scopes ([SPEC-19](../funcionales/SPEC-19-clientes-tecnicos.md)) |
 | [Base histórica](historico/openapi-1.0.0.yaml) | 1.0.0 congelada | Referencia exacta del contrato público fijado, no MFA a desplegar |
 
 Definiciones publicadas por [PR #45/#46](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/pull/46),
@@ -23,6 +23,7 @@ otros módulos cambia.
 |---|---|---|
 | `formatoAcceso` opcional y `usuario.permisos` (FEAT-16, [ADR-009](../../docs/arquitectura/adr/009-acceso-cifrado-opcional.md)) | v1 1.2.0 | No, salvo que pidan `formatoAcceso: CIFRADO`. Sin ese campo la respuesta es la de siempre |
 | Gestión de clientes técnicos en `/clientes-servicio` y `/scopes` (FEAT-14, SPEC-19) | v2 2.1.0 | No. Son rutas de administración para `ADMIN_SISTEMA` |
+| Alta administrativa en `POST /scopes` (SPEC-19) | v2 2.2.0 | No. Requiere `integracion.gestionar` |
 | Permiso `integracion.gestionar` en el claim `permisos` de `ADMIN_SISTEMA` | SPEC-11 | No. `permisos` solo lleva permisos de este módulo |
 | Alta administrativa de personal `POST /api/v2/usuarios` (FEAT-13) | v2, sin cambios desde 2.0.0 | No. El alcance está en [decisiones del PO para H5](../../plan/hito-5/DECISIONES-PO.md) |
 
