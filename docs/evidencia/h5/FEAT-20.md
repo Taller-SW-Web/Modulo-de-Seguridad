@@ -91,9 +91,20 @@ y [ajuste de alcance para Retail](../../../plan/hito-5/DECISIONES-PO.md#8-ajuste
 
 ## FEAT-20-T4 — Chatbot (G3)
 
-**No probado al corte.** No consta confirmación de URL y ventana de prueba en
-[docs #102](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/102).
+**Verificada en el despliegue, según evidencia de G3.** El BFF de Chatbot
+(`d7d3f9a`) completó el recorrido con catálogo y promociones de G6, cotización
+y creación y pago en G5. El pedido `PED-2026-00091` quedó en canal `CHATBOT`,
+estado `PAGADO`, por S/ 189.90. Fecha de creación: 26-nov-2026, 00:17:11
+(Lima) / 05:17:11 (UTC).
 
-La [decisión del PO](../../../plan/hito-5/DECISIONES-PO.md#g3-y-g4-en-la-compra-por-canal-feat-20)
-fija Marketplace como canal obligatorio. G3 queda pendiente de confirmar
-disponibilidad. El ajuste de G4 se registra en la sección de Retail.
+| Consulta por el BFF de G3 | Cuenta A | Cuenta B |
+|---|---|---|
+| `GET /api/v1/pedidos` | 200, 4 pedidos, incluye `PED-2026-00091` | 200, 0 pedidos, sin el pedido |
+| `GET /api/v1/pedidos/PED-2026-00091` | 200, `CHATBOT` / `PAGADO` | 404 `RECURSO_NO_ENCONTRADO` |
+
+El recorrido completo se verificó después del incidente de promociones del
+pedido `PED-2026-00088`. G3 reporta que la evaluación de promociones en G6
+todavía puede responder 503 al arrancar en frío. La compra aquí documentada se
+completó con la promoción aplicada.
+
+**Seguimiento:** [confirmación de G3 en #102](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/102#issuecomment-7186125592).
