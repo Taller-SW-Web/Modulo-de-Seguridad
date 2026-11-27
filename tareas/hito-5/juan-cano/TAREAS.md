@@ -17,7 +17,7 @@ Referencia de otro grupo: `Taller-SW-Web/devsecops-templates` (G4 Retail). Está
 | FEAT-15-T1 | Análisis estático de código en backend y frontend | P1 | David OPS-T3 (mié 11-nov) | Pendiente |
 | FEAT-15-T2 | Análisis de dependencias | P1 | — | Pendiente |
 | FEAT-15-T3 | Detección de secretos y escaneo de la imagen | P1 | — | Pendiente |
-| FEAT-15-T4 | Política y tratamiento de hallazgos | P1 | T1–T3 | Pendiente |
+| FEAT-15-T4 | Política y tratamiento de hallazgos | P1 | T1–T3 | Implementada localmente; pendiente CI y checks requeridos |
 | EP-03-T008 | Pendiente de H3: prueba PostgreSQL en CI | P2 | — | Por comprobar |
 
 ## FEAT-15 — Revisión de seguridad en el pipeline (P1)
