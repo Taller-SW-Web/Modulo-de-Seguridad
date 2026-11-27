@@ -1,8 +1,8 @@
 # FEAT-20 — Compra por canal con la misma identidad de G7
 
-**Responsable:** Luis David Morales Brenis. **Corte:** 22-nov-2026, hora de Lima.
-**Estado:** G5 reportó sus versiones y la configuración. La fecha y la prueba
-con Marketplace (G1) siguen pendientes.
+**Responsable:** Luis David Morales Brenis. **Corte:** 26-nov-2026, hora de Lima.
+**Estado:** compra y visibilidad A/B de Marketplace verificadas.
+
 
 ## Fuentes y versiones
 
@@ -28,22 +28,27 @@ se sigue en [docs #100](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/iss
 
 ## FEAT-20-T2 — Prueba desplegada con Marketplace (G1)
 
-**Ejecución:** pendiente. Participan G1 (compra desde el canal), G5 (resultado en
-Ventas) y G7 (identidades y evidencia). Antes de empezar, registrar hora de Lima,
-los SHA Live y la URL de cada componente que intervenga. Usar dos cuentas de
-prueba `CLIENTE` de G7, A y B, y datos de compra de prueba acordados con G5.
+**Verificada el 26-nov-2026, según los resultados reportados por G1 y la
+confirmación de G5 transmitida por Jim.** BFF desplegado en
+`g1-marketplace-backend.onrender.com`, commit `f17896d`.
 
-| Paso | Resultado esperado | Obtenido |
-|---|---|---|
-| 1. G1 obtiene un token de servicio fresco de `modulo-marketplace`. | G7 emite `200`, con `ventas:pedidos:crear` y `api-ventas` en `aud`. | Pendiente |
-| 2. A inicia sesión en Marketplace y crea un pedido de prueba. | G1 llama a `POST /api/v1/pedidos` con su token de servicio y `contacto.clienteId` igual al `sub` de A. G5 devuelve `201` en la primera creación. | Pendiente |
-| 3. Consultar `GET /api/v1/pedidos/me` en G5 con el token de usuario de A. | `200` y el pedido del paso 2 aparece en la respuesta. | Pendiente |
-| 4. Repetir la consulta con el token de usuario de B. | `200` y el pedido del paso 2 queda fuera de la respuesta. Revisar las páginas necesarias para acreditar la ausencia. | Pendiente |
+| Comprobación | Resultado |
+|---|---|
+| Creación con A, 15:06:11 Lima | `POST /checkout/orders` → 202. Ventas registró `PED-2026-00092`, canal `MARKETPLACE`, asociado al `sub` de A. |
+| Pago, 15:17:04 Lima | G5 confirmó estado `PAGADO`. El BFF mostró el mismo estado. |
+| Listado de A | 200. El único pedido del listado fue `PED-2026-00092`. |
+| Listado de B, 19:34 Lima, tras MFA | `GET /orders/me` → 200, cero pedidos. `requestId`: `af00be48-285e-4d30-9910-2ba235eb8d5c`. |
+| Detalle consultado por B | `GET /orders/PED-2026-00092` → 403. `requestId`: `84fc5c34-cedf-4d73-8962-4dbb0c4996ff`. |
 
-Conservar el mismo `pedidoId` como referencia en los pasos 2 a 4. Registrar
-solo datos sanitizados de la prueba, sin tokens, secretos ni datos personales.
-Si la emisión funciona y Ventas rechaza la creación, anotar el HTTP, el código
-de error y la ruta para que G5 revise esa llamada antes de repetir la compra.
+**Ronda funcional por el BFF, independiente de la compra.** El 26-nov, de
+20:20:27 a 20:21:03 Lima, G1 reportó 24 solicitudes, cero fallos y ningún 429.
+Confirmó registro nuevo pendiente de verificación, inicio de sesión con y sin
+MFA, cierre de sesión, rechazo de refresh después del logout, direcciones y
+respuesta neutra de recuperación. El desafío de MFA de B solo abrió sesión
+después de verificar el OTP. La ronda no incluyó JWT inválido o vencido,
+CSRF específico de logout ni recuperación con enlace vencido.
+
+**Seguimiento:** [docs #101](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/101).
 
 ## FEAT-20-T3 — Retail (G4)
 
