@@ -34,6 +34,10 @@ solo con usuario.ver. No consulta password/politica ni solicita OTP en el alta.
 `useAltaUsuario.ts`: valida, construye request y maneja 400/409/503.
 Ningún código de aplicación se crea en esta etapa documental.
 
+**Implementado en FEAT-13 (frontend #28):** `src/pantallas/admin-alta/AdminAltaPage.tsx` (formulario y
+resultado) y `validarAlta.ts` (validación y cuerpo de la petición); la llamada es `crearUsuario` de
+`src/shared/api.ts`. Pruebas en `AdminAltaPage.test.tsx`.
+
 ## Estado, petición y resultado
 
 Correo, nombres, apellidos y rol opcional. «Sin rol» **omite** rol.
@@ -55,5 +59,6 @@ Verificar alta sin rol, petición sin contraseña y ausencia de consulta sin per
 ## Fuera de alcance y pendientes
 
 Sin alta CLIENTE, perfiles de negocio ni contraseña inicial.
-La activación A6 necesita pantalla especificada y H-12; FRONT-03 simple no
-la cubre. Su implementación no se da por preparada mediante este componente.
+La activación A6 está especificada en [FRONT-16](../front/FRONT-16-activacion-cuenta.md) e implementada
+en `src/pantallas/activacion/ActivacionCuentaPage.tsx` (FEAT-13); el PO definió los términos de H-12
+(`2026-11-v1`), que la SPA muestra en `/terminos`; falta comprobar qué versión guarda el backend en Render.
