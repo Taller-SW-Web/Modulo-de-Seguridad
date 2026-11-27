@@ -31,10 +31,12 @@ evidencia H4 de FEAT-09 en el repo backend (`docs/evidencia/h4/FEAT-09.md`).
   `seguridad.usuarios`. Por el límite del plan gratuito de CloudAMQP, G7 y G1
   compartieron la credencial del broker de pruebas; G1 la rotó al terminar y G7 dejó
   de usarla.
-- **FEAT-18-T3 — verificada (publicación y recepción).** Se publicó `usuario.creado`
-  desde una instancia local de G7 y G1 confirmó el mismo `eventoId` en su cola.
-  Quedan como pendientes declarados el procesamiento por el consumidor de G1, la
-  deduplicación y la prueba de reintentos/DLQ. Evidencia:
+- **FEAT-18-T3 — verificada (publicación, recepción y procesamiento).** Se publicó
+  `usuario.creado` desde una instancia local de G7 y G1 confirmó el mismo `eventoId` en
+  su cola. En una segunda fase, con el consumidor de G1 activo, un `usuario.creado`
+  entró por entrega automática y quedó registrado en una fila; los tres eventos
+  anteriores se recuperaron del descarte, una fila cada uno. Quedan pendientes la
+  deduplicación y la prueba controlada de reintentos/DLQ. Evidencia:
   [`docs/evidencia/h5/FEAT-18.md`](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/blob/develop/docs/evidencia/h5/FEAT-18.md).
 - **FEAT-09-T3 — bloqueada.** OPS-T3 quedó cerrado el 12-nov y dejó el secreto
   `RENDER_DEPLOY_HOOK_FRONTEND` en el repositorio frontend. Falta permiso de escritura
@@ -66,8 +68,10 @@ evidencia H4 de FEAT-09 en el repo backend (`docs/evidencia/h4/FEAT-09.md`).
 ### FEAT-18-T3 — Prueba conjunta
 - **Resultado:** una acción en G7, por ejemplo bloquear una cuenta de prueba, llega como evento al otro módulo.
 - **Aceptación:** el mismo identificador de evento aparece publicado en G7 y recibido en el consumidor; un mensaje repetido no duplica el efecto.
-- **Estado:** publicación y recepción verificadas con el mismo `eventoId`. Quedan
-  pendientes el procesamiento por el consumidor, la deduplicación y los reintentos/DLQ.
+- **Estado:** publicación, recepción y procesamiento verificados. El consumidor de G1
+  procesó un `usuario.creado` con entrega automática (una fila) y recuperó los tres
+  eventos previos del descarte. Quedan pendientes la deduplicación y la prueba
+  controlada de reintentos/DLQ.
 - **Evidencia:** `docs/evidencia/h5/FEAT-18.md`, con versiones de ambos lados y nivel de evidencia.
 
 ## FEAT-10 — Auditoría administrativa (P2)
