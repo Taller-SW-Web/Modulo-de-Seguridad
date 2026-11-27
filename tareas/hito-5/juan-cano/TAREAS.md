@@ -14,10 +14,10 @@ Referencia de otro grupo: `Taller-SW-Web/devsecops-templates` (G4 Retail). Está
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-15-T1 | Análisis estático de código en backend y frontend | P1 | David OPS-T3 (mié 11-nov) | Pendiente |
-| FEAT-15-T2 | Análisis de dependencias | P1 | — | Pendiente |
-| FEAT-15-T3 | Detección de secretos y escaneo de la imagen | P1 | — | Pendiente |
-| FEAT-15-T4 | Política y tratamiento de hallazgos | P1 | T1–T3 | Implementada localmente; pendiente CI y checks requeridos |
+| FEAT-15-T1 | Análisis estático de código en backend y frontend | P1 | David OPS-T3 (mié 11-nov) | Implementada; CI verde en PR #98 y #29; revisión/merge pendientes |
+| FEAT-15-T2 | Análisis de dependencias | P1 | — | Implementada; CI verde en PR #98 y #29; revisión/merge pendientes |
+| FEAT-15-T3 | Detección de secretos y escaneo de la imagen | P1 | — | Implementada; CI verde en PR #98 y #29; revisión/merge pendientes |
+| FEAT-15-T4 | Política y tratamiento de hallazgos | P1 | T1–T3 | Implementada; CI verde en PR #98 y #29; revisión/merge y confirmación de checks requeridos pendientes |
 | EP-03-T008 | Pendiente de H3: prueba PostgreSQL en CI | P2 | — | Por comprobar |
 
 ## FEAT-15 — Revisión de seguridad en el pipeline (P1)
@@ -39,7 +39,7 @@ Referencia de otro grupo: `Taller-SW-Web/devsecops-templates` (G4 Retail). Está
 - **Resultado:** documento breve con qué bloquea un PR y qué solo informa, y una decisión para cada hallazgo de severidad alta: corregido o justificado.
 - **Primer paso:** proponer la política al equipo con los primeros resultados.
 - **Aceptación:** política publicada en `.github/CI.md`; ningún hallazgo alto sin decisión.
-- **Evidencia:** `docs/evidencia/h5/FEAT-15.md`, con los identificadores de las ejecuciones. Nivel: CI.
+- **Evidencia:** `docs/evidencia/h5/FEAT-15.md`, con SHA y ejecuciones finales de CI para ambos PR. Nivel: CI.
 
 ## EP-03-T008 (P2)
 - **Primer paso:** comprobar si la prueba PostgreSQL del cambio de contraseña ya corre en CI.

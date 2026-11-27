@@ -2,19 +2,35 @@
 
 Responsable: Juan José Cano Vasquez. Corte: 27-nov-2026, America/Lima.
 Rama de código: `feat/TEC-INFRA-seguridad-pipeline` en backend y frontend.
-Estado: **T1–T4 implementadas localmente; T4 espera CI posterior en PR y activación de checks requeridos**.
+Estado: **T1–T4 implementadas y verificadas por CI en ambos PR; revisión humana y merge pendientes**. La protección de `develop` con los checks de seguridad requeridos también debe confirmarse.
 
-## Ejecuciones revisadas
+## Ejecuciones iniciales (antes de completar T4)
 
 | Repositorio | PR | Ejecución de seguridad | Resultado observado |
 |---|---:|---:|---|
 | Backend | [#98](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/98) | [45941230331](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/actions/runs/45941230331) | Jobs verdes. Gitleaks: 0 hallazgos. Trivy: 11 HIGH y 7 CRITICAL en librerías Java; el reporte se descargó como artefacto `trivy-backend-45941230331-1` (ID `15172716643`). |
 | Frontend | [#29](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/29) | [45945578698](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/actions/runs/45945578698) | Jobs verdes. Gitleaks: 0 hallazgos. CodeQL y revisión de dependencias terminaron correctamente. |
 
-Los checks de PR #98 y #29 revisados estaban exitosos. Los checks omitidos de
-deploy, smoke y E2E tenían condiciones de ejecución, por lo que `skipped` no se
-interpretó como prueba funcional ejecutada. Esos resultados corresponden a los
-commits anteriores a T4; la verificación local posterior se registra abajo.
+En esas ejecuciones iniciales, los checks omitidos de deploy, smoke y E2E tenían
+condiciones de ejecución; `skipped` no se interpretó como prueba funcional. Los
+resultados posteriores a T4 se registran en la revalidación final.
+
+## Revalidación final de los PR
+
+| Repositorio | SHA del PR | Ejecución CI | Ejecución de seguridad | Resultado |
+|---|---|---|---|---|
+| Backend [#98](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/pull/98) | `9c0d2b0adc2665f979b750683a4ea3741d5fab04` | [45960632765](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/actions/runs/45960632765) | [45960632772, intento 2](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/actions/runs/45960632772) | Ambos workflows completaron exitosamente. Incluye build/pruebas, E2E, imagen, CodeQL, Gitleaks, Trivy y revisión de dependencias. |
+| Frontend [#29](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/pull/29) | `a6c05d89518dcc6880d84040c7778fbaf32bc5dd` | [45952090987](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/actions/runs/45952090987) | [45952091045](https://github.com/Taller-SW-Web/G7-Modulo-de-Seguridad-Frontend/actions/runs/45952091045) | Ambos workflows completaron exitosamente: build/pruebas, CodeQL, Gitleaks y revisión de dependencias. |
+
+En backend, Maven Central devolvió HTTP 429 en el primer intento de
+`Dependencias / Gradle`. La ejecución guardó la caché incompleta; el intento 2
+la restauró y terminó `BUILD SUCCESSFUL`. El job de revalidación de seguridad
+quedó exitoso. La imagen Docker también pasó con los reintentos añadidos a la
+resolución Gradle y a `bootJar`.
+
+Los PR siguen abiertos, sin revisión humana registrada ni revisor solicitado.
+Sus títulos y descripciones todavía indican T1–T2, aunque los cambios/commits
+incluyen T1–T4; corregir esa metadata y solicitar la revisión antes del merge.
 
 ## Política T4
 
@@ -72,7 +88,22 @@ cubre esos dos CVE concretos y expirables.
   Trivy 0.76.2, con base actualizada, escaneó la imagen con severidad
   `HIGH,CRITICAL` y `--exit-code 1`: 0 hallazgos bloqueantes, 2 CVE suprimidos
   exactamente por `.trivyignore` (CVE-2026-47884 y CVE-2026-47890).
-- Los checks de PR #98 pertenecen al código anterior a estos cambios y no se
-  presentan como evidencia de remediación. La nueva CI debe ejecutarse al
-  incorporar estos cambios.
+- La CI final de PR #98 sí valida el SHA actualizado indicado en la tabla; la
+  ejecución inicial anterior a T4 se conserva únicamente como evidencia del
+  hallazgo que motivó las actualizaciones.
+- Tras los HTTP 429 de Maven Central, el Dockerfile añade tres intentos de
+  resolución Gradle y `bootJar`, con esperas de 20/40 s. La imagen reconstruida
+  localmente terminó `BUILD SUCCESSFUL`, digest
+  `sha256:408c4cc368116c6440d424464d5e732d04967f356d7f9ad513c69fb2f67dcbf2`.
+  Trivy 0.76.2 volvió a reportar 0 HIGH/CRITICAL activos y solo los dos CVE
+  Spring ya justificados y expirables.
+- En la ejecución CI `45952041008`, el job E2E falló antes de lanzar Playwright
+  por un error transitorio de resolución Gradle (versiones vacías para Spring
+  Boot y Lombok). En la revalidación final del SHA de PR #98, E2E pasó; no se
+  requirió un cambio funcional de la aplicación.
+- La primera ejecución del job `Dependencias / Gradle` en el SHA final volvió a
+  recibir HTTP 429. Al reejecutar el job, Gradle restauró la caché y pasó; no
+  queda un check fallido conocido en los PR revisados.
+- Aunque los checks están verdes, falta la revisión humana. Los títulos y
+  descripciones de ambos PR deben reflejar que incluyen T1–T4, no solo T1–T2.
 - No se conectó a Supabase ni se alteró configuración de despliegue.
