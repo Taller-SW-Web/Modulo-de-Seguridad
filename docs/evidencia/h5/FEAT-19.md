@@ -110,14 +110,21 @@ Se volvió a consultar el 12-nov minuto a minuto, tras la revisión de David:
 | `401` | 4 | 2 de la equivalencia (decididos por el backend), 1 sin clave y 1 con clave inventada |
 | `404` | 3 | 1 de la prueba de ruta no publicada; las otras 2 no son de la prueba (posiblemente tráfico externo a una URL pública) |
 
-Consulta usada, sin captura del portal:
+Consulta usada:
 
 ```bash
-az monitor metrics list --resource <id de g7-seguridad-apim> --metric Requests \n  --interval PT1M --start-time 2026-11-11T04:00:00Z --end-time 2026-11-11T05:30:00Z \n  --dimension GatewayResponseCode --aggregation Total
+az monitor metrics list --resource <id de g7-seguridad-apim> --metric Requests \
+  --interval PT1M --start-time 2026-11-11T04:00:00Z --end-time 2026-11-11T05:30:00Z \
+  --dimension GatewayResponseCode --aggregation Total
 ```
 
 En el portal se ve en el recurso, sección **Métricas**, métrica **Requests**,
-con «Aplicar división» por **Gateway Response Code**. Falta añadir esa captura.
+con «Aplicar división» por **Gateway Response Code**. Captura del 27-nov del mismo
+rango (11-nov, 04:20–04:40 UTC, granularidad de 1 minuto, gráfico de barras): los
+totales de la leyenda coinciden con la tabla (200 → 30, 429 → 15, 401 → 4, 404 → 3).
+El eje muestra la hora local (UTC-05:00): la ráfaga es la barra de las 23:29.
+
+![Azure Monitor: Requests de g7-seguridad-apim divididas por Gateway Response Code](img/FEAT-19-azure-monitor.png)
 
 Las métricas tardan unos minutos en consolidarse.
 
