@@ -14,9 +14,9 @@ Sus PR los revisa Juan José; él revisa los de David, que trabaja en el paquete
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| PO-T1 | Lote único de contrato H5 | P1 · jue 12-nov | Propuestas de David (mié 11-nov) | Fusionado (#91). Falta el aviso a los seis módulos |
-| PO-T2 | Matriz de scopes y concesiones al día | P1 | David OPS-T1 | Backend #88 fusionado y catálogo de 31 scopes aplicado en Supabase; matriz en documentación #90 |
-| PO-T3 | Decisiones abiertas | P1 | — | Fusionado (#91): [decisiones del PO](../../../plan/hito-5/DECISIONES-PO.md) |
+| PO-T1 | Lote único de contrato H5 | P1 · jue 12-nov | Propuestas de David (mié 11-nov) | Hecho: fusionado (#91) y aviso a los seis módulos publicado el 28-nov ([#126](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/126)) |
+| PO-T2 | Matriz de scopes y concesiones al día | P1 | David OPS-T1 | Conciliada el 28-nov: matriz en documentación #95 y referencia SQL en backend #96 (Retail según docs #109; Postventa según G5 #67, token del cliente). Catálogo de 37 scopes aplicado en Supabase |
+| PO-T3 | Decisiones abiertas | P1 | — | Fusionado (#91) y ampliado el 28-nov con el enlace de activación vencido: [decisiones del PO](../../../plan/hito-5/DECISIONES-PO.md) |
 | FEAT-19-T1 | Plataforma de API Management elegida | P1 · jue 12-nov | — | Fusionado (#91): [ADR-010](../../../docs/arquitectura/adr/010-plataforma-api-management.md) |
 | FEAT-19-T2 | API de G7 publicada en la plataforma | P1 | T1 | Desplegada y comprobada (10-nov): [evidencia](../../../docs/evidencia/h5/FEAT-19.md). Plantilla en backend #89 |
 | FEAT-19-T3 | Seguridad, límite de uso y monitoreo, con evidencia | P1 | T2 | Verificada (10-nov): 401 sin clave, 429 sobre el límite, métricas en Azure Monitor, con captura del panel |

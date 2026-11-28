@@ -101,6 +101,18 @@ que no entran.
   del backend, que solo registra los eventos recibidos. Se presenta como lo que
   es: un consumidor de demostración de G7, no una integración con otro módulo.
 
+### Enlace de activación vencido (FEAT-13, 28-nov)
+
+- **Comportamiento final:** un alta sobre una cuenta `PENDIENTE_VERIFICACION` **sin términos
+  aceptados** reemite el enlace de activación e invalida el anterior. Las demás altas con un correo
+  existente siguen respondiendo `409 CORREO_NO_DISPONIBLE`. Es lo que ya dice el contrato de
+  `activarCuenta`, así que **el contrato no cambia**.
+- **En H5 no se implementa:** se decide la víspera de la presentación y no se despliega código nuevo
+  sin probarlo. Se hace en un PR aparte del backend después del H5.
+- **Mientras tanto se declara como límite** en la evidencia de FEAT-13. Si el enlace de una cuenta de
+  prueba vence, David elimina en Supabase esa cuenta sin activar y el administrador la vuelve a dar
+  de alta. Las cuentas de H5 son de prueba, así que no se pierden datos reales.
+
 ### Persistencia de la sesión al recargar
 
 Sin cambios en H5. Los tokens siguen en memoria y recargar la página exige
