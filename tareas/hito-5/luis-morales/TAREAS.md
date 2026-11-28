@@ -19,7 +19,7 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
 | OPS-T1 | Consultas de solo lectura en Supabase | P1 · mar 10-nov | — | Hecho (Q0 a Q7 en la [verificación](../../../docs/integracion/hito-5-clientes-tecnicos.md)) |
-| OPS-T2 | Cuentas de prueba y cliente técnico de prueba | P1 · mié 11-nov | OPS-T1; aprobación de Sergio para el cliente nuevo | En curso: cliente `modulo-prueba-h5` y cuenta del E2E listos; faltan las cuentas de carga de Valery |
+| OPS-T2 | Cuentas de prueba y cliente técnico de prueba | P1 · mié 11-nov | OPS-T1; aprobación de Sergio para el cliente nuevo | Hecho: cliente `modulo-prueba-h5`, cuenta E2E y cinco cuentas de carga. [Ronda de carga](https://github.com/Taller-SW-Web/Modulo-de-Seguridad-Backend/blob/develop/docs/evidencia/h5/FEAT-17.md) |
 | OPS-T3 | Ajustes de repositorio y Render | P1 · mié 11-nov | — | Hecho (12-nov): E2E contra Render activo y en verde ([evidencia](../../../docs/evidencia/h5/FEAT-12.md)); secreto `RENDER_DEPLOY_HOOK_FRONTEND` en el frontend para Christian. El análisis de código lo configura Juan José en su workflow (FEAT-15-T1), sin la configuración por defecto de GitHub, que lo impediría |
 | FEAT-16-T1 | Decisión y propuesta de contrato del token cifrado | P1 · mié 11-nov | — | Hecho |
 | FEAT-16-T2 | Backend emite el formato cifrado y acepta ambos | P1 | T1 como propuesta | Hecho |
@@ -29,12 +29,12 @@ David asume lo más difícil y lo que más bloquea al resto. **Orden:** OPS prim
 | FEAT-14-T2 | Backend de gestión de clientes técnicos | P1 | T1 como propuesta | Hecho |
 | FEAT-14-T3 | Pantalla «Configuración → Clientes técnicos» | P1 | T2 | Hecho |
 | FEAT-14-T4 | Recorrido desplegado y evidencia | P1 | T2, T3 | Hecho ([evidencia](../../../docs/evidencia/h5/FEAT-14.md)) |
-| FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | En curso: G5 reportó URL, SHA, issuer y JWKS el 17-nov. Falta acordar fecha y hora con G1 en [#100](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/100). |
+| FEAT-20-T1 | Confirmar con G5 la prueba conjunta | P1 | G5 (externo) | Hecho: G5 confirmó entorno, versión y validación de G7. La prueba de compra con G1 se ejecutó el 26-nov. [Evidencia](../../../docs/evidencia/h5/FEAT-20.md) · [#100](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/100) |
 | FEAT-20-T2 | Compra desde Marketplace (G1) | P1 | T1; G1 | Verificada (26-nov): `PED-2026-00092` `PAGADO`, canal `MARKETPLACE`, visible para A y ausente para B. [Evidencia](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t2--prueba-desplegada-con-marketplace-g1) · [#101](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/101). |
 | FEAT-20-T3 | Compra desde Retail (G4) | P1 | T1; G4; SPEC-03 | Prueba por API verificada: pedido `RETAIL` vinculado al UUID de G7, visible para A y ausente para B. Pendiente el flujo del POS con alta asistida y búsqueda por documento. [Evidencia](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t3--retail-g4) · [#103](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/103) |
 | FEAT-20-T4 | Compra desde Chatbot (G3) | P1 | T1; G3 | Verificada (26-nov): pedido `PED-2026-00091` pagado en canal `CHATBOT`, visible para A y ausente para B. [Evidencia](../../../docs/evidencia/h5/FEAT-20.md#feat-20-t4--chatbot-g3) · [#102](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/issues/102#issuecomment-7186125592) |
-| FEAT-11-T6 | Favoritos A/B en despliegue | P1 | G1 (externo) | Pendiente |
-| FEAT-11-T7 | Llamada real de `modulo-marketplace` a G6 | P1 | G1 y G6 (externo) | Pendiente |
+| FEAT-11-T6 | Favoritos A/B en despliegue | P1 | G1 (externo) | Parcial: G1 tiene pruebas automatizadas de titularidad. Falta el recorrido A/B desplegado. [Evidencia](../../../docs/evidencia/h5/FEAT-11.md#t6--favoritos-ab-en-despliegue) |
+| FEAT-11-T7 | Llamada real de `modulo-marketplace` a G6 | P1 | G1 y G6 (externo) | Parcial: catálogo real por APIM `200` el 27-nov, confirmado por G1. Falta `403` fuera de scope. [Evidencia](../../../docs/evidencia/h5/FEAT-11.md#t7--llamada-real-a-g6-por-apim) |
 | FEAT-07-T5 | Casos negativos de MFA en despliegue | P2 | — | Hecho (12-nov): [evidencia](../../../docs/evidencia/h5/FEAT-07.md) |
 | FEAT-08-T3 | Revocación en nube y contacto de soporte | P2 | Sergio (H-14) | Hecho (12-nov): [evidencia](../../../docs/evidencia/h5/FEAT-08.md). Soporte: se mantiene «pide al administrador de la plataforma» |
 
