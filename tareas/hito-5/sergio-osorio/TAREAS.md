@@ -19,7 +19,7 @@ Sus PR los revisa Juan José; él revisa los de David, que trabaja en el paquete
 | PO-T3 | Decisiones abiertas | P1 | — | Fusionado (#91): [decisiones del PO](../../../plan/hito-5/DECISIONES-PO.md) |
 | FEAT-19-T1 | Plataforma de API Management elegida | P1 · jue 12-nov | — | Fusionado (#91): [ADR-010](../../../docs/arquitectura/adr/010-plataforma-api-management.md) |
 | FEAT-19-T2 | API de G7 publicada en la plataforma | P1 | T1 | Desplegada y comprobada (10-nov): [evidencia](../../../docs/evidencia/h5/FEAT-19.md). Plantilla en backend #89 |
-| FEAT-19-T3 | Seguridad, límite de uso y monitoreo, con evidencia | P1 | T2 | Verificada (10-nov): 401 sin clave, 429 sobre el límite, métricas en Azure Monitor. Falta la captura del panel |
+| FEAT-19-T3 | Seguridad, límite de uso y monitoreo, con evidencia | P1 | T2 | Verificada (10-nov): 401 sin clave, 429 sobre el límite, métricas en Azure Monitor, con captura del panel |
 | FEAT-05-T4 | Rotación de clave con dos `kid` | P2 | David ejecuta en Render | Verificada (16-nov): dos claves y el token anterior con 200 ([evidencia](../../../docs/evidencia/h5/FEAT-05-06.md)). Clave anterior retirada (comprobado el 22-nov) |
 | FEAT-06-T4 | Consulta de identidad con 200 y 403 | P2 | David OPS-T2 | Verificada (10-nov): [evidencia](../../../docs/evidencia/h5/FEAT-05-06.md) |
 
@@ -59,7 +59,7 @@ API Management es gestionar la API de forma centralizada: publicarla, asegurarla
 - **Resultado:** una política de acceso, un límite de peticiones demostrable y el panel de uso de la plataforma.
 - **Aceptación:** una petición por encima del límite se rechaza; el panel muestra el tráfico de la prueba.
 - **Evidencia:** [`docs/evidencia/h5/FEAT-19.md`](../../../docs/evidencia/h5/FEAT-19.md), sin claves.
-- **Estado (10-nov):** sin clave → 401; ráfaga de 40 → 27 con 200 y 13 con 429; Azure Monitor separa el tráfico por código. Falta adjuntar la captura del panel de métricas.
+- **Estado (10-nov):** sin clave → 401; ráfaga de 40 → 27 con 200 y 13 con 429; Azure Monitor separa el tráfico por código. Captura del panel adjunta en la evidencia (27-nov).
 
 ## FEAT-05-T4 y FEAT-06-T4 (P2)
 
