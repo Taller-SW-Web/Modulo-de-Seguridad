@@ -3,7 +3,7 @@
 Responsable: Eva Lucía Moreno Zevallos. Corte: 23-nov-2026, America/Lima.
 Estado: **FEAT-13-T1 a T3 cumplidas: un administrador crea un gestor, el gestor activa su cuenta con
 el enlace del correo, inicia sesión con su rol y recibe un segundo rol desde el detalle.** El caso
-del enlace vencido queda pendiente de una decisión del PO (ver al final).
+del enlace vencido quedó decidido por el PO el 28-nov y se declara como límite en H5 (ver al final).
 
 Responde a la observación del profesor recogida en el [plan H5](../../../plan/hito-5/README.md): «no
 se ve un superadministrador que dé roles de gestor».
@@ -66,7 +66,7 @@ recorrido del 23-nov emitió y consumió el token de activación sin errores.
   del listado; `ActivacionCuentaPage.test.tsx` cubre los 410, el 422, los términos y la sesión previa;
   `TerminosPage.test.tsx` cubre la página de términos.
 
-## Enlace vencido — pendiente de decisión del PO
+## Enlace vencido — decidido por el PO (28-nov)
 
 El contrato de `activarCuenta` dice: «Si [el enlace] venció, un administrador o el vendedor puede
 reenviarlo con un alta nueva sobre la misma cuenta, o el titular puede usar la recuperación de
@@ -85,6 +85,11 @@ Sergio dijo en #93 que responderá aparte y lo registrará en `DECISIONES-PO.md`
    e invalide el anterior. Sería un PR aparte del backend; las demás altas con ese correo seguirían
    en `409`.
 2. Mantener el `409` y quitar del contrato la frase del reenvío, declarando el límite.
+
+**Decisión del PO (28-nov, [`DECISIONES-PO.md`](../../../plan/hito-5/DECISIONES-PO.md)):** opción 1
+como comportamiento final, que es lo que ya dice el contrato. Se implementa después del H5. En H5 se
+declara como límite: si vence el enlace de una cuenta de prueba, David la elimina en Supabase y el
+administrador la vuelve a dar de alta.
 
 ## Límites
 
