@@ -65,8 +65,8 @@ T006 compone enlaces reales; T007–T008 comprueban efectos y recorrido desplega
 | EP-08-T004 | PATCH propio con campos presentes | P1 | T002; EP-01-T002; EP-06-T003; TEC-INFRA-T003 | Fusionada (B#32) |
 | EP-08-T005 | MiCuentaPage y edición propia React | P1 | T003–T004; EP-02-T001/T008 | Fusionada (F#6, F#9) |
 | EP-08-T006 | Componer acciones de seguridad disponibles | P1 | T005; EP-03-T007; EP-06-T005; EP-02-T008 | Fusionada (F#8) |
-| EP-08-T007 | Verificar privacidad, autorización y efectos | P1 | T003–T004; providers/transporte reales | Pendiente |
-| EP-08-T008 | Defender perfil propio desplegado | P1 | T005–T007; login/MFA y TEC-INFRA-T005 | Pendiente (despliegue) |
+| EP-08-T007 | Verificar privacidad, autorización y efectos | P1 | T003–T004; providers/transporte reales | En PR (B#62) |
+| EP-08-T008 | Defender perfil propio desplegado | P1 | T005–T007; login/MFA y TEC-INFRA-T005 | En revisión (PR #120) |
 
 Txxx pertenece a EP-08 salvo prefijo explícito. Los otros IDs apuntan a sus
 tableros, sin asignar a Valery implementar las capacidades de sus dueños.
@@ -220,3 +220,4 @@ La revisión UX transversal se registra aparte, sin transferir frontend ajeno.
 | 16-oct-2026 | EP-08-T004 | Fusionada (B#32). PATCH propio de atributos | CI en verde (merge propio, 15-oct) | Fusionada |
 | 16-oct-2026 | EP-08-T005 | Fusionada (F#6, F#9). Mi cuenta con /auth/me y edición propia; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
 | 16-oct-2026 | EP-08-T006 | Fusionada (F#8). Mi cuenta enlaza cambio de contraseña y actividad; Sergio | CI en verde (merge propio, 15-oct) | Fusionada |
+| 26-nov-2026 | EP-08-T008 | Recorrido de Mi cuenta en la SPA desplegada: editar, cancelar sin efecto, celular Sin verificar, recarga pide login y los datos persisten. Evidencia: docs/evidencia/h3/EP-08-T008.md (PR #120) | Por asignar al revisar | En revisión |
