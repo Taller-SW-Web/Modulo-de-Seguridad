@@ -94,8 +94,11 @@ externos. Los pedidos nuevos siguen por issues de integración.
 - **Dos concesiones no tienen respaldo:** `modulo-retail` tiene `ventas:pedidos:consultar`
   y `ventas:pedidos:estado`. El contrato de G5 reserva el primero a `modulo-postventa`
   y el segundo a `modulo-despacho`, y ningún acuerdo los aprueba para Retail. No se
-  registran como aprobados. Se pide a G5 y G4 que los confirmen; si no lo hacen
-  antes del congelamiento del 20-nov, se revocan desde el módulo de configuración.
+  registran como aprobados. Se pidió a G5 y G4 que los confirmaran. **Actualización del
+  21-nov ([docs #109](https://github.com/Taller-SW-Web/Modulo-de-Seguridad/pull/109)):** se
+  suspende la revocación y se conservan mientras G5 confirma su uso por Retail; si G5 no lo
+  confirma, se revocan desde el módulo de configuración. Figuran en `concesiones-servicio.sql`
+  del backend (#96).
 - **Tres scopes se concedieron sin registro** (`ventas:pedidos:reemplazar`,
   `inventario:operaciones:leer` y `productos:fisicos:leer`). David los acordó por
   chat con los módulos dueños entre el 2 y el 6-nov; no se conserva la fecha exacta
@@ -164,7 +167,7 @@ desplegadas del H5. Su secreto lo tiene únicamente David y se desactiva al cerr
 | Scope | Audiencia | Para qué | Estado |
 |---|---|---|---|
 | `usuarios:leer`, `direcciones:leer` | `api-seguridad` | FEAT-06-T4: consulta de identidad 200/403 | Concedidos el 10-nov |
-| `tokens:introspeccion` | `api-seguridad` | FEAT-17: medir la introspección bajo carga | **Revocado el 23-nov.** Fue temporal: aprobado por el PO y concedido por David el 23-nov, que comprobó `activo: true`. La ronda de carga se detuvo por un 429 de la verificación anti-bots de Cloudflare, delante de Render, y David retiró el scope a las 22:13 (Lima) |
+| `tokens:introspeccion` | `api-seguridad` | FEAT-17: medir la introspección bajo carga | **Revocado el 23-nov.** Fue temporal: aprobado por el PO y concedido por David el 23-nov, que comprobó `activo: true`. La ronda de carga se detuvo por un 429 de origen no confirmado, como registra el informe de FEAT-17 de Valery, y David retiró el scope a las 22:13 (Lima) |
 
 No figura en `concesiones-servicio.sql` porque no forma parte de la configuración de
 referencia de los módulos.
