@@ -14,10 +14,10 @@ Cada tarea es un commit `FEAT-xx-Tn: …` en su rama. Revisión cruzada con Eva.
 
 | ID | Resultado | Prioridad | Depende de | Estado |
 |---|---|---|---|---|
-| FEAT-17-T1 | Plan de carga: escenarios, umbrales y datos | P1 | David OPS-T2 (mié 11-nov) | Pendiente |
-| FEAT-17-T2 | Ejecución contra el despliegue | P1 | T1 | Pendiente |
-| FEAT-17-T3 | Informe de resultados | P1 | T2 | Pendiente |
-| FEAT-04 | Cierre de direcciones, cambio de correo y edición admin | P2 | — | En PR |
+| FEAT-17-T1 | Plan de carga: escenarios, umbrales y datos | P1 | David OPS-T2 (mié 11-nov) | Fusionada (B#95) |
+| FEAT-17-T2 | Ejecución contra el despliegue | P1 | T1 | Fusionada (B#95): R1 y referencia completas; tramo de 10 detenido por un 429 de origen sin confirmar; 25 y 50 sin medir (límite documentado en el informe) |
+| FEAT-17-T3 | Informe de resultados | P1 | T2 | Fusionada (B#95) |
+| FEAT-04 | Cierre de direcciones, cambio de correo y edición admin | P2 | — | En PR (B#62); evidencia fusionada (PR #113) |
 
 ## FEAT-17 — Pruebas de rendimiento (P1)
 
