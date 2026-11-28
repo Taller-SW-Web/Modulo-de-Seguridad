@@ -4,7 +4,7 @@
 |---|---|
 | **Dueño** | Product Owner — es parte del contrato |
 | **Transporte** | RabbitMQ |
-| **Consumen** | Despacho: `desactivado`, `bloqueado`, `reactivado` y `desbloqueado` (confirmado el 2-oct). Marketplace: ninguno. Chatbot, Retail, Ventas y Productos: por confirmar |
+| **Consumen** | **Marketplace (G1)**: acordado el 25-nov (G1 #313) para `creado`, `bloqueado`, `desbloqueado`, `desactivado`, `reactivado`, `roles_cambiados` y, opcional, `atributos_actualizados`; prueba hecha el 25 y 26-nov en el broker de pruebas de G1 (evidencia FEAT-18 del backend). Despacho: confirmó el 2-oct `desactivado`, `bloqueado`, `reactivado` y `desbloqueado`, sin prueba en H5. Chatbot, Retail, Ventas y Productos: por confirmar |
 | **Estado** | Borrador — pendiente de acuerdo con los seis equipos |
 
 `SPEC-17` y `SPEC-18` declaran los eventos fuera de su alcance y dice que «se especifican por
@@ -41,9 +41,10 @@ la introspección en cada petición, que nos convierte en punto único de fallo.
 | **Routing key** | El nombre del evento, tal cual: `usuario.creado` |
 | **Cola por consumidor** | Cada módulo declara la suya: `<modulo>.usuarios`, duradera |
 | **Binding sugerido** | `usuario.*` para recibirlos todos |
-| **Cola de descarte** | `seguridad.usuarios.dlq`, tras 3 reintentos |
+| **Reintentos al publicar** | Del lado de G7, el outbox reintenta 3 veces (a los 10 s, 30 s y 60 s). Si los 4 intentos fallan, el evento queda marcado como fallido en el outbox. G7 **no** declara una cola de descarte de eventos |
+| **Cola de descarte del consumidor** | La define cada consumidor para su propia cola (por ejemplo, la de `marketplace.usuarios`, en G1 #315) |
 
-Cada módulo consumidor **declara y es dueño de su propia cola**. Nosotros solo
+Cada módulo consumidor **declara y es dueño de su propia cola**, y también de sus reintentos y su cola de descarte. Nosotros solo
 publicamos en el exchange: no sabemos quién escucha ni nos enteramos si alguien
 deja de hacerlo.
 
